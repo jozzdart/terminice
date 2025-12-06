@@ -1,5 +1,5 @@
 name: terminice
-description: "A new Flutter package project."
+description: "A library for creating and managing terminal interfaces."
 version: 0.0.1
 homepage:
 
