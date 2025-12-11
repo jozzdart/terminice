@@ -1,12 +1,17 @@
-name: terminice
-description: "A library for creating and managing terminal interfaces."
-version: 0.0.1
-homepage:
+name: terminice_workspace
+description: Terminice Workspace
+publish_to: "none"
 
 environment:
-  sdk: ">=2.12.0 <4.0.0"
+  sdk: ">=3.5.0 <4.0.0"
+
+workspace:
+  - terminice_core
+  - terminice_components
+  - terminice
 
 dependencies:
 
 dev_dependencies:
+  test: ^1.26.1
   lints: ^6.0.0
