@@ -1,7 +1,7 @@
 name: terminice_core
 description: "Core functionality for Terminice."
 resolution: workspace
-version: 0.0.1
+version: 0.0.2
 homepage:
 
 environment:
