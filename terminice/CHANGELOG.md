@@ -1,14 +1,26 @@
+## 0.0.3
+
+Introduced the selector suite:
+
+- **checkboxSelector** — Vertical checklist with select-all binding and live summary.
+- **choiceSelector** — Dashboard grid of cards with optional multi-select.
+- **commandPalette** — VS Code-style palette with fuzzy and substring ranking modes.
+- **gridSelector** — Generic 2D grid selector supporting multi-select and custom widths.
+- **searchSelector** — Scrollable list with optional search toggle and multi-select.
+- **tagSelector** — Chip-style picker that auto-reflows based on terminal width.
+- **toggleGroup** — Row-based toggle switches with focus navigation and "toggle all".
+
 ## 0.0.2
 
 Added the full prompt catalog (text, password, confirm, multiline editor, slider, range, rating):
 
-- **Text prompt** — Fast single-line input with immediate validation feedback.
-- **Password prompt** — Secure masked entry with optional confirmation before submission.
-- **Confirm prompt** — Streamlined yes/no flow that highlights the default action.
-- **Multiline editor** — Scrollable, multi-row composer with diff-friendly output.
-- **Slider prompt** — Keyboard-driven selector for smooth movement through numeric ranges.
-- **Range prompt** — Paired handles for picking inclusive min/max values within bounds.
-- **Rating prompt** — Symbol-based scoring that surfaces descriptive labels alongside stars.
+- **text** — Fast single-line input with immediate validation feedback.
+- **password** — Secure masked entry with optional confirmation before submission.
+- **confirm** — Streamlined yes/no flow that highlights the default action.
+- **multiline** — Scrollable, multi-row composer with diff-friendly output.
+- **slider** — Keyboard-driven selector for smooth movement through numeric ranges.
+- **range** — Paired handles for picking inclusive min/max values within bounds.
+- **rating** — Symbol-based scoring that surfaces descriptive labels alongside stars.
 
 ## 0.0.1
 
