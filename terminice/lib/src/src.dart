@@ -1,6 +1,7 @@
 export 'core/core_exports.dart';
 export 'core/terminice_api.dart';
 export 'prompts/confirm.dart';
+export 'prompts/date_prompt.dart';
 export 'prompts/multiline.dart';
 export 'prompts/password.dart';
 export 'prompts/range.dart';

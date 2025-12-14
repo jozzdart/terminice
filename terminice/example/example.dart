@@ -17,4 +17,7 @@ void main() {
     ],
   );
   print(result);
+
+  final date = terminice.date('Date');
+  print(date);
 }

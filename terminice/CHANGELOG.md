@@ -1,3 +1,8 @@
+## 0.0.4
+
+- Added `date` — a multi-field, keyboard-driven date prompt with live preview,
+  today shortcut, and cancellable flow for safe calendar input.
+
 ## 0.0.3
 
 Introduced the selector suite:
