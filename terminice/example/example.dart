@@ -1,6 +1,10 @@
+import 'package:terminice/src/pickers/color_picker.dart';
 import 'package:terminice/terminice.dart';
 
 void main() {
+  final color = terminice.colorPicker('Color');
+  print(color);
+
   final result = terminice.fire.toggleGroup(
     title: 'Settings',
     items: [

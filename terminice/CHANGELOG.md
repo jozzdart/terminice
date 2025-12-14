@@ -1,3 +1,8 @@
+## 0.0.5
+
+- Added `colorPicker` — a keyboard-first ANSI color grid with curated presets,
+  live hex preview, hex entry shortcuts, and frame-integrated hint grid.
+
 ## 0.0.4
 
 - Added `date` — a multi-field, keyboard-driven date prompt with live preview,
