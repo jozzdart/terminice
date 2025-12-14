@@ -1,3 +1,9 @@
+## 0.0.5
+
+- Added the full rendering toolkit (`FrameView`, `FrameContext`, `FrameRenderer`, `FramedLayout`, `LineBuilder`, `TableRenderer`, `InlineStyle`, `HintFormat`, syntax helpers) to the public API surface so prompts can share consistent terminal scaffolding.
+- Wrote production-grade DartDoc, diagrams, and inline examples for every renderer to ensure the new APIs render cleanly on pub.dev and meet documentation guidelines.
+- Documented how the rendering pieces integrate with `PromptRunner` and `KeyBindings`, including connector lines, table helpers, and hint grids, so downstream packages know when to pick each component.
+
 ## 0.0.4
 
 - Added style primitives (`PromptTheme`, `PromptStyle`, `BadgeTone`, `Themeable`) so that prompts and downstream widgets can share consistent visuals.
