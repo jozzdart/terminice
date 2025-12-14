@@ -1,5 +1,9 @@
 export 'core/core_exports.dart';
 export 'core/terminice_api.dart';
+export 'guides/cheat_sheet.dart';
+export 'guides/help_center.dart';
+export 'guides/hotkey_guide.dart';
+export 'guides/theme_demo.dart';
 export 'indicators/inline_progress_bar.dart';
 export 'indicators/inline_spinner.dart';
 export 'indicators/loading_spinner.dart';

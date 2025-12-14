@@ -1,3 +1,9 @@
+## 0.0.9
+
+- Introduced the `guides` suite (`cheatSheet`, `hotkeyGuide`, `helpCenter`,
+  `themeDemo`) to document key workflows directly from the CLI with polished
+  dartdoc, usage samples, and pub.dev-ready framing.
+
 ## 0.0.8
 
 - Added the indicator suite (`loadingSpinner`, `inlineSpinner`, `inlineProgressBar`,

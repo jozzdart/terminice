@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:terminice/terminice.dart';
 
 void main() {
+  terminice.themeDemo();
+
   // Example 1: Manual frame control
   print('Example 1: Manual spinner updates\n');
   final spinner = terminice.loadingSpinner(

@@ -1,7 +1,7 @@
 name: terminice
 description: "Production-ready prompt toolkit built on terminice_core."
 resolution: workspace
-version: 0.0.8
+version: 0.0.9
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice
 issue_tracker: https://github.com/jozzdart/terminice/issues
