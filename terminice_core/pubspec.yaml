@@ -1,7 +1,7 @@
 name: terminice_core
 description: "Core functionality for Terminice."
 resolution: workspace
-version: 0.0.2
+version: 0.0.6
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice_core
 issue_tracker: https://github.com/jozzdart/terminice/issues
