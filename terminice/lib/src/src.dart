@@ -1,5 +1,7 @@
 export 'core/core_exports.dart';
 export 'core/terminice_api.dart';
+export 'pickers/color_picker.dart';
+export 'pickers/date_picker.dart';
 export 'prompts/confirm.dart';
 export 'prompts/date_prompt.dart';
 export 'prompts/multiline.dart';

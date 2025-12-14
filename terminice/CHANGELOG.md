@@ -1,3 +1,8 @@
+## 0.0.6
+
+- Added `datePicker` — a framed calendar prompt with Monday/Sunday toggle,
+  today shortcut, yearly jumps, allowed past/future guards, and full hint tray.
+
 ## 0.0.5
 
 - Added `colorPicker` — a keyboard-first ANSI color grid with curated presets,
