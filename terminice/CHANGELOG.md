@@ -1,3 +1,10 @@
+## 0.0.8
+
+- Added the indicator suite (`loadingSpinner`, `inlineSpinner`, `inlineProgressBar`,
+  `progressBar`, `progressDots`) with full docs, API exports, and runnable samples.
+  Covers framed and inline progress feedback, spinner styles, and theme-integrated
+  messaging for long-running CLI workflows.
+
 ## 0.0.7
 
 - Added `filePicker` and `pathPicker`, delivering full keyboard navigation,

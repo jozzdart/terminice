@@ -1,5 +1,10 @@
 export 'core/core_exports.dart';
 export 'core/terminice_api.dart';
+export 'indicators/inline_progress_bar.dart';
+export 'indicators/inline_spinner.dart';
+export 'indicators/loading_spinner.dart';
+export 'indicators/progress_bar.dart';
+export 'indicators/progress_dots.dart';
 export 'pickers/color_picker.dart';
 export 'pickers/date_picker.dart';
 export 'pickers/file_picker.dart';
