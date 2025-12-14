@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Added `filePicker` and `pathPicker`, delivering full keyboard navigation,
+  hidden-file toggles, and directory confirmation for filesystem workflows.
+
 ## 0.0.6
 
 - Added `datePicker` — a framed calendar prompt with Monday/Sunday toggle,

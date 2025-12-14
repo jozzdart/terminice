@@ -1,6 +1,12 @@
 import 'package:terminice/terminice.dart';
 
 void main() {
+  final pathPicker = terminice.pathPicker('Path');
+  print(pathPicker);
+
+  final filePicker = terminice.filePicker('File');
+  print(filePicker);
+
   final datePicker = terminice.arcane.datePicker('Date');
   print(datePicker);
 
