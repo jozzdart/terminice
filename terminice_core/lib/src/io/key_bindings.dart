@@ -1,4 +1,4 @@
-import 'key_events.dart';
+import 'package:terminice_core/terminice_core.dart';
 
 /// Result of a key action handler.
 ///
@@ -911,5 +911,67 @@ class KeyBindings {
         return result;
       }
     }
+  }
+
+  /// Creates conditional text input bindings (only active when condition is true).
+  ///
+  /// Useful for search fields that can be toggled on/off.
+  static KeyBindings conditionalTextInput({
+    required TextInputBuffer buffer,
+    required bool Function() isEnabled,
+    void Function()? onInput,
+  }) {
+    return KeyBindings([
+      KeyBinding(
+        keys: {
+          KeyEventType.char,
+          KeyEventType.backspace,
+          KeyEventType.arrowLeft,
+          KeyEventType.arrowRight,
+        },
+        action: (event) {
+          if (!isEnabled()) return KeyActionResult.ignored;
+          if (buffer.handleKey(event)) {
+            onInput?.call();
+            return KeyActionResult.handled;
+          }
+          return KeyActionResult.ignored;
+        },
+      ),
+    ]);
+  }
+
+  /// Creates searchable list bindings: navigation + search toggle + conditional text input + prompt.
+  static KeyBindings searchableList({
+    required void Function() onUp,
+    required void Function() onDown,
+    required void Function() onSearchToggle,
+    required TextInputBuffer searchBuffer,
+    required bool Function() isSearchEnabled,
+    void Function()? onSearchInput,
+    void Function()? onToggle,
+    bool hasMultiSelect = false,
+    KeyActionResult Function()? onConfirm,
+    void Function()? onCancel,
+  }) {
+    var bindings = verticalNavigation(onUp: onUp, onDown: onDown) +
+        searchToggle(onToggle: onSearchToggle) +
+        conditionalTextInput(
+          buffer: searchBuffer,
+          isEnabled: isSearchEnabled,
+          onInput: onSearchInput,
+        );
+
+    if (hasMultiSelect && onToggle != null) {
+      bindings = bindings +
+          conditionalToggle(
+            isEnabled: () => true,
+            onToggle: onToggle,
+          );
+    }
+
+    return bindings +
+        confirm(onConfirm: onConfirm) +
+        cancel(onCancel: onCancel);
   }
 }

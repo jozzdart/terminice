@@ -1,3 +1,9 @@
+## 0.0.6
+
+- Added the entire prompt toolkit (`SimplePrompt`, selectable/searchable/ranked list prompts, grid selection, value prompts, `DynamicListPrompt`, and `TextInputBuffer`) to the public API.
+- Documented every prompt with production-grade dartdoc plus README excerpts so the new surfaces render cleanly on pub.dev.
+- Clarified how the prompt module composes the existing navigation, rendering, and IO primitives to build higher-level interactions.
+
 ## 0.0.5
 
 - Added the full rendering toolkit (`FrameView`, `FrameContext`, `FrameRenderer`, `FramedLayout`, `LineBuilder`, `TableRenderer`, `InlineStyle`, `HintFormat`, syntax helpers) to the public API surface so prompts can share consistent terminal scaffolding.
