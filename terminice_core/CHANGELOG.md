@@ -10,6 +10,13 @@
   - `TerminalInfo` now queries dimensions through `TerminalContext.output`.
   - `RenderOutput` now writes through `TerminalContext.output`.
 - **Testing support**: External users can now inject custom `Terminal` implementations for testing or alternative environments.
+- **Test utilities**: Added comprehensive mock terminal implementations for testing:
+  - `MockTerminal` with `MockTerminalInput` and `MockTerminalOutput` for full I/O simulation.
+  - `SpyTerminal` for tracking method calls and verifying interactions.
+  - `ErrorTerminal` for testing error handling scenarios.
+  - Input queueing helpers for bytes, lines, and key events.
+  - Output capture with pattern matching and inspection helpers.
+- **Extensive test suite**: 69 tests covering terminal interfaces, context switching, and integration.
 - No behavior changes - all existing code continues to work unchanged.
 
 ## 0.0.7
