@@ -244,8 +244,6 @@ extension ColorPickerPromptExtensions on Terminice {
       title: label,
       theme: theme,
       bindings: bindings,
-      showConnector: true,
-      hintStyle: HintStyle.grid,
     );
 
     void render(RenderOutput out) {

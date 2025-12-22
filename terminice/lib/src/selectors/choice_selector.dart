@@ -69,7 +69,7 @@ extension ChoiceSelectorExtensions on Terminice {
 
       String paint(String s) {
         if (highlighted) {
-          if (theme.style.useInverseHighlight) {
+          if (theme.useInverseHighlight) {
             return '${theme.inverse}$s${theme.reset}';
           }
           return '${theme.selection}$s${theme.reset}';
