@@ -28,7 +28,7 @@ extension RangePromptExtensions on Terminice {
   /// ```dart
   /// final (from, to) = terminice.range('Quiet hours', unit: 'h');
   /// ```
-  (num, num) range(
+  RangeResult range(
     String label, {
     num min = 0,
     num max = 100,

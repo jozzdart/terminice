@@ -1,3 +1,11 @@
+## 0.0.10
+
+- Reduced minimum dart sdk version to 2.17.0
+- Migrated `enum.name` to use custom extension methods to support older versions of Dart.
+- Migrated tuples and records to classes to support older versions of Dart.
+- Explicitly named all libraries to support older versions of Dart.
+- Removed worspace resolution to support older versions of Dart.
+
 ## 0.0.9
 
 - Introduced the `guides` suite (`cheatSheet`, `hotkeyGuide`, `helpCenter`,

@@ -485,10 +485,17 @@ extension SelectableGridPromptTags<T> on SelectableGridPrompt<T> {
   }
 }
 
+class CardRender {
+  final String top;
+  final String bottom;
+
+  const CardRender({required this.top, required this.bottom});
+}
+
 /// Extension for card-style grid rendering (ChoiceMap pattern).
 extension SelectableGridPromptCards<T> on SelectableGridPrompt<T> {
   /// Renders a two-line card with title and subtitle.
-  ({String top, String bottom}) renderCard({
+  CardRender renderCard({
     required String title,
     String? subtitle,
     required bool isFocused,
@@ -522,6 +529,6 @@ extension SelectableGridPromptCards<T> on SelectableGridPrompt<T> {
     final top = paint(titleStr.padRight(boxWidth));
     final bottom =
         paint('${theme.dim}${subtitleStr.padRight(boxWidth)}${theme.reset}');
-    return (top: top, bottom: bottom);
+    return CardRender(top: top, bottom: bottom);
   }
 }

@@ -251,7 +251,7 @@ class DynamicListPrompt<T> {
         ctx.listWindow(
           window,
           selectedIndex: _nav.selectedIndex,
-          renderItem: (item, index, isFocused) {
+          renderItem: (T item, int index, bool isFocused) {
             renderItem(ctx, item, index, isFocused);
           },
         );

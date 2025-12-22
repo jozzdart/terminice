@@ -1,6 +1,5 @@
 name: terminice
 description: "Production-ready prompt toolkit built on terminice_core."
-resolution: workspace
 version: 0.0.9
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice
@@ -14,7 +13,7 @@ topics:
   - terminal-ui
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: ">=2.12.0 <4.0.0"
 
 platforms:
   linux:
@@ -27,4 +26,4 @@ dependencies:
   time_plus: ^1.3.2
 
 dev_dependencies:
-  lints:
+  lints: ^6.0.0

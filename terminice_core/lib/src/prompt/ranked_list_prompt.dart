@@ -209,7 +209,7 @@ class RankedListPrompt<T> {
         ctx.listWindow(
           window,
           selectedIndex: _nav.selectedIndex,
-          renderItem: (rankedItem, index, isFocused) {
+          renderItem: (RankedItem<T> rankedItem, int index, bool isFocused) {
             if (renderItem != null) {
               renderItem(ctx, rankedItem, index, isFocused, _queryInput.text);
             } else {
