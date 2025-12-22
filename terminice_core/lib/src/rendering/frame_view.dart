@@ -457,7 +457,7 @@ class FrameContext {
     listWindow(
       window,
       selectedIndex: selectedIndex,
-      renderItem: (item, index, isFocused) {
+      renderItem: (T item, int index, bool isFocused) {
         final text = itemBuilder?.call(item) ?? item.toString();
         selectableItem(text, focused: isFocused);
       },
@@ -473,7 +473,7 @@ class FrameContext {
     required Set<int> checkedIndices,
     String Function(T item)? itemBuilder,
   }) {
-    listWindow(
+    listWindow<T>(
       window,
       selectedIndex: focusedIndex,
       renderItem: (item, index, isFocused) {

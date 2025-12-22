@@ -143,7 +143,7 @@ class TableRenderer {
   int get contentWidth {
     if (_widths.isEmpty) return 0;
     // widths + separators (' │ ' = 3 chars between each)
-    return _widths.fold(0, (sum, w) => sum + w) + (columns.length - 1) * 3;
+    return _widths.fold<int>(0, (sum, w) => sum + w) + (columns.length - 1) * 3;
   }
 
   // ============================================================================

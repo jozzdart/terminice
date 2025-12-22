@@ -208,7 +208,7 @@ class SearchableListPrompt<T> {
         ctx.listWindow(
           window,
           selectedIndex: _nav.selectedIndex,
-          renderItem: (item, absoluteIndex, isFocused) {
+          renderItem: (T item, int absoluteIndex, bool isFocused) {
             final isSelected = _selection.isSelected(absoluteIndex);
 
             if (renderItem != null) {
