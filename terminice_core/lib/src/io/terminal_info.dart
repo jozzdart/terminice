@@ -53,7 +53,7 @@ class TerminalInfo {
   /// ```dart
   /// final (:columns, :rows) = TerminalInfo.size;
   /// ```
-  static ({int columns, int rows}) get size => (columns: columns, rows: rows);
+  static TerminalSize get size => TerminalSize(columns: columns, rows: rows);
 
   /// Whether a terminal is available.
   static bool get hasTerminal {
@@ -63,4 +63,11 @@ class TerminalInfo {
       return false;
     }
   }
+}
+
+class TerminalSize {
+  final int columns;
+  final int rows;
+
+  const TerminalSize({required this.columns, required this.rows});
 }

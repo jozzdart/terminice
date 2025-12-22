@@ -1,3 +1,30 @@
+## 0.0.10
+
+- Reduced minimum dart sdk version to 2.17.0
+- Migrated `enum.name` to use custom extension methods to support older versions of Dart.
+- Migrated tuples and records to classes to support older versions of Dart.
+- Explicitly named all libraries to support older versions of Dart.
+- Removed workspace resolution to support older versions of Dart.
+- Bumped `terminice_core` dependency to 0.0.7
+
+## 0.0.9
+
+- Introduced the `guides` suite (`cheatSheet`, `hotkeyGuide`, `helpCenter`,
+  `themeDemo`) to document key workflows directly from the CLI with polished
+  dartdoc, usage samples, and pub.dev-ready framing.
+
+## 0.0.8
+
+- Added the indicator suite (`loadingSpinner`, `inlineSpinner`, `inlineProgressBar`,
+  `progressBar`, `progressDots`) with full docs, API exports, and runnable samples.
+  Covers framed and inline progress feedback, spinner styles, and theme-integrated
+  messaging for long-running CLI workflows.
+
+## 0.0.7
+
+- Added `filePicker` and `pathPicker`, delivering full keyboard navigation,
+  hidden-file toggles, and directory confirmation for filesystem workflows.
+
 ## 0.0.6
 
 - Added `datePicker` — a framed calendar prompt with Monday/Sunday toggle,

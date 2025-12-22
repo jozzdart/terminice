@@ -379,14 +379,15 @@ class TextInputBuffer {
   ///
   /// Returns a record with (beforeCursor, charAtCursor, afterCursor).
   /// If cursor is at end, charAtCursor is a space for block cursor effect.
-  ({String before, String cursor, String after}) textWithBlockCursor() {
+  TextWithBlockCursor textWithBlockCursor() {
     final before = textBeforeCursor;
     final cursorChar = charAtCursor ?? ' ';
     final after = _cursorPosition < _buffer.length
         ? text.substring(_cursorPosition + 1)
         : '';
 
-    return (before: before, cursor: cursorChar, after: after);
+    return TextWithBlockCursor(
+        before: before, cursor: cursorChar, after: after);
   }
 
   @override
@@ -436,4 +437,13 @@ extension TextInputBindingsExtensions on TextInputBuffer {
       ),
     ]);
   }
+}
+
+class TextWithBlockCursor {
+  final String before;
+  final String cursor;
+  final String after;
+
+  const TextWithBlockCursor(
+      {required this.before, required this.cursor, required this.after});
 }

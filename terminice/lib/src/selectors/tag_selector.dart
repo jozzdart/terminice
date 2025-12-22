@@ -57,7 +57,7 @@ extension TagSelectorExtensions on Terminice {
     }
 
     // Compute layout for chip-style grid
-    ({int contentWidth, int colWidth, int cols}) computeLayout() {
+    _TagSelectorLayout computeLayout() {
       const framePrefix = 2;
       final termCols = useTerminalWidth ? TerminalInfo.columns : 80;
       final targetContent = (maxContentWidth != null)
@@ -72,7 +72,8 @@ extension TagSelectorExtensions on Terminice {
       final cols =
           available <= 0 ? 1 : (available + 1) ~/ (colWidth + 1).clamp(1, 99);
 
-      return (contentWidth: targetContent, colWidth: colWidth, cols: cols);
+      return _TagSelectorLayout(
+          contentWidth: targetContent, colWidth: colWidth, cols: cols);
     }
 
     final initialLayout = computeLayout();
@@ -125,4 +126,16 @@ extension TagSelectorExtensions on Terminice {
       },
     );
   }
+}
+
+class _TagSelectorLayout {
+  final int contentWidth;
+  final int colWidth;
+  final int cols;
+
+  const _TagSelectorLayout({
+    required this.contentWidth,
+    required this.colWidth,
+    required this.cols,
+  });
 }

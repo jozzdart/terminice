@@ -1,7 +1,6 @@
 name: terminice_core
 description: "Core functionality for Terminice."
-resolution: workspace
-version: 0.0.6
+version: 0.0.7
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice_core
 issue_tracker: https://github.com/jozzdart/terminice/issues
@@ -13,7 +12,7 @@ topics:
   - terminal-ui
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: ">=2.17.0 <4.0.0"
 
 platforms:
   linux:
@@ -23,4 +22,4 @@ platforms:
 dependencies:
 
 dev_dependencies:
-  lints:
+  lints: ^6.0.0

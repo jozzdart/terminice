@@ -6,7 +6,7 @@
 /// - Value clamping and collection utilities
 ///
 /// Import and use these instead of duplicating private helpers in views.
-library;
+library text_utils;
 
 // ============================================================================
 // STRING MANIPULATION
