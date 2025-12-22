@@ -1,5 +1,5 @@
 name: terminice
-description: "Production-ready prompt toolkit built on terminice_core."
+description: "The best and easiest way to build terminal-based applications in Dart. With 30+ prompts and viewers, beautiful themes, and ease of use."
 version: 0.0.10
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice
