@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'terminal_context.dart';
 
 /// Provides safe, cached access to terminal dimensions with sensible defaults.
 ///
@@ -14,7 +14,7 @@ import 'dart:io';
 /// **Why centralize?**
 /// - Consistent fallback defaults (80×24)
 /// - Single point for error handling
-/// - Easy to test/mock
+/// - Easy to test/mock via [TerminalContext]
 /// - Reduces boilerplate in views and prompts
 class TerminalInfo {
   /// Default fallback width when terminal is unavailable.
@@ -30,7 +30,8 @@ class TerminalInfo {
   /// - An error occurs querying the terminal
   static int get columns {
     try {
-      if (stdout.hasTerminal) return stdout.terminalColumns;
+      final output = TerminalContext.output;
+      if (output.hasTerminal) return output.terminalColumns;
     } catch (_) {}
     return defaultColumns;
   }
@@ -42,7 +43,8 @@ class TerminalInfo {
   /// - An error occurs querying the terminal
   static int get rows {
     try {
-      if (stdout.hasTerminal) return stdout.terminalLines;
+      final output = TerminalContext.output;
+      if (output.hasTerminal) return output.terminalLines;
     } catch (_) {}
     return defaultRows;
   }
@@ -58,7 +60,7 @@ class TerminalInfo {
   /// Whether a terminal is available.
   static bool get hasTerminal {
     try {
-      return stdout.hasTerminal;
+      return TerminalContext.output.hasTerminal;
     } catch (_) {
       return false;
     }
