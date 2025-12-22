@@ -1,10 +1,10 @@
 ## 0.0.7
 
 - Reduced minimum dart sdk version to 2.17.0
-- Enforeced type safety with the new dart sdk.
+- Enforced type safety with the new dart sdk.
 - Migrated tuples and records to classes to support older versions of Dart.
 - Explicitly named all libraries to support older versions of Dart.
-- Removed worspace resolution to support older versions of Dart.
+- Removed workspace resolution to support older versions of Dart.
 
 ## 0.0.6
 

@@ -4,7 +4,7 @@
 - Migrated `enum.name` to use custom extension methods to support older versions of Dart.
 - Migrated tuples and records to classes to support older versions of Dart.
 - Explicitly named all libraries to support older versions of Dart.
-- Removed worspace resolution to support older versions of Dart.
+- Removed workspace resolution to support older versions of Dart.
 
 ## 0.0.9
 
