@@ -1,3 +1,17 @@
+## 0.0.8
+
+- **Terminal I/O Abstraction**: Introduced a centralized, pluggable terminal I/O system.
+  - Added `Terminal` abstract class with `TerminalInput` and `TerminalOutput` interfaces.
+  - Added `DartTerminal` as the default implementation using `dart:io` stdin/stdout.
+  - Added `TerminalContext` singleton for global terminal access and replacement.
+- **Migrated all core components** to use the new abstraction:
+  - `TerminalControl` now uses `TerminalContext.input/output` for mode management and cursor control.
+  - `KeyEventReader` now reads through `TerminalContext.input`.
+  - `TerminalInfo` now queries dimensions through `TerminalContext.output`.
+  - `RenderOutput` now writes through `TerminalContext.output`.
+- **Testing support**: External users can now inject custom `Terminal` implementations for testing or alternative environments.
+- No behavior changes - all existing code continues to work unchanged.
+
 ## 0.0.7
 
 - Reduced minimum dart sdk version to 2.17.0

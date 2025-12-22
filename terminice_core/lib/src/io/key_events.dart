@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' show sleep;
 
+import 'terminal_context.dart';
 import 'terminal_control.dart';
 
 /// Normalized terminal key event types.
@@ -46,7 +47,7 @@ class KeyEvent {
 
 /// Synchronous key event reader for raw terminal input.
 ///
-/// Wraps `stdin.readByteSync`, interprets multi-byte escape sequences, and
+/// Wraps `TerminalContext.input.readByteSync`, interprets multi-byte escape sequences, and
 /// emits normalized [KeyEvent] instances. Works in tandem with
 /// [TerminalControl.enterRaw] / [TerminalModeState] so prompts can switch in
 /// and out of raw mode safely.
@@ -56,7 +57,7 @@ class KeyEventReader {
   /// Expects stdin to be in raw mode. For ESC-based sequences, briefly peeks
   /// ahead to differentiate a lone ESC from arrow keys or other CSI sequences.
   static KeyEvent read() {
-    final byte = stdin.readByteSync();
+    final byte = TerminalContext.input.readByteSync();
 
     // Enter
     if (byte == 10 || byte == 13) return const KeyEvent(KeyEventType.enter);

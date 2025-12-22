@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:terminice_core/terminice_core.dart';
 
 /// Result from a prompt indicating whether it was confirmed or cancelled.
@@ -38,16 +36,16 @@ class RenderOutput {
   /// Number of lines written since the last clear.
   int get lineCount => _lineCount;
 
-  /// Writes a line to stdout and tracks it.
+  /// Writes a line to the terminal output and tracks it.
   void writeln([String line = '']) {
-    stdout.writeln(line);
+    TerminalContext.output.writeln(line);
     // Count the line itself plus any embedded newlines
     _lineCount += 1 + '\n'.allMatches(line).length;
   }
 
   /// Writes text without a trailing newline (newlines in text are counted).
   void write(String text) {
-    stdout.write(text);
+    TerminalContext.output.write(text);
     _lineCount += '\n'.allMatches(text).length;
   }
 
@@ -57,9 +55,9 @@ class RenderOutput {
   void clear() {
     if (_lineCount > 0) {
       // Move cursor up by the number of lines we wrote
-      stdout.write('\x1B[${_lineCount}A');
+      TerminalContext.output.write('\x1B[${_lineCount}A');
       // Clear from cursor to end of screen (only our content)
-      stdout.write('\x1B[0J');
+      TerminalContext.output.write('\x1B[0J');
     }
     _lineCount = 0;
   }
