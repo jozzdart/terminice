@@ -1,6 +1,6 @@
 name: terminice_core
 description: "Core functionality for the Terminice library, providing tools for building beautiful terminal-based applications."
-version: 0.0.8
+version: 0.0.9
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice_core
 issue_tracker: https://github.com/jozzdart/terminice/issues
