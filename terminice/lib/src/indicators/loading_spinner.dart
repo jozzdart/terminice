@@ -106,10 +106,11 @@ class LoadingSpinner {
       ctx.gutterLine(
           '${theme.dim}$message${theme.reset}  ${theme.bold}$color$spin${theme.reset}');
     });
+    final styleName = style.name;
 
     out.writeln(HintFormat.bullets([
       'Theme-aware spinner',
-      'Style: ${style.name}',
+      'Style: $styleName',
     ], theme, dim: true));
   }
 }

@@ -96,3 +96,16 @@ class InlineSpinner {
 /// - `bars`: Rising bar graph that loops over a wave.
 /// - `arcs`: Rotating quarter/half circles for a softer feel.
 enum SpinnerStyle { dots, bars, arcs }
+
+extension SpinnerStyleExtensions on SpinnerStyle {
+  String get name {
+    switch (this) {
+      case SpinnerStyle.dots:
+        return 'Dots';
+      case SpinnerStyle.bars:
+        return 'Bars';
+      case SpinnerStyle.arcs:
+        return 'Arcs';
+    }
+  }
+}
