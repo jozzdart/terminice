@@ -84,6 +84,11 @@ class DartTerminalInput implements TerminalInput {
   int readByteSync() {
     return io.stdin.readByteSync();
   }
+
+  @override
+  String? readLineSync() {
+    return io.stdin.readLineSync();
+  }
 }
 
 /// Default TerminalOutput implementation using dart:io stdout.

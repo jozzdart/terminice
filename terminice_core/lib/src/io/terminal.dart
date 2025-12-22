@@ -62,6 +62,13 @@ abstract class TerminalInput {
   /// This is the primary method used for key event reading.
   /// Blocks until a byte is available.
   int readByteSync();
+
+  /// Reads a line synchronously from input.
+  ///
+  /// Used for text input prompts where the user types a full line.
+  /// Requires [lineMode] to be enabled for proper behavior.
+  /// Returns `null` if end-of-input is reached.
+  String? readLineSync();
 }
 
 /// Abstract output interface for terminal operations.
