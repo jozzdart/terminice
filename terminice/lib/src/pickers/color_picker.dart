@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:terminice/terminice.dart';
@@ -57,21 +56,23 @@ extension ColorPickerPromptExtensions on Terminice {
     final theme = defaultTheme;
 
     String? promptHexSync() {
-      stdout.writeln('');
-      final prevEcho = stdin.echoMode;
-      final prevLine = stdin.lineMode;
+      final termInput = TerminalContext.input;
+      final termOutput = TerminalContext.output;
+      termOutput.writeln('');
+      final prevEcho = termInput.echoMode;
+      final prevLine = termInput.lineMode;
       try {
-        stdin.echoMode = true;
-        stdin.lineMode = true;
+        termInput.echoMode = true;
+        termInput.lineMode = true;
         TerminalControl.showCursor();
-        stdout.write('${theme.accent}Hex${theme.reset} (#RRGGBB): ');
-        final input = stdin.readLineSync();
+        termOutput.write('${theme.accent}Hex${theme.reset} (#RRGGBB): ');
+        final input = termInput.readLineSync();
         final value = input?.trim();
         if (value == null) return null;
         return value;
       } finally {
-        stdin.echoMode = prevEcho == true ? true : false;
-        stdin.lineMode = prevLine == true ? true : false;
+        termInput.echoMode = prevEcho;
+        termInput.lineMode = prevLine;
         TerminalControl.hideCursor();
       }
     }
