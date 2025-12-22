@@ -298,7 +298,7 @@ class RangeValuePrompt {
   bool get wasCancelled => _cancelled;
 
   /// Runs the range value prompt.
-  (num start, num end) run({
+  RangeResult run({
     required void Function(
       FrameContext ctx,
       num start,
@@ -370,8 +370,8 @@ class RangeValuePrompt {
     );
 
     return (result == PromptResult.cancelled || _cancelled)
-        ? (startInitial, endInitial)
-        : (_start, _end);
+        ? RangeResult(start: startInitial, end: endInitial)
+        : RangeResult(start: _start, end: _end);
   }
 
   void _initState() {
@@ -444,4 +444,14 @@ extension ValuePromptRendering on FrameContext {
     gutterLine(
         '$buffer   ${theme.dim}(${theme.reset}${theme.accent}$value${theme.reset}${theme.dim}/$max)${theme.reset}');
   }
+}
+
+class RangeResult {
+  final num start;
+  final num end;
+
+  const RangeResult({
+    required this.start,
+    required this.end,
+  });
 }
