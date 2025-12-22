@@ -94,37 +94,6 @@ class Terminice {
   /// The currently active terminal from [TerminalContext].
   static Terminal get currentTerminal => TerminalContext.current;
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // THEME PRESETS
-  // ──────────────────────────────────────────────────────────────────────────
-
-  /// Terminice client pinned to [PromptTheme.dark].
-  Terminice get dark => themed(PromptTheme.dark);
-
-  /// Terminice client pinned to [PromptTheme.matrix].
-  Terminice get matrix => themed(PromptTheme.matrix);
-
-  /// Terminice client pinned to [PromptTheme.fire].
-  Terminice get fire => themed(PromptTheme.fire);
-
-  /// Terminice client pinned to [PromptTheme.pastel].
-  Terminice get pastel => themed(PromptTheme.pastel);
-
-  /// Terminice client pinned to [PromptTheme.ocean].
-  Terminice get ocean => themed(PromptTheme.ocean);
-
-  /// Terminice client pinned to [PromptTheme.monochrome].
-  Terminice get monochrome => themed(PromptTheme.monochrome);
-
-  /// Terminice client pinned to [PromptTheme.neon].
-  Terminice get neon => themed(PromptTheme.neon);
-
-  /// Terminice client pinned to [PromptTheme.arcane].
-  Terminice get arcane => themed(PromptTheme.arcane);
-
-  /// Terminice client pinned to [PromptTheme.phantom].
-  Terminice get phantom => themed(PromptTheme.phantom);
-
   /// Returns a new client using the provided [theme], preserving the terminal.
   Terminice themed(PromptTheme theme) {
     return Terminice(defaultTheme: theme, terminal: terminal);
