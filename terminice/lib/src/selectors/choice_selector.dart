@@ -47,7 +47,7 @@ extension ChoiceSelectorExtensions on Terminice {
     if (items.isEmpty) return [];
     final theme = defaultTheme;
 
-    ({String top, String bottom}) renderCard(
+    CardRender renderCard(
       ChoiceItem item,
       int boxWidth,
       bool highlighted,
@@ -80,7 +80,7 @@ extension ChoiceSelectorExtensions on Terminice {
       final top = paint(title.padRight(boxWidth));
       final bottom =
           paint('${theme.dim}${subtitle.padRight(boxWidth)}${theme.reset}');
-      return (top: top, bottom: bottom);
+      return CardRender(top: top, bottom: bottom);
     }
 
     // Compute card layout
