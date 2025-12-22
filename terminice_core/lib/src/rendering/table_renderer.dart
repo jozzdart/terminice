@@ -185,21 +185,29 @@ class TableRenderer {
   // LINE RENDERING
   // ============================================================================
 
+  /// Returns the default gutter string, respecting showBorders.
+  String _defaultGutter() {
+    if (!theme.features.showBorders) return '';
+    return '${theme.gray}${theme.glyphs.borderVertical}${theme.reset} ';
+  }
+
+  /// Returns the default connector prefix, respecting showBorders.
+  String _defaultConnectorPrefix() {
+    if (!theme.features.showBorders) return '';
+    return '${theme.gray}${theme.glyphs.borderConnector}${theme.reset}';
+  }
+
   /// Builds the header row line.
   String headerLine({String? leadingGutter}) {
-    final style = theme.style;
+    final glyphs = theme.glyphs;
     final buffer = StringBuffer();
 
     // Leading gutter (frame border)
-    if (leadingGutter != null) {
-      buffer.write(leadingGutter);
-    } else {
-      buffer.write('${theme.gray}${style.borderVertical}${theme.reset} ');
-    }
+    buffer.write(leadingGutter ?? _defaultGutter());
 
     for (var i = 0; i < columns.length; i++) {
       if (i > 0) {
-        buffer.write(' ${theme.gray}${style.borderVertical}${theme.reset} ');
+        buffer.write(' ${theme.gray}${glyphs.borderVertical}${theme.reset} ');
       }
       buffer.write('${theme.bold}${theme.accent}');
       buffer.write(_padCell(columns[i].header, i));
@@ -211,11 +219,13 @@ class TableRenderer {
 
   /// Builds the connector line below the header.
   String connectorLine({String? leadingGutter}) {
-    final style = theme.style;
+    final glyphs = theme.glyphs;
     final width = contentWidth + 2; // +2 for spacing
-    final prefix =
-        leadingGutter ?? '${theme.gray}${style.borderConnector}${theme.reset}';
-    return '$prefix${'─' * width}';
+    final prefix = leadingGutter ?? _defaultConnectorPrefix();
+    if (!theme.features.showBorders && leadingGutter == null) {
+      return ''; // No connector when borders are disabled
+    }
+    return '$prefix${glyphs.borderHorizontal * width}';
   }
 
   /// Builds a data row line.
@@ -228,15 +238,11 @@ class TableRenderer {
     String? leadingGutter,
     bool forceStripe = false,
   }) {
-    final style = theme.style;
+    final glyphs = theme.glyphs;
     final buffer = StringBuffer();
 
     // Leading gutter
-    if (leadingGutter != null) {
-      buffer.write(leadingGutter);
-    } else {
-      buffer.write('${theme.gray}${style.borderVertical}${theme.reset} ');
-    }
+    buffer.write(leadingGutter ?? _defaultGutter());
 
     final stripe = (zebraStripes && index % 2 == 1) || forceStripe;
     final prefix = stripe ? theme.dim : '';
@@ -244,7 +250,7 @@ class TableRenderer {
 
     for (var i = 0; i < columns.length; i++) {
       if (i > 0) {
-        buffer.write(' ${theme.gray}${style.borderVertical}${theme.reset} ');
+        buffer.write(' ${theme.gray}${glyphs.borderVertical}${theme.reset} ');
       }
       final cell = i < cells.length ? cells[i] : '';
       buffer.write(prefix);
@@ -266,15 +272,11 @@ class TableRenderer {
     String editBuffer = '',
     String? leadingGutter,
   }) {
-    final style = theme.style;
+    final glyphs = theme.glyphs;
     final buffer = StringBuffer();
 
     // Leading gutter
-    if (leadingGutter != null) {
-      buffer.write(leadingGutter);
-    } else {
-      buffer.write('${theme.gray}${style.borderVertical}${theme.reset} ');
-    }
+    buffer.write(leadingGutter ?? _defaultGutter());
 
     final stripe = zebraStripes && index % 2 == 1;
     final prefix = stripe ? theme.dim : '';
@@ -282,7 +284,7 @@ class TableRenderer {
 
     for (var i = 0; i < columns.length; i++) {
       if (i > 0) {
-        buffer.write(' ${theme.gray}${style.borderVertical}${theme.reset} ');
+        buffer.write(' ${theme.gray}${glyphs.borderVertical}${theme.reset} ');
       }
 
       final isSelected = selectedColumn == i;
@@ -369,7 +371,7 @@ class TableRenderer {
     if (columnIndex >= _widths.length) return content;
 
     final width = _widths[columnIndex];
-    final style = theme.style;
+    final features = theme.features;
 
     // Truncate visible content
     final visible = text.stripAnsi(content);
@@ -383,7 +385,7 @@ class TableRenderer {
       final cursor = '${theme.accent}|${theme.reset}';
       final base = displayText + cursor;
       final padded = text.padVisibleRight(base, width);
-      if (style.useInverseHighlight) {
+      if (features.useInverseHighlight) {
         return '${theme.inverse}$padded${theme.reset}';
       }
       return '${theme.selection}$padded${theme.reset}';
@@ -391,7 +393,7 @@ class TableRenderer {
 
     // Selected but not editing
     final padded = text.padVisibleRight(displayText, width);
-    if (style.useInverseHighlight) {
+    if (features.useInverseHighlight) {
       return '${theme.inverse}$padded${theme.reset}';
     }
     return '${theme.selection}$padded${theme.reset}';

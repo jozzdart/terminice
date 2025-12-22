@@ -47,8 +47,11 @@ class LineBuilder {
   /// Creates a LineBuilder with the given theme.
   const LineBuilder(this.theme);
 
-  /// Shorthand access to the theme's style configuration.
-  PromptStyle get style => theme.style;
+  /// Shorthand access to the theme's glyph configuration.
+  TerminalGlyphs get glyphs => theme.glyphs;
+
+  /// Shorthand access to the theme's feature configuration.
+  DisplayFeatures get features => theme.features;
 
   // ──────────────────────────────────────────────────────────────────────────
   // GUTTER / FRAME PREFIX
@@ -57,13 +60,18 @@ class LineBuilder {
   /// Returns the standard left gutter/frame prefix.
   ///
   /// This is the `│ ` pattern used at the start of content lines
-  /// within a framed view.
-  String gutter() => '${theme.gray}${style.borderVertical}${theme.reset} ';
+  /// within a framed view. Returns empty string when borders are disabled.
+  String gutter() => features.showBorders
+      ? '${theme.gray}${glyphs.borderVertical}${theme.reset} '
+      : '';
 
   /// Returns a gutter-only line (no trailing space, just the border).
   ///
   /// Useful for empty separator lines within a frame.
-  String gutterOnly() => '${theme.gray}${style.borderVertical}${theme.reset}';
+  /// Returns empty string when borders are disabled.
+  String gutterOnly() => features.showBorders
+      ? '${theme.gray}${glyphs.borderVertical}${theme.reset}'
+      : '';
 
   // ──────────────────────────────────────────────────────────────────────────
   // ARROW / FOCUS INDICATOR
@@ -74,13 +82,13 @@ class LineBuilder {
   /// When [focused] is true, returns the themed arrow symbol.
   /// Otherwise returns a space for alignment.
   String arrow(bool focused) =>
-      focused ? '${theme.accent}${style.arrow}${theme.reset}' : ' ';
+      focused ? '${theme.accent}${glyphs.arrow}${theme.reset}' : ' ';
 
   /// Returns an accented arrow (always visible, used for bullets).
-  String arrowAccent() => '${theme.accent}${style.arrow}${theme.reset}';
+  String arrowAccent() => '${theme.accent}${glyphs.arrow}${theme.reset}';
 
   /// Returns a dimmed arrow (for inactive/non-focused items).
-  String arrowDim() => '${theme.dim}${style.arrow}${theme.reset}';
+  String arrowDim() => '${theme.dim}${glyphs.arrow}${theme.reset}';
 
   // ──────────────────────────────────────────────────────────────────────────
   // CHECKBOX
@@ -88,9 +96,9 @@ class LineBuilder {
 
   /// Returns a styled checkbox based on checked state.
   ///
-  /// Uses theme colors and style symbols for on/off states.
+  /// Uses theme colors and glyph symbols for on/off states.
   String checkbox(bool checked) {
-    final sym = checked ? style.checkboxOnSymbol : style.checkboxOffSymbol;
+    final sym = checked ? glyphs.checkboxOnSymbol : glyphs.checkboxOffSymbol;
     final col = checked ? theme.checkboxOn : theme.checkboxOff;
     return '$col$sym${theme.reset}';
   }
@@ -101,7 +109,7 @@ class LineBuilder {
   /// and the theme supports inverse highlighting.
   String checkboxHighlighted(bool checked, {bool highlight = false}) {
     final base = checkbox(checked);
-    if (highlight && style.useInverseHighlight) {
+    if (highlight && features.useInverseHighlight) {
       return '${theme.inverse}$base${theme.reset}';
     }
     return base;
@@ -116,7 +124,7 @@ class LineBuilder {
   /// Displays "[✓] ON " or "[□] OFF" based on the [on] state.
   String switchControl(bool on) {
     final col = on ? theme.checkboxOn : theme.checkboxOff;
-    final sym = on ? style.checkboxOnSymbol : style.checkboxOffSymbol;
+    final sym = on ? glyphs.checkboxOnSymbol : glyphs.checkboxOffSymbol;
     final text = on ? ' ON ' : ' OFF';
     return '$col$sym$text${theme.reset}';
   }
@@ -127,7 +135,7 @@ class LineBuilder {
   /// and the theme supports inverse highlighting.
   String switchControlHighlighted(bool on, {bool highlight = false}) {
     final base = switchControl(on);
-    if (highlight && style.useInverseHighlight) {
+    if (highlight && features.useInverseHighlight) {
       return '${theme.inverse}$base${theme.reset}';
     }
     return base;
@@ -184,7 +192,7 @@ class LineBuilder {
     bool includeGutter = true,
   }) {
     final prefix = includeGutter ? gutter() : '';
-    if (highlighted && style.useInverseHighlight) {
+    if (highlighted && features.useInverseHighlight) {
       out.writeln('$prefix${theme.inverse}$content${theme.reset}');
     } else {
       out.writeln('$prefix$content');

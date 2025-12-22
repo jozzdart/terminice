@@ -22,10 +22,15 @@ class FramedLayout {
 
   const FramedLayout(this.title, {this.theme = const PromptTheme()});
 
+  /// Shorthand access to glyphs.
+  TerminalGlyphs get glyphs => theme.glyphs;
+
+  /// Shorthand access to features.
+  DisplayFeatures get features => theme.features;
+
   /// Returns the top title line (unstyled; caller may add bold if desired).
   String top() {
-    final s = theme.style;
-    return s.showBorder
+    return features.showBorders
         ? FrameRenderer.titleWithBorders(title, theme)
         : FrameRenderer.plainTitle(title, theme);
   }
@@ -41,14 +46,18 @@ class FramedLayout {
   }
 
   /// Returns the left gutter prefix string: `│ `
+  /// Returns empty string when borders are disabled.
   String gutter() {
-    final s = theme.style;
-    return '${theme.gray}${s.borderVertical}${theme.reset} ';
+    return features.showBorders
+        ? '${theme.gray}${glyphs.borderVertical}${theme.reset} '
+        : '';
   }
 
   /// Returns just the gutter character without trailing space.
+  /// Returns empty string when borders are disabled.
   String gutterOnly() {
-    final s = theme.style;
-    return '${theme.gray}${s.borderVertical}${theme.reset}';
+    return features.showBorders
+        ? '${theme.gray}${glyphs.borderVertical}${theme.reset}'
+        : '';
   }
 }

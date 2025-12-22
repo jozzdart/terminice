@@ -44,9 +44,6 @@ class ValuePrompt {
   /// Theme for styling.
   final PromptTheme theme;
 
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   late num _value;
   late KeyBindings _bindings;
   bool _cancelled = false;
@@ -58,7 +55,6 @@ class ValuePrompt {
     this.initial = 50,
     this.step = 1,
     this.theme = PromptTheme.dark,
-    this.hintStyle = HintStyle.bullets,
   });
 
   /// Current value.
@@ -113,7 +109,6 @@ class ValuePrompt {
       title: title,
       theme: theme,
       bindings: _bindings,
-      hintStyle: hintStyle,
     );
 
     void renderFrame(RenderOutput out) {
@@ -155,9 +150,6 @@ class DiscreteValuePrompt {
   /// Theme for styling.
   final PromptTheme theme;
 
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   late int _value;
   late KeyBindings _bindings;
   bool _cancelled = false;
@@ -167,7 +159,6 @@ class DiscreteValuePrompt {
     this.maxValue = 5,
     this.initial = 3,
     this.theme = PromptTheme.dark,
-    this.hintStyle = HintStyle.grid,
   }) : assert(maxValue > 0);
 
   /// Current value.
@@ -208,8 +199,6 @@ class DiscreteValuePrompt {
       title: title,
       theme: theme,
       bindings: _bindings,
-      showConnector: true,
-      hintStyle: hintStyle,
     );
 
     void renderFrame(RenderOutput out) {
@@ -262,9 +251,6 @@ class RangeValuePrompt {
   /// Theme for styling.
   final PromptTheme theme;
 
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   late num _start;
   late num _end;
   late bool _editingStart;
@@ -279,7 +265,6 @@ class RangeValuePrompt {
     this.endInitial = 80,
     this.step = 1,
     this.theme = PromptTheme.dark,
-    this.hintStyle = HintStyle.bullets,
   });
 
   /// Current start value.
@@ -354,7 +339,6 @@ class RangeValuePrompt {
       title: title,
       theme: theme,
       bindings: _bindings,
-      hintStyle: hintStyle,
     );
 
     void renderFrame(RenderOutput out) {

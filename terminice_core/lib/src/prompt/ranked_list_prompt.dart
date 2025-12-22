@@ -42,9 +42,6 @@ class RankedListPrompt<T> {
   /// Initial search mode (true = fuzzy, false = substring).
   final bool initialFuzzyMode;
 
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   /// Terminal lines to reserve for chrome.
   final int reservedLines;
 
@@ -67,7 +64,6 @@ class RankedListPrompt<T> {
     this.maxVisible = 12,
     this.alwaysShowSearch = true,
     this.initialFuzzyMode = true,
-    this.hintStyle = HintStyle.grid,
     this.reservedLines = 8,
   });
 
@@ -184,8 +180,6 @@ class RankedListPrompt<T> {
       title: title,
       theme: theme,
       bindings: _bindings,
-      showConnector: true,
-      hintStyle: hintStyle,
     );
 
     void render(RenderOutput out) {

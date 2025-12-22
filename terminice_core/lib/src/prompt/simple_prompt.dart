@@ -78,12 +78,6 @@ class SimplePrompt<T> {
   /// Whether to hide the cursor during the prompt.
   final bool hideCursor;
 
-  /// Hint style for displaying key bindings.
-  final HintStyle hintStyle;
-
-  /// Whether to show connector line after header.
-  final bool showConnector;
-
   const SimplePrompt({
     required this.title,
     required this.initialValue,
@@ -91,8 +85,6 @@ class SimplePrompt<T> {
     required this.render,
     this.theme = PromptTheme.dark,
     this.hideCursor = true,
-    this.hintStyle = HintStyle.bullets,
-    this.showConnector = false,
   });
 
   /// Runs the prompt and returns the result.
@@ -107,8 +99,6 @@ class SimplePrompt<T> {
       title: title,
       theme: theme,
       bindings: bindings,
-      hintStyle: hintStyle,
-      showConnector: showConnector,
     );
 
     void renderFrame(RenderOutput out) {
@@ -176,8 +166,6 @@ extension SimplePromptBuilder<T> on SimplePrompt<T> {
     KeyBindings Function(PromptState<T> state)? buildBindings,
     void Function(FrameContext ctx, PromptState<T> state)? render,
     bool? hideCursor,
-    HintStyle? hintStyle,
-    bool? showConnector,
   }) {
     return SimplePrompt<T>(
       title: title ?? this.title,
@@ -186,8 +174,6 @@ extension SimplePromptBuilder<T> on SimplePrompt<T> {
       buildBindings: buildBindings ?? this.buildBindings,
       render: render ?? this.render,
       hideCursor: hideCursor ?? this.hideCursor,
-      hintStyle: hintStyle ?? this.hintStyle,
-      showConnector: showConnector ?? this.showConnector,
     );
   }
 }
@@ -226,10 +212,8 @@ class SimplePrompts {
       ),
       render: (ctx, state) {
         // Message with arrow
-        ctx.emptyLine();
-        ctx.line(
-            ' ${ctx.lb.arrowAccent()} ${ctx.theme.bold}$message${ctx.theme.reset}');
-        ctx.emptyLine();
+        ctx.gutterLine(
+            '${ctx.lb.arrowAccent()} ${ctx.theme.bold}$message${ctx.theme.reset}');
 
         // Yes/No buttons
         final yes = state.value
@@ -239,7 +223,7 @@ class SimplePrompts {
             ? '${ctx.theme.inverse}${ctx.theme.accent} $noLabel ${ctx.theme.reset}'
             : '${ctx.theme.dim}$noLabel${ctx.theme.reset}';
 
-        ctx.line('   $yes   $no\n');
+        ctx.gutterLine('  $yes   $no');
       },
     );
   }
@@ -284,9 +268,7 @@ class SimplePrompts {
             KeyBindings.prompt(onCancel: state.cancel);
       },
       render: (ctx, state) {
-        ctx.emptyLine();
-
-        final buffer = StringBuffer('   ');
+        final buffer = StringBuffer('  ');
         for (var i = 0; i < options.length; i++) {
           final opt = options[i];
           final isSelected = opt == state.value;
@@ -299,8 +281,7 @@ class SimplePrompts {
           if (i < options.length - 1) buffer.write('   ');
         }
 
-        ctx.line(buffer.toString());
-        ctx.emptyLine();
+        ctx.gutterLine(buffer.toString());
       },
     );
   }
@@ -520,10 +501,10 @@ class TextPromptSync {
       final frame = FrameView(
         title: title,
         theme: theme,
-        bindings: null, // Manual hints below
+        bindings: bindings,
       );
 
-      frame.renderContent(out, (ctx) {
+      frame.render(out, (ctx) {
         // Build display text
         String displayText;
         if (state.isEmpty) {
@@ -544,13 +525,9 @@ class TextPromptSync {
 
         ctx.gutterLine('$color$displayText$cursor${theme.reset}');
 
-        // Error or hints
+        // Error message (hints are handled by FrameView)
         if (state.error != null) {
           ctx.gutterLine('${theme.error}${state.error}${theme.reset}');
-        } else {
-          final hints = <String>['Enter to confirm', 'Esc to cancel'];
-          if (masked && allowReveal) hints.add('Ctrl+R to reveal');
-          ctx.gutterLine(HintFormat.comma(hints, theme));
         }
       });
     }
