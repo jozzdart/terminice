@@ -1,3 +1,15 @@
+## 0.0.11
+
+- **Terminal abstraction integration**: Full support for custom terminal implementations.
+  - Added `withTerminal()` method to `Terminice` for injecting custom terminals.
+  - Added `activate()` method to switch context between multiple `Terminice` instances.
+  - Added `resetTerminal()` static method to restore default `DartTerminal`.
+  - Added `currentTerminal` static getter for accessing the active terminal.
+- **Migrated color picker** to use `TerminalContext` instead of direct `dart:io` access.
+- **Re-exported terminal types**: `Terminal`, `TerminalInput`, `TerminalOutput`, `DartTerminal`, `DartTerminalInput`, `DartTerminalOutput`, and `TerminalContext` are now available from the main package.
+- **Test suite**: 46 tests covering API integration, terminal switching, and complex workflows.
+- Bumped `terminice_core` dependency to 0.0.8
+
 ## 0.0.10
 
 - Reduced minimum dart sdk version to 2.17.0

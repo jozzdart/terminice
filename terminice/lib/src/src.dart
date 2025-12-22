@@ -28,3 +28,4 @@ export 'selectors/grid_selector.dart';
 export 'selectors/search_selector.dart';
 export 'selectors/tag_selector.dart';
 export 'selectors/toggle_group.dart';
+export 'style/theme_extensions.dart';

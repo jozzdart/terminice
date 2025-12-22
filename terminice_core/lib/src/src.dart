@@ -1,5 +1,8 @@
+export 'io/dart_terminal.dart';
 export 'io/key_bindings.dart';
 export 'io/key_events.dart';
+export 'io/terminal.dart';
+export 'io/terminal_context.dart';
 export 'io/terminal_control.dart';
 export 'io/terminal_info.dart';
 export 'navigation/focus_navigator.dart';
