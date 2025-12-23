@@ -166,7 +166,6 @@ extension MultiLineInputPromptExtensions on Terminice {
         title: label,
         theme: theme,
         bindings: bindings,
-        hintStyle: HintStyle.bullets,
       );
 
       widgetFrame.render(out, (ctx) {

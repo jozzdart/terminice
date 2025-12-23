@@ -1,7 +1,11 @@
 export 'package:terminice_core/terminice_core.dart'
     show
+        // Theme system
         PromptTheme,
-        PromptStyle,
+        TerminalColors,
+        TerminalGlyphs,
+        DisplayFeatures,
+        HintStyle,
         BadgeTone,
         // Terminal I/O abstraction
         Terminal,

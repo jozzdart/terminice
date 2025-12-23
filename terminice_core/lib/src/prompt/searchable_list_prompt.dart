@@ -52,12 +52,6 @@ class SearchableListPrompt<T> {
   /// Whether search is initially enabled.
   final bool searchEnabled;
 
-  /// Whether to show a connector line after header.
-  final bool showConnector;
-
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   /// Terminal lines to reserve for chrome.
   final int reservedLines;
 
@@ -81,8 +75,6 @@ class SearchableListPrompt<T> {
     this.maxVisible = 10,
     this.initialSelection,
     this.searchEnabled = true,
-    this.showConnector = true,
-    this.hintStyle = HintStyle.bullets,
     this.reservedLines = 7,
   });
 
@@ -189,8 +181,6 @@ class SearchableListPrompt<T> {
       title: title,
       theme: theme,
       bindings: _bindings,
-      showConnector: showConnector,
-      hintStyle: hintStyle,
     );
 
     void render(RenderOutput out) {

@@ -75,8 +75,6 @@ extension ToggleGroupExtensions on Terminice {
       title: title,
       theme: theme,
       bindings: bindings,
-      showConnector: true,
-      hintStyle: HintStyle.grid,
     );
 
     void render(RenderOutput out) {

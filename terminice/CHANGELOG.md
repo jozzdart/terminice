@@ -1,3 +1,17 @@
+## 0.0.12
+
+- **Display Mode Presets**: New fluent accessors for quick theme switching.
+  - `terminice.minimal` — No borders, inline hints for functional-only output.
+  - `terminice.compact` — Borders but no hints for space-constrained environments.
+  - `terminice.verbose` — Full borders with grid hints for maximum discoverability.
+- **Component Customization Methods**: Fine-grained theme control.
+  - `withColors(TerminalColors)` — Swap color palette while preserving glyphs and features.
+  - `withGlyphs(TerminalGlyphs)` — Change symbols (borders, arrows, checkboxes) independently.
+  - `withFeatures(DisplayFeatures)` — Toggle borders, hints, bold titles on any theme.
+- **New Exports**: `TerminalColors`, `TerminalGlyphs`, `DisplayFeatures`, `HintStyle` now available from the main package.
+- **Theme Demo updated**: Now showcases glyphs and features alongside colors.
+- Bumped `terminice_core` dependency to 0.0.9
+
 ## 0.0.11
 
 - **Terminal abstraction integration**: Full support for custom terminal implementations.

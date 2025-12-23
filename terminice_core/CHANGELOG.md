@@ -1,3 +1,18 @@
+## 0.0.9
+
+- **Centralized Theme System**: Complete refactor separating styling into three composable concerns.
+  - Added `TerminalColors` class with 9 built-in color palettes (dark, matrix, fire, pastel, ocean, monochrome, neon, arcane, phantom).
+  - Added `TerminalGlyphs` class with 8 glyph presets (unicode, ascii, rounded, double, heavy, dotted, arcane, phantom, minimal).
+  - Added `DisplayFeatures` class with 6 display mode presets (standard, minimal, compact, verbose, clean, focus).
+  - Moved `HintStyle` enum to `DisplayFeatures` for centralized presentation control.
+- **PromptTheme refactored**: Now composes `TerminalColors`, `TerminalGlyphs`, and `DisplayFeatures`.
+  - Added convenience getters delegating to each component for ergonomic access.
+  - Added `copyWith()` for easy theme customization.
+  - Added new built-in themes: `PromptTheme.minimal`, `PromptTheme.compact`.
+- **Rendering components updated**: `FrameView`, `LineBuilder`, `FramedLayout`, `FrameRenderer`, `TableRenderer` now use the new `theme.glyphs` and `theme.features` accessors.
+  - `FrameView.hintStyle` now defaults from `theme.features.hintStyle` with per-component override.
+  - `FrameView.showConnector` now defaults from `theme.features.showConnector`.
+
 ## 0.0.8
 
 - **Terminal I/O Abstraction**: Introduced a centralized, pluggable terminal I/O system.

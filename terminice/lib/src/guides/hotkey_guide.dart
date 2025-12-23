@@ -48,7 +48,6 @@ extension HotkeyGuideExtensions on Terminice {
       final widgetFrame = FrameView(
         title: title,
         theme: theme,
-        hintStyle: HintStyle.none,
       );
 
       widgetFrame.render(out, (ctx) {

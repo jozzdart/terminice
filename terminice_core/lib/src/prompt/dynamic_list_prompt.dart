@@ -36,12 +36,6 @@ class DynamicListPrompt<T> {
   /// Maximum visible items (viewport size).
   final int maxVisible;
 
-  /// Whether to show a connector line after header.
-  final bool showConnector;
-
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   // ──────────────────────────────────────────────────────────────────────────
   // INTERNAL STATE
   // ──────────────────────────────────────────────────────────────────────────
@@ -56,8 +50,6 @@ class DynamicListPrompt<T> {
     required this.title,
     this.theme = PromptTheme.dark,
     this.maxVisible = 18,
-    this.showConnector = true,
-    this.hintStyle = HintStyle.grid,
   });
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -233,8 +225,6 @@ class DynamicListPrompt<T> {
       title: title,
       theme: theme,
       bindings: _bindings,
-      showConnector: showConnector,
-      hintStyle: hintStyle,
     );
 
     void render(RenderOutput out) {

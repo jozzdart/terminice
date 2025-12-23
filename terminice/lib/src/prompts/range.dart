@@ -85,16 +85,16 @@ extension RangePromptExtensions on Terminice {
       // Range text
       final rangeTxt = '${theme.bold}${theme.accent}$sRaw—$eRaw${theme.reset}';
 
-      final border = '${theme.gray}┃${theme.reset}';
+      final gutter = ctx.lb.gutter();
       final activeIdx = editingStart ? startIdx : endIdx;
 
       // Caret pointer
-      ctx.line('$border${' ' * (2 + activeIdx)}${theme.accent}^${theme.reset}');
-      ctx.line('$border${' ' * (2 + leftPad)}$rangeTxt');
+      ctx.line('$gutter${' ' * (1 + activeIdx)}${theme.accent}^${theme.reset}');
+      ctx.line('$gutter${' ' * (1 + leftPad)}$rangeTxt');
 
       // Bar with handles
       final barLine = StringBuffer();
-      barLine.write('$border ');
+      barLine.write(gutter);
       for (int i = 0; i <= effWidth; i++) {
         if (i == startIdx) {
           final isActive = editingStart;

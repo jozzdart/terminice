@@ -126,7 +126,6 @@ extension DatePromptExtensions on Terminice {
         title: '  $title  ',
         theme: theme,
         bindings: bindings,
-        hintStyle: HintStyle.bullets,
       );
 
       widgetFrame.render(out, (ctx) {

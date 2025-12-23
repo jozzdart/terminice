@@ -94,12 +94,6 @@ class SelectableListPrompt<T> {
   /// Initial selection indices.
   final Set<int>? initialSelection;
 
-  /// Whether to show a connector line after header.
-  final bool showConnector;
-
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   /// Terminal lines to reserve for chrome (headers, hints, etc).
   final int reservedLines;
 
@@ -119,8 +113,6 @@ class SelectableListPrompt<T> {
     this.multiSelect = false,
     this.maxVisible = 12,
     this.initialSelection,
-    this.showConnector = true,
-    this.hintStyle = HintStyle.grid,
     this.reservedLines = 7,
   });
 
@@ -238,8 +230,6 @@ class SelectableListPrompt<T> {
       title: title,
       theme: theme,
       bindings: _bindings,
-      showConnector: showConnector,
-      hintStyle: hintStyle,
     );
 
     void render(RenderOutput out) {
@@ -467,8 +457,6 @@ class SelectableListPromptBuilder<T> {
   bool _multiSelect = false;
   int _maxVisible = 12;
   Set<int>? _initialSelection;
-  bool _showConnector = true;
-  HintStyle _hintStyle = HintStyle.grid;
   int _reservedLines = 7;
   KeyBindings? _extraBindings;
 
@@ -499,16 +487,6 @@ class SelectableListPromptBuilder<T> {
 
   SelectableListPromptBuilder<T> initialSelection(Set<int> selection) {
     _initialSelection = selection;
-    return this;
-  }
-
-  SelectableListPromptBuilder<T> showConnector([bool value = true]) {
-    _showConnector = value;
-    return this;
-  }
-
-  SelectableListPromptBuilder<T> hintStyle(HintStyle style) {
-    _hintStyle = style;
     return this;
   }
 
@@ -549,8 +527,6 @@ class SelectableListPromptBuilder<T> {
       multiSelect: _multiSelect,
       maxVisible: _maxVisible,
       initialSelection: _initialSelection,
-      showConnector: _showConnector,
-      hintStyle: _hintStyle,
       reservedLines: _reservedLines,
     );
   }

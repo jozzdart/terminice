@@ -66,9 +66,6 @@ class SelectableGridPrompt<T> {
   /// Initial selection indices.
   final Set<int>? initialSelection;
 
-  /// Hint style for key bindings display.
-  final HintStyle hintStyle;
-
   // ──────────────────────────────────────────────────────────────────────────
   // INTERNAL STATE
   // ──────────────────────────────────────────────────────────────────────────
@@ -89,7 +86,6 @@ class SelectableGridPrompt<T> {
     this.cellWidth,
     this.maxColumns,
     this.initialSelection,
-    this.hintStyle = HintStyle.grid,
   });
 
   /// Creates a responsive grid that adapts to terminal width.
@@ -101,7 +97,6 @@ class SelectableGridPrompt<T> {
     bool multiSelect = false,
     int? maxColumns,
     Set<int>? initialSelection,
-    HintStyle hintStyle = HintStyle.grid,
   }) {
     return SelectableGridPrompt(
       title: title,
@@ -112,7 +107,6 @@ class SelectableGridPrompt<T> {
       cellWidth: cellWidth,
       maxColumns: maxColumns,
       initialSelection: initialSelection,
-      hintStyle: hintStyle,
     );
   }
 
@@ -177,7 +171,6 @@ class SelectableGridPrompt<T> {
       title: title,
       theme: theme,
       bindings: _bindings,
-      hintStyle: hintStyle,
     );
 
     final colSep = showCellSeparators ? '${theme.gray}│${theme.reset}' : '';
@@ -281,7 +274,6 @@ class SelectableGridPrompt<T> {
       title: title,
       theme: theme,
       bindings: _bindings,
-      hintStyle: hintStyle,
     );
 
     void render(RenderOutput out) {
@@ -384,7 +376,7 @@ class SelectableGridPrompt<T> {
     final padded = (check + visible).padRight(_computedCellWidth);
 
     if (isFocused) {
-      if (theme.style.useInverseHighlight) {
+      if (theme.useInverseHighlight) {
         return '${theme.inverse}$padded${theme.reset}';
       }
       return '${theme.selection}$padded${theme.reset}';
@@ -518,7 +510,7 @@ extension SelectableGridPromptCards<T> on SelectableGridPrompt<T> {
 
     String paint(String s) {
       if (isFocused) {
-        if (theme.style.useInverseHighlight) {
+        if (theme.useInverseHighlight) {
           return '${theme.inverse}$s${theme.reset}';
         }
         return '${theme.selection}$s${theme.reset}';

@@ -47,8 +47,6 @@ extension CheckboxSelectorExtensions on Terminice {
       multiSelect: true,
       maxVisible: maxVisible,
       initialSelection: initialSelected,
-      showConnector: true,
-      hintStyle: HintStyle.grid,
     );
 
     // Summary line builder (captures prompt for access to selection state)

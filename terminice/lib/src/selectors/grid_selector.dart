@@ -17,7 +17,6 @@ import 'package:terminice_core/terminice_core.dart';
 /// - `cellWidth`: Overrides computed width per cell.
 /// - `maxColumns`: Caps automatically computed column count.
 /// - `initialSelection`: Indices that start out selected.
-/// - `hintStyle`: Layout used to show control hints.
 ///
 /// Example:
 /// ```dart
@@ -40,7 +39,6 @@ extension GridSelectorExtensions on Terminice {
     int? cellWidth,
     int? maxColumns,
     Set<int>? initialSelection,
-    HintStyle hintStyle = HintStyle.grid,
   }) {
     return SelectableGridPrompt<String>(
       title: prompt,
@@ -51,7 +49,6 @@ extension GridSelectorExtensions on Terminice {
       cellWidth: cellWidth,
       maxColumns: maxColumns,
       initialSelection: initialSelection,
-      hintStyle: hintStyle,
     ).run();
   }
 }

@@ -12,17 +12,16 @@ import 'package:terminice_core/terminice_core.dart';
 /// **Before FrameView:**
 /// ```dart
 /// void render(RenderOutput out) {
-///   final style = theme.style;
 ///   final lb = LineBuilder(theme);
 ///   final frame = FramedLayout(title, theme: theme);
 ///
-///   out.writeln(style.boldPrompt
+///   out.writeln(theme.boldTitles
 ///     ? '${theme.bold}${frame.top()}${theme.reset}'
 ///     : frame.top());
 ///
 ///   // ... 10+ lines of content setup ...
 ///
-///   if (style.showBorder) {
+///   if (theme.showBorders) {
 ///     out.writeln(frame.bottom());
 ///   }
 ///
@@ -62,22 +61,23 @@ class FrameView {
   /// Key bindings for hint generation.
   final KeyBindings? bindings;
 
-  /// Hint display style.
-  final HintStyle hintStyle;
-
-  /// Whether to show a connector line after the header.
-  final bool showConnector;
-
   const FrameView({
     required this.title,
     required this.theme,
     this.bindings,
-    this.hintStyle = HintStyle.bullets,
-    this.showConnector = false,
   });
 
-  /// Shorthand access to the style.
-  PromptStyle get style => theme.style;
+  /// Hint style from theme.
+  HintStyle get hintStyle => theme.hintStyle;
+
+  /// Whether to show connector from theme.
+  bool get showConnector => theme.showConnector;
+
+  /// Shorthand access to glyphs.
+  TerminalGlyphs get glyphs => theme.glyphs;
+
+  /// Shorthand access to features.
+  DisplayFeatures get features => theme.features;
 
   /// Renders the complete frame with content.
   ///
@@ -103,7 +103,7 @@ class FrameView {
     ctx.writeTop();
 
     // Optional connector
-    if (showConnector && style.showBorder) {
+    if (showConnector && features.showBorders) {
       out.writeln(frame.connector());
     }
 
@@ -111,7 +111,7 @@ class FrameView {
     content(ctx);
 
     // Bottom border
-    if (style.showBorder) {
+    if (features.showBorders) {
       out.writeln(frame.bottom());
     }
 
@@ -132,13 +132,13 @@ class FrameView {
 
     ctx.writeTop();
 
-    if (showConnector && style.showBorder) {
+    if (showConnector && features.showBorders) {
       out.writeln(frame.connector());
     }
 
     content(ctx);
 
-    if (style.showBorder) {
+    if (features.showBorders) {
       out.writeln(frame.bottom());
     }
   }
@@ -163,20 +163,7 @@ class FrameView {
   }
 }
 
-/// Hint display style options.
-enum HintStyle {
-  /// Bullet-style hints (default).
-  bullets,
-
-  /// Grid-style hints.
-  grid,
-
-  /// Inline comma-separated hints.
-  inline,
-
-  /// No hints displayed.
-  none,
-}
+// HintStyle is now defined in display_features.dart and re-exported through prompt_theme.dart
 
 /// Context passed to the content callback during frame rendering.
 ///
@@ -197,8 +184,11 @@ class FrameContext {
 
   const FrameContext._(this.out, this.lb, this.theme, this.frame);
 
-  /// Shorthand access to the style.
-  PromptStyle get style => theme.style;
+  /// Shorthand access to glyphs.
+  TerminalGlyphs get glyphs => theme.glyphs;
+
+  /// Shorthand access to features.
+  DisplayFeatures get features => theme.features;
 
   // ──────────────────────────────────────────────────────────────────────────
   // FRAME STRUCTURE
@@ -207,19 +197,19 @@ class FrameContext {
   /// Writes the top border line with optional bold styling.
   void writeTop() {
     final top = frame.top();
-    out.writeln(style.boldPrompt ? '${theme.bold}$top${theme.reset}' : top);
+    out.writeln(features.boldTitles ? '${theme.bold}$top${theme.reset}' : top);
   }
 
   /// Writes a connector line (├─────).
   void writeConnector() {
-    if (style.showBorder) {
+    if (features.showBorders) {
       out.writeln(frame.connector());
     }
   }
 
   /// Writes the bottom border line.
   void writeBottom() {
-    if (style.showBorder) {
+    if (features.showBorders) {
       out.writeln(frame.bottom());
     }
   }
@@ -584,7 +574,7 @@ class FrameContext {
   /// Writes a section header line: ├─ SectionName
   void sectionHeader(String name) {
     line(
-        '${theme.gray}${style.borderConnector}${theme.reset} ${theme.dim}$name${theme.reset}');
+        '${theme.gray}${glyphs.borderConnector}${theme.reset} ${theme.dim}$name${theme.reset}');
   }
 
   /// Writes a progress bar line: │ ████████░░░░ 75%

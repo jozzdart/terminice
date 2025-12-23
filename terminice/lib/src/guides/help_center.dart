@@ -135,8 +135,6 @@ extension HelpCenterExtensions on Terminice {
         title: title,
         theme: theme,
         bindings: bindings,
-        hintStyle: HintStyle.bullets,
-        showConnector: true,
       );
 
       widgetFrame.render(out, (ctx) {

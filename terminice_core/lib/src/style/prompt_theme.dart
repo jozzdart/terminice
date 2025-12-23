@@ -1,276 +1,226 @@
-import 'prompt_style.dart';
+import 'display_features.dart';
+import 'terminal_colors.dart';
+import 'terminal_glyphs.dart';
 
-/// Rich styling bundle pairing ANSI color codes with [PromptStyle] glyphs.
+// Re-export for convenience
+export 'display_features.dart';
+export 'terminal_colors.dart';
+export 'terminal_glyphs.dart';
+
+/// Rich styling bundle composing colors, glyphs, and display features.
 ///
-/// Whereas [PromptStyle] focuses on the characters that form the prompt
-/// scaffold, `PromptTheme` owns the escape sequences and symbolic colors used
-/// across the UI. Provide a custom instance to align the toolkit with your
-/// brand palette or terminal aesthetic.
+/// `PromptTheme` is the unified styling API for all terminal prompts.
+/// It composes three independent concerns:
+/// - [TerminalColors]: Color palette (ANSI escape sequences)
+/// - [TerminalGlyphs]: Structural symbols (borders, arrows, checkboxes)
+/// - [DisplayFeatures]: Behavioral flags (borders, hints, bold)
+///
+/// Use built-in themes or create custom combinations:
 ///
 /// ```dart
-/// final midnight = PromptTheme(
-///   accent: '\x1B[38;5;141m',
-///   highlight: '\x1B[38;5;81m',
-///   style: const PromptStyle(arrow: '❯'),
+/// // Built-in theme
+/// final theme = PromptTheme.matrix;
+///
+/// // Minimal mode with any color palette
+/// final minimal = PromptTheme(
+///   colors: TerminalColors.ocean,
+///   features: DisplayFeatures.minimal,
+/// );
+///
+/// // Full customization
+/// final custom = PromptTheme(
+///   colors: TerminalColors.arcane,
+///   glyphs: TerminalGlyphs.rounded,
+///   features: DisplayFeatures.verbose,
 /// );
 /// ```
 class PromptTheme {
-  /// Structural glyph configuration to use when drawing frames and controls.
-  final PromptStyle style;
+  /// Color palette for ANSI escape sequences.
+  final TerminalColors colors;
 
-  /// ANSI escape sequence that resets the terminal back to its defaults.
-  final String reset;
+  /// Glyph set for structural symbols.
+  final TerminalGlyphs glyphs;
 
-  /// ANSI escape sequence that enables bold output.
-  final String bold;
+  /// Display feature configuration.
+  final DisplayFeatures features;
 
-  /// ANSI escape sequence that dims the current output.
-  final String dim;
-
-  /// Neutral gray foreground color code.
-  final String gray;
-
-  /// Primary accent color for labels and highlights.
-  final String accent;
-
-  /// Accent color dedicated to key bindings and shortcut hints.
-  final String keyAccent;
-
-  /// Color for momentary highlights such as focused rows.
-  final String highlight;
-
-  /// Color used for selection regions or active multi-select rows.
-  final String selection;
-
-  /// Foreground color for selected checkboxes or toggles.
-  final String checkboxOn;
-
-  /// Foreground color for unselected checkboxes or toggles.
-  final String checkboxOff;
-
-  /// ANSI escape sequence for inverse video effects.
-  final String inverse;
-
-  /// Informational/status color.
-  final String info;
-
-  /// Warning color.
-  final String warn;
-
-  /// Error color.
-  final String error;
-
-  /// Creates a full theme definition. All parameters accept ANSI escape
-  /// sequences (standard or 256-color). Defaults favor broad terminal
-  /// compatibility so prompts stay legible even in limited environments.
+  /// Creates a theme by composing colors, glyphs, and features.
+  ///
+  /// All parameters default to their standard presets, producing
+  /// a full-featured dark theme suitable for most terminals.
   const PromptTheme({
-    this.style = const PromptStyle(),
-    this.reset = '\x1B[0m',
-    this.bold = '\x1B[1m',
-    this.dim = '\x1B[2m',
-    this.gray = '\x1B[90m',
-    this.accent = '\x1B[36m',
-    this.keyAccent = '\x1B[37m',
-    this.highlight = '\x1B[33m',
-    this.selection = '\x1B[35m',
-    this.checkboxOn = '\x1B[32m',
-    this.checkboxOff = '\x1B[90m',
-    this.inverse = '\x1B[7m',
-    this.info = '\x1B[36m', // cyan by default
-    this.warn = '\x1B[33m', // yellow by default
-    this.error = '\x1B[31m', // red by default
+    this.colors = TerminalColors.dark,
+    this.glyphs = TerminalGlyphs.unicode,
+    this.features = DisplayFeatures.standard,
   });
 
-  /// Default high-contrast dark theme tuned for general use.
+  /// Creates a copy with modified components.
+  PromptTheme copyWith({
+    TerminalColors? colors,
+    TerminalGlyphs? glyphs,
+    DisplayFeatures? features,
+  }) {
+    return PromptTheme(
+      colors: colors ?? this.colors,
+      glyphs: glyphs ?? this.glyphs,
+      features: features ?? this.features,
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // CONVENIENCE GETTERS - Colors
+  // ════════════════════════════════════════════════════════════════════════════
+
+  /// ANSI reset sequence.
+  String get reset => colors.reset;
+
+  /// ANSI bold sequence.
+  String get bold => colors.bold;
+
+  /// ANSI dim sequence.
+  String get dim => colors.dim;
+
+  /// Gray color.
+  String get gray => colors.gray;
+
+  /// Primary accent color.
+  String get accent => colors.accent;
+
+  /// Key accent color for hints.
+  String get keyAccent => colors.keyAccent;
+
+  /// Highlight color for focus.
+  String get highlight => colors.highlight;
+
+  /// Selection color.
+  String get selection => colors.selection;
+
+  /// Checkbox on color.
+  String get checkboxOn => colors.checkboxOn;
+
+  /// Checkbox off color.
+  String get checkboxOff => colors.checkboxOff;
+
+  /// Inverse video sequence.
+  String get inverse => colors.inverse;
+
+  /// Info color.
+  String get info => colors.info;
+
+  /// Warning color.
+  String get warn => colors.warn;
+
+  /// Error color.
+  String get error => colors.error;
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // CONVENIENCE GETTERS - Glyphs
+  // ════════════════════════════════════════════════════════════════════════════
+
+  /// Top border character.
+  String get borderTop => glyphs.borderTop;
+
+  /// Bottom border character.
+  String get borderBottom => glyphs.borderBottom;
+
+  /// Vertical border character.
+  String get borderVertical => glyphs.borderVertical;
+
+  /// Border connector character.
+  String get borderConnector => glyphs.borderConnector;
+
+  /// Horizontal border character.
+  String get borderHorizontal => glyphs.borderHorizontal;
+
+  /// Arrow/focus indicator.
+  String get arrow => glyphs.arrow;
+
+  /// Checkbox on symbol.
+  String get checkboxOnSymbol => glyphs.checkboxOnSymbol;
+
+  /// Checkbox off symbol.
+  String get checkboxOffSymbol => glyphs.checkboxOffSymbol;
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // CONVENIENCE GETTERS - Features
+  // ════════════════════════════════════════════════════════════════════════════
+
+  /// Whether to show borders.
+  bool get showBorders => features.showBorders;
+
+  /// Whether to bold titles.
+  bool get boldTitles => features.boldTitles;
+
+  /// Whether to use inverse highlight.
+  bool get useInverseHighlight => features.useInverseHighlight;
+
+  /// Whether to show connector lines.
+  bool get showConnector => features.showConnector;
+
+  /// Default hint style.
+  HintStyle get hintStyle => features.hintStyle;
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // BUILT-IN THEMES
+  // ════════════════════════════════════════════════════════════════════════════
+
+  /// Default high-contrast dark theme.
   static const PromptTheme dark = PromptTheme();
 
-  /// Matrix-inspired neon-green palette for classic hacker aesthetics.
+  /// Minimal functional theme - no borders, inline hints.
+  static const PromptTheme minimal = PromptTheme(
+    features: DisplayFeatures.minimal,
+  );
+
+  /// Compact theme - borders but no hints.
+  static const PromptTheme compact = PromptTheme(
+    features: DisplayFeatures.compact,
+  );
+
+  /// Matrix-inspired neon-green theme.
   static const PromptTheme matrix = PromptTheme(
-    accent: '\x1B[32m',
-    highlight: '\x1B[92m',
-    selection: '\x1B[32m',
-    checkboxOn: '\x1B[32m',
-    checkboxOff: '\x1B[90m',
-    info: '\x1B[32m', // green info
-    warn: '\x1B[93m', // bright yellow warning
-    error: '\x1B[31m', // red error
-    style: PromptStyle(
-      borderTop: '╭',
-      borderBottom: '╰',
-      borderVertical: '│',
-      borderConnector: '├',
-      arrow: '❯',
-      checkboxOnSymbol: '◉',
-      checkboxOffSymbol: '○',
-    ),
+    colors: TerminalColors.matrix,
+    glyphs: TerminalGlyphs.rounded,
   );
 
-  /// Fire theme – high-energy reds/oranges that demand attention.
+  /// Fire theme – high-energy reds/oranges.
   static const PromptTheme fire = PromptTheme(
-    accent: '\x1B[31m',
-    highlight: '\x1B[33m',
-    selection: '\x1B[31m',
-    checkboxOn: '\x1B[31m',
-    checkboxOff: '\x1B[90m',
-    info: '\x1B[36m', // cyan info for readability
-    warn: '\x1B[33m', // yellow warning
-    error: '\x1B[31m', // red error
-    style: PromptStyle(
-      borderTop: '╔',
-      borderBottom: '╚',
-      borderVertical: '║',
-      borderConnector: '╟',
-      arrow: '➤',
-      checkboxOnSymbol: '■',
-      checkboxOffSymbol: '□',
-    ),
+    colors: TerminalColors.fire,
+    glyphs: TerminalGlyphs.double,
   );
 
-  /// Pastel theme – soft gradients for calm, friendly prompts.
+  /// Pastel theme – soft, gentle colors.
   static const PromptTheme pastel = PromptTheme(
-    accent: '\x1B[95m',
-    highlight: '\x1B[93m',
-    selection: '\x1B[94m',
-    checkboxOn: '\x1B[96m',
-    checkboxOff: '\x1B[90m',
-    info: '\x1B[96m', // pastel cyan
-    warn: '\x1B[93m', // pastel yellow
-    error: '\x1B[91m', // light red
-    style: PromptStyle(
-      borderTop: '┌',
-      borderBottom: '└',
-      borderVertical: '│',
-      borderConnector: '├',
-      arrow: '›',
-      checkboxOnSymbol: '◆',
-      checkboxOffSymbol: '◇',
-    ),
+    colors: TerminalColors.pastel,
   );
 
-  /// Ocean theme – Calming deep blue and cyan tones like ocean depths.
-  ///
-  /// Best for: Long sessions, reading-heavy tasks, calm environments.
+  /// Ocean theme – calming blue/cyan tones.
   static const PromptTheme ocean = PromptTheme(
-    accent: '\x1B[94m', // bright blue
-    highlight: '\x1B[96m', // bright cyan
-    selection: '\x1B[34m', // blue
-    keyAccent: '\x1B[36m', // cyan
-    checkboxOn: '\x1B[94m', // bright blue
-    checkboxOff: '\x1B[90m', // gray
-    info: '\x1B[96m', // bright cyan
-    warn: '\x1B[93m', // bright yellow
-    error: '\x1B[91m', // bright red
-    style: PromptStyle(
-      borderTop: '╭',
-      borderBottom: '╰',
-      borderVertical: '┊',
-      borderConnector: '├',
-      arrow: '▸',
-      checkboxOnSymbol: '●',
-      checkboxOffSymbol: '○',
-    ),
+    colors: TerminalColors.ocean,
+    glyphs: TerminalGlyphs.dotted,
   );
 
-  /// Monochrome theme – High-contrast ASCII retro terminal aesthetic.
-  ///
-  /// Best for: Classic terminal feel, high-visibility, minimal distraction.
+  /// Monochrome theme – high-contrast ASCII retro.
   static const PromptTheme monochrome = PromptTheme(
-    accent: '\x1B[97m', // bright white
-    highlight: '\x1B[7m', // inverse for stark contrast
-    selection: '\x1B[37m', // white
-    keyAccent: '\x1B[97m', // bright white
-    checkboxOn: '\x1B[97m', // bright white
-    checkboxOff: '\x1B[90m', // gray
-    info: '\x1B[37m', // white
-    warn: '\x1B[97m', // bright white
-    error: '\x1B[4m\x1B[97m', // underlined bright white
-    style: PromptStyle(
-      borderTop: '+',
-      borderBottom: '+',
-      borderVertical: '|',
-      borderConnector: '+',
-      arrow: '>',
-      checkboxOnSymbol: '[x]',
-      checkboxOffSymbol: '[ ]',
-    ),
+    colors: TerminalColors.monochrome,
+    glyphs: TerminalGlyphs.ascii,
   );
 
-  /// Neon theme – Vibrant synthwave cyberpunk with electric colors.
-  ///
-  /// Best for: Creative sessions, standout visuals, futuristic vibe.
+  /// Neon theme – vibrant synthwave cyberpunk.
   static const PromptTheme neon = PromptTheme(
-    accent: '\x1B[95m', // bright magenta
-    highlight: '\x1B[96m', // bright cyan
-    selection: '\x1B[93m', // bright yellow
-    keyAccent: '\x1B[95m', // bright magenta
-    checkboxOn: '\x1B[96m', // bright cyan
-    checkboxOff: '\x1B[90m', // gray
-    info: '\x1B[95m', // bright magenta
-    warn: '\x1B[93m', // bright yellow
-    error: '\x1B[91m', // bright red
-    style: PromptStyle(
-      borderTop: '┏',
-      borderBottom: '┗',
-      borderVertical: '┃',
-      borderConnector: '┣',
-      arrow: '>',
-      checkboxOnSymbol: '◈',
-      checkboxOffSymbol: '◇',
-    ),
+    colors: TerminalColors.neon,
+    glyphs: TerminalGlyphs.heavy,
   );
 
-  /// Arcane theme – Mystical ancient tome aesthetic with magical runes.
-  ///
-  /// Uses 256-color palette for deep amethyst, ancient gold, and mystic hues.
-  /// Unique glyph-like borders evoke spell scrolls and enchanted manuscripts.
-  ///
-  /// Best for: When you want magic in your terminal.
+  /// Arcane theme – mystical ancient tome aesthetic.
   static const PromptTheme arcane = PromptTheme(
-    accent: '\x1B[38;5;141m', // soft amethyst violet
-    highlight: '\x1B[38;5;220m', // ancient gold
-    selection: '\x1B[38;5;99m', // deep mystic purple
-    keyAccent: '\x1B[38;5;178m', // warm amber
-    checkboxOn: '\x1B[38;5;220m', // gold (activated rune)
-    checkboxOff: '\x1B[38;5;240m', // faded stone gray
-    info: '\x1B[38;5;147m', // light lavender mist
-    warn: '\x1B[38;5;214m', // burning orange
-    error: '\x1B[38;5;160m', // blood crimson
-    style: PromptStyle(
-      borderTop: '⸢',
-      borderBottom: '⸤',
-      borderVertical: '⁞',
-      borderConnector: '⊢',
-      arrow: '⊳',
-      checkboxOnSymbol: '⬢',
-      checkboxOffSymbol: '⬡',
-    ),
+    colors: TerminalColors.arcane,
+    glyphs: TerminalGlyphs.arcane,
   );
 
-  /// Phantom theme – Ghostly apparition materializing from shadow.
-  ///
-  /// Ethereal gray-violet tones with spectral glows. Half-brackets float
-  /// like corners emerging from void. Broken bars suggest translucency.
-  /// The presence/absence symbolized by watching eyes and empty circles.
-  ///
-  /// Best for: When you want to feel like a ghost in the machine.
+  /// Phantom theme – ghostly apparition aesthetic.
   static const PromptTheme phantom = PromptTheme(
-    accent: '\x1B[38;5;103m', // ghostly gray-violet
-    highlight: '\x1B[38;5;255m', // sudden spectral flash
-    selection: '\x1B[38;5;60m', // shadow purple
-    keyAccent: '\x1B[38;5;146m', // faded lavender whisper
-    checkboxOn: '\x1B[38;5;189m', // spectral presence glow
-    checkboxOff: '\x1B[38;5;236m', // deep shadow absence
-    info: '\x1B[38;5;103m', // ghostly murmur
-    warn: '\x1B[38;5;180m', // eerie candlelight amber
-    error: '\x1B[38;5;131m', // blood mist
-    style: PromptStyle(
-      borderTop: '⌜',
-      borderBottom: '⌞',
-      borderVertical: '¦',
-      borderConnector: '·',
-      arrow: '›',
-      checkboxOnSymbol: '◉',
-      checkboxOffSymbol: '◌',
-    ),
+    colors: TerminalColors.phantom,
+    glyphs: TerminalGlyphs.phantom,
   );
 }

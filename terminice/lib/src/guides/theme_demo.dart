@@ -33,21 +33,20 @@ extension ThemeDemoExtensions on Terminice {
     bool showPromptPreview = false;
 
     void renderThemePreview(RenderOutput out, String name, PromptTheme theme) {
-      final style = theme.style;
+      final glyphs = theme.glyphs;
 
       final widgetFrame = FrameView(
         title: 'Theme Preview',
         theme: theme,
-        hintStyle: HintStyle.none,
       );
 
       widgetFrame.render(out, (ctx) {
         ctx.labeledAccent('Theme', name);
-        ctx.gutterLine('Arrow: ${theme.accent}${style.arrow}${theme.reset}');
+        ctx.gutterLine('Arrow: ${theme.accent}${glyphs.arrow}${theme.reset}');
         ctx.gutterLine(
-            'Checkbox: ${theme.checkboxOn}${style.checkboxOnSymbol}${theme.reset} / ${theme.checkboxOff}${style.checkboxOffSymbol}${theme.reset}');
+            'Checkbox: ${theme.checkboxOn}${glyphs.checkboxOnSymbol}${theme.reset} / ${theme.checkboxOff}${glyphs.checkboxOffSymbol}${theme.reset}');
         ctx.gutterLine(
-            'Border: ${theme.selection}${style.borderTop}${style.borderConnector}${style.borderBottom}${theme.reset}');
+            'Border: ${theme.selection}${glyphs.borderTop}${glyphs.borderConnector}${glyphs.borderBottom}${theme.reset}');
         ctx.gutterLine(
             'Highlight: ${theme.highlight}Highlight text${theme.reset}');
         ctx.gutterLine(
@@ -55,7 +54,7 @@ extension ThemeDemoExtensions on Terminice {
       });
 
       out.writeln(
-          '${theme.gray}${style.borderBottom}${'─' * 25}${theme.reset}');
+          '${theme.gray}${glyphs.borderBottom}${glyphs.borderHorizontal * 25}${theme.reset}');
       out.writeln(HintFormat.bullets([
         '↑↓ to browse',
         'Enter to preview prompt',
