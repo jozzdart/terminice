@@ -150,12 +150,26 @@ extension MultiLineInputPromptExtensions on Terminice {
               return KeyActionResult.handled;
             },
           ),
+          // Space
+          KeyBinding.single(
+            KeyEventType.space,
+            (event) {
+              final line = lines[cursorLine];
+              final before = line.substring(0, cursorColumn);
+              final after = line.substring(cursorColumn);
+              lines[cursorLine] = '$before $after';
+              cursorColumn++;
+              return KeyActionResult.handled;
+            },
+          ),
         ]) +
         KeyBindings.ctrlD(
           onPress: () {
             if (allowEmpty || lines.any((l) => l.trim().isNotEmpty)) {
               confirmed = true;
+              return KeyActionResult.confirmed;
             }
+            return KeyActionResult.handled;
           },
           hintDescription: 'confirm',
         ) +
