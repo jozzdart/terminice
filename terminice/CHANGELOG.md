@@ -1,3 +1,10 @@
+## 0.0.14
+
+- **Documentation**: Completely rewrote the `README.md` with a production-grade opening and embedded an interactive, looping VHS showcase GIF.
+- **Examples**: Added a comprehensive `showcase.dart` example demonstrating multiple prompts and themes chained together.
+- **Bug fix**: Fixed `multiline` prompt ignoring spacebar inputs (added `KeyEventType.space` handling).
+- **Bug fix**: Fixed `multiline` prompt not exiting properly when pressing `Ctrl+D` due to incorrect key action result mapping.
+
 ## 0.0.13
 
 - **Centralized filesystem helpers**: Shared `pathBasename`, `shortPath`, and `sortedEntries` extracted from `filePicker` and `pathPicker`, removing duplicated path and directory-listing logic.

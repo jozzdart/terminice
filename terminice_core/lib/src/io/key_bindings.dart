@@ -597,7 +597,7 @@ class KeyBindings {
 
   /// Creates Ctrl+D binding.
   static KeyBindings ctrlD({
-    required void Function() onPress,
+    KeyActionResult Function()? onPress,
     String hintLabel = 'Ctrl+D',
     String? hintDescription,
   }) {
@@ -605,8 +605,7 @@ class KeyBindings {
       KeyBinding.single(
         KeyEventType.ctrlD,
         (event) {
-          onPress();
-          return KeyActionResult.handled;
+          return onPress?.call() ?? KeyActionResult.confirmed;
         },
         hintLabel: hintLabel,
         hintDescription: hintDescription,

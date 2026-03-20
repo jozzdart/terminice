@@ -1,3 +1,8 @@
+## 0.0.11
+
+- **Bug fix**: Fixed `KeyBindings.ctrlD` returning `KeyActionResult.handled` instead of `KeyActionResult.confirmed`, which caused infinite loops in prompts relying on it for submission (like the multiline editor).
+- **Bug fix**: Fixed `SearchableListPrompt` crashing with `Invalid argument(s)` when the terminal height or `maxVisible` parameter resulted in a viewport smaller than 5 lines.
+
 ## 0.0.10
 
 - **Bug fix**: `SelectableListPromptBuilder.withSelectAll()` now correctly wires the `toggleAll` callback. Previously the builder created a binding with an empty closure and `build()` never passed extra bindings to the prompt.
