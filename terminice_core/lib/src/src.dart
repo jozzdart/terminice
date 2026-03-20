@@ -1,3 +1,4 @@
+// Core I/O
 export 'io/dart_terminal.dart';
 export 'io/key_bindings.dart';
 export 'io/key_events.dart';
@@ -5,10 +6,14 @@ export 'io/terminal.dart';
 export 'io/terminal_context.dart';
 export 'io/terminal_control.dart';
 export 'io/terminal_info.dart';
+
+// Navigation
 export 'navigation/focus_navigator.dart';
 export 'navigation/grid_navigator.dart';
 export 'navigation/list_navigator.dart';
 export 'navigation/selection_controller.dart';
+
+// Prompts
 export 'prompt/dynamic_list_prompt.dart';
 export 'prompt/ranked_list_prompt.dart';
 export 'prompt/searchable_list_prompt.dart';
@@ -17,19 +22,12 @@ export 'prompt/selectable_list_prompt.dart';
 export 'prompt/simple_prompt.dart';
 export 'prompt/text_input_buffer.dart';
 export 'prompt/value_prompt.dart';
-export 'rendering/frame_renderer.dart';
+
+// Rendering (local)
 export 'rendering/frame_view.dart';
-export 'rendering/framed_layout.dart';
 export 'rendering/hint_format.dart';
-export 'rendering/inline_style.dart';
 export 'rendering/line_builder.dart';
 export 'rendering/prompt_runner.dart';
-export 'rendering/syntax_highlight.dart';
-export 'rendering/table_renderer.dart';
-export 'rendering/text_highlighter.dart';
-export 'rendering/text_utils.dart';
-export 'style/badge_tone.dart';
-export 'style/display_features.dart';
-export 'style/prompt_theme.dart';
-export 'style/terminal_colors.dart';
-export 'style/terminal_glyphs.dart';
+
+// Style & rendering (from termistyle)
+export 'package:termistyle/termistyle.dart';

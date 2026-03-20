@@ -548,9 +548,9 @@ class FrameContext {
     String icon = '•',
     StatTone tone = StatTone.accent,
   }) {
-    final toneColor = _toneColor(tone, theme);
+    final color = toneColor(tone, theme);
     final line = StringBuffer();
-    line.write('$toneColor$icon${theme.reset} ');
+    line.write('$color$icon${theme.reset} ');
     line.write('${theme.dim}$label:${theme.reset} ');
     line.write('${theme.selection}${theme.bold}$value${theme.reset}');
     gutterLine(line.toString());
@@ -565,8 +565,8 @@ class FrameContext {
     StatTone tone = StatTone.info,
     bool bold = false,
   }) {
-    final toneColor = _toneColor(tone, theme);
-    final iconPart = '${theme.bold}$toneColor$icon${theme.reset}';
+    final color = toneColor(tone, theme);
+    final iconPart = '${theme.bold}$color$icon${theme.reset}';
     final msgPart = bold ? '${theme.bold}$message${theme.reset}' : message;
     gutterLine('$iconPart $msgPart');
   }
@@ -653,26 +653,6 @@ class FrameContext {
     } else {
       gutterEmpty();
     }
-  }
-}
-
-/// Tone for stat/styled items.
-enum StatTone { info, warn, error, accent, success, neutral }
-
-String _toneColor(StatTone tone, PromptTheme theme) {
-  switch (tone) {
-    case StatTone.info:
-      return theme.info;
-    case StatTone.warn:
-      return theme.warn;
-    case StatTone.error:
-      return theme.error;
-    case StatTone.accent:
-      return theme.accent;
-    case StatTone.success:
-      return theme.checkboxOn;
-    case StatTone.neutral:
-      return theme.gray;
   }
 }
 

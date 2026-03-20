@@ -1,4 +1,5 @@
-import 'package:terminice_core/terminice_core.dart';
+import '../style/prompt_theme.dart';
+import 'frame_renderer.dart';
 
 /// FramedLayout – pure string generator for framed terminal output.
 ///

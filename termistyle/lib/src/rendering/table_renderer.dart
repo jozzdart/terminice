@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:terminice_core/terminice_core.dart';
-import 'text_utils.dart' as text;
+import '../style/prompt_theme.dart';
+import '../utils/text_utils.dart' as text;
 
 /// Alignment options for table columns.
 enum ColumnAlign { left, center, right }

@@ -1,4 +1,4 @@
-import 'package:terminice_core/terminice_core.dart';
+import '../style/prompt_theme.dart';
 
 /// Highlights the first case-insensitive occurrence of [query] in [text]
 /// using the theme's highlight color, preserving the rest of the string.

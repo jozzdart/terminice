@@ -1,11 +1,7 @@
-import 'package:terminice_core/terminice_core.dart';
-
-// ════════════════════════════════════════════════════════════════════════════
-// SPINNER FRAME STYLES
-// ════════════════════════════════════════════════════════════════════════════
-
-/// Spinner frame styles.
-enum SpinnerFrames { dots, bars, arcs }
+import '../style/badge_tone.dart';
+import '../style/prompt_theme.dart';
+import '../style/spinner_frames.dart';
+import '../style/stat_tone.dart';
 
 // ════════════════════════════════════════════════════════════════════════════
 // INLINE STYLE
@@ -73,53 +69,12 @@ class InlineStyle {
   // SPINNER FRAMES
   // ──────────────────────────────────────────────────────────────────────────
 
-  static const List<String> dotsFrames = [
-    '⠋',
-    '⠙',
-    '⠹',
-    '⠸',
-    '⠼',
-    '⠴',
-    '⠦',
-    '⠧',
-    '⠇',
-    '⠏'
-  ];
-  static const List<String> barsFrames = [
-    '▁',
-    '▂',
-    '▃',
-    '▄',
-    '▅',
-    '▆',
-    '▇',
-    '█',
-    '▇',
-    '▆',
-    '▅',
-    '▄',
-    '▃',
-    '▂'
-  ];
-  static const List<String> arcsFrames = ['◜', '◠', '◝', '◞', '◡', '◟'];
-
   /// Returns a spinner frame for the given phase.
   String spinner(int phase, {SpinnerFrames frames = SpinnerFrames.dots}) {
-    final list = _spinnerFramesList(frames);
+    final list = spinnerFramesList(frames);
     final char = list[phase % list.length];
     final color = (phase % 2 == 0) ? theme.accent : theme.highlight;
     return '${theme.bold}$color$char${theme.reset}';
-  }
-
-  List<String> _spinnerFramesList(SpinnerFrames f) {
-    switch (f) {
-      case SpinnerFrames.dots:
-        return dotsFrames;
-      case SpinnerFrames.bars:
-        return barsFrames;
-      case SpinnerFrames.arcs:
-        return arcsFrames;
-    }
   }
 
   // ──────────────────────────────────────────────────────────────────────────
