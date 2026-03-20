@@ -1,3 +1,10 @@
+## 0.0.12
+
+- **Styling extracted to `termistyle`**: All standalone style and rendering primitives (`PromptTheme`, `TerminalColors`, `TerminalGlyphs`, `DisplayFeatures`, `BadgeTone`, `InlineStyle`, `FrameRenderer`, `FramedLayout`, `TableRenderer`, `SyntaxHighlighter`, text utilities) now live in the `termistyle` package and are re-exported through the existing barrel.
+- Removed duplicate `StatTone` enum and `_toneColor` helper from `frame_view.dart` in favor of the shared definitions from `termistyle`.
+- Cleaned up the `style/` directory entirely — all style files are sourced from `termistyle`.
+- No public API or behavioral changes. All existing code continues to work unchanged.
+
 ## 0.0.11
 
 - **Bug fix**: Fixed `KeyBindings.ctrlD` returning `KeyActionResult.handled` instead of `KeyActionResult.confirmed`, which caused infinite loops in prompts relying on it for submission (like the multiline editor).
