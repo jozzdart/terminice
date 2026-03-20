@@ -34,27 +34,103 @@ void main() {
         visibleLines: 6,
         description: 'A longer description for your project (multiline)',
       ),
-      PasswordConfigurable(
-        key: 'apiKey',
-        label: 'API Key',
-        allowReveal: true,
-        description: 'Secret key for external service authentication',
+
+      // --- Groups ---
+
+      GroupConfigurable(
+        key: 'network',
+        label: 'Network',
+        description: 'Connection, proxy, and timeout settings',
+        children: [
+          StringConfigurable(
+            key: 'host',
+            label: 'Host',
+            value: 'localhost',
+            description: 'Server hostname or IP address',
+          ),
+          NumberConfigurable(
+            key: 'port',
+            label: 'Port',
+            value: 8080,
+            min: 1,
+            max: 65535,
+            integerOnly: true,
+            description: 'HTTP server port (1–65535)',
+          ),
+          NumberConfigurable(
+            key: 'timeout',
+            label: 'Timeout',
+            value: 30,
+            min: 1,
+            max: 300,
+            useSlider: true,
+            unit: 's',
+            description: 'Request timeout in seconds',
+          ),
+          GroupConfigurable(
+            key: 'proxy',
+            label: 'Proxy',
+            description: 'HTTP proxy configuration',
+            children: [
+              BoolConfigurable(
+                key: 'enabled',
+                label: 'Enabled',
+                value: false,
+                description: 'Route traffic through a proxy server',
+              ),
+              StringConfigurable(
+                key: 'url',
+                label: 'Proxy URL',
+                value: '',
+                placeholder: 'http://proxy:3128',
+                description: 'Full URL of the proxy server',
+              ),
+              PasswordConfigurable(
+                key: 'proxyAuth',
+                label: 'Proxy Auth',
+                allowReveal: true,
+                description: 'Authentication token for the proxy',
+              ),
+            ],
+          ),
+        ],
       ),
+
+      GroupConfigurable(
+        key: 'security',
+        label: 'Security',
+        description: 'Authentication and encryption settings',
+        children: [
+          PasswordConfigurable(
+            key: 'apiKey',
+            label: 'API Key',
+            allowReveal: true,
+            description: 'Secret key for external service authentication',
+          ),
+          EnumConfigurable(
+            key: 'authMode',
+            label: 'Auth Mode',
+            value: 'token',
+            options: ['token', 'oauth2', 'basic', 'none'],
+            description: 'Authentication method for API requests',
+          ),
+          BoolConfigurable(
+            key: 'tlsVerify',
+            label: 'TLS Verify',
+            value: true,
+            description: 'Verify TLS certificates on outgoing connections',
+          ),
+        ],
+      ),
+
+      // --- Remaining leaf fields ---
+
       EnumConfigurable(
         key: 'environment',
         label: 'Environment',
         value: 'development',
         options: ['development', 'staging', 'production'],
         description: 'Target deployment environment',
-      ),
-      NumberConfigurable(
-        key: 'port',
-        label: 'Port',
-        value: 8080,
-        min: 1,
-        max: 65535,
-        integerOnly: true,
-        description: 'HTTP server port (1–65535)',
       ),
       NumberConfigurable(
         key: 'volume',
@@ -97,11 +173,22 @@ void main() {
 
   if (result.hasChanges) {
     print('Modified fields:');
-    for (final field in result.modified) {
-      print('  ${field.key}: ${field.displayValue}');
-    }
+    printModified(result.fields);
   }
 
   final json = const JsonEncoder.withIndent('  ').convert(result.toMap());
   print('\nJSON output:\n$json');
+}
+
+void printModified(List<Configurable> fields, {int indent = 1}) {
+  final pad = '  ' * indent;
+  for (final field in fields) {
+    if (!field.isModified) continue;
+    if (field is GroupConfigurable) {
+      print('$pad${field.key}: ${field.displayValue}');
+      printModified(field.children, indent: indent + 1);
+    } else {
+      print('$pad${field.key}: ${field.displayValue}');
+    }
+  }
 }
