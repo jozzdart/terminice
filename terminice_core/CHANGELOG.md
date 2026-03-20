@@ -1,3 +1,9 @@
+## 0.0.10
+
+- **Bug fix**: `SelectableListPromptBuilder.withSelectAll()` now correctly wires the `toggleAll` callback. Previously the builder created a binding with an empty closure and `build()` never passed extra bindings to the prompt.
+- **New**: `SelectionController.validatedIndices()` static helper centralizes the initial-selection validation that was duplicated across `SelectableListPrompt`, `SearchableListPrompt`, and `SelectableGridPrompt`.
+- **New**: `package:terminice_core/testing.dart` entrypoint exports `MockTerminal`, `SpyTerminal`, and `ErrorTerminal` so downstream packages can import test utilities without duplicating them.
+
 ## 0.0.9
 
 - **Centralized Theme System**: Complete refactor separating styling into three composable concerns.

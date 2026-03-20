@@ -105,6 +105,7 @@ class SelectableListPrompt<T> {
   late SelectionController _selection;
   late KeyBindings _bindings;
   bool _cancelled = false;
+  KeyBindings? _pendingExtraBindings;
 
   SelectableListPrompt({
     required this.title,
@@ -221,7 +222,9 @@ class SelectableListPrompt<T> {
 
     _initState();
 
-    // Merge extra bindings if provided
+    if (_pendingExtraBindings != null) {
+      _bindings = _bindings + _pendingExtraBindings!;
+    }
     if (extraBindings != null) {
       _bindings = _bindings + extraBindings;
     }
@@ -301,15 +304,11 @@ class SelectableListPrompt<T> {
 
     _selection = SelectionController(
       multiSelect: multiSelect,
-      initialSelection: _validatedInitialSelection(),
+      initialSelection:
+          SelectionController.validatedIndices(initialSelection, items.length),
     );
 
     _bindings = _createDefaultBindings();
-  }
-
-  Set<int>? _validatedInitialSelection() {
-    if (initialSelection == null) return null;
-    return initialSelection!.where((i) => i >= 0 && i < items.length).toSet();
   }
 
   KeyBindings _createDefaultBindings() {
@@ -459,6 +458,8 @@ class SelectableListPromptBuilder<T> {
   Set<int>? _initialSelection;
   int _reservedLines = 7;
   KeyBindings? _extraBindings;
+  bool _wantSelectAll = false;
+  String _selectAllHint = 'select all / clear';
 
   SelectableListPromptBuilder<T> title(String title) {
     _title = title;
@@ -504,23 +505,13 @@ class SelectableListPromptBuilder<T> {
   SelectableListPromptBuilder<T> withSelectAll({
     String hintDescription = 'select all / clear',
   }) {
-    final binding = KeyBindings.letter(
-      char: 'A',
-      onPress: () {
-        // Will be connected during run()
-      },
-      hintDescription: hintDescription,
-    );
-    if (_extraBindings != null) {
-      _extraBindings = _extraBindings! + binding;
-    } else {
-      _extraBindings = binding;
-    }
+    _wantSelectAll = true;
+    _selectAllHint = hintDescription;
     return this;
   }
 
   SelectableListPrompt<T> build() {
-    return SelectableListPrompt<T>(
+    final prompt = SelectableListPrompt<T>(
       title: _title,
       items: _items,
       theme: _theme,
@@ -529,5 +520,18 @@ class SelectableListPromptBuilder<T> {
       initialSelection: _initialSelection,
       reservedLines: _reservedLines,
     );
+
+    KeyBindings? combined = _extraBindings;
+    if (_wantSelectAll) {
+      final selectAll = KeyBindings.letter(
+        char: 'A',
+        onPress: () => prompt.selection.toggleAll(prompt.items.length),
+        hintDescription: _selectAllHint,
+      );
+      combined = combined != null ? combined + selectAll : selectAll;
+    }
+    prompt._pendingExtraBindings = combined;
+
+    return prompt;
   }
 }

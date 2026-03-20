@@ -236,6 +236,20 @@ class SelectionController {
   }
 
   // ──────────────────────────────────────────────────────────────────────────
+  // VALIDATED INITIAL SELECTION
+  // ──────────────────────────────────────────────────────────────────────────
+
+  /// Filters [indices] to only those within `[0, itemCount)`.
+  ///
+  /// Returns `null` when [indices] is `null`, preserving the "no explicit
+  /// selection" semantic for callers that distinguish between "nothing passed"
+  /// and "empty set passed".
+  static Set<int>? validatedIndices(Set<int>? indices, int itemCount) {
+    if (indices == null) return null;
+    return indices.where((i) => i >= 0 && i < itemCount).toSet();
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
   // UTILITY
   // ──────────────────────────────────────────────────────────────────────────
 
