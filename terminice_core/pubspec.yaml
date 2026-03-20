@@ -20,6 +20,7 @@ platforms:
   windows:
 
 dependencies:
+  termistyle: ^0.0.2
 
 dev_dependencies:
   lints: ^6.0.0
