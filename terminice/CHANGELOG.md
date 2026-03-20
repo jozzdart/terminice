@@ -1,3 +1,9 @@
+## 0.0.15
+
+- Added `termistyle` path override for local development alongside `terminice_core`.
+- Bumped `terminice_core` dependency to 0.0.12.
+- No public API or behavioral changes.
+
 ## 0.0.14
 
 - **Documentation**: Completely rewrote the `README.md` with a production-grade opening and embedded an interactive, looping VHS showcase GIF.
