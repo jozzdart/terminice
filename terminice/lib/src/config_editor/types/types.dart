@@ -1,5 +1,6 @@
 export 'bool_configurable.dart';
 export 'enum_configurable.dart';
+export 'group_configurable.dart';
 export 'number_configurable.dart';
 export 'password_configurable.dart';
 export 'range_configurable.dart';

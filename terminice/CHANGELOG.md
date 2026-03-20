@@ -1,3 +1,14 @@
+## 0.0.17
+
+Added **nested group configurables** to the config editor, enabling hierarchical settings with infinite nesting depth.
+
+- **`GroupConfigurable`** — Groups child fields into a navigable sub-editor. Appears in the parent list with a `▸` icon and a live summary (e.g. "2/5 modified"). Press Enter to drill in, Esc or "← Back" to return. Groups can contain other groups for arbitrary nesting.
+- **Shared editor loop** — Extracted the rendering, navigation, and key-handling logic into a reusable internal loop. Both the top-level `configEditor` and nested group editors share the same code path, eliminating duplication.
+- **Root-only save** — Only the top-level editor shows "✓ Save & confirm". Nested editors show "← Back" instead — edits are preserved in-place and only finalized when the user confirms at the root.
+- **Recursive change detection** — `GroupConfigurable.isModified` checks all descendants recursively. The `*` modified indicator propagates up through all parent groups.
+- **Nested JSON serialization** — `toJsonValue()` produces nested maps and `loadJsonValue()` distributes back to children, so groups round-trip through JSON seamlessly.
+- **Recursive validation** — `GroupConfigurable.validate()` aggregates errors from all children, prefixed with the child label for context.
+
 ## 0.0.16
 
 Introduced the **Config Editor** system - a searchable, theme-aware settings editor that composes existing prompts into a unified configuration flow.
