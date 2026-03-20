@@ -1,3 +1,24 @@
+## 0.0.16
+
+Introduced the **Config Editor** system - a searchable, theme-aware settings editor that composes existing prompts into a unified configuration flow.
+
+- **`configEditor`** — Keyboard-driven settings editor that presents a searchable list of typed fields. Select a field to open its dedicated prompt, then return to the list. Single terminal session with clean rendering (no leftover artifacts between edits).
+- **`Configurable<T>`** — Abstract base class for typed, serializable config fields with built-in validation, formatting, change detection (`isModified`), and JSON round-tripping (`toJsonValue` / `loadJsonValue`).
+- **`ConfigResult`** — Result wrapper with `toMap()` serialization, typed `get<T>(key)` access, `hasChanges`, `modified` list, and `loadFromMap()` for restoring state.
+- **8 configurable types**:
+  - `BoolConfigurable` — Yes/no via confirm prompt.
+  - `StringConfigurable` — Single-line text or multiline editor, with placeholder and required flag.
+  - `PasswordConfigurable` — Masked input with optional reveal toggle.
+  - `NumberConfigurable` — Text input or slider mode, with min/max/step/unit and integer-only option.
+  - `EnumConfigurable` — Searchable dropdown from a fixed set of string options.
+  - `RangeConfigurable` — Dual-handle range prompt with start/end serialization.
+  - `RatingConfigurable` — Star rating with optional per-level labels.
+  - `ThemeConfigurable` — Live theme picker from all 11 built-in presets (or custom map). Changing the theme re-renders the editor immediately.
+- **Live theme switching** — `ThemeConfigurable` fields are auto-wired so selecting a new theme updates the editor's own frame, icons, and hints in real time.
+- **Focused selection** — Enum and theme selectors start the cursor on the currently active value, with a `✓` marker for quick identification.
+- **Field descriptions** — Optional `description` parameter on any configurable, shown as a dim subtitle below the focused field.
+- **Search on by default** — The editor starts with search enabled for fast filtering by label or key.
+
 ## 0.0.15
 
 - Added `termistyle` path override for local development alongside `terminice_core`.
