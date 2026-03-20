@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '_indicator_base.dart';
+
 extension LoadingSpinnerExtensions on Terminice {
   /// Creates a themed loading spinner with customizable message and style.
   ///
@@ -49,14 +51,11 @@ extension LoadingSpinnerExtensions on Terminice {
 ///   }
 /// });
 /// ```
-class LoadingSpinner {
+class LoadingSpinner with IndicatorLifecycle {
   final String label;
   final String message;
   final SpinnerStyle style;
   final PromptTheme theme;
-
-  RenderOutput? _output;
-  bool _started = false;
 
   /// Creates a loading spinner.
   LoadingSpinner(
@@ -68,30 +67,17 @@ class LoadingSpinner {
 
   /// Shows the spinner at the given frame.
   void show(int frame) {
-    _output ??= RenderOutput();
-    final out = _output!;
-
-    if (_started) out.clear();
-    _started = true;
-
+    final out = prepareFrame();
     _render(out, frame);
-  }
-
-  /// Clears the spinner from the terminal.
-  void clear() {
-    _output?.clear();
-    _output = null;
-    _started = false;
   }
 
   /// Runs the spinner with a callback that provides tick updates.
   void runWith(void Function(void Function() tick) callback) {
-    TerminalSession(hideCursor: true).run(() {
+    runSession(() {
       int frame = 0;
       callback(() {
         show(frame++);
       });
-      clear();
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:terminice/terminice.dart';
-import 'package:terminice_core/terminice_core.dart';
+
+import '_indicator_base.dart';
 
 extension InlineSpinnerExtensions on Terminice {
   /// Creates a lightweight spinner that stays on a single console line.
@@ -27,13 +28,10 @@ extension InlineSpinnerExtensions on Terminice {
 ///
 /// It renders the current frame along with a dimmed status message so you can
 /// surface progress in long-running CLI tasks without taking over the screen.
-class InlineSpinner {
+class InlineSpinner with IndicatorLifecycle {
   final String message;
   final SpinnerStyle style;
   final PromptTheme theme;
-
-  RenderOutput? _output;
-  bool _started = false;
 
   InlineSpinner(
     this.message, {
@@ -43,23 +41,11 @@ class InlineSpinner {
 
   /// Renders the spinner frame indicated by [frame].
   void show(int frame) {
-    _output ??= RenderOutput();
-    final out = _output!;
-
-    if (_started) out.clear();
-    _started = true;
-
+    final out = prepareFrame();
     final frames = framesForStyle(style);
     final spin = frames[frame % frames.length];
     out.writeln(
         '${theme.accent}$spin${theme.reset} ${theme.dim}$message${theme.reset}');
-  }
-
-  /// Clears the rendered spinner and frees the underlying buffer.
-  void clear() {
-    _output?.clear();
-    _output = null;
-    _started = false;
   }
 
   /// Returns the list of Unicode frames used by the configured [SpinnerStyle].
