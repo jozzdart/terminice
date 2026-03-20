@@ -2,7 +2,7 @@
 
 `termistyle` is the standalone styling foundation extracted from the [terminice](https://pub.dev/packages/terminice) ecosystem. It gives any Dart CLI package access to the same ANSI color palettes, box-drawing glyph sets, composable themes, and rendering utilities that power terminice -- without depending on terminice itself.
 
-Use it when you are building a terminal tool, prompt library, ASCII art renderer, or any other CLI package that wants consistent, themeable output with zero external dependencies.
+Use it when you are building a terminal tool, prompt library, ASCII art renderer, or any other CLI package that wants consistent, themeable output with zero external dependencies. Well-tested with 964 tests covering every public API surface.
 
 ## Install
 
@@ -198,6 +198,14 @@ print(s.spinner(tick, frames: SpinnerFrames.arcs));
 | `columnWidth` / `columnWidthVisible` | Column sizing from content |
 | `spinnerFramesList` | Frame data for a `SpinnerFrames` value |
 | `dotsFrames` / `barsFrames` / `arcsFrames` | Raw frame character lists |
+
+## Testing
+
+termistyle ships with 964 tests covering every public class, function, enum, preset, and edge case. Run them with:
+
+```bash
+dart test
+```
 
 ## Relationship to terminice
 
