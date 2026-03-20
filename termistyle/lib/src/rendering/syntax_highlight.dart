@@ -1,4 +1,4 @@
-import 'package:terminice_core/terminice_core.dart';
+import '../style/prompt_theme.dart';
 
 // ════════════════════════════════════════════════════════════════════════════
 // SYNTAX HIGHLIGHTING SUPPORT
