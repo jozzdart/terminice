@@ -267,13 +267,9 @@ class SearchableListPrompt<T> {
 
     _selection = SelectionController(
       multiSelect: multiSelect,
-      initialSelection: _validatedInitialSelection(),
+      initialSelection:
+          SelectionController.validatedIndices(initialSelection, items.length),
     );
-  }
-
-  Set<int>? _validatedInitialSelection() {
-    if (initialSelection == null) return null;
-    return initialSelection!.where((i) => i >= 0 && i < items.length).toSet();
   }
 
   // ──────────────────────────────────────────────────────────────────────────

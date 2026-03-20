@@ -17,7 +17,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// - `S`: cycle through smart saturation breakpoints
 /// - `[` / `]`: fine-tune saturation
 /// - `-` / `=`: adjust brightness (value) on the grid
-/// - `H`: type a hex code directly
+/// - `H`: type a hex code inline (Enter to apply, Esc to discard)
 /// - `1-0`: jump to curated presets, mirroring Tailwind hues
 /// - `R`: random color
 /// - `X`: reset back to `initialHex` or defaults
@@ -43,10 +43,6 @@ extension ColorPickerPromptExtensions on Terminice {
   ///
   /// Returns the chosen hex string in uppercase `#RRGGBB` format, or `null`
   /// when the user cancels (Esc) or the prompt runner reports `PromptResult.cancelled`.
-  ///
-  /// The prompt automatically surfaces contextual key hints, supports frame
-  /// connectors, and keeps cursor handling consistent with the broader
-  /// Terminice catalog making it safe for pub.dev distribution.
   String? colorPicker(
     String label, {
     String? initialHex,
@@ -55,45 +51,26 @@ extension ColorPickerPromptExtensions on Terminice {
   }) {
     final theme = defaultTheme;
 
-    String? promptHexSync() {
-      final termInput = TerminalContext.input;
-      final termOutput = TerminalContext.output;
-      termOutput.writeln('');
-      final prevEcho = termInput.echoMode;
-      final prevLine = termInput.lineMode;
-      try {
-        termInput.echoMode = true;
-        termInput.lineMode = true;
-        TerminalControl.showCursor();
-        termOutput.write('${theme.accent}Hex${theme.reset} (#RRGGBB): ');
-        final input = termInput.readLineSync();
-        final value = input?.trim();
-        if (value == null) return null;
-        return value;
-      } finally {
-        termInput.echoMode = prevEcho;
-        termInput.lineMode = prevLine;
-        TerminalControl.hideCursor();
-      }
-    }
-
     int selX = 0;
     int selY = math.max(0, rows ~/ 2 - 1);
     double saturation = 1.0;
     int presetIndex = -1;
     bool cancelled = false;
-    // Curated vibrant presets (Tailwind-like palette)
-    List<Map<String, String>> presets = [
-      {'h': '#EF4444'}, // Red 500
-      {'h': '#F97316'}, // Orange 500
-      {'h': '#F59E0B'}, // Amber 500
-      {'h': '#EAB308'}, // Yellow 500
-      {'h': '#84CC16'}, // Lime 500
-      {'h': '#22C55E'}, // Green 500
-      {'h': '#14B8A6'}, // Teal 500
-      {'h': '#0EA5E9'}, // Sky 500
-      {'h': '#3B82F6'}, // Blue 500
-      {'h': '#8B5CF6'}, // Violet 500
+
+    bool hexMode = false;
+    final hexInput = TextInputBuffer(maxLength: 7);
+
+    final presets = [
+      '#EF4444', // Red 500
+      '#F97316', // Orange 500
+      '#F59E0B', // Amber 500
+      '#EAB308', // Yellow 500
+      '#84CC16', // Lime 500
+      '#22C55E', // Green 500
+      '#14B8A6', // Teal 500
+      '#0EA5E9', // Sky 500
+      '#3B82F6', // Blue 500
+      '#8B5CF6', // Violet 500
     ];
 
     void setFromHex(String hex) {
@@ -111,135 +88,176 @@ extension ColorPickerPromptExtensions on Terminice {
       return _rgbToHex(rgb[0], rgb[1], rgb[2]);
     }
 
-    KeyBindings buildBindings() {
-      return KeyBindings.directionalNavigation(
-            onUp: () => selY = math.max(0, selY - 1),
-            onDown: () => selY = math.min(rows - 1, selY + 1),
-            onLeft: () => selX = (selX - 1 + cols) % cols,
-            onRight: () => selX = (selX + 1) % cols,
-          ) +
-          KeyBindings([
-            // Saturation controls
-            KeyBinding.char(
-              (c) => c == '[',
-              (event) {
-                saturation = (saturation - 0.1).clamp(0.0, 1.0);
-                return KeyActionResult.handled;
-              },
-              hintLabel: '[ / ]',
-              hintDescription: 'sat − / +',
-            ),
-            KeyBinding.char(
-              (c) => c == ']',
-              (event) {
-                saturation = (saturation + 0.1).clamp(0.0, 1.0);
-                return KeyActionResult.handled;
-              },
-            ),
-            // Brightness controls
-            KeyBinding.char(
-              (c) => c == '-',
-              (event) {
-                selY = math.min(rows - 1, selY + 1);
-                return KeyActionResult.handled;
-              },
-              hintLabel: '- / =',
-              hintDescription: 'bright − / +',
-            ),
-            KeyBinding.char(
-              (c) => c == '=' || c == '+',
-              (event) {
-                selY = math.max(0, selY - 1);
-                return KeyActionResult.handled;
-              },
-            ),
-            // Cycle saturation
-            KeyBinding.char(
-              (c) => c == 's' || c == 'S',
-              (event) {
-                if (saturation > 0.9) {
-                  saturation = 0.7;
-                } else if (saturation > 0.6) {
-                  saturation = 0.4;
-                } else {
-                  saturation = 1.0;
-                }
-                return KeyActionResult.handled;
-              },
-              hintLabel: 'S',
-              hintDescription: 'cycle saturation',
-            ),
-            // Type hex
-            KeyBinding.char(
-              (c) => c == 'h' || c == 'H',
-              (event) {
-                final value = promptHexSync();
-                if (value != null && _isValidHex(value)) {
-                  setFromHex(value);
-                  presetIndex = -1;
-                }
-                return KeyActionResult.handled;
-              },
-              hintLabel: 'H',
-              hintDescription: 'type hex',
-            ),
-            // Reset
-            KeyBinding.char(
-              (c) => c == 'x' || c == 'X',
-              (event) {
-                if (initialHex != null && _isValidHex(initialHex)) {
-                  setFromHex(initialHex);
-                } else {
-                  selX = 0;
-                  selY = math.max(0, rows ~/ 2 - 1);
-                  saturation = 1.0;
-                  presetIndex = -1;
-                }
-                return KeyActionResult.handled;
-              },
-              hintLabel: 'X',
-              hintDescription: 'reset',
-            ),
-            // Presets (1-0)
-            KeyBinding.char(
-              (c) => RegExp(r'^[0-9]$').hasMatch(c),
-              (event) {
-                final c = event.char!;
-                int idx = c == '0' ? 9 : int.parse(c) - 1;
-                if (idx < presets.length) {
-                  setFromHex(presets[idx]['h']!);
-                  presetIndex = idx;
-                }
-                return KeyActionResult.handled;
-              },
-              hintLabel: '1-0',
-              hintDescription: 'presets',
-            ),
-            // Random
-            KeyBinding.char(
-              (c) => c == 'r' || c == 'R',
-              (event) {
-                selX = math.Random().nextInt(cols);
-                selY = math.Random().nextInt(rows);
+    // Hex mode intercepts all navigation/text keys while active. When
+    // inactive, returns `ignored` so normal grid bindings fire instead.
+    final hexModeBindings = KeyBindings([
+      KeyBinding(
+        keys: {
+          KeyEventType.char,
+          KeyEventType.space,
+          KeyEventType.backspace,
+          KeyEventType.arrowLeft,
+          KeyEventType.arrowRight,
+          KeyEventType.arrowUp,
+          KeyEventType.arrowDown,
+        },
+        action: (event) {
+          if (!hexMode) return KeyActionResult.ignored;
+          hexInput.handleKey(event);
+          return KeyActionResult.handled;
+        },
+      ),
+    ]);
+
+    final enterBinding = KeyBindings([
+      KeyBinding.single(
+        KeyEventType.enter,
+        (event) {
+          if (!hexMode) return KeyActionResult.confirmed;
+          final value = hexInput.text.trim();
+          if (_isValidHex(value)) {
+            setFromHex(value);
+            presetIndex = -1;
+          }
+          hexMode = false;
+          return KeyActionResult.handled;
+        },
+        hintLabel: 'Enter',
+        hintDescription: 'confirm',
+      ),
+    ]);
+
+    final escBinding = KeyBindings([
+      KeyBinding.multi(
+        {KeyEventType.esc, KeyEventType.ctrlC},
+        (event) {
+          if (hexMode) {
+            hexMode = false;
+            return KeyActionResult.handled;
+          }
+          cancelled = true;
+          return KeyActionResult.cancelled;
+        },
+        hintLabel: 'Esc',
+        hintDescription: 'cancel',
+      ),
+    ]);
+
+    final gridBindings = KeyBindings.directionalNavigation(
+          onUp: () => selY = math.max(0, selY - 1),
+          onDown: () => selY = math.min(rows - 1, selY + 1),
+          onLeft: () => selX = (selX - 1 + cols) % cols,
+          onRight: () => selX = (selX + 1) % cols,
+        ) +
+        KeyBindings([
+          KeyBinding.char(
+            (c) => c == '[',
+            (event) {
+              saturation = (saturation - 0.1).clamp(0.0, 1.0);
+              return KeyActionResult.handled;
+            },
+            hintLabel: '[ / ]',
+            hintDescription: 'sat − / +',
+          ),
+          KeyBinding.char(
+            (c) => c == ']',
+            (event) {
+              saturation = (saturation + 0.1).clamp(0.0, 1.0);
+              return KeyActionResult.handled;
+            },
+          ),
+          KeyBinding.char(
+            (c) => c == '-',
+            (event) {
+              selY = math.min(rows - 1, selY + 1);
+              return KeyActionResult.handled;
+            },
+            hintLabel: '- / =',
+            hintDescription: 'bright − / +',
+          ),
+          KeyBinding.char(
+            (c) => c == '=' || c == '+',
+            (event) {
+              selY = math.max(0, selY - 1);
+              return KeyActionResult.handled;
+            },
+          ),
+          KeyBinding.char(
+            (c) => c == 's' || c == 'S',
+            (event) {
+              if (saturation > 0.9) {
+                saturation = 0.7;
+              } else if (saturation > 0.6) {
+                saturation = 0.4;
+              } else {
+                saturation = 1.0;
+              }
+              return KeyActionResult.handled;
+            },
+            hintLabel: 'S',
+            hintDescription: 'cycle saturation',
+          ),
+          KeyBinding.char(
+            (c) => c == 'h' || c == 'H',
+            (event) {
+              hexMode = true;
+              hexInput.clear();
+              hexInput.insert('#');
+              return KeyActionResult.handled;
+            },
+            hintLabel: 'H',
+            hintDescription: 'type hex',
+          ),
+          KeyBinding.char(
+            (c) => c == 'x' || c == 'X',
+            (event) {
+              if (initialHex != null && _isValidHex(initialHex)) {
+                setFromHex(initialHex);
+              } else {
+                selX = 0;
+                selY = math.max(0, rows ~/ 2 - 1);
+                saturation = 1.0;
                 presetIndex = -1;
-                return KeyActionResult.handled;
-              },
-              hintLabel: 'R',
-              hintDescription: 'random',
-            ),
-          ]) +
-          KeyBindings.confirm() +
-          KeyBindings.cancel(onCancel: () => cancelled = true);
-    }
+              }
+              return KeyActionResult.handled;
+            },
+            hintLabel: 'X',
+            hintDescription: 'reset',
+          ),
+          KeyBinding.char(
+            (c) => RegExp(r'^[0-9]$').hasMatch(c),
+            (event) {
+              final c = event.char!;
+              int idx = c == '0' ? 9 : int.parse(c) - 1;
+              if (idx < presets.length) {
+                setFromHex(presets[idx]);
+                presetIndex = idx;
+              }
+              return KeyActionResult.handled;
+            },
+            hintLabel: '1-0',
+            hintDescription: 'presets',
+          ),
+          KeyBinding.char(
+            (c) => c == 'r' || c == 'R',
+            (event) {
+              selX = math.Random().nextInt(cols);
+              selY = math.Random().nextInt(rows);
+              presetIndex = -1;
+              return KeyActionResult.handled;
+            },
+            hintLabel: 'R',
+            hintDescription: 'random',
+          ),
+        ]);
 
     if (initialHex != null && _isValidHex(initialHex)) {
       setFromHex(initialHex);
     }
 
-    // Build key bindings
-    final bindings = buildBindings();
+    // Hex mode bindings come first to intercept keys when active.
+    final bindings = hexModeBindings + gridBindings + enterBinding + escBinding;
 
-    // Use WidgetFrame for consistent frame rendering
     final frame = FrameView(
       title: label,
       theme: theme,
@@ -248,19 +266,15 @@ extension ColorPickerPromptExtensions on Terminice {
 
     void render(RenderOutput out) {
       frame.render(out, (ctx) {
-        // Subtitle
         ctx.gutterLine(
             '${theme.accent}Pick visually. ${theme.reset}${theme.dim}(←/→ hue, ↑/↓ brightness, S saturation)${theme.reset}');
 
-        // Connector after subtitle
         ctx.writeConnector();
 
-        // Caret line
         final caretColumn = selX * 2;
         final caretPad = ' ' * caretColumn;
         ctx.gutterLine('$caretPad${theme.selection}^^${theme.reset}');
 
-        // Color grid
         for (int y = 0; y < rows; y++) {
           final line = StringBuffer();
           line.write(ctx.lb.gutter());
@@ -276,11 +290,10 @@ extension ColorPickerPromptExtensions on Terminice {
           ctx.line(line.toString());
         }
 
-        // Presets line
         final presetsLine = StringBuffer();
         presetsLine.write(ctx.lb.gutter());
         for (int i = 0; i < presets.length; i++) {
-          final hex = presets[i]['h']!;
+          final hex = presets[i];
           final rgb = _hexToRgb(hex);
           final isCur = i == presetIndex;
           final indexLabel = ((i + 1) % 10).toString();
@@ -293,11 +306,30 @@ extension ColorPickerPromptExtensions on Terminice {
         }
         ctx.line(presetsLine.toString());
 
-        // Swatch and hex
         final hex = selectedHex();
         final rgb = _hexToRgb(hex);
         final swatch = '${_bg(rgb[0], rgb[1], rgb[2])}      ${theme.reset}';
         ctx.gutterLine('$swatch ${theme.accent}$hex${theme.reset}');
+
+        if (hexMode) {
+          ctx.writeConnector();
+          final typed = hexInput.text.trim();
+          final valid = _isValidHex(typed);
+          final cursor = hexInput.textWithCursor();
+
+          final statusColor = valid ? theme.accent : theme.dim;
+          final preview = valid
+              ? () {
+                  final pRgb = _hexToRgb(typed);
+                  return ' ${_bg(pRgb[0], pRgb[1], pRgb[2])}    ${theme.reset}';
+                }()
+              : '';
+
+          ctx.gutterLine(
+              '${theme.accent}Hex${theme.reset} $statusColor$cursor${theme.reset}$preview');
+          ctx.gutterLine(
+              '${theme.dim}Enter to apply · Esc to discard${theme.reset}');
+        }
       });
     }
 
@@ -315,10 +347,8 @@ extension ColorPickerPromptExtensions on Terminice {
 
 // ───────────────────────── Utilities ─────────────────────────
 
-/// Returns `true` when [s] matches `RRGGBB` with an optional leading `#`.
 bool _isValidHex(String s) => RegExp(r'^#?[0-9a-fA-F]{6}$').hasMatch(s.trim());
 
-/// Parses a hex string into `[r, g, b]` channel values.
 List<int> _hexToRgb(String hex) {
   final h = hex.startsWith('#') ? hex.substring(1) : hex;
   final r = int.parse(h.substring(0, 2), radix: 16);
@@ -327,13 +357,11 @@ List<int> _hexToRgb(String hex) {
   return [r, g, b];
 }
 
-/// Formats RGB integers as an uppercase `#RRGGBB` string.
 String _rgbToHex(int r, int g, int b) {
   String two(int v) => v.toRadixString(16).padLeft(2, '0');
   return '#${two(r)}${two(g)}${two(b)}'.toUpperCase();
 }
 
-/// Converts HSV (h ∈ [0, 360), s,v ∈ [0, 1]) into an RGB triple.
 List<int> _hsvToRgb(double h, double s, double v) {
   final c = v * s;
   final hp = (h % 360) / 60.0;
@@ -365,7 +393,6 @@ List<int> _hsvToRgb(double h, double s, double v) {
   return [r, g, b];
 }
 
-/// Converts RGB 0-255 values to HSV with h ∈ [0, 360), s,v ∈ [0, 1].
 List<double> _rgbToHsv(int r, int g, int b) {
   final double rf = r / 255.0;
   final double gf = g / 255.0;
@@ -389,14 +416,11 @@ List<double> _rgbToHsv(int r, int g, int b) {
   return [h, s, v];
 }
 
-/// ANSI background escape for a full-color swatch.
 String _bg(int r, int g, int b) => '\x1B[48;2;$r;$g;${b}m';
 
-/// Maps a grid cell to HSV values based on the configured cols/rows + sat.
 List<double> _cellToHsv(int x, int y, int cols, int rows, double sat) {
   final hue = (x / (cols)) * 360.0;
   final s = sat.clamp(0.0, 1.0);
-  // Bright at top row, darker towards bottom (min ~0.35)
   final v = 1.0 - (y / (rows - 1)) * 0.65;
   return [hue, s, v];
 }

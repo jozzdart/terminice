@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '_indicator_base.dart';
+
 extension ProgressBarExtensions on Terminice {
   /// Creates a progress bar indicator
   ///
@@ -37,13 +39,10 @@ extension ProgressBarExtensions on Terminice {
 ///   }
 /// });
 /// ```
-class ProgressBar {
+class ProgressBar with IndicatorLifecycle {
   final String label;
   final int width;
   final PromptTheme theme;
-
-  RenderOutput? _output;
-  bool _started = false;
 
   /// Creates a progress bar.
   ///
@@ -61,33 +60,18 @@ class ProgressBar {
     required int total,
     int shimmerPhase = 0,
   }) {
-    _output ??= RenderOutput();
-    final out = _output!;
-
-    if (_started) {
-      out.clear();
-    }
-    _started = true;
-
+    final out = prepareFrame();
     _render(out, current, total, shimmerPhase);
-  }
-
-  /// Clears the progress bar from the terminal.
-  void clear() {
-    _output?.clear();
-    _output = null;
-    _started = false;
   }
 
   /// Runs the progress bar with a callback that provides updates.
   void runWith(
       void Function(void Function(int current, int total) update) callback) {
-    TerminalSession(hideCursor: true).run(() {
+    runSession(() {
       int phase = 0;
       callback((current, total) {
         show(current: current, total: total, shimmerPhase: phase++);
       });
-      clear();
     });
   }
 

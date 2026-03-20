@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '_file_helpers.dart';
+
 extension PathPickerExtensions on Terminice {
   /// Launches the dynamic path picker for selecting directories (and optional files).
   ///
@@ -66,7 +68,6 @@ extension PathPickerExtensions on Terminice {
         }
       },
       onSecondary: (entry, index) {
-        // Go to parent
         if (current.parent.path != current.path) {
           current = current.parent;
           return DynamicAction.rebuildAndReset;
@@ -74,10 +75,7 @@ extension PathPickerExtensions on Terminice {
         return DynamicAction.none;
       },
       beforeItems: (ctx) {
-        final shortPath = current.path.length > 60
-            ? '...${current.path.substring(current.path.length - 57)}'
-            : current.path;
-        ctx.headerLine('Path', shortPath);
+        ctx.headerLine('Path', shortPath(current.path));
         ctx.writeConnector();
       },
       renderItem: (ctx, entry, index, isFocused) {
@@ -108,37 +106,22 @@ enum _EntryType { up, confirmDir, directory, file }
 List<_Entry> _readEntries(Directory dir, bool showHidden, bool allowFiles) {
   final List<_Entry> list = [];
 
-  // Parent navigation
   final hasParent = dir.parent.path != dir.path;
   if (hasParent) {
     list.add(_Entry('↩ ..', dir.parent.path, _EntryType.up));
   }
 
-  // Select current directory
   list.add(_Entry('✓ Select this directory', dir.path, _EntryType.confirmDir));
 
-  // List directory contents
   try {
-    final raw = dir.listSync(followLinks: false);
-    raw.sort((a, b) {
-      final aDir = a is Directory;
-      final bDir = b is Directory;
-      if (aDir != bDir) return aDir ? -1 : 1;
-      return _basename(a.path)
-          .toLowerCase()
-          .compareTo(_basename(b.path).toLowerCase());
-    });
+    final entries = sortedEntries(dir, showHidden: showHidden);
 
-    final filtered = raw
-        .where((e) => showHidden || !_basename(e.path).startsWith('.'))
-        .toList();
-
-    for (final e in filtered) {
+    for (final e in entries) {
       if (e is Directory) {
         list.add(
-            _Entry('▸ ${_basename(e.path)}', e.path, _EntryType.directory));
+            _Entry('▸ ${pathBasename(e.path)}', e.path, _EntryType.directory));
       } else if (allowFiles && e is File) {
-        list.add(_Entry('· ${_basename(e.path)}', e.path, _EntryType.file));
+        list.add(_Entry('· ${pathBasename(e.path)}', e.path, _EntryType.file));
       }
     }
   } catch (_) {
@@ -146,9 +129,4 @@ List<_Entry> _readEntries(Directory dir, bool showHidden, bool allowFiles) {
   }
 
   return list;
-}
-
-String _basename(String path) {
-  final parts = path.split(Platform.pathSeparator);
-  return parts.isEmpty ? path : parts.last;
 }

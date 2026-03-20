@@ -317,19 +317,18 @@ class SelectableGridPrompt<T> {
 
     _selection = SelectionController(
       multiSelect: multiSelect,
-      initialSelection: _validatedInitialSelection(),
+      initialSelection:
+          SelectionController.validatedIndices(initialSelection, items.length),
     );
 
     _bindings = _createDefaultBindings();
   }
 
   void _computeLayout() {
-    // Cell width: explicit, or based on longest item + padding
     _computedCellWidth = cellWidth ??
         (items.fold<int>(0, (m, item) => max(m, item.toString().length)) + 4)
             .clamp(10, 40);
 
-    // Columns: explicit, or auto-calculate from terminal width
     if (columns > 0) {
       _computedColumns = columns;
     } else {
@@ -344,15 +343,9 @@ class SelectableGridPrompt<T> {
     final unit = _computedCellWidth + sepWidth;
     final colsByWidth = max(1, ((termWidth - leftPrefix) + sepWidth) ~/ unit);
 
-    // Aim for balanced grid
     final desired = max(2, min(items.length, sqrt(items.length).ceil()));
     final cap = (maxColumns != null && maxColumns! > 0) ? maxColumns! : desired;
     _computedColumns = min(colsByWidth, cap);
-  }
-
-  Set<int>? _validatedInitialSelection() {
-    if (initialSelection == null) return null;
-    return initialSelection!.where((i) => i >= 0 && i < items.length).toSet();
   }
 
   KeyBindings _createDefaultBindings() {

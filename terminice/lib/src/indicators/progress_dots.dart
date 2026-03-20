@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '_indicator_base.dart';
+
 extension ProgressDotsExtensions on Terminice {
   /// Creates a themed dot indicator for lightweight progress feedback.
   ///
@@ -41,14 +43,11 @@ extension ProgressDotsExtensions on Terminice {
 ///   }
 /// });
 /// ```
-class ProgressDots {
+class ProgressDots with IndicatorLifecycle {
   final String label;
   final String message;
   final int maxDots;
   final PromptTheme theme;
-
-  RenderOutput? _output;
-  bool _started = false;
 
   ProgressDots(
     this.label, {
@@ -59,30 +58,17 @@ class ProgressDots {
 
   /// Shows the dots at the given phase.
   void show({required int phase}) {
-    _output ??= RenderOutput();
-    final out = _output!;
-
-    if (_started) out.clear();
-    _started = true;
-
+    final out = prepareFrame();
     _render(out, phase);
-  }
-
-  /// Clears the dots from the terminal.
-  void clear() {
-    _output?.clear();
-    _output = null;
-    _started = false;
   }
 
   /// Runs with a callback that provides tick updates.
   void runWith(void Function(void Function() tick) callback) {
-    TerminalSession(hideCursor: true).run(() {
+    runSession(() {
       int phase = 0;
       callback(() {
         show(phase: phase++);
       });
-      clear();
     });
   }
 
