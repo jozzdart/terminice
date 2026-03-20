@@ -184,8 +184,9 @@ class SearchableListPrompt<T> {
     );
 
     void render(RenderOutput out) {
-      _nav.maxVisible =
-          (TerminalInfo.rows - reservedLines).clamp(5, maxVisible);
+      final rows = TerminalInfo.rows;
+      final available = rows > reservedLines ? rows - reservedLines : 5;
+      _nav.maxVisible = available.clamp(1, maxVisible);
 
       frame.render(out, (ctx) {
         // Search line
