@@ -1,3 +1,11 @@
+## 0.0.13
+
+- **Centralized filesystem helpers**: Shared `pathBasename`, `shortPath`, and `sortedEntries` extracted from `filePicker` and `pathPicker`, removing duplicated path and directory-listing logic.
+- **Centralized indicator lifecycle**: New `IndicatorLifecycle` mixin provides `prepareFrame()`, `clear()`, and `runSession()` for all 5 indicators, eliminating duplicated `RenderOutput` management and `TerminalSession` boilerplate.
+- **Color picker UX fix**: Replaced `promptHexSync()` (which dropped out of raw mode to `readLineSync`) with an inline `TextInputBuffer`-based hex input. The hex field now renders inside the `FrameView` with live swatch preview, validity feedback, and contextual hints.
+- **Deduplicated test mocks**: `MockTerminal` in tests now re-exports from `package:terminice_core/testing.dart` instead of maintaining a separate copy.
+- Bumped `terminice_core` dependency to 0.0.10.
+
 ## 0.0.12
 
 - **Display Mode Presets**: New fluent accessors for quick theme switching.
