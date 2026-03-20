@@ -90,8 +90,7 @@ class GroupConfigurable extends Configurable<Map<String, dynamic>> {
   }
 
   @override
-  dynamic toJsonValue() =>
-      {for (final c in children) c.key: c.toJsonValue()};
+  dynamic toJsonValue() => {for (final c in children) c.key: c.toJsonValue()};
 
   @override
   void loadJsonValue(dynamic jsonValue) {

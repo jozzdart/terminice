@@ -207,7 +207,8 @@ void renderEditorAction(
   final styledLabel = isFocused
       ? '${theme.bold}${theme.accent}$text${theme.reset}'
       : '${theme.accent}$text${theme.reset}';
-  ctx.highlightedLine('$arrow $styledIcon $styledLabel', highlighted: isFocused);
+  ctx.highlightedLine('$arrow $styledIcon $styledLabel',
+      highlighted: isFocused);
 }
 
 /// Renders a single configurable field as a list row.
