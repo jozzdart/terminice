@@ -106,8 +106,7 @@ class SyntaxHighlighter {
     // Keys
     out = out.replaceAllMapped(
       RegExp(r'(\")([^\"]+)(\"\s*:)'),
-      (m) =>
-          '${m[1]}${theme.accent}${theme.bold}${m[2]}${theme.reset}${m[3]}',
+      (m) => '${m[1]}${theme.accent}${theme.bold}${m[2]}${theme.reset}${m[3]}',
     );
 
     // String values
