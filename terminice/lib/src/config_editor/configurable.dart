@@ -47,13 +47,12 @@ abstract class Configurable<T> {
   Configurable({
     required this.key,
     required this.label,
-    required T value,
+    required this.value,
     this.description,
     this.hint,
     this.formatter,
     this.validator,
-  })  : value = value,
-        defaultValue = value;
+  }) : defaultValue = value;
 
   /// Formatted string representation of [value] for display in the list.
   String get displayValue {
