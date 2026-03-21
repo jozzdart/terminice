@@ -1,3 +1,12 @@
+## 0.0.18
+
+Added **`ConfigFactory`** — a shorthand factory for creating configurables with less boilerplate.
+
+- **`terminice.config`** — Extension getter that returns a `ConfigFactory` instance. Store it as `final c = terminice.config` and build fields with concise one-liners.
+- **Factory methods**: `c.boolean()`, `c.string()`, `c.password()`, `c.number()`, `c.select()`, `c.range()`, `c.rating()`, `c.theme()`, `c.group()` — each mirrors the full constructor of its corresponding `Configurable` type.
+- `select` is used for enum fields since `enum` is a Dart reserved word.
+- `ConfigFactory` is a `const` class — zero overhead, no state, works standalone or via the extension.
+
 ## 0.0.17
 
 Added **nested group configurables** to the config editor, enabling hierarchical settings with infinite nesting depth.
