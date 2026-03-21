@@ -1,3 +1,11 @@
+## 0.0.20
+
+Config editor polish: **custom icons** and **group styling**.
+
+- **Custom `icon` parameter** — Every `Configurable` type now accepts an optional `icon` to override the default type glyph. Works on direct constructors and `ConfigFactory` methods alike. Subclasses provide a `defaultTypeIcon` fallback.
+- **Distinct group styling** — `GroupConfigurable` rows render with bold labels, accent-colored field counts, and a dim `→` navigation arrow, making them visually distinct from leaf fields.
+- **Updated default icons** — `GroupConfigurable` uses `⊞` (tree-expand), `PasswordConfigurable` uses `✲` (key-like), and `BoolConfigurable` uses `☉`.
+
 ## 0.0.19
 
 Added **verify password** and **`terminice.form()`** using the new `FormPrompt` from terminice_core 0.0.13.
