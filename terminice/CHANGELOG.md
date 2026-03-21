@@ -1,5 +1,8 @@
-## 0.0.22
+## 1.0.0
 
+- **First stable release.**
+- **Documentation**: Added comprehensive, production-ready Dartdoc comments to all public APIs (extensions, methods, classes, and properties) across the entire package.
+- **Linting**: Enabled the `public_member_api_docs` linting rule in `analysis_options.yaml` to enforce 100% documentation coverage for all public members.
 - **Refactor**: Centralized hint rendering logic into `terminice_core`'s `HintKeybindingsExtensions.writeHints()`.
 - **Refactor**: Replaced duplicated manual hint chunking and rendering in `colorPicker` and `datePicker` with the new centralized `writeHints` method.
 
