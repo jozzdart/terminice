@@ -258,9 +258,13 @@ extension ColorPickerPromptExtensions on Terminice {
     // Hex mode bindings come first to intercept keys when active.
     final bindings = hexModeBindings + gridBindings + enterBinding + escBinding;
 
+    // We disable hints in the frame so we can render them manually with wrapping
+    // to prevent terminal line-wrapping from breaking the clear-lines count.
     final frame = FrameView(
       title: label,
-      theme: theme,
+      theme: theme.copyWith(
+        features: theme.features.copyWith(hintStyle: HintStyle.none),
+      ),
       bindings: bindings,
     );
 
@@ -331,6 +335,31 @@ extension ColorPickerPromptExtensions on Terminice {
               '${theme.dim}Enter to apply · Esc to discard${theme.reset}');
         }
       });
+
+      // Manually render hints to avoid terminal wrapping issues
+      if (theme.features.hintStyle == HintStyle.bullets) {
+        final entries = bindings.toHintEntries();
+        for (var i = 0; i < entries.length; i += 4) {
+          final chunk = entries.sublist(i, math.min(i + 4, entries.length));
+          final segments =
+              chunk.map((e) => HintFormat.hint(e[0], e[1], theme)).toList();
+          out.writeln(HintFormat.bullets(segments, theme));
+        }
+      } else {
+        switch (theme.features.hintStyle) {
+          case HintStyle.grid:
+            out.writeln(bindings.toHintsGrid(theme));
+            break;
+          case HintStyle.inline:
+            final entries = bindings.toHintEntries();
+            final hints = entries.map((e) => '${e[0]}: ${e[1]}').toList();
+            out.writeln(HintFormat.comma(hints, theme));
+            break;
+          case HintStyle.bullets:
+          case HintStyle.none:
+            break;
+        }
+      }
     }
 
     final runner = PromptRunner(hideCursor: true);
