@@ -39,6 +39,9 @@ class NumberConfigurable extends Configurable<num> {
   /// When `true`, uses a slider prompt. Otherwise uses text input.
   final bool useSlider;
 
+  /// When `true`, shows a percentage label on the slider bar.
+  final bool showPercent;
+
   /// When `true`, restricts the value to integers.
   final bool integerOnly;
 
@@ -57,6 +60,7 @@ class NumberConfigurable extends Configurable<num> {
     this.unit = '',
     this.sliderWidth = 28,
     this.useSlider = false,
+    this.showPercent = false,
     this.integerOnly = false,
   });
 
@@ -86,6 +90,7 @@ class NumberConfigurable extends Configurable<num> {
       step: step,
       width: sliderWidth,
       unit: unit,
+      showPercent: showPercent,
     );
     if (result != value) {
       value = integerOnly ? result.toInt() : result;

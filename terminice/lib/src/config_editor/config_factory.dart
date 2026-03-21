@@ -116,6 +116,7 @@ class ConfigFactory {
     String unit = '',
     int sliderWidth = 28,
     bool useSlider = false,
+    bool showPercent = false,
     bool integerOnly = false,
   }) =>
       NumberConfigurable(
@@ -133,6 +134,7 @@ class ConfigFactory {
         unit: unit,
         sliderWidth: sliderWidth,
         useSlider: useSlider,
+        showPercent: showPercent,
         integerOnly: integerOnly,
       );
 

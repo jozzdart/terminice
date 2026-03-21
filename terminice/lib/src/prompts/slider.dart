@@ -15,7 +15,15 @@ import 'package:terminice_core/terminice_core.dart';
 ///   min: 0,
 ///   max: 200,
 ///   initial: 150,
-///   unit: '%',
+/// );
+///
+/// final timeout = terminice.slider(
+///   'Timeout',
+///   min: 0,
+///   max: 120,
+///   initial: 30,
+///   unit: 's',
+///   showPercent: false,
 /// );
 /// ```
 extension SliderPromptExtensions on Terminice {
@@ -38,7 +46,8 @@ extension SliderPromptExtensions on Terminice {
     num initial = 50,
     num step = 1,
     int width = 28,
-    String unit = '%',
+    String unit = '',
+    bool showPercent = false,
   }) {
     final prompt = ValuePrompt(
       title: label,
@@ -51,7 +60,13 @@ extension SliderPromptExtensions on Terminice {
 
     return prompt.run(
       render: (ctx, value, ratio) {
-        ctx.sliderBar(ratio, width: width, showPercent: true);
+        ctx.sliderBar(
+          ratio,
+          width: width,
+          showPercent: showPercent,
+          value: value,
+          unit: unit,
+        );
       },
     );
   }
