@@ -2,37 +2,37 @@ import 'package:terminice/terminice.dart';
 
 import 'package:terminice_core/terminice_core.dart';
 
-/// A VS Code-style command palette with fuzzy ranking and theming.
-///
-/// Controls:
-/// - Type to search across command titles and subtitles
-/// - ↑ / ↓ navigate the ranked list
-/// - Enter confirms the focused command
-/// - Backspace edits the query
-/// - Esc cancels (returns `null`)
-/// - Ctrl+R toggles fuzzy vs substring ranking
-///
-/// Parameters:
-/// - `commands`: Entries exposed to the palette.
-/// - `label`: Frame heading shown above the input.
-/// - `maxVisible`: Maximum list height before scrolling.
-///
-/// Returns the confirmed `CommandEntry`, or `null` if cancelled.
-///
-/// Example:
-/// ```dart
-/// final command = terminice.commandPalette(
-///   'Command Palette',
-///   commands: [
-///     CommandEntry(id: 'open', title: 'Open Project', subtitle: '⌘O'),
-///     CommandEntry(id: 'deploy', title: 'Deploy', subtitle: 'Prod slot'),
-///   ],
-/// );
-/// ```
+/// Extension providing the [commandPalette] prompt for `Terminice`.
 extension CommandPaletteExtensions on Terminice {
-  /// Opens a command palette and returns the selected `CommandEntry`.
+  /// Opens a command palette and returns the selected [CommandEntry].
   ///
-  /// See the file-level docs for interaction details and arguments.
+  /// A VS Code-style command palette with fuzzy ranking and theming.
+  ///
+  /// Controls:
+  /// - Type to search across command titles and subtitles
+  /// - ↑ / ↓ navigate the ranked list
+  /// - Enter confirms the focused command
+  /// - Backspace edits the query
+  /// - Esc cancels (returns `null`)
+  /// - Ctrl+R toggles fuzzy vs substring ranking
+  ///
+  /// Parameters:
+  /// - [prompt]: Frame heading shown above the input.
+  /// - [commands]: Entries exposed to the palette.
+  /// - [maxVisible]: Maximum list height before scrolling.
+  ///
+  /// Returns the confirmed [CommandEntry], or `null` if cancelled.
+  ///
+  /// Example:
+  /// ```dart
+  /// final command = terminice.commandPalette(
+  ///   'Command Palette',
+  ///   commands: [
+  ///     CommandEntry(id: 'open', title: 'Open Project', subtitle: '⌘O'),
+  ///     CommandEntry(id: 'deploy', title: 'Deploy', subtitle: 'Prod slot'),
+  ///   ],
+  /// );
+  /// ```
   CommandEntry? commandPalette(
     String prompt, {
     required List<CommandEntry> commands,
@@ -114,12 +114,18 @@ extension CommandPaletteExtensions on Terminice {
 
 /// Represents a command exposed through the palette.
 ///
-/// Provide a stable `id`, a human-friendly `title`, and an optional
-/// `subtitle` (displayed dimmed to the right of the title).
+/// Provide a stable [id], a human-friendly [title], and an optional
+/// [subtitle] (displayed dimmed to the right of the title).
 class CommandEntry {
+  /// A unique identifier for this command.
   final String id;
+
+  /// The primary text displayed for this command.
   final String title;
+
+  /// Optional secondary text displayed dimmed next to the title.
   final String? subtitle;
 
+  /// Creates a new [CommandEntry].
   const CommandEntry({required this.id, required this.title, this.subtitle});
 }

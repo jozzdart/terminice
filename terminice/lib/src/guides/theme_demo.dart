@@ -1,6 +1,7 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+/// Provides the [themeDemo] method for previewing bundled themes.
 extension ThemeDemoExtensions on Terminice {
   /// Launches an interactive theme gallery for previewing bundled `PromptTheme`s.
   ///

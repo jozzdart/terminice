@@ -3,6 +3,7 @@ import 'package:terminice/terminice.dart';
 
 import '_file_helpers.dart';
 
+/// Adds the [filePicker] method to [Terminice] for interactive file and directory selection.
 extension FilePickerExtensions on Terminice {
   /// Opens a keyboard-driven picker for choosing a file or directory.
   ///

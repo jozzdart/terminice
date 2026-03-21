@@ -4,6 +4,7 @@ import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 import 'package:time_plus/time_plus.dart';
 
+/// Adds the [datePicker] method to [Terminice] for interactive calendar-based date selection.
 extension DatePickerExtensions on Terminice {
   /// Renders a framed, keyboard-driven calendar that captures a single
   /// `DateTime` inside an interactive Terminice session.

@@ -30,6 +30,12 @@ import 'package:terminice_core/terminice_core.dart';
 extension PasswordPromptExtensions on Terminice {
   /// Password input prompt with masking options and a required flag.
   ///
+  /// - [prompt] is the main text displayed to the user.
+  /// - [required] ensures the user cannot submit an empty string (defaults to `true`).
+  /// - [maskChar] is the character used to hide the input (defaults to '•').
+  /// - [allowReveal] allows the user to toggle visibility using a hotkey (defaults to `true`).
+  /// - [verify] when `true`, shows a second confirmation field.
+  ///
   /// Returns the entered password, or `null` if canceled.
   ///
   /// When [verify] is `true`, a second confirmation field is shown.

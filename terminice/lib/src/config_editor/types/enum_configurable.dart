@@ -20,6 +20,10 @@ class EnumConfigurable extends Configurable<String> {
   /// The allowed values to choose from.
   final List<String> options;
 
+  /// Creates an enum configurable field.
+  ///
+  /// The [key], [label], [value], and [options] are required.
+  /// The initial [value] must be present in the [options] list.
   EnumConfigurable({
     required super.key,
     required super.label,

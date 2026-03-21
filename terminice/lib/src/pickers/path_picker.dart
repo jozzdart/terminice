@@ -5,6 +5,7 @@ import 'package:terminice_core/terminice_core.dart';
 
 import '_file_helpers.dart';
 
+/// Adds the [pathPicker] method to [Terminice] for interactive directory and file selection.
 extension PathPickerExtensions on Terminice {
   /// Launches the dynamic path picker for selecting directories (and optional files).
   ///

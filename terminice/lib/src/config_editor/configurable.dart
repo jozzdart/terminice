@@ -48,6 +48,7 @@ abstract class Configurable<T> {
   /// the subclass default from [defaultTypeIcon].
   final String? icon;
 
+  /// Creates a new [Configurable] field.
   Configurable({
     required this.key,
     required this.label,
@@ -110,6 +111,7 @@ class ConfigResult {
   /// Whether the user confirmed (true) or cancelled (false).
   final bool confirmed;
 
+  /// Creates a new [ConfigResult] with the final [fields] and [confirmed] status.
   const ConfigResult({required this.fields, required this.confirmed});
 
   /// Serializes all field values into a `{key: value}` map.

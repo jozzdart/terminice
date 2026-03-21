@@ -35,8 +35,23 @@ import 'package:terminice_core/terminice_core.dart';
 extension FormPromptExtensions on Terminice {
   /// Runs a multi-field text input form.
   ///
+  /// - [prompt] is the title of the form.
+  /// - [fields] is a list of [FormFieldConfig] objects defining the inputs.
+  /// - [crossValidator] is an optional function to validate the entire form state.
+  ///
   /// Returns a [FormResult] on confirmation, or `null` if cancelled.
   /// Access field values by index: `result[0]`, `result[1]`, etc.
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final result = terminice.form(
+  ///   'Login',
+  ///   fields: [
+  ///     FormFieldConfig(label: 'Username', required: true),
+  ///     FormFieldConfig(label: 'Password', masked: true, required: true),
+  ///   ],
+  /// );
+  /// ```
   FormResult? form(
     String prompt, {
     required List<FormFieldConfig> fields,

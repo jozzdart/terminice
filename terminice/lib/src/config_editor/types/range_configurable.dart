@@ -2,9 +2,13 @@ import 'package:terminice/terminice.dart';
 
 /// Internal pair to hold the two endpoints of a range.
 class RangeValue {
+  /// The start value of the range.
   num start;
+
+  /// The end value of the range.
   num end;
 
+  /// Creates a new [RangeValue] with the given [start] and [end].
   RangeValue(this.start, this.end);
 
   @override
@@ -32,12 +36,25 @@ class RangeValue {
 /// )
 /// ```
 class RangeConfigurable extends Configurable<RangeValue> {
+  /// The minimum allowed value.
   final num min;
+
+  /// The maximum allowed value.
   final num max;
+
+  /// The increment step size.
   final num step;
+
+  /// The unit label shown alongside the values (e.g. '%', 'GB').
   final String unit;
+
+  /// Width of the range slider in characters.
   final int width;
 
+  /// Creates a range configurable field.
+  ///
+  /// The [key], [label], [start], and [end] are required.
+  /// The range is bounded by [min] and [max].
   RangeConfigurable({
     required super.key,
     required super.label,

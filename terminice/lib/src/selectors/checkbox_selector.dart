@@ -1,35 +1,35 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-/// Presents a vertical multi-select checklist with a live summary counter.
-///
-/// Controls:
-/// - ↑ / ↓ navigate
-/// - Space toggles the focused option
-/// - A selects all / clears all
-/// - Enter confirms the selection
-/// - Esc / Ctrl+C cancels (returns `[]`)
-///
-/// Parameters:
-/// - `label`: Heading rendered in the frame title bar.
-/// - `options`: String labels displayed next to the checkboxes.
-/// - `initialSelected`: Optional set of indices that start checked.
-/// - `maxVisible`: Maximum number of rows before scrolling kicks in.
-///
-/// Returns a list containing the labels that were confirmed by the user.
-///
-/// Example:
-/// ```dart
-/// final choices = terminice.checkboxSelector(
-///   'Options',
-///   options: ['Alpha', 'Beta', 'Gamma'],
-///   initialSelected: {0},
-/// );
-/// ```
+/// Extension providing the [checkboxSelector] prompt for `Terminice`.
 extension CheckboxSelectorExtensions on Terminice {
   /// Renders a keyboard-driven checklist prompt and returns the checked labels.
   ///
-  /// See the file-level docs above for controls, parameter details, and usage.
+  /// Presents a vertical multi-select checklist with a live summary counter.
+  ///
+  /// Controls:
+  /// - ↑ / ↓ navigate
+  /// - Space toggles the focused option
+  /// - A selects all / clears all
+  /// - Enter confirms the selection
+  /// - Esc / Ctrl+C cancels (returns `[]`)
+  ///
+  /// Parameters:
+  /// - [prompt]: Heading rendered in the frame title bar.
+  /// - [options]: String labels displayed next to the checkboxes.
+  /// - [initialSelected]: Optional set of indices that start checked.
+  /// - [maxVisible]: Maximum number of rows before scrolling kicks in.
+  ///
+  /// Returns a list containing the labels that were confirmed by the user.
+  ///
+  /// Example:
+  /// ```dart
+  /// final choices = terminice.checkboxSelector(
+  ///   'Options',
+  ///   options: ['Alpha', 'Beta', 'Gamma'],
+  ///   initialSelected: {0},
+  /// );
+  /// ```
   List<String> checkboxSelector(
     String prompt, {
     required List<String> options,

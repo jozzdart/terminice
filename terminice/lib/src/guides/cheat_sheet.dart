@@ -1,6 +1,7 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+/// Provides the [cheatSheet] method for rendering reference tables.
 extension CheatSheetExtensions on Terminice {
   /// Renders a framed cheat sheet table for quick reference material.
   ///

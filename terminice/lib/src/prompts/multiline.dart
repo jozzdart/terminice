@@ -8,6 +8,11 @@ import 'package:terminice_core/terminice_core.dart';
 extension MultiLineInputPromptExtensions on Terminice {
   /// MultiLineInputPrompt - editable pseudo text area for multi-line input.
   ///
+  /// - [prompt] is the title displayed above the text area.
+  /// - [maxLines] limits the total number of lines allowed (defaults to 200).
+  /// - [visibleLines] sets the height of the scrollable viewport (defaults to 10).
+  /// - [allowEmpty] determines if an empty input can be confirmed (defaults to `true`).
+  ///
   /// Controls:
   /// - Type normally to insert text
   /// - [Enter] inserts a new line

@@ -28,6 +28,10 @@ class StringConfigurable extends Configurable<String> {
   /// Maximum visible lines for the multiline editor.
   final int visibleLines;
 
+  /// Creates a string configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to an empty string.
+  /// If [multiline] is `true`, a multiline text editor is used instead of a single-line prompt.
   StringConfigurable({
     required super.key,
     required super.label,

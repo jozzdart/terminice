@@ -3,6 +3,7 @@ import 'package:terminice_core/terminice_core.dart';
 
 import '_indicator_base.dart';
 
+/// Adds the [loadingSpinner] method to the [Terminice] instance.
 extension LoadingSpinnerExtensions on Terminice {
   /// Creates a themed loading spinner with customizable message and style.
   ///
@@ -13,6 +14,10 @@ extension LoadingSpinnerExtensions on Terminice {
   /// spinner.show(1);
   /// spinner.clear();
   /// ```
+  ///
+  /// The [prompt] is the label displayed above the spinner.
+  /// The [message] is the text displayed next to the spinner.
+  /// The [style] determines the visual appearance of the spinner.
   LoadingSpinner loadingSpinner(
     String prompt, {
     String message = 'Loading',
@@ -52,12 +57,24 @@ extension LoadingSpinnerExtensions on Terminice {
 /// });
 /// ```
 class LoadingSpinner with IndicatorLifecycle {
+  /// The label displayed above the spinner.
   final String prompt;
+
+  /// The text displayed next to the spinner.
   final String message;
+
+  /// The visual appearance of the spinner.
   final SpinnerStyle style;
+
+  /// The theme controlling the colors used for the spinner and text.
   final PromptTheme theme;
 
   /// Creates a loading spinner.
+  ///
+  /// The [prompt] is the label displayed above the spinner.
+  /// The [message] is the text displayed next to the spinner.
+  /// The [style] determines the visual appearance of the spinner.
+  /// The [theme] controls the colors used for the spinner and text.
   LoadingSpinner(
     this.prompt, {
     this.message = 'Loading',

@@ -19,6 +19,11 @@ import 'package:terminice_core/terminice_core.dart';
 extension RatingPromptExtensions on Terminice {
   /// Rating prompt (default 1-5 stars) with optional label overrides.
   ///
+  /// - [prompt] is the title of the rating prompt.
+  /// - [maxStars] is the maximum rating value (defaults to 5).
+  /// - [initial] is the starting rating value (defaults to 3).
+  /// - [labels] is an optional list of strings to display for each rating level.
+  ///
   /// Returns the selected rating.
   ///
   /// **Example:**
