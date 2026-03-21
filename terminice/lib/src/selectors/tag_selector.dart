@@ -100,11 +100,17 @@ extension TagSelectorExtensions on Terminice {
         final summary = count == 0
             ? ctx.lb.emptyMessage('none selected')
             : '${theme.accent}$count selected${theme.reset}';
-        ctx.gutterLine('${HintFormat.comma([
-              'Space to toggle',
-              'Enter to confirm',
-              'Esc to cancel'
-            ], theme)}  $summary');
+        
+        // Only show inline hints if the theme's hint style is inline
+        if (theme.features.hintStyle == HintStyle.inline) {
+          ctx.gutterLine('${HintFormat.comma([
+                'Space to toggle',
+                'Enter to confirm',
+                'Esc to cancel'
+              ], theme)}  $summary');
+        } else {
+          ctx.gutterLine(summary);
+        }
 
         ctx.writeConnector();
 
