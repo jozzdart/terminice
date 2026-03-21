@@ -1,5 +1,6 @@
 ## 0.0.15
 
+- **Documentation**: Completely rewrote the `README.md` to provide a deep dive into the macro architecture of the package. Added detailed sections explaining how the `IO`, `Navigation`, `Rendering`, `Prompt`, and `Testing` modules work together, complete with code examples and clear explanations of the `termistyle` integration.
 - **New**: Added `writeHints` method to `HintKeybindingsExtensions` to centralize hint rendering across all hint styles (bullets, grid, inline, none), including support for chunking bullets via `bulletsPerLine`.
 - **Refactor**: Updated `FrameView` to use the new `writeHints` method internally.
 
