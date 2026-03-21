@@ -19,7 +19,7 @@ extension ConfirmPromptExtensions on Terminice {
   /// }
   /// ```
   bool confirm({
-    required String label,
+    String label = 'Confirm',
     required String message,
     String yesLabel = 'Yes',
     String noLabel = 'No',
