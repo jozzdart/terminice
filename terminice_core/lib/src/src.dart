@@ -15,6 +15,7 @@ export 'navigation/selection_controller.dart';
 
 // Prompts
 export 'prompt/dynamic_list_prompt.dart';
+export 'prompt/form_prompt.dart';
 export 'prompt/ranked_list_prompt.dart';
 export 'prompt/searchable_list_prompt.dart';
 export 'prompt/selectable_grid_prompt.dart';
