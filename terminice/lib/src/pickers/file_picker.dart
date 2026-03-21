@@ -27,7 +27,7 @@ extension FilePickerExtensions on Terminice {
   /// }
   /// ```
   String? filePicker(
-    String label, {
+    String prompt, {
     Directory? startDirectory,
     bool showHidden = false,
     bool foldersOnly = false,
@@ -49,8 +49,8 @@ extension FilePickerExtensions on Terminice {
       }
 
       final result = searchSelector(
+        prompt: '$prompt (${shortPath(current.path)})',
         options: names,
-        prompt: '$label (${shortPath(current.path)})',
         showSearch: true,
         multiSelect: false,
         maxVisible: 15,

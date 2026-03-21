@@ -13,8 +13,8 @@ extension ProgressDotsExtensions on Terminice {
   /// dots.show(phase: 1);
   /// dots.clear();
   /// ```
-  ProgressDots progressDots(String label) {
-    return ProgressDots(label, theme: defaultTheme);
+  ProgressDots progressDots(String prompt) {
+    return ProgressDots(prompt, theme: defaultTheme);
   }
 }
 
@@ -44,13 +44,13 @@ extension ProgressDotsExtensions on Terminice {
 /// });
 /// ```
 class ProgressDots with IndicatorLifecycle {
-  final String label;
+  final String prompt;
   final String message;
   final int maxDots;
   final PromptTheme theme;
 
   ProgressDots(
-    this.label, {
+    this.prompt, {
     this.message = 'Working',
     this.maxDots = 3,
     this.theme = PromptTheme.dark,
@@ -73,7 +73,7 @@ class ProgressDots with IndicatorLifecycle {
   }
 
   void _render(RenderOutput out, int phase) {
-    final widgetFrame = FrameView(title: label, theme: theme);
+    final widgetFrame = FrameView(title: prompt, theme: theme);
     widgetFrame.showTo(out, (ctx) {
       final dots = '.' * ((phase % (maxDots + 1)));
       ctx.gutterLine(

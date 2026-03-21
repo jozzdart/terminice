@@ -26,7 +26,7 @@ import 'editor_loop.dart';
 ///
 /// ```dart
 /// final result = terminice.configEditor(
-///   title: 'App Settings',
+///   'App Settings',
 ///   fields: [
 ///     ThemeConfigurable(key: 'theme', label: 'Theme', value: 'dark'),
 ///     BoolConfigurable(key: 'darkMode', label: 'Dark Mode', value: true),
@@ -45,8 +45,8 @@ extension ConfigEditorExtensions on Terminice {
   /// Opens a config editor for the given [fields].
   ///
   /// Returns a [ConfigResult] on confirmation, or `null` if cancelled.
-  ConfigResult? configEditor({
-    required String title,
+  ConfigResult? configEditor(
+    String prompt, {
     required List<Configurable> fields,
     int maxVisible = 18,
   }) {
@@ -55,8 +55,9 @@ extension ConfigEditorExtensions on Terminice {
     }
 
     final confirmed = runEditorLoop(
+      
       terminice: this,
-      title: title,
+      title: prompt,
       fields: fields,
       isRoot: true,
       maxVisible: maxVisible,

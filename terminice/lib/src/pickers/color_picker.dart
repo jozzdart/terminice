@@ -36,7 +36,7 @@ extension ColorPickerPromptExtensions on Terminice {
   /// Presents an interactive color grid with ANSI preview + hex output.
   ///
   /// Parameters:
-  /// - `label`: Title rendered in the frame header.
+  /// - `prompt`: Title rendered in the frame header.
   /// - `initialHex`: Preselects a color when provided (accepts `#RRGGBB` or `RRGGBB`).
   /// - `cols`: Number of hue columns. Higher counts provide finer hue control.
   /// - `rows`: Number of value rows. More rows increase vertical resolution.
@@ -44,7 +44,7 @@ extension ColorPickerPromptExtensions on Terminice {
   /// Returns the chosen hex string in uppercase `#RRGGBB` format, or `null`
   /// when the user cancels (Esc) or the prompt runner reports `PromptResult.cancelled`.
   String? colorPicker(
-    String label, {
+    String prompt, {
     String? initialHex,
     int cols = 24,
     int rows = 8,
@@ -261,7 +261,7 @@ extension ColorPickerPromptExtensions on Terminice {
     // We disable hints in the frame so we can render them manually with wrapping
     // to prevent terminal line-wrapping from breaking the clear-lines count.
     final frame = FrameView(
-      title: label,
+      title: prompt,
       theme: theme.copyWith(
         features: theme.features.copyWith(hintStyle: HintStyle.none),
       ),

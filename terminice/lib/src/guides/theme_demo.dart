@@ -99,8 +99,8 @@ extension ThemeDemoExtensions on Terminice {
         'plum',
       ];
       themed(themes[selected]!).searchSelector(
-        options: fruits,
         prompt: 'Previewing theme: $selected',
+        options: fruits,
         multiSelect: true,
       );
     }

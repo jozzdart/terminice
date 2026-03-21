@@ -19,12 +19,10 @@ extension MultiLineInputPromptExtensions on Terminice {
   ///
   /// **Mixins:** Implements [Themeable] for fluent theme configuration:
   /// ```dart
-  /// final text = MultiLineInputPrompt(label: 'Notes')
-  ///   .withMatrixTheme()
-  ///   .run();
+  /// final text = terminice.multiline('Notes');
   /// ```
-  String? multiline({
-    required String label,
+  String? multiline(
+    String prompt, {
     int maxLines = 200,
     int visibleLines = 10,
     bool allowEmpty = true,
@@ -177,7 +175,7 @@ extension MultiLineInputPromptExtensions on Terminice {
 
     void render(RenderOutput out) {
       final widgetFrame = FrameView(
-        title: label,
+        title: prompt,
         theme: theme,
         bindings: bindings,
       );

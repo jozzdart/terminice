@@ -9,7 +9,7 @@ import 'package:terminice_core/terminice_core.dart';
 ///
 /// ```dart
 /// final result = terminice.form(
-///   title: 'Login',
+///   'Login',
 ///   fields: [
 ///     FormFieldConfig(label: 'Username', required: true),
 ///     FormFieldConfig(label: 'Password', masked: true, required: true),
@@ -23,7 +23,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// Use [crossValidator] for multi-field validation:
 /// ```dart
 /// final result = terminice.form(
-///   title: 'New Password',
+///   'New Password',
 ///   fields: [
 ///     FormFieldConfig(label: 'Password', masked: true, required: true),
 ///     FormFieldConfig(label: 'Confirm', masked: true, required: true),
@@ -37,13 +37,13 @@ extension FormPromptExtensions on Terminice {
   ///
   /// Returns a [FormResult] on confirmation, or `null` if cancelled.
   /// Access field values by index: `result[0]`, `result[1]`, etc.
-  FormResult? form({
-    required String title,
+  FormResult? form(
+    String prompt, {
     required List<FormFieldConfig> fields,
     String? Function(List<String> values)? crossValidator,
   }) {
     return FormPrompt(
-      title: title,
+      title: prompt,
       theme: defaultTheme,
       fields: fields,
       crossValidator: crossValidator,

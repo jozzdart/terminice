@@ -21,7 +21,7 @@ extension DatePickerExtensions on Terminice {
   /// - Enter confirm, Esc cancel
   ///
   /// **Configuration**
-  /// - `label` becomes the frame title (e.g. “Select start date”)
+  /// - `prompt` becomes the frame title (e.g. “Select start date”)
   /// - `initialDate` seeds both the highlighted cell and the visible month
   /// - `startWeekOnMonday` toggles ISO vs. Sunday-first calendars
   /// - `allowPast` / `allowFuture` gate navigation relative to today
@@ -36,7 +36,7 @@ extension DatePickerExtensions on Terminice {
   /// );
   /// ```
   DateTime? datePicker(
-    String label, {
+    String prompt, {
     DateTime? initialDate,
     bool startWeekOnMonday = true,
     bool allowPast = true,
@@ -125,7 +125,7 @@ extension DatePickerExtensions on Terminice {
         KeyBindings.cancel(onCancel: () => cancelled = true);
 
     // Use WidgetFrame for consistent frame rendering
-    final paddedTitle = '  $label  ';
+    final paddedTitle = '  $prompt  ';
     final frame = FrameView(
       title: paddedTitle,
       theme: theme,

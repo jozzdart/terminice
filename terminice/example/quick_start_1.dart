@@ -1,6 +1,6 @@
 import 'package:terminice/terminice.dart';
 
 void main() {
-  terminice.text(prompt: 'Project name');
-  terminice.confirm(message: 'Ship to production?');
+  terminice.text('Project name');
+  terminice.confirm(prompt: 'Ship to production?', message: 'Are you sure?');
 }

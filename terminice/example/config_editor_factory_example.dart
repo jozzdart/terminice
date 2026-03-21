@@ -6,7 +6,7 @@ void main() {
   final c = terminice.config;
 
   final result = terminice.matrix.configEditor(
-    title: 'App Settings',
+    'App Settings',
     fields: [
       c.theme(
         key: 'theme',

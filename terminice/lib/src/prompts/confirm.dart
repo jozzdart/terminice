@@ -19,14 +19,14 @@ extension ConfirmPromptExtensions on Terminice {
   /// }
   /// ```
   bool confirm({
-    String label = 'Confirm',
+    String prompt = 'Confirm',
     required String message,
     String yesLabel = 'Yes',
     String noLabel = 'No',
     bool defaultYes = true,
   }) {
     return SimplePrompts.confirm(
-      title: label,
+      title: prompt,
       message: message,
       yesLabel: yesLabel,
       noLabel: noLabel,

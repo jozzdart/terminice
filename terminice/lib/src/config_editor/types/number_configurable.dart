@@ -101,7 +101,7 @@ class NumberConfigurable extends Configurable<num> {
 
   bool _editText(Terminice terminice) {
     final result = terminice.text(
-      prompt: '$label ($min–$max)',
+      '$label ($min–$max)',
       placeholder: value.toString(),
       validator: (input) {
         final parsed = num.tryParse(input);

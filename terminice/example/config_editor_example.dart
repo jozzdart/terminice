@@ -4,7 +4,7 @@ import 'package:terminice/terminice.dart';
 
 void main() {
   final result = terminice.configEditor(
-    title: 'App Settings',
+    'App Settings',
     fields: [
       ThemeConfigurable(
         key: 'theme',

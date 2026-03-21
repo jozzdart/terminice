@@ -30,7 +30,7 @@ extension PathPickerExtensions on Terminice {
   /// }
   /// ```
   String? pathPicker(
-    String label, {
+    String prompt, {
     Directory? startDirectory,
     bool showHidden = false,
     bool allowFiles = false,
@@ -40,13 +40,13 @@ extension PathPickerExtensions on Terminice {
     Directory current = startDirectory ?? Directory.current;
     String? selectedPath;
 
-    final prompt = DynamicListPrompt<_Entry>(
-      title: label,
+    final promptObj = DynamicListPrompt<_Entry>(
+      title: prompt,
       theme: theme,
       maxVisible: maxVisible,
     );
 
-    final result = prompt.run(
+    final result = promptObj.run(
       buildItems: () => _readEntries(current, showHidden, allowFiles),
       onPrimary: (entry, index) {
         switch (entry.type) {

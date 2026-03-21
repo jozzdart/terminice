@@ -2,19 +2,19 @@ import 'package:terminice/terminice.dart';
 
 Future<void> themeShowcase(Terminice t) async {
   // 1. Text
-  t.text(prompt: 'Text Prompt', placeholder: 'Type here...', required: false);
+  t.text('Text Prompt', placeholder: 'Type here...', required: false);
 
   // 2. Password
-  t.password(prompt: 'Password Prompt', required: false);
+  t.password('Password Prompt', required: false);
 
   // 3. Confirm
-  t.confirm(label: 'Confirm Prompt', message: 'Are you sure?');
+  t.confirm(message: 'Are you sure?');
 
   // 4. Slider
   t.slider('Slider Prompt', min: 0, max: 100, initial: 50);
 
   // 5. Multiline
-  t.multiline(label: 'Multiline Prompt');
+  t.multiline('Multiline Prompt');
 
   // 6. Date
   t.date('Date Prompt');
@@ -26,14 +26,13 @@ Future<void> themeShowcase(Terminice t) async {
   t.rating('Rating Prompt', maxStars: 5, initial: 3);
 
   // 9. Choice Selector
-  t.choiceSelector(prompt: 'Choice Selector', items: [
+  t.choiceSelector('Choice Selector', items: [
     ChoiceItem('Option 1', subtitle: 'First option'),
     ChoiceItem('Option 2', subtitle: 'Second option'),
   ]);
 
   // 10. Checkbox Selector
-  t.checkboxSelector(
-      label: 'Checkbox Selector',
+  t.checkboxSelector('Checkbox Selector',
       options: ['Option 1', 'Option 2', 'Option 3']);
 
   // 11. Search Selector
@@ -41,13 +40,13 @@ Future<void> themeShowcase(Terminice t) async {
       prompt: 'Search Selector', options: ['Apple', 'Banana', 'Cherry']);
 
   // 12. Toggle Group
-  t.toggleGroup(title: 'Toggle Group', items: [
+  t.toggleGroup('Toggle Group', items: [
     ToggleItem('On', initialOn: true),
     ToggleItem('Off', initialOn: false),
   ]);
 
   // 13. Command Palette
-  t.commandPalette(label: 'Command Palette', commands: [
+  t.commandPalette('Command Palette', commands: [
     CommandEntry(id: '1', title: 'Command 1', subtitle: 'First'),
     CommandEntry(id: '2', title: 'Command 2', subtitle: 'Second'),
   ]);
