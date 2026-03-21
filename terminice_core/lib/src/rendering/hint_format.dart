@@ -95,4 +95,36 @@ extension HintKeybindingsExtensions on KeyBindings {
         entries.map((e) => HintFormat.hint(e[0], e[1], theme)).toList();
     return HintFormat.bullets(segments, theme);
   }
+
+  /// Writes hints directly to a [RenderOutput], handling all hint styles.
+  /// 
+  /// If [bulletsPerLine] is provided and the style is [HintStyle.bullets],
+  /// the hints will be chunked into multiple lines to avoid terminal wrapping issues.
+  void writeHints(RenderOutput out, PromptTheme theme, {int? bulletsPerLine}) {
+    switch (theme.features.hintStyle) {
+      case HintStyle.bullets:
+        final entries = toHintEntries();
+        if (bulletsPerLine != null && bulletsPerLine > 0) {
+          for (var i = 0; i < entries.length; i += bulletsPerLine) {
+            final chunk = entries.sublist(i, min(i + bulletsPerLine, entries.length));
+            final segments =
+                chunk.map((e) => HintFormat.hint(e[0], e[1], theme)).toList();
+            out.writeln(HintFormat.bullets(segments, theme));
+          }
+        } else {
+          out.writeln(toHintsBullets(theme));
+        }
+        break;
+      case HintStyle.grid:
+        out.writeln(toHintsGrid(theme));
+        break;
+      case HintStyle.inline:
+        final entries = toHintEntries();
+        final hints = entries.map((e) => '${e[0]}: ${e[1]}').toList();
+        out.writeln(HintFormat.comma(hints, theme));
+        break;
+      case HintStyle.none:
+        break;
+    }
+  }
 }
