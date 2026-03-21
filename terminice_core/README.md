@@ -1,6 +1,22 @@
 # terminice_core
 
-`terminice_core` provides the low-level primitives that power the Terminice design system. The navigation utilities live in `lib/src/navigation` and are intended to be consumed directly by downstream packages via the public exports in `terminice_core.dart`.
+**The low-level foundation for building beautiful terminal interfaces in Dart.**
+
+> **Note:** If you just want to ask for user input or display menus, you probably want the main [**`terminice`** package on pub.dev](https://pub.dev/packages/terminice). Check out the [main `terminice` README](https://pub.dev/packages/terminice) for a complete catalogue of ready-to-use components.
+
+`terminice_core` provides the essential primitives, state management, and rendering utilities that power the main `terminice` package. While `terminice` offers high-level, ready-to-use components, `terminice_core` is designed for developers who need full control to build custom prompts, complex CLI layouts, or entirely new terminal UI frameworks.
+
+## Core Modules
+
+`terminice_core` is highly modular, allowing you to compose only the pieces you need. The architecture is divided into the following core modules:
+
+- [**Navigation**](#navigation-toolkit) — State machines for lists, grids, and focus management.
+- [**Prompt**](#prompt-toolkit) — Scaffolding and lifecycle management for interactive CLI prompts.
+- [**Rendering**](#rendering) — High-performance terminal drawing, layout, and theming utilities.
+- [**IO**](#io) — Cross-platform terminal interaction, raw mode, and input parsing.
+- [**Testing**](#testing) — Mock terminals and utilities for testing CLI applications.
+
+---
 
 ## Navigation toolkit
 
