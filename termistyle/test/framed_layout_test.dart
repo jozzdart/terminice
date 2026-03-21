@@ -71,7 +71,9 @@ void main() {
       expect(result, endsWith(reset));
     });
 
-    test('bordered title structure is corner-dash-space-title-space-dash-corner', () {
+    test(
+        'bordered title structure is corner-dash-space-title-space-dash-corner',
+        () {
       final frame = FramedLayout('X', theme: dark);
       final stripped = stripAnsi(frame.top());
       expect(stripped, equals('┌─ X ─┐'));
@@ -240,7 +242,9 @@ void main() {
       expect(stripped.substring(1), matches(RegExp(r'^─+$')));
     });
 
-    test('bottom width is title.length + 5 dashes + 1 corner = title.length + 6', () {
+    test(
+        'bottom width is title.length + 5 dashes + 1 corner = title.length + 6',
+        () {
       const title = 'Hello';
       final frame = FramedLayout(title, theme: dark);
       final stripped = stripAnsi(frame.bottom());
@@ -350,7 +354,8 @@ void main() {
   // ══════════════════════════════════════════════════════════════════════════
 
   group('gutterOnly()', () {
-    test('returns vertical bar without trailing space when borders enabled', () {
+    test('returns vertical bar without trailing space when borders enabled',
+        () {
       final frame = FramedLayout('T', theme: dark);
       final result = frame.gutterOnly();
       final stripped = stripAnsi(result);

@@ -466,8 +466,7 @@ void main() {
     });
 
     test('can disable inverse highlight on focus', () {
-      final custom =
-          DisplayFeatures.focus.copyWith(useInverseHighlight: false);
+      final custom = DisplayFeatures.focus.copyWith(useInverseHighlight: false);
       expect(custom.useInverseHighlight, isFalse);
       expect(custom.showBorders, isTrue);
       expect(custom.hintStyle, equals(HintStyle.none));

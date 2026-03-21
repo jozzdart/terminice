@@ -34,12 +34,14 @@ void main() {
     });
 
     test('contains the expected braille characters', () {
-      expect(dotsFrames, equals(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']));
+      expect(dotsFrames,
+          equals(['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']));
     });
 
     test('every frame is a single character', () {
       for (final frame in dotsFrames) {
-        expect(frame.runes.length, equals(1), reason: 'frame "$frame" should be a single character');
+        expect(frame.runes.length, equals(1),
+            reason: 'frame "$frame" should be a single character');
       }
     });
 
@@ -59,7 +61,8 @@ void main() {
         expect(
           codePoint >= 0x2800 && codePoint <= 0x28FF,
           isTrue,
-          reason: 'frame "$frame" (U+${codePoint.toRadixString(16).toUpperCase()}) should be in braille block',
+          reason:
+              'frame "$frame" (U+${codePoint.toRadixString(16).toUpperCase()}) should be in braille block',
         );
       }
     });
@@ -77,13 +80,29 @@ void main() {
     test('contains the expected block element characters', () {
       expect(
         barsFrames,
-        equals(['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█', '▇', '▆', '▅', '▄', '▃', '▂']),
+        equals([
+          '▁',
+          '▂',
+          '▃',
+          '▄',
+          '▅',
+          '▆',
+          '▇',
+          '█',
+          '▇',
+          '▆',
+          '▅',
+          '▄',
+          '▃',
+          '▂'
+        ]),
       );
     });
 
     test('every frame is a single character', () {
       for (final frame in barsFrames) {
-        expect(frame.runes.length, equals(1), reason: 'frame "$frame" should be a single character');
+        expect(frame.runes.length, equals(1),
+            reason: 'frame "$frame" should be a single character');
       }
     });
 
@@ -108,7 +127,8 @@ void main() {
         expect(
           codePoint >= 0x2580 && codePoint <= 0x259F,
           isTrue,
-          reason: 'frame "$frame" (U+${codePoint.toRadixString(16).toUpperCase()}) should be in block elements',
+          reason:
+              'frame "$frame" (U+${codePoint.toRadixString(16).toUpperCase()}) should be in block elements',
         );
       }
     });
@@ -134,7 +154,8 @@ void main() {
 
     test('every frame is a single character', () {
       for (final frame in arcsFrames) {
-        expect(frame.runes.length, equals(1), reason: 'frame "$frame" should be a single character');
+        expect(frame.runes.length, equals(1),
+            reason: 'frame "$frame" should be a single character');
       }
     });
 
@@ -168,7 +189,8 @@ void main() {
 
     test('returns non-empty list for every enum value', () {
       for (final style in SpinnerFrames.values) {
-        expect(spinnerFramesList(style).isNotEmpty, isTrue, reason: '$style should have frames');
+        expect(spinnerFramesList(style).isNotEmpty, isTrue,
+            reason: '$style should have frames');
       }
     });
 
@@ -186,15 +208,19 @@ void main() {
       for (final style in SpinnerFrames.values) {
         for (final frame in spinnerFramesList(style)) {
           expect(frame.isNotEmpty, isTrue);
-          expect(frame.runes.length, equals(1), reason: '$style frame "$frame" should be one character');
+          expect(frame.runes.length, equals(1),
+              reason: '$style frame "$frame" should be one character');
         }
       }
     });
 
     test('returns same reference on repeated calls', () {
-      expect(spinnerFramesList(SpinnerFrames.dots), same(spinnerFramesList(SpinnerFrames.dots)));
-      expect(spinnerFramesList(SpinnerFrames.bars), same(spinnerFramesList(SpinnerFrames.bars)));
-      expect(spinnerFramesList(SpinnerFrames.arcs), same(spinnerFramesList(SpinnerFrames.arcs)));
+      expect(spinnerFramesList(SpinnerFrames.dots),
+          same(spinnerFramesList(SpinnerFrames.dots)));
+      expect(spinnerFramesList(SpinnerFrames.bars),
+          same(spinnerFramesList(SpinnerFrames.bars)));
+      expect(spinnerFramesList(SpinnerFrames.arcs),
+          same(spinnerFramesList(SpinnerFrames.arcs)));
     });
   });
 

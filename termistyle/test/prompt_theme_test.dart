@@ -68,8 +68,7 @@ void main() {
     });
 
     test('replaces features only', () {
-      final copy =
-          PromptTheme.dark.copyWith(features: DisplayFeatures.verbose);
+      final copy = PromptTheme.dark.copyWith(features: DisplayFeatures.verbose);
       expect(identical(copy.colors, TerminalColors.dark), isTrue);
       expect(identical(copy.glyphs, TerminalGlyphs.unicode), isTrue);
       expect(identical(copy.features, DisplayFeatures.verbose), isTrue);
@@ -320,16 +319,15 @@ void main() {
     test('matrix uses matrix colors and rounded glyphs', () {
       expect(
           identical(PromptTheme.matrix.colors, TerminalColors.matrix), isTrue);
-      expect(identical(PromptTheme.matrix.glyphs, TerminalGlyphs.rounded),
-          isTrue);
+      expect(
+          identical(PromptTheme.matrix.glyphs, TerminalGlyphs.rounded), isTrue);
       expect(identical(PromptTheme.matrix.features, DisplayFeatures.standard),
           isTrue);
     });
 
     test('fire uses fire colors and double glyphs', () {
       expect(identical(PromptTheme.fire.colors, TerminalColors.fire), isTrue);
-      expect(
-          identical(PromptTheme.fire.glyphs, TerminalGlyphs.double), isTrue);
+      expect(identical(PromptTheme.fire.glyphs, TerminalGlyphs.double), isTrue);
       expect(identical(PromptTheme.fire.features, DisplayFeatures.standard),
           isTrue);
     });
@@ -337,15 +335,14 @@ void main() {
     test('pastel uses pastel colors with default glyphs', () {
       expect(
           identical(PromptTheme.pastel.colors, TerminalColors.pastel), isTrue);
-      expect(identical(PromptTheme.pastel.glyphs, TerminalGlyphs.unicode),
-          isTrue);
+      expect(
+          identical(PromptTheme.pastel.glyphs, TerminalGlyphs.unicode), isTrue);
       expect(identical(PromptTheme.pastel.features, DisplayFeatures.standard),
           isTrue);
     });
 
     test('ocean uses ocean colors and dotted glyphs', () {
-      expect(
-          identical(PromptTheme.ocean.colors, TerminalColors.ocean), isTrue);
+      expect(identical(PromptTheme.ocean.colors, TerminalColors.ocean), isTrue);
       expect(
           identical(PromptTheme.ocean.glyphs, TerminalGlyphs.dotted), isTrue);
       expect(identical(PromptTheme.ocean.features, DisplayFeatures.standard),
@@ -359,15 +356,13 @@ void main() {
       expect(identical(PromptTheme.monochrome.glyphs, TerminalGlyphs.ascii),
           isTrue);
       expect(
-          identical(
-              PromptTheme.monochrome.features, DisplayFeatures.standard),
+          identical(PromptTheme.monochrome.features, DisplayFeatures.standard),
           isTrue);
     });
 
     test('neon uses neon colors and heavy glyphs', () {
       expect(identical(PromptTheme.neon.colors, TerminalColors.neon), isTrue);
-      expect(
-          identical(PromptTheme.neon.glyphs, TerminalGlyphs.heavy), isTrue);
+      expect(identical(PromptTheme.neon.glyphs, TerminalGlyphs.heavy), isTrue);
       expect(identical(PromptTheme.neon.features, DisplayFeatures.standard),
           isTrue);
     });
@@ -375,8 +370,8 @@ void main() {
     test('arcane uses arcane colors and arcane glyphs', () {
       expect(
           identical(PromptTheme.arcane.colors, TerminalColors.arcane), isTrue);
-      expect(identical(PromptTheme.arcane.glyphs, TerminalGlyphs.arcane),
-          isTrue);
+      expect(
+          identical(PromptTheme.arcane.glyphs, TerminalGlyphs.arcane), isTrue);
       expect(identical(PromptTheme.arcane.features, DisplayFeatures.standard),
           isTrue);
     });
@@ -412,7 +407,8 @@ void main() {
               identical(a.glyphs, b.glyphs) &&
               identical(a.features, b.features);
           expect(same, isFalse,
-              reason: 'theme $i and $j should differ in at least one component');
+              reason:
+                  'theme $i and $j should differ in at least one component');
         }
       }
     });
@@ -424,15 +420,13 @@ void main() {
 
   group('getters reflect copyWith changes', () {
     test('color getters update after copyWith(colors:)', () {
-      final theme =
-          PromptTheme.dark.copyWith(colors: TerminalColors.matrix);
+      final theme = PromptTheme.dark.copyWith(colors: TerminalColors.matrix);
       expect(theme.accent, equals(TerminalColors.matrix.accent));
       expect(theme.accent, equals('\x1B[32m'));
     });
 
     test('glyph getters update after copyWith(glyphs:)', () {
-      final theme =
-          PromptTheme.dark.copyWith(glyphs: TerminalGlyphs.ascii);
+      final theme = PromptTheme.dark.copyWith(glyphs: TerminalGlyphs.ascii);
       expect(theme.arrow, equals('>'));
       expect(theme.borderTop, equals('+'));
     });
@@ -468,8 +462,8 @@ void main() {
       expect(theme.borderTop, equals('┌'));
     });
 
-    test(
-        'theme.copyWith with features.copyWith overrides a single feature', () {
+    test('theme.copyWith with features.copyWith overrides a single feature',
+        () {
       final theme = PromptTheme.dark.copyWith(
         features: DisplayFeatures.standard.copyWith(showBorders: false),
       );
@@ -597,8 +591,7 @@ void main() {
     });
 
     test('different themes produce different ANSI sequences for same text', () {
-      final darkStyled =
-          '${PromptTheme.dark.accent}X${PromptTheme.dark.reset}';
+      final darkStyled = '${PromptTheme.dark.accent}X${PromptTheme.dark.reset}';
       final matrixStyled =
           '${PromptTheme.matrix.accent}X${PromptTheme.matrix.reset}';
       expect(stripAnsi(darkStyled), equals(stripAnsi(matrixStyled)));
@@ -671,7 +664,9 @@ void main() {
       expect(PromptTheme.minimal.useInverseHighlight, isFalse);
     });
 
-    test('copyWith on a preset preserves preset identity for untouched components', () {
+    test(
+        'copyWith on a preset preserves preset identity for untouched components',
+        () {
       final derived = PromptTheme.arcane.copyWith(
         features: DisplayFeatures.compact,
       );
