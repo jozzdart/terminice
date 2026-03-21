@@ -1,6 +1,6 @@
 name: termistyle
-description: "Standalone terminal styling primitives — ANSI color palettes, box-drawing glyphs, display features, themes, and text utilities for CLI applications."
-version: 1.0.0
+description: "Standalone terminal styling primitives built for the terminice package — ANSI color palettes, box-drawing glyphs, display features, themes, and text utilities for CLI applications"
+version: 1.0.1
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/termistyle
 issue_tracker: https://github.com/jozzdart/terminice/issues
