@@ -55,7 +55,6 @@ extension ConfigEditorExtensions on Terminice {
     }
 
     final confirmed = runEditorLoop(
-      
       terminice: this,
       title: prompt,
       fields: fields,
