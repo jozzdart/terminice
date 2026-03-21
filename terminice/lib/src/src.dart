@@ -31,4 +31,5 @@ export 'selectors/toggle_group.dart';
 export 'style/theme_extensions.dart';
 export 'config_editor/configurable.dart';
 export 'config_editor/config_editor.dart';
+export 'config_editor/config_factory.dart';
 export 'config_editor/types/types.dart';
