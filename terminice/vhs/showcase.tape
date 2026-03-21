@@ -9,11 +9,11 @@ Set Margin 0
 Set BorderRadius 0
 Set WindowBar ""
 
-Set FontSize 16
-Set Width 900
-Set Height 250
+Set FontSize 20
+Set Width 1125
+Set Height 310
 Set Padding 20
-Set Theme "Catppuccin Mocha"
+Set Theme "OneDark"
 
 Hide
 Type "clear && dart run example/showcase.dart"

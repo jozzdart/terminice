@@ -29,7 +29,7 @@ extension RangePromptExtensions on Terminice {
   /// final (from, to) = terminice.range('Quiet hours', unit: 'h');
   /// ```
   RangeResult range(
-    String label, {
+    String prompt, {
     num min = 0,
     num max = 100,
     num startInitial = 20,
@@ -40,7 +40,7 @@ extension RangePromptExtensions on Terminice {
   }) {
     final theme = defaultTheme;
     final rangePrompt = RangeValuePrompt(
-      title: label,
+      title: prompt,
       min: min,
       max: max,
       startInitial: startInitial,

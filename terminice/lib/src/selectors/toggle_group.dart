@@ -20,7 +20,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// Example:
 /// ```dart
 /// final settings = terminice.toggleGroup(
-///   title: 'Settings',
+///   'Settings',
 ///   items: const [
 ///     ToggleItem('Auto deploy', initialOn: true),
 ///     ToggleItem('Send email'),
@@ -31,8 +31,8 @@ extension ToggleGroupExtensions on Terminice {
   /// Runs the toggle group prompt and returns the confirmed states.
   ///
   /// See the file-level docs for control hints and argument details.
-  Map<String, bool> toggleGroup({
-    required String title,
+  Map<String, bool> toggleGroup(
+    String prompt, {
     required List<ToggleItem> items,
     bool alignContent = true,
   }) {
@@ -72,7 +72,7 @@ extension ToggleGroupExtensions on Terminice {
 
     // Use WidgetFrame for consistent frame rendering
     final frame = FrameView(
-      title: title,
+      title: prompt,
       theme: theme,
       bindings: bindings,
     );

@@ -1,3 +1,11 @@
+## 0.0.21
+
+- **Documentation**: Completely rewrote the `README.md` with a new structure, comprehensive catalogue, quick start guides, and embedded interactive VHS showcase GIFs.
+- **Bug fix**: Fixed an issue in `colorPicker` where long hint strings wrapped by the terminal emulator caused the internal line counter to desync, resulting in the frame title duplicating on every render step. Hints are now manually chunked and wrapped to ensure accurate line clearing.
+- **Bug fix**: Fixed `datePicker` not respecting the `hintStyle` of the current theme (it always rendered bullets). It now correctly renders grid, bullets, or inline hints based on the active display mode.
+- **Bug fix**: Fixed `tagSelector` hardcoding inline hints regardless of the theme's `hintStyle`. It now only shows inline hints if the theme specifically requests them.
+- **Naming consistency**: All prompts now use `prompt` as the main text parameter. Most are positional; those with defaults (like `confirm`, `searchSelector`, etc.) use a named `prompt` or `title`.
+
 ## 0.0.20
 
 Config editor polish: **custom icons**, **group styling**, and **slider labels**.

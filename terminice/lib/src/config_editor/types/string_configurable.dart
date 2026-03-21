@@ -69,7 +69,7 @@ class StringConfigurable extends Configurable<String> {
 
   bool _editSingleLine(Terminice terminice) {
     final result = terminice.text(
-      prompt: label,
+      label,
       placeholder: placeholder ?? value,
       validator: validator != null ? (v) => validator!(v) ?? '' : null,
       required: required,
@@ -83,7 +83,7 @@ class StringConfigurable extends Configurable<String> {
 
   bool _editMultiline(Terminice terminice) {
     final result = terminice.multiline(
-      label: label,
+      label,
       visibleLines: visibleLines,
       allowEmpty: !required,
     );

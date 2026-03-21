@@ -41,7 +41,7 @@ class BoolConfigurable extends Configurable<bool> {
   @override
   bool edit(Terminice terminice) {
     final result = terminice.confirm(
-      label: label,
+      prompt: label,
       message: description ?? 'Toggle $label',
       yesLabel: trueLabel,
       noLabel: falseLabel,

@@ -21,7 +21,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// Example:
 /// ```dart
 /// final choices = terminice.checkboxSelector(
-///   label: 'Options',
+///   'Options',
 ///   options: ['Alpha', 'Beta', 'Gamma'],
 ///   initialSelected: {0},
 /// );
@@ -30,8 +30,8 @@ extension CheckboxSelectorExtensions on Terminice {
   /// Renders a keyboard-driven checklist prompt and returns the checked labels.
   ///
   /// See the file-level docs above for controls, parameter details, and usage.
-  List<String> checkboxSelector({
-    required String label,
+  List<String> checkboxSelector(
+    String prompt, {
     required List<String> options,
     Set<int>? initialSelected,
     int maxVisible = 12,
@@ -40,8 +40,8 @@ extension CheckboxSelectorExtensions on Terminice {
     if (options.isEmpty) return <String>[];
 
     // Use SelectableListPrompt for centralized state management
-    final prompt = SelectableListPrompt<String>(
-      title: label,
+    final promptObj = SelectableListPrompt<String>(
+      title: prompt,
       items: options,
       theme: theme,
       multiSelect: true,
@@ -49,15 +49,15 @@ extension CheckboxSelectorExtensions on Terminice {
       initialSelection: initialSelected,
     );
 
-    // Summary line builder (captures prompt for access to selection state)
+    // Summary line builder (captures promptObj for access to selection state)
     String buildSummaryLine() {
       final total = options.length;
-      final count = prompt.selection.count;
+      final count = promptObj.selection.count;
       if (count == 0) {
         return '${theme.dim}(none selected)${theme.reset}';
       }
       // render up to 3 selections by label, then "+N"
-      final indices = prompt.selection.getSelectedIndices();
+      final indices = promptObj.selection.getSelectedIndices();
       final names = <String>[];
       for (var i = 0; i < indices.length && i < 3; i++) {
         final name = options[indices[i]];
@@ -69,11 +69,11 @@ extension CheckboxSelectorExtensions on Terminice {
       return '${theme.accent}$count${theme.reset}/${theme.dim}$total${theme.reset} • ${names.join('${theme.dim}, ${theme.reset}')} $more';
     }
 
-    return prompt.runCustom(
+    return promptObj.runCustom(
       // Add select-all binding ('A' key)
       extraBindings: KeyBindings.letter(
         char: 'A',
-        onPress: () => prompt.selection.toggleAll(options.length),
+        onPress: () => promptObj.selection.toggleAll(options.length),
         hintDescription: 'select all / clear',
       ),
 

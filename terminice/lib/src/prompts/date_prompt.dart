@@ -36,10 +36,10 @@ extension DatePromptExtensions on Terminice {
   /// print(date); // -> 2025-12-14 00:00:00.000
   /// ```
   DateTime? date(
-    String label, {
+    String prompt, {
     DateTime? initial,
   }) {
-    if (label.isEmpty) label = 'Date';
+    if (prompt.isEmpty) prompt = 'Date';
     final theme = defaultTheme;
     final initialDate = initial ?? DateTime.now();
 
@@ -121,7 +121,7 @@ extension DatePromptExtensions on Terminice {
         KeyBindings.cancel(onCancel: () => cancelled = true);
 
     void render(RenderOutput out) {
-      final title = '$label — Choose Date';
+      final title = '$prompt — Choose Date';
       final widgetFrame = FrameView(
         title: '  $title  ',
         theme: theme,

@@ -17,13 +17,13 @@ import 'package:terminice_core/terminice_core.dart';
 ///
 /// ```dart
 /// final apiKey = terminice.password(
-///   prompt: 'API key',
+///   'API key',
 ///   maskChar: '*',
 ///   allowReveal: false,
 /// );
 ///
 /// final secret = terminice.password(
-///   prompt: 'New password',
+///   'New password',
 ///   verify: true,
 /// );
 /// ```
@@ -34,8 +34,8 @@ extension PasswordPromptExtensions on Terminice {
   ///
   /// When [verify] is `true`, a second confirmation field is shown.
   /// The user must enter the same password in both fields to confirm.
-  String? password({
-    required String prompt,
+  String? password(
+    String prompt, {
     bool required = true,
     String maskChar = '•',
     bool allowReveal = true,

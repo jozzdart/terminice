@@ -21,8 +21,8 @@ extension CheatSheetExtensions on Terminice {
   ///
   /// The table automatically sizes columns, applies zebra striping, and renders
   /// within a `FrameView` that matches the current theme.
-  void cheatSheet({
-    required String title,
+  void cheatSheet(
+    String prompt, {
     required List<List<String>> entries,
     List<String> columns = const ['Command', 'Shortcut', 'Usage'],
     List<ColumnAlign>? columnAlignments,
@@ -38,7 +38,7 @@ extension CheatSheetExtensions on Terminice {
         'columnAlignments must match the column count (${columns.length}).');
 
     final theme = defaultTheme;
-    final frame = FrameView(title: title, theme: theme);
+    final frame = FrameView(title: prompt, theme: theme);
 
     frame.show((ctx) {
       final renderer = TableRenderer.withAlignments(

@@ -3,18 +3,18 @@ import 'package:terminice/terminice.dart';
 void main() {
   // Text input
   final name = terminice.text(
-    prompt: 'Your name',
+    'Your name',
     placeholder: 'Ada Lovelace',
   );
   print('Hello, $name!');
 
   // Password input (masked)
-  final secret = terminice.password(prompt: 'Enter password');
+  final secret = terminice.password('Enter password');
   print('Password length: ${secret?.length ?? 0}');
 
   // Confirmation dialog
   final proceed = terminice.confirm(
-    label: 'Continue',
+    prompt: 'Continue',
     message: 'Ready to proceed?',
   );
   print('Proceed: $proceed');
@@ -29,7 +29,7 @@ void main() {
 
   // Multi-select checkboxes
   final features = terminice.checkboxSelector(
-    label: 'Enable features',
+    'Enable features',
     options: ['Dark mode', 'Notifications', 'Auto-save', 'Sync'],
     initialSelected: {0},
   );

@@ -40,7 +40,7 @@ extension SliderPromptExtensions on Terminice {
   /// );
   /// ```
   num slider(
-    String label, {
+    String prompt, {
     num min = 0,
     num max = 100,
     num initial = 50,
@@ -49,8 +49,8 @@ extension SliderPromptExtensions on Terminice {
     String unit = '',
     bool showPercent = false,
   }) {
-    final prompt = ValuePrompt(
-      title: label,
+    final promptObj = ValuePrompt(
+      title: prompt,
       min: min,
       max: max,
       initial: initial,
@@ -58,7 +58,7 @@ extension SliderPromptExtensions on Terminice {
       theme: defaultTheme,
     );
 
-    return prompt.run(
+    return promptObj.run(
       render: (ctx, value, ratio) {
         ctx.sliderBar(
           ratio,

@@ -22,7 +22,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// Example:
 /// ```dart
 /// final command = terminice.commandPalette(
-///   label: 'Command Palette',
+///   'Command Palette',
 ///   commands: [
 ///     CommandEntry(id: 'open', title: 'Open Project', subtitle: '⌘O'),
 ///     CommandEntry(id: 'deploy', title: 'Deploy', subtitle: 'Prod slot'),
@@ -33,22 +33,22 @@ extension CommandPaletteExtensions on Terminice {
   /// Opens a command palette and returns the selected `CommandEntry`.
   ///
   /// See the file-level docs for interaction details and arguments.
-  CommandEntry? commandPalette({
+  CommandEntry? commandPalette(
+    String prompt, {
     required List<CommandEntry> commands,
-    required String label,
     int maxVisible = 12,
   }) {
     if (commands.isEmpty) return null;
     final theme = defaultTheme;
 
-    final prompt = RankedListPrompt<CommandEntry>(
-      title: label,
+    final promptObj = RankedListPrompt<CommandEntry>(
+      title: prompt,
       items: commands,
       theme: theme,
       maxVisible: maxVisible,
     );
 
-    return prompt.run(
+    return promptObj.run(
       // Custom ranking that checks both title and subtitle
       rankItem: (entry, query, useFuzzy) {
         if (query.isEmpty) return const RankResult(0, []);

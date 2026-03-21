@@ -14,12 +14,12 @@ extension LoadingSpinnerExtensions on Terminice {
   /// spinner.clear();
   /// ```
   LoadingSpinner loadingSpinner(
-    String label, {
+    String prompt, {
     String message = 'Loading',
     SpinnerStyle style = SpinnerStyle.dots,
   }) {
     return LoadingSpinner(
-      label,
+      prompt,
       message: message,
       style: style,
       theme: defaultTheme,
@@ -52,14 +52,14 @@ extension LoadingSpinnerExtensions on Terminice {
 /// });
 /// ```
 class LoadingSpinner with IndicatorLifecycle {
-  final String label;
+  final String prompt;
   final String message;
   final SpinnerStyle style;
   final PromptTheme theme;
 
   /// Creates a loading spinner.
   LoadingSpinner(
-    this.label, {
+    this.prompt, {
     this.message = 'Loading',
     this.style = SpinnerStyle.dots,
     this.theme = PromptTheme.dark,
@@ -83,7 +83,7 @@ class LoadingSpinner with IndicatorLifecycle {
 
   void _render(RenderOutput out, int frameIndex) {
     final frames = InlineSpinner.framesForStyle(style);
-    final widgetFrame = FrameView(title: label, theme: theme);
+    final widgetFrame = FrameView(title: prompt, theme: theme);
 
     final color = (frameIndex % 2 == 0) ? theme.accent : theme.highlight;
 

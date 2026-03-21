@@ -54,7 +54,7 @@ class PasswordConfigurable extends Configurable<String> {
   @override
   bool edit(Terminice terminice) {
     final result = terminice.password(
-      prompt: label,
+      label,
       maskChar: maskChar,
       allowReveal: allowReveal,
       required: required,

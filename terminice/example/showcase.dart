@@ -3,14 +3,14 @@ import 'package:terminice/terminice.dart';
 void main() async {
   // 1. Text prompt with default theme
   final name = terminice.text(
-    prompt: 'Project name',
+    'Project name',
     placeholder: 'my_awesome_app',
   );
 
   // 2. Password prompt with Arcane theme
   // ignore: unused_local_variable
   final secret = terminice.arcane.password(
-    prompt: 'Vault passphrase',
+    'Vault passphrase',
     maskChar: '✦',
   );
 
@@ -34,13 +34,13 @@ void main() async {
 
   // 5. Multiline editor with Matrix theme
   final notes = terminice.matrix.multiline(
-    label: 'Release notes (Ctrl+D to save)',
+    'Release notes (Ctrl+D to save)',
     visibleLines: 4,
   );
 
   // 6. Confirm with Neon theme
   final confirmed = terminice.neon.confirm(
-    label: 'Deploy',
+    prompt: 'Deploy',
     message: 'Ship $name to production?',
   );
 

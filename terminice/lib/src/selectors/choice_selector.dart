@@ -24,11 +24,11 @@ import 'package:terminice_core/terminice_core.dart';
 /// Example:
 /// ```dart
 /// final picked = terminice.choiceSelector(
+///   'Pick actions',
 ///   items: const [
 ///     ChoiceItem('Preview', subtitle: 'Shows a live diff'),
 ///     ChoiceItem('Publish', subtitle: 'Deploy to production'),
 ///   ],
-///   prompt: 'Pick actions',
 ///   multiSelect: true,
 /// );
 /// ```
@@ -36,9 +36,9 @@ extension ChoiceSelectorExtensions on Terminice {
   /// Renders a grid of cards and returns the labels that were selected.
   ///
   /// See the file-level docs for the supported controls and parameters.
-  List<String> choiceSelector({
+  List<String> choiceSelector(
+    String prompt, {
     required List<ChoiceItem> items,
-    required String prompt,
     bool multiSelect = false,
     int columns = 0,
     int? cardWidth,

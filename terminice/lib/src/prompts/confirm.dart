@@ -14,19 +14,19 @@ extension ConfirmPromptExtensions on Terminice {
   ///
   /// **Example:**
   /// ```dart
-  /// if (terminice.confirm(label: 'Delete', message: 'Are you sure?')) {
+  /// if (terminice.confirm(prompt: 'Delete', message: 'Are you sure?')) {
   ///   // User confirmed
   /// }
   /// ```
   bool confirm({
-    required String label,
+    String prompt = 'Confirm',
     required String message,
     String yesLabel = 'Yes',
     String noLabel = 'No',
     bool defaultYes = true,
   }) {
     return SimplePrompts.confirm(
-      title: label,
+      title: prompt,
       message: message,
       yesLabel: yesLabel,
       noLabel: noLabel,

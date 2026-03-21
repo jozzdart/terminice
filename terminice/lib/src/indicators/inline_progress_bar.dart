@@ -12,8 +12,8 @@ extension InlineProgressBarExtensions on Terminice {
   /// bar.show(current: 50, total: 100);
   /// bar.clear();
   /// ```
-  InlineProgressBar inlineProgressBar(String label) {
-    return InlineProgressBar(label, theme: defaultTheme);
+  InlineProgressBar inlineProgressBar(String prompt) {
+    return InlineProgressBar(prompt, theme: defaultTheme);
   }
 }
 
@@ -23,10 +23,10 @@ extension InlineProgressBarExtensions on Terminice {
 /// percent information, making it ideal for CI logs or verbose scripts where a
 /// full framed widget would be too heavy.
 class InlineProgressBar with IndicatorLifecycle {
-  final String label;
+  final String prompt;
   final PromptTheme theme;
 
-  InlineProgressBar(this.label, {this.theme = PromptTheme.dark});
+  InlineProgressBar(this.prompt, {this.theme = PromptTheme.dark});
 
   /// Renders the current progress percentage next to the label.
   ///
@@ -36,6 +36,6 @@ class InlineProgressBar with IndicatorLifecycle {
     final out = prepareFrame();
     final percent = total > 0 ? (current / total * 100).round() : 0;
     out.writeln(
-        '${theme.accent}$label${theme.reset} ${theme.dim}$percent%${theme.reset}');
+        '${theme.accent}$prompt${theme.reset} ${theme.dim}$percent%${theme.reset}');
   }
 }

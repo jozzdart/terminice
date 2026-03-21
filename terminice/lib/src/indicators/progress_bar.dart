@@ -13,8 +13,8 @@ extension ProgressBarExtensions on Terminice {
   /// bar.show(current: 50, total: 100);
   /// bar.clear();
   /// ```
-  ProgressBar progressBar(String label) {
-    return ProgressBar(label, theme: defaultTheme);
+  ProgressBar progressBar(String prompt) {
+    return ProgressBar(prompt, theme: defaultTheme);
   }
 }
 
@@ -40,7 +40,7 @@ extension ProgressBarExtensions on Terminice {
 /// });
 /// ```
 class ProgressBar with IndicatorLifecycle {
-  final String label;
+  final String prompt;
   final int width;
   final PromptTheme theme;
 
@@ -49,7 +49,7 @@ class ProgressBar with IndicatorLifecycle {
   /// The optional [width] lets you dial in the bar footprint to match the
   /// caller's terminal columns while keeping the shimmer effect intact.
   ProgressBar(
-    this.label, {
+    this.prompt, {
     this.width = 36,
     this.theme = PromptTheme.dark,
   }) : assert(width > 4);
@@ -76,7 +76,7 @@ class ProgressBar with IndicatorLifecycle {
   }
 
   void _render(RenderOutput out, int current, int total, int shimmerPhase) {
-    final widgetFrame = FrameView(title: label, theme: theme);
+    final widgetFrame = FrameView(title: prompt, theme: theme);
     widgetFrame.showTo(out, (ctx) {
       final ratio = total > 0 ? current / total : 0.0;
       final filled = (ratio * width).clamp(0, width).round();

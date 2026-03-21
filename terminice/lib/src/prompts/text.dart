@@ -12,7 +12,7 @@ import 'package:terminice_core/terminice_core.dart';
 ///
 /// ```dart
 /// final name = terminice.text(
-///   prompt: 'Display name',
+///   'Display name',
 ///   placeholder: 'Ada Lovelace',
 ///   validator: (value) =>
 ///       value.trim().isEmpty ? 'Please enter something' : null,
@@ -27,13 +27,13 @@ extension TextPromptExtensions on Terminice {
   /// **Example:**
   /// ```dart
   /// final handle = terminice.text(
-  ///   prompt: 'Handle',
+  ///   'Handle',
   ///   placeholder: '@terminice',
   ///   required: true,
   /// );
   /// ```
-  String? text({
-    required String prompt,
+  String? text(
+    String prompt, {
     String? placeholder,
     String Function(String)? validator,
     bool required = true,

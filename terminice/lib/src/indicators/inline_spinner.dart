@@ -13,11 +13,11 @@ extension InlineSpinnerExtensions on Terminice {
   /// spinner.clear();
   /// ```
   InlineSpinner inlineSpinner(
-    String message, {
+    String prompt, {
     SpinnerStyle style = SpinnerStyle.dots,
   }) {
     return InlineSpinner(
-      message,
+      prompt,
       style: style,
       theme: defaultTheme,
     );
@@ -29,12 +29,12 @@ extension InlineSpinnerExtensions on Terminice {
 /// It renders the current frame along with a dimmed status message so you can
 /// surface progress in long-running CLI tasks without taking over the screen.
 class InlineSpinner with IndicatorLifecycle {
-  final String message;
+  final String prompt;
   final SpinnerStyle style;
   final PromptTheme theme;
 
   InlineSpinner(
-    this.message, {
+    this.prompt, {
     this.style = SpinnerStyle.dots,
     this.theme = PromptTheme.dark,
   });
@@ -45,7 +45,7 @@ class InlineSpinner with IndicatorLifecycle {
     final frames = framesForStyle(style);
     final spin = frames[frame % frames.length];
     out.writeln(
-        '${theme.accent}$spin${theme.reset} ${theme.dim}$message${theme.reset}');
+        '${theme.accent}$spin${theme.reset} ${theme.dim}$prompt${theme.reset}');
   }
 
   /// Returns the list of Unicode frames used by the configured [SpinnerStyle].
