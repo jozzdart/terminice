@@ -29,6 +29,7 @@ class RatingConfigurable extends Configurable<int> {
     super.hint,
     super.formatter,
     super.validator,
+    super.icon,
     this.maxStars = 5,
     this.labels,
   }) {
@@ -37,7 +38,7 @@ class RatingConfigurable extends Configurable<int> {
   }
 
   @override
-  String get typeIcon => '★';
+  String get defaultTypeIcon => '★';
 
   @override
   String formatValue() {

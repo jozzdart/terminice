@@ -47,6 +47,7 @@ class RangeConfigurable extends Configurable<RangeValue> {
     super.hint,
     super.formatter,
     super.validator,
+    super.icon,
     this.min = 0,
     this.max = 100,
     this.step = 1,
@@ -55,7 +56,7 @@ class RangeConfigurable extends Configurable<RangeValue> {
   }) : super(value: RangeValue(start, end));
 
   @override
-  String get typeIcon => '↔';
+  String get defaultTypeIcon => '↔';
 
   @override
   String formatValue() {

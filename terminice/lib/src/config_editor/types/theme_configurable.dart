@@ -63,6 +63,7 @@ class ThemeConfigurable extends Configurable<String> {
     super.hint,
     super.formatter,
     super.validator,
+    super.icon,
     Map<String, PromptTheme>? themes,
     this.onChanged,
   }) : themes = themes ?? builtInThemes {
@@ -73,7 +74,7 @@ class ThemeConfigurable extends Configurable<String> {
   }
 
   @override
-  String get typeIcon => '◐';
+  String get defaultTypeIcon => '◐';
 
   /// The currently selected [PromptTheme].
   PromptTheme get selectedTheme => themes[value] ?? PromptTheme.dark;

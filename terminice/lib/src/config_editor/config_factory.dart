@@ -26,6 +26,7 @@ class ConfigFactory {
     String? hint,
     String Function(bool)? formatter,
     String? Function(bool)? validator,
+    String? icon,
     String trueLabel = 'Yes',
     String falseLabel = 'No',
   }) =>
@@ -37,6 +38,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
         trueLabel: trueLabel,
         falseLabel: falseLabel,
       );
@@ -49,6 +51,7 @@ class ConfigFactory {
     String? hint,
     String Function(String)? formatter,
     String? Function(String)? validator,
+    String? icon,
     String? placeholder,
     bool multiline = false,
     bool required = false,
@@ -62,6 +65,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
         placeholder: placeholder,
         multiline: multiline,
         required: required,
@@ -76,6 +80,7 @@ class ConfigFactory {
     String? hint,
     String Function(String)? formatter,
     String? Function(String)? validator,
+    String? icon,
     String maskChar = '•',
     bool allowReveal = true,
     bool required = false,
@@ -89,6 +94,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
         maskChar: maskChar,
         allowReveal: allowReveal,
         required: required,
@@ -103,6 +109,7 @@ class ConfigFactory {
     String? hint,
     String Function(num)? formatter,
     String? Function(num)? validator,
+    String? icon,
     num min = 0,
     num max = 100,
     num step = 1,
@@ -119,6 +126,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
         min: min,
         max: max,
         step: step,
@@ -140,6 +148,7 @@ class ConfigFactory {
     String? hint,
     String Function(String)? formatter,
     String? Function(String)? validator,
+    String? icon,
   }) =>
       EnumConfigurable(
         key: key,
@@ -150,6 +159,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
       );
 
   RangeConfigurable range({
@@ -161,6 +171,7 @@ class ConfigFactory {
     String? hint,
     String Function(RangeValue)? formatter,
     String? Function(RangeValue)? validator,
+    String? icon,
     num min = 0,
     num max = 100,
     num step = 1,
@@ -176,6 +187,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
         min: min,
         max: max,
         step: step,
@@ -191,6 +203,7 @@ class ConfigFactory {
     String? hint,
     String Function(int)? formatter,
     String? Function(int)? validator,
+    String? icon,
     int maxStars = 5,
     List<String>? labels,
   }) =>
@@ -202,6 +215,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
         maxStars: maxStars,
         labels: labels,
       );
@@ -214,6 +228,7 @@ class ConfigFactory {
     String? hint,
     String Function(String)? formatter,
     String? Function(String)? validator,
+    String? icon,
     Map<String, PromptTheme>? themes,
     void Function(PromptTheme)? onChanged,
   }) =>
@@ -225,6 +240,7 @@ class ConfigFactory {
         hint: hint,
         formatter: formatter,
         validator: validator,
+        icon: icon,
         themes: themes,
         onChanged: onChanged,
       );
@@ -235,6 +251,7 @@ class ConfigFactory {
     required List<Configurable> children,
     String? description,
     String? hint,
+    String? icon,
   }) =>
       GroupConfigurable(
         key: key,
@@ -242,6 +259,7 @@ class ConfigFactory {
         children: children,
         description: description,
         hint: hint,
+        icon: icon,
       );
 }
 

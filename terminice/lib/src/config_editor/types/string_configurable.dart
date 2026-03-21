@@ -36,6 +36,7 @@ class StringConfigurable extends Configurable<String> {
     super.hint,
     super.formatter,
     super.validator,
+    super.icon,
     this.placeholder,
     this.multiline = false,
     this.required = false,
@@ -43,7 +44,7 @@ class StringConfigurable extends Configurable<String> {
   });
 
   @override
-  String get typeIcon => multiline ? '≡' : '✎';
+  String get defaultTypeIcon => multiline ? '≡' : '✎';
 
   @override
   String formatValue() {

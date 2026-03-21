@@ -42,10 +42,11 @@ class GroupConfigurable extends Configurable<Map<String, dynamic>> {
     required this.children,
     super.description,
     super.hint,
+    super.icon,
   }) : super(value: const {});
 
   @override
-  String get typeIcon => '▸';
+  String get defaultTypeIcon => '⊞';
 
   @override
   Map<String, dynamic> get value =>

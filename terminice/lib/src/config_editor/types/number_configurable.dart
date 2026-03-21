@@ -50,6 +50,7 @@ class NumberConfigurable extends Configurable<num> {
     super.description,
     super.hint,
     super.formatter,
+    super.icon,
     this.min = 0,
     this.max = 100,
     this.step = 1,
@@ -60,7 +61,7 @@ class NumberConfigurable extends Configurable<num> {
   });
 
   @override
-  String get typeIcon => useSlider ? '═' : '#';
+  String get defaultTypeIcon => useSlider ? '═' : '#';
 
   @override
   String formatValue() {
