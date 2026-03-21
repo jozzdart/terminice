@@ -97,7 +97,7 @@ extension HintKeybindingsExtensions on KeyBindings {
   }
 
   /// Writes hints directly to a [RenderOutput], handling all hint styles.
-  /// 
+  ///
   /// If [bulletsPerLine] is provided and the style is [HintStyle.bullets],
   /// the hints will be chunked into multiple lines to avoid terminal wrapping issues.
   void writeHints(RenderOutput out, PromptTheme theme, {int? bulletsPerLine}) {
@@ -106,7 +106,8 @@ extension HintKeybindingsExtensions on KeyBindings {
         final entries = toHintEntries();
         if (bulletsPerLine != null && bulletsPerLine > 0) {
           for (var i = 0; i < entries.length; i += bulletsPerLine) {
-            final chunk = entries.sublist(i, min(i + bulletsPerLine, entries.length));
+            final chunk =
+                entries.sublist(i, min(i + bulletsPerLine, entries.length));
             final segments =
                 chunk.map((e) => HintFormat.hint(e[0], e[1], theme)).toList();
             out.writeln(HintFormat.bullets(segments, theme));
