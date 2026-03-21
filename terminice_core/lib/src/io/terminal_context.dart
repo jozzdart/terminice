@@ -92,4 +92,3 @@ class TerminalContext {
   /// Shortcut to the current terminal's output.
   static TerminalOutput get output => current.output;
 }
-
