@@ -1,3 +1,11 @@
+## 0.0.19
+
+Added **verify password** and **`terminice.form()`** using the new `FormPrompt` from terminice_core 0.0.13.
+
+- **`password(verify: true)`** — New optional parameter on the password prompt. When enabled, shows "Password" and "Verify password" fields side-by-side in a single frame. Both must match to confirm. Existing behavior (`verify: false`) is completely unchanged.
+- **`terminice.form()`** — Convenience extension that runs a `FormPrompt` with the current theme. Pass `title`, `fields`, and an optional `crossValidator` to collect multiple text inputs in one prompt.
+- **`PasswordConfigurable.verify`** — New field on `PasswordConfigurable` and `ConfigFactory.password()` to enable verify mode from the config editor.
+
 ## 0.0.18
 
 Added **`ConfigFactory`** — a shorthand factory for creating configurables with less boilerplate.
