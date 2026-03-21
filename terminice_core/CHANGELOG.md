@@ -1,3 +1,8 @@
+## 0.0.15
+
+- **New**: Added `writeHints` method to `HintKeybindingsExtensions` to centralize hint rendering across all hint styles (bullets, grid, inline, none), including support for chunking bullets via `bulletsPerLine`.
+- **Refactor**: Updated `FrameView` to use the new `writeHints` method internally.
+
 ## 0.0.14
 
 Enhanced **`sliderBar`** with configurable value labels.
