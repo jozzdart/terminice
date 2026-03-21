@@ -40,7 +40,7 @@ void main() async {
 
   // 6. Confirm with Neon theme
   final confirmed = terminice.neon.confirm(
-    'Deploy',
+    prompt: 'Deploy',
     message: 'Ship $name to production?',
   );
 
