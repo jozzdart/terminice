@@ -1,35 +1,35 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-/// Choose multiple "chips" (tags) from a responsive grid.
-///
-/// Controls:
-/// - Arrow keys navigate between chips
-/// - Space toggles selection
-/// - Enter confirms the highlighted set
-/// - Esc / Ctrl+C cancels (returns `[]`)
-///
-/// Parameters:
-/// - `tags`: Labels rendered inside each chip.
-/// - `prompt`: Frame title text.
-/// - `maxContentWidth`: Caps the inner frame width (auto when `null`).
-/// - `minContentWidth`: Minimum content width before wrapping.
-/// - `minColumnWidth`: Lower bound for chip column width.
-/// - `maxColumnWidth`: Upper bound for chip column width.
-/// - `useTerminalWidth`: When true, recomputes layout on resize.
-///
-/// Example:
-/// ```dart
-/// final labels = terminice.tagSelector(
-///   tags: const ['Bug', 'Feature', 'Docs', 'Chore'],
-///   prompt: 'Select labels',
-///   maxContentWidth: 96,
-/// );
-/// ```
+/// Extension providing the [tagSelector] prompt for `Terminice`.
 extension TagSelectorExtensions on Terminice {
-  /// Renders the chip-style selector and returns the confirmed tags.
+  /// Renders a chip-style selector and returns the confirmed tags.
   ///
-  /// See the file-level documentation for the control scheme and arguments.
+  /// Choose multiple "chips" (tags) from a responsive grid.
+  ///
+  /// Controls:
+  /// - Arrow keys navigate between chips
+  /// - Space toggles selection
+  /// - Enter confirms the highlighted set
+  /// - Esc / Ctrl+C cancels (returns `[]`)
+  ///
+  /// Parameters:
+  /// - [tags]: Labels rendered inside each chip.
+  /// - [prompt]: Frame title text.
+  /// - [maxContentWidth]: Caps the inner frame width (auto when `null`).
+  /// - [minContentWidth]: Minimum content width before wrapping.
+  /// - [minColumnWidth]: Lower bound for chip column width.
+  /// - [maxColumnWidth]: Upper bound for chip column width.
+  /// - [useTerminalWidth]: When true, recomputes layout on resize.
+  ///
+  /// Example:
+  /// ```dart
+  /// final labels = terminice.tagSelector(
+  ///   tags: const ['Bug', 'Feature', 'Docs', 'Chore'],
+  ///   prompt: 'Select labels',
+  ///   maxContentWidth: 96,
+  /// );
+  /// ```
   List<String> tagSelector({
     required List<String> tags,
     String prompt = 'Select tags',

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+/// Provides the [helpCenter] method for interactive documentation.
 extension HelpCenterExtensions on Terminice {
   /// Launches an interactive help center with search, filtering, and preview.
   ///
@@ -213,9 +214,16 @@ extension HelpCenterExtensions on Terminice {
 
 /// Represents a single searchable help document.
 class HelpDoc {
+  /// Stable identifier used for analytics or persistence.
   final String id;
+
+  /// Line rendered in the results list.
   final String title;
+
+  /// Markdown or plaintext body shown in the preview panel.
   final String content;
+
+  /// Optional badge appended to the title for quick grouping.
   final String? category;
 
   /// Creates a help document.

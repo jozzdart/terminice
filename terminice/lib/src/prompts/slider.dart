@@ -29,6 +29,15 @@ import 'package:terminice_core/terminice_core.dart';
 extension SliderPromptExtensions on Terminice {
   /// Slider prompt for selecting a numeric value within `[min, max]`.
   ///
+  /// - [prompt] is the title of the slider prompt.
+  /// - [min] is the minimum allowed value (defaults to 0).
+  /// - [max] is the maximum allowed value (defaults to 100).
+  /// - [initial] is the starting value (defaults to 50).
+  /// - [step] is the increment/decrement amount when using arrow keys (defaults to 1).
+  /// - [width] is the visual width of the slider bar in characters (defaults to 28).
+  /// - [unit] is an optional string appended to the displayed value.
+  /// - [showPercent] displays the value as a percentage of the range if `true`.
+  ///
   /// Returns the selected value as `num`.
   ///
   /// **Example**

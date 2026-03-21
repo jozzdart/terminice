@@ -36,6 +36,10 @@ class GroupConfigurable extends Configurable<Map<String, dynamic>> {
   /// The child fields managed by this group.
   final List<Configurable> children;
 
+  /// Creates a group configurable field.
+  ///
+  /// The [key], [label], and [children] are required.
+  /// The group itself has no direct value; its value is a map of its children's values.
   GroupConfigurable({
     required super.key,
     required super.label,

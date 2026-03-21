@@ -19,6 +19,10 @@ class BoolConfigurable extends Configurable<bool> {
   /// Label shown for the "false" option in the confirm prompt.
   final String falseLabel;
 
+  /// Creates a boolean configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to `false`.
+  /// The [trueLabel] and [falseLabel] customize the confirm prompt options.
   BoolConfigurable({
     required super.key,
     required super.label,

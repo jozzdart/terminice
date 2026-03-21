@@ -16,8 +16,13 @@ import 'package:terminice/terminice.dart';
 /// ];
 /// ```
 class ConfigFactory {
+  /// Creates a new [ConfigFactory] instance.
   const ConfigFactory();
 
+  /// Creates a boolean configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to `false`.
+  /// The [trueLabel] and [falseLabel] customize the confirm prompt options.
   BoolConfigurable boolean({
     required String key,
     required String label,
@@ -43,6 +48,10 @@ class ConfigFactory {
         falseLabel: falseLabel,
       );
 
+  /// Creates a string configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to an empty string.
+  /// If [multiline] is `true`, a multiline text editor is used.
   StringConfigurable string({
     required String key,
     required String label,
@@ -72,6 +81,10 @@ class ConfigFactory {
         visibleLines: visibleLines,
       );
 
+  /// Creates a password configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to an empty string.
+  /// The [maskChar] is used to hide the input.
   PasswordConfigurable password({
     required String key,
     required String label,
@@ -101,6 +114,10 @@ class ConfigFactory {
         verify: verify,
       );
 
+  /// Creates a number configurable field.
+  ///
+  /// The [key], [label], and [value] are required.
+  /// Set [useSlider] to `true` to display a slider instead of a text input.
   NumberConfigurable number({
     required String key,
     required String label,
@@ -164,6 +181,10 @@ class ConfigFactory {
         icon: icon,
       );
 
+  /// Creates a range configurable field.
+  ///
+  /// The [key], [label], [start], and [end] are required.
+  /// The range is bounded by [min] and [max].
   RangeConfigurable range({
     required String key,
     required String label,
@@ -197,6 +218,10 @@ class ConfigFactory {
         width: width,
       );
 
+  /// Creates a rating configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to 3.
+  /// The [maxStars] defaults to 5.
   RatingConfigurable rating({
     required String key,
     required String label,
@@ -222,6 +247,10 @@ class ConfigFactory {
         labels: labels,
       );
 
+  /// Creates a theme configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to `'dark'`.
+  /// If [themes] is not provided, [builtInThemes] is used.
   ThemeConfigurable theme({
     required String key,
     required String label,
@@ -247,6 +276,10 @@ class ConfigFactory {
         onChanged: onChanged,
       );
 
+  /// Creates a group configurable field.
+  ///
+  /// The [key], [label], and [children] are required.
+  /// The group itself has no direct value; its value is a map of its children's values.
   GroupConfigurable group({
     required String key,
     required String label,
@@ -275,5 +308,6 @@ class ConfigFactory {
 /// ];
 /// ```
 extension ConfigFactoryExtension on Terminice {
+  /// Returns a [ConfigFactory] instance for creating configurables.
   ConfigFactory get config => const ConfigFactory();
 }

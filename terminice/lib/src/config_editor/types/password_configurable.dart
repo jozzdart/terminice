@@ -26,6 +26,10 @@ class PasswordConfigurable extends Configurable<String> {
   /// When `true`, shows a second confirmation field that must match.
   final bool verify;
 
+  /// Creates a password configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to an empty string.
+  /// The [maskChar] is used to hide the input.
   PasswordConfigurable({
     required super.key,
     required super.label,

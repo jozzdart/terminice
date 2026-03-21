@@ -55,6 +55,10 @@ class ThemeConfigurable extends Configurable<String> {
   /// The config editor hooks into this to apply the theme live.
   void Function(PromptTheme theme)? onChanged;
 
+  /// Creates a theme configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to `'dark'`.
+  /// If [themes] is not provided, [builtInThemes] is used.
   ThemeConfigurable({
     required super.key,
     required super.label,

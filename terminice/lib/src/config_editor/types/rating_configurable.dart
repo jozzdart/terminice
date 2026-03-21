@@ -21,6 +21,10 @@ class RatingConfigurable extends Configurable<int> {
   /// Optional labels for each star level (index 0 = 1 star, etc.).
   final List<String>? labels;
 
+  /// Creates a rating configurable field.
+  ///
+  /// The [key] and [label] are required. The [value] defaults to 3.
+  /// The [maxStars] defaults to 5.
   RatingConfigurable({
     required super.key,
     required super.label,

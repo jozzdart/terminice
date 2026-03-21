@@ -40,53 +40,10 @@
 #### Table of Contents
 
 - [**Features**](#features)
-- [**Quick Start**](#-quick-start)
 - [**How to use `terminice`**](#-how-to-use-terminice)
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Theming & Display Modes**](#-theming--display-modes)
-
-### 🚀 Quick Start
-
-Get up and running in seconds. No setup required—just import and call.
-
-#### 1. Ask for input
-
-Gather text, passwords, or confirmations with a single line of code.
-
-```dart
-final name = terminice.text('Project name');
-final ship = terminice.confirm(prompt: 'Ship to production?', message: 'Are you sure?');
-```
-
-<img src="assets/quick_start_1.gif" alt="terminice text and confirm prompts" width="1000"/>
-
-#### 2. Build interactive menus
-
-Need a searchable list? It's just as easy.
-
-```dart
-final lang = terminice.searchSelector(
-  prompt: 'Language',
-  options: ['Dart', 'Go', 'Rust', 'TypeScript'],
-  showSearch: true,
-);
-```
-
-<img src="assets/quick_start_2.gif" alt="terminice search selector" width="1000"/>
-
-#### 3. Change themes instantly
-
-Want a different vibe? Just chain a theme name before your prompt.
-
-```dart
-// Hacker green
-final secret = terminice.matrix.password('Passphrase');
-
-// High-energy cyberpunk
-final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
-```
-
-<img src="assets/quick_start_3.gif" alt="terminice themes showcase" width="1000"/>
+- [**Quick Start**](#-quick-start)
 
 ### 📖 How to use `terminice`
 
@@ -178,9 +135,7 @@ final user = t.text('Username');
 final pass = t.password('Password');
 ```
 
-For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
-
-### 📚 The `terminice` Catalogue
+# 📚 The `terminice` Catalogue
 
 Explore the complete collection of tools available in `terminice`. Every tool is fully themeable and ready to use with zero setup.
 
@@ -284,3 +239,48 @@ final t = terminice.fire.minimal;
 final age = t.text('Age');
 final role = t.searchSelector(prompt: 'Role', options: ['Admin', 'User']);
 ```
+
+### 🚀 Quick Start
+
+Get up and running in seconds. No setup required—just import and call.
+
+#### 1. Ask for input
+
+Gather text, passwords, or confirmations with a single line of code.
+
+```dart
+final name = terminice.text('Project name');
+final ship = terminice.confirm(prompt: 'Ship to production?', message: 'Are you sure?');
+```
+
+<img src="assets/quick_start_1.gif" alt="terminice text and confirm prompts" width="1000"/>
+
+#### 2. Build interactive menus
+
+Need a searchable list? It's just as easy.
+
+```dart
+final lang = terminice.searchSelector(
+  prompt: 'Language',
+  options: ['Dart', 'Go', 'Rust', 'TypeScript'],
+  showSearch: true,
+);
+```
+
+<img src="assets/quick_start_2.gif" alt="terminice search selector" width="1000"/>
+
+#### 3. Change themes instantly
+
+Want a different vibe? Just chain a theme name before your prompt.
+
+```dart
+// Hacker green
+final secret = terminice.matrix.password('Passphrase');
+
+// High-energy cyberpunk
+final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
+```
+
+<img src="assets/quick_start_3.gif" alt="terminice themes showcase" width="1000"/>
+
+For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.

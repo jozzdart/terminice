@@ -15,7 +15,7 @@ extension DatePromptExtensions on Terminice {
   /// time component zeroed and surfaces a formatted preview for validation.
   ///
   /// ### Parameters
-  /// - `label` – Title shown at the top of the frame. Falls back to `"Date"`
+  /// - `prompt` – Title shown at the top of the frame. Falls back to `"Date"`
   ///   when left blank so prompts stay branded.
   /// - `initial` – Optional starting value. Only the date portion is used; the
   ///   time-of-day gets stripped to avoid timezone drift.

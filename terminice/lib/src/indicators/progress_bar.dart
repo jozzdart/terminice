@@ -3,8 +3,9 @@ import 'package:terminice_core/terminice_core.dart';
 
 import '_indicator_base.dart';
 
+/// Adds the [progressBar] method to the [Terminice] instance.
 extension ProgressBarExtensions on Terminice {
-  /// Creates a progress bar indicator
+  /// Creates a progress bar indicator.
   ///
   /// ```dart
   /// final bar = terminice.progressBar('Downloading');
@@ -13,6 +14,8 @@ extension ProgressBarExtensions on Terminice {
   /// bar.show(current: 50, total: 100);
   /// bar.clear();
   /// ```
+  ///
+  /// The [prompt] is the label displayed above the progress bar.
   ProgressBar progressBar(String prompt) {
     return ProgressBar(prompt, theme: defaultTheme);
   }
@@ -40,14 +43,21 @@ extension ProgressBarExtensions on Terminice {
 /// });
 /// ```
 class ProgressBar with IndicatorLifecycle {
+  /// The label displayed above the progress bar.
   final String prompt;
+
+  /// The width of the progress bar in characters.
   final int width;
+
+  /// The theme controlling the colors used for the progress bar and text.
   final PromptTheme theme;
 
   /// Creates a progress bar.
   ///
+  /// The [prompt] is the label displayed above the progress bar.
   /// The optional [width] lets you dial in the bar footprint to match the
   /// caller's terminal columns while keeping the shimmer effect intact.
+  /// The [theme] controls the colors used for the progress bar and text.
   ProgressBar(
     this.prompt, {
     this.width = 36,

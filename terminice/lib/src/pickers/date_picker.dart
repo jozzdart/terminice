@@ -1,10 +1,10 @@
-import 'dart:math' as math;
 import 'package:intl/intl.dart';
 
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 import 'package:time_plus/time_plus.dart';
 
+/// Adds the [datePicker] method to [Terminice] for interactive calendar-based date selection.
 extension DatePickerExtensions on Terminice {
   /// Renders a framed, keyboard-driven calendar that captures a single
   /// `DateTime` inside an interactive Terminice session.
@@ -203,29 +203,7 @@ extension DatePickerExtensions on Terminice {
       });
 
       // Footer hints generated from bindings
-      if (theme.features.hintStyle == HintStyle.bullets) {
-        final entries = bindings.toHintEntries();
-        for (var i = 0; i < entries.length; i += 4) {
-          final chunk = entries.sublist(i, math.min(i + 4, entries.length));
-          final segments =
-              chunk.map((e) => HintFormat.hint(e[0], e[1], theme)).toList();
-          out.writeln(HintFormat.bullets(segments, theme));
-        }
-      } else {
-        switch (theme.features.hintStyle) {
-          case HintStyle.grid:
-            out.writeln(bindings.toHintsGrid(theme));
-            break;
-          case HintStyle.inline:
-            final entries = bindings.toHintEntries();
-            final hints = entries.map((e) => '${e[0]}: ${e[1]}').toList();
-            out.writeln(HintFormat.comma(hints, theme));
-            break;
-          case HintStyle.bullets:
-          case HintStyle.none:
-            break;
-        }
-      }
+      bindings.writeHints(out, theme, bulletsPerLine: 4);
     }
 
     final runner = PromptRunner(hideCursor: true);

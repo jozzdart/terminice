@@ -1,36 +1,34 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-/// Manage multiple on/off toggles with keyboard-first controls.
-///
-/// Controls:
-/// - ↑ / ↓ navigate between rows
-/// - ← / → or Space toggles the focused switch
-/// - A toggles all switches
-/// - Enter confirms the edited states
-/// - Esc / Ctrl+C cancels (returns the initial map)
-///
-/// Parameters:
-/// - `title`: Frame heading shown alongside the connector.
-/// - `items`: Collection of `ToggleItem`s with labels and initial states.
-/// - `alignContent`: When true, pads labels to create a tidy column.
-///
-/// Returns a `Map<label, isOn>` describing the confirmed state.
-///
-/// Example:
-/// ```dart
-/// final settings = terminice.toggleGroup(
-///   'Settings',
-///   items: const [
-///     ToggleItem('Auto deploy', initialOn: true),
-///     ToggleItem('Send email'),
-///   ],
-/// );
-/// ```
+/// Extension providing the [toggleGroup] prompt for `Terminice`.
 extension ToggleGroupExtensions on Terminice {
-  /// Runs the toggle group prompt and returns the confirmed states.
+  /// Runs a toggle group prompt to manage multiple on/off switches.
   ///
-  /// See the file-level docs for control hints and argument details.
+  /// Controls:
+  /// - ↑ / ↓ navigate between rows
+  /// - ← / → or Space toggles the focused switch
+  /// - A toggles all switches
+  /// - Enter confirms the edited states
+  /// - Esc / Ctrl+C cancels (returns the initial map)
+  ///
+  /// Parameters:
+  /// - [prompt]: Frame heading shown alongside the connector.
+  /// - [items]: Collection of [ToggleItem]s with labels and initial states.
+  /// - [alignContent]: When true, pads labels to create a tidy column.
+  ///
+  /// Returns a `Map<String, bool>` describing the confirmed state.
+  ///
+  /// Example:
+  /// ```dart
+  /// final settings = terminice.toggleGroup(
+  ///   'Settings',
+  ///   items: const [
+  ///     ToggleItem('Auto deploy', initialOn: true),
+  ///     ToggleItem('Send email'),
+  ///   ],
+  /// );
+  /// ```
   Map<String, bool> toggleGroup(
     String prompt, {
     required List<ToggleItem> items,
@@ -120,12 +118,18 @@ extension ToggleGroupExtensions on Terminice {
   }
 }
 
+/// Represents a single row in a toggle group.
+///
+/// Contains the [label] to display and its [initialOn] state.
 class ToggleItem {
+  /// The text displayed next to the toggle switch.
   final String label;
+
+  /// Whether the toggle is initially turned on.
   final bool initialOn;
 
-  /// Represents a single row in a toggle group.
+  /// Creates a new [ToggleItem].
   ///
-  /// Provide a `label` and optionally set `initialOn` to true.
+  /// Provide a [label] and optionally set [initialOn] to true.
   const ToggleItem(this.label, {this.initialOn = false});
 }

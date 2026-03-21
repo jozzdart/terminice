@@ -22,6 +22,15 @@ import 'package:terminice_core/terminice_core.dart';
 extension RangePromptExtensions on Terminice {
   /// Range prompt for selecting a `(start, end)` tuple.
   ///
+  /// - [prompt] is the title of the range prompt.
+  /// - [min] is the minimum allowed value (defaults to 0).
+  /// - [max] is the maximum allowed value (defaults to 100).
+  /// - [startInitial] is the starting value for the left handle (defaults to 20).
+  /// - [endInitial] is the starting value for the right handle (defaults to 80).
+  /// - [step] is the increment/decrement amount when using arrow keys (defaults to 1).
+  /// - [width] is the visual width of the slider bar in characters (defaults to 28).
+  /// - [unit] is an optional string appended to the displayed values (defaults to '%').
+  ///
   /// Returns `(start, end)` inclusive of the provided bounds.
   ///
   /// **Example:**

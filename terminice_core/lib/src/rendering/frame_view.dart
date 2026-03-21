@@ -145,21 +145,7 @@ class FrameView {
 
   /// Writes hints in the configured style.
   void _writeHints(RenderOutput out, KeyBindings bindings) {
-    switch (hintStyle) {
-      case HintStyle.bullets:
-        out.writeln(bindings.toHintsBullets(theme));
-        break;
-      case HintStyle.grid:
-        out.writeln(bindings.toHintsGrid(theme));
-        break;
-      case HintStyle.inline:
-        final entries = bindings.toHintEntries();
-        final hints = entries.map((e) => '${e[0]}: ${e[1]}').toList();
-        out.writeln(HintFormat.comma(hints, theme));
-        break;
-      case HintStyle.none:
-        break;
-    }
+    bindings.writeHints(out, theme);
   }
 }
 

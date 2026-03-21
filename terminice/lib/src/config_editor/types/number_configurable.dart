@@ -26,8 +26,13 @@ import 'package:terminice/terminice.dart';
 /// )
 /// ```
 class NumberConfigurable extends Configurable<num> {
+  /// The minimum allowed value.
   final num min;
+
+  /// The maximum allowed value.
   final num max;
+
+  /// The increment step size for the slider.
   final num step;
 
   /// Unit label shown alongside the slider (e.g. '%', 'GB', 'ms').
@@ -45,6 +50,10 @@ class NumberConfigurable extends Configurable<num> {
   /// When `true`, restricts the value to integers.
   final bool integerOnly;
 
+  /// Creates a number configurable field.
+  ///
+  /// The [key], [label], and [value] are required.
+  /// Set [useSlider] to `true` to display a slider instead of a text input.
   NumberConfigurable({
     required super.key,
     required super.label,

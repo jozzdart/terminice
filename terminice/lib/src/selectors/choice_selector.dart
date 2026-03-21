@@ -3,39 +3,39 @@ import 'dart:math';
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-/// Displays a dashboard-style grid of selectable cards.
-///
-/// Controls:
-/// - Arrow keys move across cards (wraps around edges)
-/// - Space toggles selection when `multiSelect` is true
-/// - Enter confirms the highlighted card(s)
-/// - Esc cancels (returns `[]`)
-///
-/// Parameters:
-/// - `items`: Cards rendered with `ChoiceItem.label` and optional subtitle.
-/// - `prompt`: Frame title displayed above the grid.
-/// - `multiSelect`: Enables toggling multiple cards.
-/// - `columns`: Forces a specific column count (auto when zero).
-/// - `cardWidth`: Overrides the computed card width (16-44 characters).
-/// - `maxColumns`: Caps automatically computed columns.
-///
-/// Returns the labels for any cards that were confirmed by the user.
-///
-/// Example:
-/// ```dart
-/// final picked = terminice.choiceSelector(
-///   'Pick actions',
-///   items: const [
-///     ChoiceItem('Preview', subtitle: 'Shows a live diff'),
-///     ChoiceItem('Publish', subtitle: 'Deploy to production'),
-///   ],
-///   multiSelect: true,
-/// );
-/// ```
+/// Extension providing the [choiceSelector] prompt for `Terminice`.
 extension ChoiceSelectorExtensions on Terminice {
   /// Renders a grid of cards and returns the labels that were selected.
   ///
-  /// See the file-level docs for the supported controls and parameters.
+  /// Displays a dashboard-style grid of selectable cards.
+  ///
+  /// Controls:
+  /// - Arrow keys move across cards (wraps around edges)
+  /// - Space toggles selection when [multiSelect] is true
+  /// - Enter confirms the highlighted card(s)
+  /// - Esc cancels (returns `[]`)
+  ///
+  /// Parameters:
+  /// - [prompt]: Frame title displayed above the grid.
+  /// - [items]: Cards rendered with [ChoiceItem.label] and optional subtitle.
+  /// - [multiSelect]: Enables toggling multiple cards.
+  /// - [columns]: Forces a specific column count (auto when zero).
+  /// - [cardWidth]: Overrides the computed card width (16-44 characters).
+  /// - [maxColumns]: Caps automatically computed columns.
+  ///
+  /// Returns the labels for any cards that were confirmed by the user.
+  ///
+  /// Example:
+  /// ```dart
+  /// final picked = terminice.choiceSelector(
+  ///   'Pick actions',
+  ///   items: const [
+  ///     ChoiceItem('Preview', subtitle: 'Shows a live diff'),
+  ///     ChoiceItem('Publish', subtitle: 'Deploy to production'),
+  ///   ],
+  ///   multiSelect: true,
+  /// );
+  /// ```
   List<String> choiceSelector(
     String prompt, {
     required List<ChoiceItem> items,
@@ -168,10 +168,14 @@ extension ChoiceSelectorExtensions on Terminice {
 
 /// Defines the content for a `choiceSelector` card.
 ///
-/// Provide a short `label` and an optional `subtitle` (shown dimmed).
+/// Provide a short [label] and an optional [subtitle] (shown dimmed).
 class ChoiceItem {
+  /// The primary text displayed on the card.
   final String label;
+
+  /// Optional secondary text displayed below the label.
   final String? subtitle;
 
+  /// Creates a new [ChoiceItem].
   const ChoiceItem(this.label, {this.subtitle});
 }

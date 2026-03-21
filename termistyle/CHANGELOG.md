@@ -1,3 +1,13 @@
+## 1.0.1
+
+- Updated package description
+
+## 1.0.0
+
+- First stable release.
+- Updated README
+- Fixed code formatting
+
 ## 0.0.2
 
 - **Test suite**: Added 964 tests across 11 test files covering every public API surface.

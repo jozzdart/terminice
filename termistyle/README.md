@@ -1,6 +1,8 @@
 # termistyle
 
-`termistyle` is the standalone styling foundation extracted from the [terminice](https://pub.dev/packages/terminice) ecosystem. It gives any Dart CLI package access to the same ANSI color palettes, box-drawing glyph sets, composable themes, and rendering utilities that power terminice -- without depending on terminice itself.
+> **Note:** If you are looking for ready-to-use interactive prompts, menus, and extensive built-in terminal tools, you probably want the main [**`terminice`** package on pub.dev](https://pub.dev/packages/terminice). `termistyle` was built specifically to power `terminice`, but is provided as a standalone package so you can use it to create your own custom terminal-styled packages.
+
+`termistyle` is the standalone styling foundation extracted from the [terminice](https://pub.dev/packages/terminice) ecosystem. It gives any Dart CLI package access to the same ANSI color palettes, box-drawing glyph sets, composable themes, and rendering utilities that power terminice - without depending on terminice itself.
 
 Use it when you are building a terminal tool, prompt library, ASCII art renderer, or any other CLI package that wants consistent, themeable output with zero external dependencies. Well-tested with 964 tests covering every public API surface.
 
@@ -8,7 +10,7 @@ Use it when you are building a terminal tool, prompt library, ASCII art renderer
 
 ```yaml
 dependencies:
-  termistyle: ^0.0.1
+  termistyle: ^1.0.0
 ```
 
 ```dart
@@ -19,11 +21,11 @@ import 'package:termistyle/termistyle.dart';
 
 A `PromptTheme` composes three independent concerns into one styling bundle:
 
-| Concern | Class | Built-in presets |
-|---------|-------|-----------------|
-| Colors | `TerminalColors` | dark, matrix, fire, pastel, ocean, monochrome, neon, arcane, phantom (10) |
-| Glyphs | `TerminalGlyphs` | unicode, ascii, rounded, double, heavy, dotted, arcane, phantom, minimal (9) |
-| Features | `DisplayFeatures` | standard, minimal, compact, verbose, clean, focus (6) |
+| Concern  | Class             | Built-in presets                                                             |
+| -------- | ----------------- | ---------------------------------------------------------------------------- |
+| Colors   | `TerminalColors`  | dark, matrix, fire, pastel, ocean, monochrome, neon, arcane, phantom (10)    |
+| Glyphs   | `TerminalGlyphs`  | unicode, ascii, rounded, double, heavy, dotted, arcane, phantom, minimal (9) |
+| Features | `DisplayFeatures` | standard, minimal, compact, verbose, clean, focus (6)                        |
 
 Eleven ready-made themes ship out of the box: `dark`, `minimal`, `compact`, `matrix`, `fire`, `pastel`, `ocean`, `monochrome`, `neon`, `arcane`, `phantom`.
 
@@ -159,45 +161,45 @@ print(s.spinner(tick, frames: SpinnerFrames.arcs));
 
 ### Style primitives
 
-| Export | Description |
-|--------|-------------|
-| `PromptTheme` | Composable theme bundle (colors + glyphs + features) |
-| `TerminalColors` | ANSI color palette with `copyWith` and 10 presets |
-| `TerminalGlyphs` | Box-drawing symbols with `copyWith` and 9 presets |
-| `DisplayFeatures` | Behavioral flags with `copyWith` and 6 presets |
-| `HintStyle` | Enum: `bullets`, `grid`, `inline`, `none` |
-| `BadgeTone` | Enum: `neutral`, `info`, `success`, `warning`, `danger` |
-| `StatTone` | Enum: `info`, `warn`, `error`, `accent`, `success`, `neutral` |
-| `SpinnerFrames` | Enum: `dots`, `bars`, `arcs` |
+| Export            | Description                                                   |
+| ----------------- | ------------------------------------------------------------- |
+| `PromptTheme`     | Composable theme bundle (colors + glyphs + features)          |
+| `TerminalColors`  | ANSI color palette with `copyWith` and 10 presets             |
+| `TerminalGlyphs`  | Box-drawing symbols with `copyWith` and 9 presets             |
+| `DisplayFeatures` | Behavioral flags with `copyWith` and 6 presets                |
+| `HintStyle`       | Enum: `bullets`, `grid`, `inline`, `none`                     |
+| `BadgeTone`       | Enum: `neutral`, `info`, `success`, `warning`, `danger`       |
+| `StatTone`        | Enum: `info`, `warn`, `error`, `accent`, `success`, `neutral` |
+| `SpinnerFrames`   | Enum: `dots`, `bars`, `arcs`                                  |
 
 ### Rendering utilities
 
-| Export | Description |
-|--------|-------------|
-| `InlineStyle` | Theme-aware badges, spinners, icons, progress bars, text coloring |
-| `SyntaxHighlighter` | Dart / JSON / shell line highlighting with auto-detection |
-| `FrameRenderer` | Static helpers for bordered titles, connectors, bottom lines |
-| `FramedLayout` | Composable frame layout (top, connector, bottom, gutter) |
-| `TableRenderer` | ANSI-aware table with column alignment and zebra stripes |
-| `ColumnConfig` | Column header, alignment, min/max width constraints |
-| `ColumnAlign` | Enum: `left`, `center`, `right` |
-| `highlightSubstring` | Case-insensitive match highlighting using theme colors |
-| `toneColor` | Resolves `StatTone` to ANSI color through a theme |
+| Export               | Description                                                       |
+| -------------------- | ----------------------------------------------------------------- |
+| `InlineStyle`        | Theme-aware badges, spinners, icons, progress bars, text coloring |
+| `SyntaxHighlighter`  | Dart / JSON / shell line highlighting with auto-detection         |
+| `FrameRenderer`      | Static helpers for bordered titles, connectors, bottom lines      |
+| `FramedLayout`       | Composable frame layout (top, connector, bottom, gutter)          |
+| `TableRenderer`      | ANSI-aware table with column alignment and zebra stripes          |
+| `ColumnConfig`       | Column header, alignment, min/max width constraints               |
+| `ColumnAlign`        | Enum: `left`, `center`, `right`                                   |
+| `highlightSubstring` | Case-insensitive match highlighting using theme colors            |
+| `toneColor`          | Resolves `StatTone` to ANSI color through a theme                 |
 
 ### Text utilities
 
-| Export | Description |
-|--------|-------------|
-| `stripAnsi` | Remove ANSI escape codes from a string |
-| `visibleLength` | Printable character count after stripping ANSI |
-| `padVisibleRight` / `Left` / `Center` | ANSI-aware padding to a target width |
-| `padRight` / `padLeft` | Plain-text padding |
-| `truncate` | Truncate with ellipsis |
-| `truncatePad` | Truncate and pad to fixed width |
-| `clampInt` / `maxOf` / `minOf` | Integer helpers |
-| `columnWidth` / `columnWidthVisible` | Column sizing from content |
-| `spinnerFramesList` | Frame data for a `SpinnerFrames` value |
-| `dotsFrames` / `barsFrames` / `arcsFrames` | Raw frame character lists |
+| Export                                     | Description                                    |
+| ------------------------------------------ | ---------------------------------------------- |
+| `stripAnsi`                                | Remove ANSI escape codes from a string         |
+| `visibleLength`                            | Printable character count after stripping ANSI |
+| `padVisibleRight` / `Left` / `Center`      | ANSI-aware padding to a target width           |
+| `padRight` / `padLeft`                     | Plain-text padding                             |
+| `truncate`                                 | Truncate with ellipsis                         |
+| `truncatePad`                              | Truncate and pad to fixed width                |
+| `clampInt` / `maxOf` / `minOf`             | Integer helpers                                |
+| `columnWidth` / `columnWidthVisible`       | Column sizing from content                     |
+| `spinnerFramesList`                        | Frame data for a `SpinnerFrames` value         |
+| `dotsFrames` / `barsFrames` / `arcsFrames` | Raw frame character lists                      |
 
 ## Testing
 
@@ -213,4 +215,4 @@ dart test
 
 The split allows packages like title renderers, log formatters, or dashboard builders to use the terminice visual language without importing the interactive prompt stack.
 
-When terminice integrates `termistyle`, it will re-export the same types -- existing terminice users will see no change in behavior, styling, or API surface.
+When terminice integrates `termistyle`, it will re-export the same types - existing terminice users will see no change in behavior, styling, or API surface.

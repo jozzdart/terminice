@@ -535,8 +535,7 @@ void main() {
       }
     });
 
-    test(
-        'every preset with non-empty borderBottom has a valid matching corner',
+    test('every preset with non-empty borderBottom has a valid matching corner',
         () {
       for (final entry in allPresets.entries) {
         final g = entry.value;

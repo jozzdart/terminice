@@ -1,6 +1,7 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+/// Provides the [hotkeyGuide] method for documenting keyboard shortcuts.
 extension HotkeyGuideExtensions on Terminice {
   /// Renders an interactive hotkey guide that documents shortcuts and context.
   ///
