@@ -116,7 +116,8 @@ final age = terminice.slider('Age', min: 0, max: 100);
 
 print('Hello $name, you are $age years old.');
 ```
-*(Note: Indicators like `loadingSpinner` return an object that you control asynchronously, but user-input prompts are synchronous).*
+
+_(Note: Indicators like `loadingSpinner` return an object that you control asynchronously, but user-input prompts are synchronous)._
 
 #### Shared API Design
 
@@ -179,7 +180,7 @@ final pass = t.password('Password');
 
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
 
-### 📚 The Terminice Catalogue
+### 📚 The `terminice` Catalogue
 
 Explore the complete collection of tools available in `terminice`. Every tool is fully themeable and ready to use with zero setup.
 
@@ -242,13 +243,13 @@ Advanced tools for building full CLI applications.
 
 `terminice` makes styling effortless. Every prompt adapts automatically to the selected theme and display mode. Just chain the theme or mode accessor before calling any prompt.
 
-| Dark | Matrix | Fire |
-| :---: | :---: | :---: |
-| <img src="assets/theme_showcase_dark.gif" width="300"/> | <img src="assets/theme_showcase_matrix.gif" width="300"/> | <img src="assets/theme_showcase_fire.gif" width="300"/> |
-| **Pastel** | **Ocean** | **Monochrome** |
-| <img src="assets/theme_showcase_pastel.gif" width="300"/> | <img src="assets/theme_showcase_ocean.gif" width="300"/> | <img src="assets/theme_showcase_monochrome.gif" width="300"/> |
-| **Neon** | **Arcane** | **Phantom** |
-| <img src="assets/theme_showcase_neon.gif" width="300"/> | <img src="assets/theme_showcase_arcane.gif" width="300"/> | <img src="assets/theme_showcase_phantom.gif" width="300"/> |
+|                           Dark                            |                          Matrix                           |                             Fire                              |
+| :-------------------------------------------------------: | :-------------------------------------------------------: | :-----------------------------------------------------------: |
+|  <img src="assets/theme_showcase_dark.gif" width="300"/>  | <img src="assets/theme_showcase_matrix.gif" width="300"/> |    <img src="assets/theme_showcase_fire.gif" width="300"/>    |
+|                        **Pastel**                         |                         **Ocean**                         |                        **Monochrome**                         |
+| <img src="assets/theme_showcase_pastel.gif" width="300"/> | <img src="assets/theme_showcase_ocean.gif" width="300"/>  | <img src="assets/theme_showcase_monochrome.gif" width="300"/> |
+|                         **Neon**                          |                        **Arcane**                         |                          **Phantom**                          |
+|  <img src="assets/theme_showcase_neon.gif" width="300"/>  | <img src="assets/theme_showcase_arcane.gif" width="300"/> |  <img src="assets/theme_showcase_phantom.gif" width="300"/>   |
 
 #### ❖ Available Themes
 
