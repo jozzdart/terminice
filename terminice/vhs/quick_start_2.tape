@@ -7,7 +7,7 @@ Set FontSize 20
 Set Width 950
 Set Height 400
 Set Padding 10
-Set Theme "Catppuccin Mocha"
+Set Theme "OneDark"
 
 Hide
 Type "clear && dart run example/quick_start_2.dart"

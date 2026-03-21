@@ -13,7 +13,7 @@ Set FontSize 20
 Set Width 1125
 Set Height 310
 Set Padding 20
-Set Theme "Catppuccin Mocha"
+Set Theme "OneDark"
 
 Hide
 Type "clear && dart run example/showcase.dart"
