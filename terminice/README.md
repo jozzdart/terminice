@@ -54,8 +54,8 @@ Get up and running in seconds. No setup required—just import and call.
 Gather text, passwords, or confirmations with a single line of code.
 
 ```dart
-final name = terminice.text(prompt: 'Project name');
-final ship = terminice.confirm(message: 'Ship to production?');
+final name = terminice.text('Project name');
+final ship = terminice.confirm(prompt: 'Ship to production?', message: 'Are you sure?');
 ```
 
 <img src="assets/quick_start_1.gif" alt="terminice text and confirm prompts" width="1000"/>
@@ -80,7 +80,7 @@ Want a different vibe? Just chain a theme name before your prompt.
 
 ```dart
 // Hacker green
-final secret = terminice.matrix.password(prompt: 'Passphrase');
+final secret = terminice.matrix.password('Passphrase');
 
 // High-energy cyberpunk
 final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
@@ -101,7 +101,7 @@ import 'package:terminice/terminice.dart';
 
 void main() {
   // Use the global instance directly
-  terminice.text(prompt: 'What is your name?');
+  terminice.text('What is your name?');
 }
 ```
 
@@ -111,7 +111,7 @@ Unlike many Dart libraries, **`terminice` is fully synchronous**. You do not nee
 
 ```dart
 // No async/await required!
-final name = terminice.text(prompt: 'Name');
+final name = terminice.text('Name');
 final age = terminice.slider('Age', min: 0, max: 100);
 
 print('Hello $name, you are $age years old.');
@@ -133,7 +133,7 @@ Validating input is built directly into the prompts. Simply provide a `validator
 
 ```dart
 final email = terminice.text(
-  prompt: 'Email address',
+  'Email address',
   validator: (val) {
     if (!val.contains('@')) return 'Please enter a valid email';
     return null; // Input is valid
@@ -145,7 +145,7 @@ For basic required fields, you don't even need a custom validator. Just use the 
 
 ```dart
 final name = terminice.text(
-  prompt: 'Full name',
+  'Full name',
   required: true, // Automatically prevents empty submissions
 );
 ```
@@ -154,7 +154,7 @@ Validation works seamlessly with other tools too, like the multiline editor:
 
 ```dart
 final commitMsg = terminice.multiline(
-  label: 'Commit message',
+  'Commit message',
   validator: (lines) {
     if (lines.isEmpty) return 'Message cannot be empty';
     if (lines.first.length > 50) return 'First line must be under 50 chars';
@@ -173,8 +173,8 @@ final choice = terminice.ocean.compact.confirm(message: 'Save changes?');
 
 // Or save a scoped instance for reuse
 final t = terminice.neon.minimal;
-final user = t.text(prompt: 'Username');
-final pass = t.password(prompt: 'Password');
+final user = t.text('Username');
+final pass = t.password('Password');
 ```
 
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
@@ -276,10 +276,10 @@ Control the verbosity and framing of your prompts:
 
 ```dart
 // Combine theme and display mode
-final name = terminice.ocean.compact.text(prompt: 'Name');
+final name = terminice.ocean.compact.text('Name');
 
 // Store a themed instance for consistency
 final t = terminice.fire.minimal;
-final age = t.text(prompt: 'Age');
+final age = t.text('Age');
 final role = t.searchSelector(prompt: 'Role', options: ['Admin', 'User']);
 ```
