@@ -373,13 +373,28 @@ class RangeValuePrompt {
 /// Helper extension for rendering value prompts.
 extension ValuePromptRendering on FrameContext {
   /// Renders a slider bar with head indicator.
+  ///
+  /// The trailing label is built from [value], [unit], and [showPercent]:
+  ///
+  /// | unit   | showPercent | Display          |
+  /// |--------|------------|------------------|
+  /// | (none) | false      | `30`             |
+  /// | `%`    | false      | `30%`            |
+  /// | `s`    | false      | `30s`            |
+  /// | (none) | true       | `30 (10%)`       |
+  /// | `s`    | true       | `30s (10%)`      |
+  ///
+  /// When [value] is `null`, falls back to showing `pct%` if [showPercent]
+  /// is `true`, or nothing otherwise.
   void sliderBar(
     double ratio, {
     int width = 28,
     String filledChar = '█',
     String emptyChar = '·',
     String? headChar,
-    bool showPercent = true,
+    bool showPercent = false,
+    num? value,
+    String unit = '',
   }) {
     final clamped = ratio.clamp(0.0, 1.0);
     final filled = (clamped * width).round();
@@ -390,10 +405,21 @@ extension ValuePromptRendering on FrameContext {
     final emptyPart =
         '${theme.dim}${emptyChar * (width - filled)}${theme.reset}';
 
-    final percentPart = showPercent ? ' ${theme.dim}$pct%${theme.reset}' : '';
+    String label;
+    if (value != null) {
+      final v = value;
+      final display =
+          v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+      final valuePart = '$display$unit';
+      final pctPart = showPercent ? ' ($pct%)' : '';
+      label = ' ${theme.dim}$valuePart$pctPart${theme.reset}';
+    } else if (showPercent) {
+      label = ' ${theme.dim}$pct%${theme.reset}';
+    } else {
+      label = '';
+    }
 
-    gutterLine(
-        '$filledPart${theme.accent}$head${theme.reset}$emptyPart$percentPart');
+    gutterLine('$filledPart${theme.accent}$head${theme.reset}$emptyPart$label');
   }
 
   /// Renders star rating display.

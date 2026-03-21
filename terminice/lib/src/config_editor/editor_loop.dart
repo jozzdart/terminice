@@ -224,6 +224,7 @@ void renderFieldItem(
   String? searchQuery,
 ) {
   final arrow = ctx.lb.arrow(isFocused);
+  final isGroup = field is GroupConfigurable;
 
   final icon = '${theme.accent}${field.typeIcon}${theme.reset}';
 
@@ -232,17 +233,32 @@ void renderFieldItem(
     labelStr = '${labelStr.substring(0, labelWidth - 1)}…';
   }
   final paddedLabel = labelStr.padRight(labelWidth);
-  final displayLabel = searchQuery != null && searchQuery.isNotEmpty
-      ? highlightSubstring(paddedLabel, searchQuery, theme)
-      : paddedLabel;
+
+  final String displayLabel;
+  if (isGroup) {
+    final base = '${theme.bold}$paddedLabel${theme.reset}';
+    displayLabel = searchQuery != null && searchQuery.isNotEmpty
+        ? highlightSubstring(base, searchQuery, theme)
+        : base;
+  } else {
+    displayLabel = searchQuery != null && searchQuery.isNotEmpty
+        ? highlightSubstring(paddedLabel, searchQuery, theme)
+        : paddedLabel;
+  }
 
   final valueStr = field.displayValue;
-  final valueDisplay = '${theme.dim}$valueStr${theme.reset}';
+  final String valueDisplay;
+  if (isGroup) {
+    valueDisplay = '${theme.accent}$valueStr${theme.reset}';
+  } else {
+    valueDisplay = '${theme.dim}$valueStr${theme.reset}';
+  }
 
   final modified = field.isModified ? ' ${theme.accent}*${theme.reset}' : '';
+  final nav = isGroup ? ' ${theme.dim}→${theme.reset}' : '';
 
   ctx.highlightedLine(
-    '$arrow $icon $displayLabel  $valueDisplay$modified',
+    '$arrow $icon $displayLabel  $valueDisplay$modified$nav',
     highlighted: isFocused,
   );
 

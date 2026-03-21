@@ -1,3 +1,12 @@
+## 0.0.20
+
+Config editor polish: **custom icons**, **group styling**, and **slider labels**.
+
+- **Custom `icon` parameter** — Every `Configurable` type now accepts an optional `icon` to override the default type glyph. Works on direct constructors and `ConfigFactory` methods alike. Subclasses provide a `defaultTypeIcon` fallback.
+- **Distinct group styling** — `GroupConfigurable` rows render with bold labels, accent-colored field counts, and a dim `→` navigation arrow, making them visually distinct from leaf fields.
+- **Updated default icons** — `GroupConfigurable` uses `⊞` (tree-expand), `PasswordConfigurable` uses `✲` (key-like), and `BoolConfigurable` uses `☉`.
+- **Slider unit & percent control** — `slider()` now accepts a `unit` suffix (e.g. `'%'`, `'s'`, `'MB'`) shown alongside the value, and an opt-in `showPercent` flag that appends the calculated ratio percentage in parentheses. Both default to off, so the slider shows the raw value by default. `NumberConfigurable` and `ConfigFactory.number()` expose `showPercent` to forward this to slider mode.
+
 ## 0.0.19
 
 Added **verify password** and **`terminice.form()`** using the new `FormPrompt` from terminice_core 0.0.13.

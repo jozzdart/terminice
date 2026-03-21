@@ -34,6 +34,7 @@ class PasswordConfigurable extends Configurable<String> {
     super.hint,
     super.formatter,
     super.validator,
+    super.icon,
     this.maskChar = '•',
     this.allowReveal = true,
     this.required = false,
@@ -41,7 +42,7 @@ class PasswordConfigurable extends Configurable<String> {
   });
 
   @override
-  String get typeIcon => '●';
+  String get defaultTypeIcon => '✲';
 
   @override
   String formatValue() {

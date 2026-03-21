@@ -27,12 +27,13 @@ class BoolConfigurable extends Configurable<bool> {
     super.hint,
     super.formatter,
     super.validator,
+    super.icon,
     this.trueLabel = 'Yes',
     this.falseLabel = 'No',
   });
 
   @override
-  String get typeIcon => '◉';
+  String get defaultTypeIcon => '☉';
 
   @override
   String formatValue() => value ? trueLabel : falseLabel;

@@ -29,12 +29,13 @@ class EnumConfigurable extends Configurable<String> {
     super.hint,
     super.formatter,
     super.validator,
+    super.icon,
   }) : super(value: value) {
     assert(options.contains(value), 'Initial value must be in options');
   }
 
   @override
-  String get typeIcon => '▾';
+  String get defaultTypeIcon => '▾';
 
   @override
   bool edit(Terminice terminice) {

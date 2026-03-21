@@ -1,3 +1,9 @@
+## 0.0.14
+
+Enhanced **`sliderBar`** with configurable value labels.
+
+- **`value` and `unit` parameters** — `sliderBar` now accepts the actual numeric value and an optional unit suffix (e.g. `'%'`, `'s'`, `'MB'`). The value with its suffix is always shown when provided. The `showPercent` flag (now `false` by default) optionally appends the calculated ratio percentage in parentheses — e.g. `30s (25%)`.
+
 ## 0.0.13
 
 Added **`FormPrompt`** — a reusable multi-field text input prompt.

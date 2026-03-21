@@ -44,6 +44,10 @@ abstract class Configurable<T> {
   /// Optional validator. Returns an error message on failure, `null` on success.
   final String? Function(T value)? validator;
 
+  /// Custom icon override. When set, [typeIcon] returns this instead of
+  /// the subclass default from [defaultTypeIcon].
+  final String? icon;
+
   Configurable({
     required this.key,
     required this.label,
@@ -52,6 +56,7 @@ abstract class Configurable<T> {
     this.hint,
     this.formatter,
     this.validator,
+    this.icon,
   }) : defaultValue = value;
 
   /// Formatted string representation of [value] for display in the list.
@@ -66,7 +71,12 @@ abstract class Configurable<T> {
   String formatValue() => value.toString();
 
   /// Glyph prefix identifying the field type in the list view.
-  String get typeIcon;
+  /// Returns the custom [icon] if set, otherwise [defaultTypeIcon].
+  String get typeIcon => icon ?? defaultTypeIcon;
+
+  /// The default icon for this configurable type.
+  /// Override in subclasses to provide a type-specific glyph.
+  String get defaultTypeIcon;
 
   /// Runs the appropriate terminice prompt to edit this field's value.
   ///
