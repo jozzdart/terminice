@@ -14,7 +14,7 @@ extension ConfirmPromptExtensions on Terminice {
   ///
   /// **Example:**
   /// ```dart
-  /// if (terminice.confirm(label: 'Delete', message: 'Are you sure?')) {
+  /// if (terminice.confirm(prompt: 'Delete', message: 'Are you sure?')) {
   ///   // User confirmed
   /// }
   /// ```
