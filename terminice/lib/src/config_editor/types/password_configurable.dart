@@ -23,6 +23,9 @@ class PasswordConfigurable extends Configurable<String> {
   /// Whether the field is required (non-empty).
   final bool required;
 
+  /// When `true`, shows a second confirmation field that must match.
+  final bool verify;
+
   PasswordConfigurable({
     required super.key,
     required super.label,
@@ -34,6 +37,7 @@ class PasswordConfigurable extends Configurable<String> {
     this.maskChar = '•',
     this.allowReveal = true,
     this.required = false,
+    this.verify = false,
   });
 
   @override
@@ -53,6 +57,7 @@ class PasswordConfigurable extends Configurable<String> {
       maskChar: maskChar,
       allowReveal: allowReveal,
       required: required,
+      verify: verify,
     );
     if (result != null) {
       value = result;
