@@ -1,3 +1,8 @@
+## 0.0.22
+
+- **Refactor**: Centralized hint rendering logic into `terminice_core`'s `HintKeybindingsExtensions.writeHints()`.
+- **Refactor**: Replaced duplicated manual hint chunking and rendering in `colorPicker` and `datePicker` with the new centralized `writeHints` method.
+
 ## 0.0.21
 
 - **Documentation**: Completely rewrote the `README.md` with a new structure, comprehensive catalogue, quick start guides, and embedded interactive VHS showcase GIFs.
