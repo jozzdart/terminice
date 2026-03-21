@@ -15,6 +15,7 @@ export 'pickers/file_picker.dart';
 export 'pickers/path_picker.dart';
 export 'prompts/confirm.dart';
 export 'prompts/date_prompt.dart';
+export 'prompts/form.dart';
 export 'prompts/multiline.dart';
 export 'prompts/password.dart';
 export 'prompts/range.dart';

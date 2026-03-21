@@ -1,3 +1,12 @@
+## 0.0.13
+
+Added **`FormPrompt`** — a reusable multi-field text input prompt.
+
+- **`FormPrompt`** — Renders multiple labeled text fields inside a single `FrameView`. Supports per-field masking, placeholders, validation, and a cross-field validator. Composes existing `TextInputBuffer`, `FrameView`, `KeyBindings`, and `PromptRunner` with no changes to existing code.
+- **`FormFieldConfig`** — Configuration for each field: `label`, `placeholder`, `masked`, `maskChar`, `allowReveal`, `required`, `validator`, `initialValue`.
+- **`FormResult`** — Result wrapper with indexed `[]` access to field values.
+- Key handling: Tab/↓ advance to next field, ↑ goes back, Enter advances or submits from the last field, Ctrl+R reveals masked fields, Esc cancels.
+
 ## 0.0.12
 
 - **Styling extracted to `termistyle`**: All standalone style and rendering primitives (`PromptTheme`, `TerminalColors`, `TerminalGlyphs`, `DisplayFeatures`, `BadgeTone`, `InlineStyle`, `FrameRenderer`, `FramedLayout`, `TableRenderer`, `SyntaxHighlighter`, text utilities) now live in the `termistyle` package and are re-exported through the existing barrel.

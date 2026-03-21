@@ -79,6 +79,7 @@ class ConfigFactory {
     String maskChar = '•',
     bool allowReveal = true,
     bool required = false,
+    bool verify = false,
   }) =>
       PasswordConfigurable(
         key: key,
@@ -91,6 +92,7 @@ class ConfigFactory {
         maskChar: maskChar,
         allowReveal: allowReveal,
         required: required,
+        verify: verify,
       );
 
   NumberConfigurable number({

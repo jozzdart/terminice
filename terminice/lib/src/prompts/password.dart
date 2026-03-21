@@ -11,11 +11,20 @@ import 'package:terminice_core/terminice_core.dart';
 /// - Esc cancels (returns `null`)
 /// - Optional reveal hotkey (when `allowReveal` is `true`)
 ///
+/// When [verify] is `true`, a second "Verify password" field is shown
+/// alongside the main field inside a single frame. Both must match to
+/// confirm.
+///
 /// ```dart
 /// final apiKey = terminice.password(
 ///   prompt: 'API key',
 ///   maskChar: '*',
 ///   allowReveal: false,
+/// );
+///
+/// final secret = terminice.password(
+///   prompt: 'New password',
+///   verify: true,
 /// );
 /// ```
 extension PasswordPromptExtensions on Terminice {
@@ -23,23 +32,50 @@ extension PasswordPromptExtensions on Terminice {
   ///
   /// Returns the entered password, or `null` if canceled.
   ///
-  /// **Example:**
-  /// ```dart
-  /// final secret = terminice.arcane.password(prompt: 'Vault passphrase');
-  /// ```
+  /// When [verify] is `true`, a second confirmation field is shown.
+  /// The user must enter the same password in both fields to confirm.
   String? password({
     required String prompt,
     bool required = true,
     String maskChar = '•',
     bool allowReveal = true,
+    bool verify = false,
   }) {
-    return TextPromptSync(
+    if (!verify) {
+      return TextPromptSync(
+        title: prompt,
+        theme: defaultTheme,
+        required: required,
+        masked: true,
+        maskChar: maskChar,
+        allowReveal: allowReveal,
+      ).run();
+    }
+
+    final result = FormPrompt(
       title: prompt,
       theme: defaultTheme,
-      required: required,
-      masked: true,
-      maskChar: maskChar,
-      allowReveal: allowReveal,
+      fields: [
+        FormFieldConfig(
+          label: 'Password',
+          masked: true,
+          maskChar: maskChar,
+          allowReveal: allowReveal,
+          required: required,
+        ),
+        FormFieldConfig(
+          label: 'Verify password',
+          masked: true,
+          maskChar: maskChar,
+          allowReveal: allowReveal,
+          required: required,
+          placeholder: 're-enter to confirm',
+        ),
+      ],
+      crossValidator: (values) =>
+          values[0] != values[1] ? 'Passwords do not match' : null,
     ).run();
+
+    return result?[0];
   }
 }
