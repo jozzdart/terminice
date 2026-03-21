@@ -1,5 +1,5 @@
 name: terminice
-description: "The best and easiest way to build terminal-based applications in Dart. With 30+ prompts and viewers, beautiful themes, and ease of use."
+description: "The ultimate toolkit for Dart CLI apps. 30+ ready-to-use components (prompts, searchable selectors, pickers, indicators, editors), 11 universal themes, and zero boilerplate."
 version: 0.0.21
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice
