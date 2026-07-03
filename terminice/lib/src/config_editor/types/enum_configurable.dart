@@ -1,4 +1,6 @@
 import 'package:terminice/terminice.dart';
+import 'package:terminice_core/terminice_core.dart'
+    show normalizeValidationError;
 
 import '../focused_select.dart';
 
@@ -53,7 +55,7 @@ class EnumConfigurable extends Configurable<String> {
     );
     if (selected == null || selected == value) return false;
     if (validator != null) {
-      final error = validator!(selected);
+      final error = normalizeValidationError(validator!(selected));
       if (error != null) return false;
     }
     value = selected;

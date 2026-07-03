@@ -1,16 +1,17 @@
 import '../io/terminal_context.dart';
+import 'validator_semantics.dart';
 
 /// Validator for fallback text input.
 ///
-/// Return an empty string for success, or a non-empty error message to ask
-/// again. This matches the existing Terminice text prompt convention.
-typedef FallbackTextValidator = String Function(String value);
+/// Return `null` for success, or a non-empty error message to ask again.
+/// Returning `''` is also accepted as success for backwards compatibility.
+typedef FallbackTextValidator = String? Function(String value);
 
 /// Validator for fallback numeric input.
 ///
-/// Return an empty string for success, or a non-empty error message to ask
-/// again. This matches the existing Terminice text prompt convention.
-typedef FallbackNumberValidator = String Function(num value);
+/// Return `null` for success, or a non-empty error message to ask again.
+/// Returning `''` is also accepted as success for backwards compatibility.
+typedef FallbackNumberValidator = String? Function(num value);
 
 /// Builds a display label for a selectable fallback item.
 typedef FallbackLabelBuilder<T> = String Function(T item);
@@ -59,7 +60,8 @@ class FallbackFormField {
   /// Whether the field must be non-empty.
   final bool required;
 
-  /// Per-field validator. Return `''` for success or an error message.
+  /// Per-field validator. Return `null` for success or an error message.
+  /// Returning `''` is also accepted as success for backwards compatibility.
   final FallbackTextValidator? validator;
 
   /// Optional initial value used when the user submits an empty line.
@@ -105,19 +107,23 @@ class FallbackPrompt {
   /// Reads a line of text.
   ///
   /// Returns the trimmed input, [defaultValue] for empty input when provided,
-  /// or `null` on end-of-input. Validators use the Terminice convention:
-  /// return `''` for success and a non-empty string for an error message.
+  /// or [defaultValue] on end-of-input unless [returnDefaultOnEndOfInput] is
+  /// `false`. Validators return `null` for success and a non-empty string for
+  /// an error message. Returning `''` is also accepted as success for backwards
+  /// compatibility.
   static String? text({
     required String title,
     String? defaultValue,
     bool required = false,
     FallbackTextValidator? validator,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     return _readText(
       title: title,
       defaultValue: defaultValue,
       required: required,
       validator: validator,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
   }
 
@@ -131,11 +137,13 @@ class FallbackPrompt {
     required String title,
     bool required = true,
     FallbackTextValidator? validator,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     return _readText(
       title: title,
       required: required,
       validator: validator,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
   }
 
@@ -170,13 +178,16 @@ class FallbackPrompt {
 
   /// Reads a one-based single selection.
   ///
-  /// [defaultIndex] is zero-based. Empty input and end-of-input return that
-  /// default item when it is in range, otherwise `null`.
+  /// [defaultIndex] is zero-based. Empty input returns that default item when
+  /// it is in range, otherwise `null`. End-of-input follows the same policy
+  /// unless [returnDefaultOnEndOfInput] is `false`, in which case it returns
+  /// `null`.
   static T? singleSelect<T>({
     required String title,
     required List<T> options,
     int? defaultIndex = 0,
     FallbackLabelBuilder<T>? labelBuilder,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     if (options.isEmpty) return null;
 
@@ -195,7 +206,14 @@ class FallbackPrompt {
       );
 
       final line = TerminalContext.input.readLineSync();
-      if (line == null || line.trim().isEmpty) {
+      if (line == null) {
+        return returnDefaultOnEndOfInput
+            ? normalizedDefault == null
+                ? null
+                : options[normalizedDefault]
+            : null;
+      }
+      if (line.trim().isEmpty) {
         return normalizedDefault == null ? null : options[normalizedDefault];
       }
 
@@ -211,15 +229,18 @@ class FallbackPrompt {
   /// Reads one-based multi-selection input.
   ///
   /// [defaultIndices] and [fallbackIndex] are zero-based. Input may be comma or
-  /// whitespace separated, for example `1, 3` or `1 3`. Empty input and
-  /// end-of-input return the default items when any valid defaults are present,
-  /// otherwise the fallback item when [fallbackIndex] is in range.
+  /// whitespace separated, for example `1, 3` or `1 3`. Empty input returns
+  /// the default items when any valid defaults are present, otherwise the
+  /// fallback item when [fallbackIndex] is in range. End-of-input follows the
+  /// same policy unless [returnDefaultOnEndOfInput] is `false`, in which case
+  /// it returns an empty list.
   static List<T> multiSelect<T>({
     required String title,
     required List<T> options,
     Set<int>? defaultIndices,
     int? fallbackIndex,
     FallbackLabelBuilder<T>? labelBuilder,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     if (options.isEmpty) return <T>[];
 
@@ -242,7 +263,12 @@ class FallbackPrompt {
       TerminalContext.output.write('Select one or more$suffix: ');
 
       final line = TerminalContext.input.readLineSync();
-      if (line == null || line.trim().isEmpty) {
+      if (line == null) {
+        return returnDefaultOnEndOfInput
+            ? _itemsAt(options, emptyInputSelection)
+            : <T>[];
+      }
+      if (line.trim().isEmpty) {
         return _itemsAt(options, emptyInputSelection);
       }
 
@@ -257,21 +283,25 @@ class FallbackPrompt {
 
   /// Reads a number.
   ///
-  /// Empty input and end-of-input return [defaultValue]. Invalid numbers,
-  /// out-of-range values, and validator errors are reported before asking
-  /// again.
+  /// Empty input returns [defaultValue]. End-of-input also returns
+  /// [defaultValue] unless [returnDefaultOnEndOfInput] is `false`. Invalid
+  /// numbers, out-of-range values, and validator errors are reported before
+  /// asking again.
   static num? number({
     required String title,
     num? defaultValue,
     num? min,
     num? max,
     FallbackNumberValidator? validator,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     while (true) {
       _writePrompt(title, defaultValue: defaultValue?.toString());
 
       final line = TerminalContext.input.readLineSync();
-      if (line == null) return defaultValue;
+      if (line == null) {
+        return returnDefaultOnEndOfInput ? defaultValue : null;
+      }
 
       final text = line.trim();
       if (text.isEmpty) return defaultValue;
@@ -320,6 +350,7 @@ class FallbackPrompt {
     num? min,
     num? max,
     FallbackNumberValidator? validator,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     final lower = _lowerBound(min, max);
     final upper = _upperBound(min, max);
@@ -340,6 +371,7 @@ class FallbackPrompt {
       min: lower,
       max: upper,
       validator: validator,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
     if (start == null) return null;
 
@@ -349,6 +381,7 @@ class FallbackPrompt {
       min: lower,
       max: upper,
       validator: validator,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
     if (end == null) return null;
 
@@ -364,12 +397,14 @@ class FallbackPrompt {
   /// Reads a multi-field form in line mode.
   ///
   /// Fields are prompted in order. Per-field validators use the text fallback
-  /// convention: return `''` for success or an error message. The optional
-  /// [crossValidator] runs after all fields are accepted; return `null` for
-  /// success or an error message to retry the whole form.
+  /// convention: return `null` for success or an error message. The optional
+  /// [crossValidator] runs after all fields are accepted. Returning `''` from
+  /// either validator type is also accepted as success for backwards
+  /// compatibility.
   static FallbackFormResult? form({
     required List<FallbackFormField> fields,
     String? Function(List<String> values)? crossValidator,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     if (fields.isEmpty) return const FallbackFormResult([]);
 
@@ -382,13 +417,14 @@ class FallbackPrompt {
           defaultValue: field.masked ? null : _initialFormDefault(field),
           required: field.required,
           validator: field.validator,
+          returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
         );
 
         if (value == null) return null;
         values.add(value);
       }
 
-      final error = crossValidator?.call(values);
+      final error = normalizeValidationError(crossValidator?.call(values));
       if (error == null) return FallbackFormResult(values);
 
       _writeError(error);
@@ -400,12 +436,15 @@ class FallbackPrompt {
     String? defaultValue,
     bool required = false,
     FallbackTextValidator? validator,
+    bool returnDefaultOnEndOfInput = true,
   }) {
     while (true) {
       _writePrompt(title, defaultValue: defaultValue);
 
       final line = TerminalContext.input.readLineSync();
-      if (line == null) return defaultValue;
+      if (line == null) {
+        return returnDefaultOnEndOfInput ? defaultValue : null;
+      }
 
       final value = line.trim();
       if (value.isEmpty && defaultValue != null) return defaultValue;
@@ -431,8 +470,7 @@ class FallbackPrompt {
   ) {
     if (validator == null) return null;
 
-    final error = validator(value);
-    return error.isEmpty ? null : error;
+    return normalizeValidationError(validator(value));
   }
 
   static String? _numberValidationError(
@@ -441,8 +479,7 @@ class FallbackPrompt {
   ) {
     if (validator == null) return null;
 
-    final error = validator(value);
-    return error.isEmpty ? null : error;
+    return normalizeValidationError(validator(value));
   }
 
   static String _fallbackFormFieldTitle(FallbackFormField field) {

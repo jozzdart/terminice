@@ -98,6 +98,7 @@ extension PasswordPromptExtensions on Terminice {
           : FallbackPrompt.password(
               title: prompt,
               required: required,
+              returnDefaultOnEndOfInput: false,
             ),
     );
   }
@@ -129,6 +130,7 @@ String? _fallbackVerifiedPassword(
     ],
     crossValidator: (values) =>
         values[0] != values[1] ? 'Passwords do not match' : null,
+    returnDefaultOnEndOfInput: false,
   );
 
   return result?[0];

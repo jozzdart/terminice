@@ -37,7 +37,7 @@ extension TextPromptExtensions on Terminice {
   String? text(
     String prompt, {
     String? placeholder,
-    String Function(String)? validator,
+    String? Function(String)? validator,
     bool required = true,
   }) {
     return runWithFallback<String?>(
@@ -52,6 +52,7 @@ extension TextPromptExtensions on Terminice {
         title: prompt,
         required: required,
         validator: validator,
+        returnDefaultOnEndOfInput: false,
       ),
     );
   }

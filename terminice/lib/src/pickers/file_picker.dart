@@ -3,17 +3,21 @@ import 'package:terminice/terminice.dart';
 
 import '_file_helpers.dart';
 
-/// Adds the [filePicker] method to [Terminice] for interactive file and directory selection.
+/// Adds the [filePicker] method to [Terminice] for interactive file browsing.
 extension FilePickerExtensions on Terminice {
-  /// Opens a keyboard-driven picker for choosing a file or directory.
+  /// Opens a keyboard-driven browser for choosing an existing file.
   ///
   /// The prompt lists the contents of [startDirectory] (or the current working
   /// directory when omitted), sorts directories first, and lets users drill down
   /// or navigate up with the built-in `↩ ..` entry. Hidden entries stay filtered
-  /// unless [showHidden] is enabled, and passing [foldersOnly] ensures only
-  /// directories can be confirmed, which is useful for export targets.
+  /// unless [showHidden] is enabled.
   ///
-  /// Returns the resolved path of the selected entity or `null` if the flow is
+  /// Directories are always navigation targets, not confirmation targets. When
+  /// [foldersOnly] is `true`, files are not returned, so the browser can only
+  /// be cancelled after directory navigation. Use [pathPicker] when the user
+  /// needs to confirm a directory path.
+  ///
+  /// Returns the resolved path of the selected file or `null` if the flow is
   /// cancelled.
   ///
   /// Example:

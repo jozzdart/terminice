@@ -396,7 +396,7 @@ The fallback API includes `text`, `password`, `confirm`, `singleSelect`, `multiS
 final name = FallbackPrompt.text(
   title: 'Name',
   required: true,
-  validator: (value) => value.length < 2 ? 'Too short' : '',
+  validator: (value) => value.length < 2 ? 'Too short' : null,
 );
 
 final confirmed = FallbackPrompt.confirm(
@@ -424,7 +424,7 @@ final login = FallbackPrompt.form(
 );
 ```
 
-Fallback validators for `text` and `number` follow the existing Terminice text prompt convention: return `''` for success, or a non-empty string to display as the validation error before asking again. `password` intentionally uses the same line-mode path as `text`, so it does not mask characters or disable terminal echo.
+Fallback validators for `text` and `number` return `null` for success, or a non-empty string to display as the validation error before asking again. Returning `''` is still accepted as success for backwards compatibility. `password` intentionally uses the same line-mode path as `text`, so it does not mask characters or disable terminal echo.
 
 ---
 

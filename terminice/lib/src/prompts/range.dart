@@ -163,11 +163,12 @@ extension RangePromptExtensions on Terminice {
           endDefault: endInitial,
           min: min,
           max: max,
+          returnDefaultOnEndOfInput: false,
         );
         if (result == null) {
           return RangeResult(
-            start: math.min(min, max),
-            end: math.max(min, max),
+            start: startInitial,
+            end: endInitial,
           );
         }
         return RangeResult(

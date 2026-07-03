@@ -23,6 +23,7 @@ export 'prompt/selectable_grid_prompt.dart';
 export 'prompt/selectable_list_prompt.dart';
 export 'prompt/simple_prompt.dart';
 export 'prompt/text_input_buffer.dart';
+export 'prompt/validator_semantics.dart';
 export 'prompt/value_prompt.dart';
 
 // Rendering (local)

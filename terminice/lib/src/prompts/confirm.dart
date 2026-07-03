@@ -16,7 +16,7 @@ extension ConfirmPromptExtensions on Terminice {
   /// Controls:
   /// - ← / → change the highlighted option
   /// - Enter confirms the highlighted option
-  /// - Esc cancels (returns `false`)
+  /// - Esc cancels (returns [defaultYes])
   ///
   /// Returns true if confirmed, false otherwise.
   ///

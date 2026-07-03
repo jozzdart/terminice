@@ -81,6 +81,7 @@ FormResult? _fallbackForm(
   final result = FallbackPrompt.form(
     fields: fields.map(_toFallbackField).toList(),
     crossValidator: crossValidator,
+    returnDefaultOnEndOfInput: false,
   );
   return result == null ? null : FormResult(result.values);
 }

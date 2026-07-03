@@ -11,6 +11,7 @@ class FallbackSelection {
     int? defaultIndex = 0,
     Set<int>? defaultIndices,
     FallbackLabelBuilder<T>? labelBuilder,
+    bool returnDefaultOnEndOfInput = false,
   }) {
     if (options.isEmpty) return null;
 
@@ -23,6 +24,7 @@ class FallbackSelection {
         length: options.length,
       ),
       labelBuilder: labelBuilder,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
   }
 
@@ -33,6 +35,7 @@ class FallbackSelection {
     Set<int>? defaultIndices,
     int? fallbackIndex,
     FallbackLabelBuilder<T>? labelBuilder,
+    bool returnDefaultOnEndOfInput = false,
   }) {
     if (options.isEmpty) return <T>[];
 
@@ -42,6 +45,7 @@ class FallbackSelection {
       defaultIndices: defaultIndices,
       fallbackIndex: _focusedFallbackIndex(fallbackIndex, options.length),
       labelBuilder: labelBuilder,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
   }
 
@@ -53,6 +57,7 @@ class FallbackSelection {
     int? defaultIndex = 0,
     Set<int>? defaultIndices,
     FallbackLabelBuilder<T>? labelBuilder,
+    bool returnDefaultOnEndOfInput = false,
   }) {
     return mappedList<T, T>(
       title: title,
@@ -61,6 +66,7 @@ class FallbackSelection {
       defaultIndex: defaultIndex,
       defaultIndices: defaultIndices,
       labelBuilder: labelBuilder,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
       mapItem: (item) => item,
     );
   }
@@ -74,6 +80,7 @@ class FallbackSelection {
     int? defaultIndex = 0,
     Set<int>? defaultIndices,
     FallbackLabelBuilder<T>? labelBuilder,
+    bool returnDefaultOnEndOfInput = false,
   }) {
     if (options.isEmpty) return <R>[];
 
@@ -84,6 +91,7 @@ class FallbackSelection {
         defaultIndices: defaultIndices,
         fallbackIndex: defaultIndex,
         labelBuilder: labelBuilder,
+        returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
       ).map(mapItem).toList();
     }
 
@@ -93,6 +101,7 @@ class FallbackSelection {
       defaultIndex: defaultIndex,
       defaultIndices: defaultIndices,
       labelBuilder: labelBuilder,
+      returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
     return selected == null ? <R>[] : <R>[mapItem(selected)];
   }

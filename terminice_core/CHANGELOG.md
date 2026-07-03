@@ -3,6 +3,9 @@
 - **New**: Added public `FallbackPrompt` line-mode primitives for prompt flows that should not enter raw terminal mode.
 - **New**: Added `FallbackPrompt.range()` and `FallbackPrompt.form()` helpers so bounded range input and fallback form validation share one core implementation.
 - **Behavior**: Fallback prompts read normal input lines while preserving validation feedback and cancellation behavior.
+- **Behavior**: Standardized nullable validator semantics and shared normalization so `null` and legacy `''` both mean success.
+- **Behavior**: Fallback prompts now distinguish EOF or unavailable stdin from blank input, preserving blank-line default acceptance.
+- **Behavior**: `SimplePrompts.number()` cancellation returns the exact caller-supplied initial value while confirmed values remain clamped.
 - **Validation**: Added validator coverage for fallback prompt input paths and guarded numeric fallback input against non-finite values.
 - **Documentation and tests**: Updated README guidance and tests for fallback primitives and line-mode behavior.
 - Bumped `termistyle` dependency lower bound to `^1.1.0`.

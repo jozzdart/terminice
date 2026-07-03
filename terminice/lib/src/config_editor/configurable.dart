@@ -1,4 +1,6 @@
 import 'package:terminice/terminice.dart';
+import 'package:terminice_core/terminice_core.dart'
+    show normalizeValidationError;
 
 /// Base class for all configurable fields in a config editor.
 ///
@@ -42,6 +44,7 @@ abstract class Configurable<T> {
   final String Function(T value)? formatter;
 
   /// Optional validator. Returns an error message on failure, `null` on success.
+  /// Returning `''` is also accepted as success for backwards compatibility.
   final String? Function(T value)? validator;
 
   /// Custom icon override. When set, [typeIcon] returns this instead of
@@ -97,7 +100,7 @@ abstract class Configurable<T> {
   void reset() => value = defaultValue;
 
   /// Validates the current value. Returns `null` if valid, error message otherwise.
-  String? validate() => validator?.call(value);
+  String? validate() => normalizeValidationError(validator?.call(value));
 }
 
 /// Result returned by the config editor after the user confirms.

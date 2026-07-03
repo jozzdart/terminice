@@ -75,7 +75,7 @@ class StringConfigurable extends Configurable<String> {
     final result = terminice.text(
       label,
       placeholder: placeholder ?? value,
-      validator: validator != null ? (v) => validator!(v) ?? '' : null,
+      validator: validator,
       required: required,
     );
     if (result != null) {

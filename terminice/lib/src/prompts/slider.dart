@@ -90,8 +90,9 @@ extension SliderPromptExtensions on Terminice {
               defaultValue: defaultValue,
               min: min,
               max: max,
+              returnDefaultOnEndOfInput: false,
             ) ??
-            defaultValue;
+            initial;
       },
     );
   }

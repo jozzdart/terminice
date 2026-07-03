@@ -86,9 +86,18 @@ Most tools in the library share a consistent set of parameters to keep the API p
 - `required`: (On text/password prompts) Prevents the user from submitting an empty value.
 - `validator`: A function that returns a `String?` error message if the input is invalid.
 
+#### Cancellation Behavior
+
+Prompts use a consistent cancellation policy:
+
+- Nullable prompts return `null` when cancelled.
+- Value prompts return the exact caller-supplied `initial` or default value when cancelled, even if the active interactive value is clamped while editing.
+- Config editor fields leave their existing value unchanged when a field edit is cancelled.
+- List and multi selectors return a non-null list; cancelled multi-selection prompts may return `[]`.
+
 #### Validation
 
-Validating input is built directly into the prompts. Simply provide a `validator` function that returns a `String` error message if the input is invalid, or `null` if it passes.
+Validating input is built directly into the prompts. Simply provide a `validator` function that returns a `String` error message if the input is invalid, or `null` if it passes. Returning `''` is also accepted as a legacy-compatible success value.
 
 ```dart
 final email = terminice.text(
@@ -384,7 +393,7 @@ Collect a single trimmed string with optional placeholder text and inline valida
 - `prompt` - Title displayed above the input.
 - `placeholder` - Dimmed hint text shown while the input is empty.
 - `required` - Defaults to `true`; empty submissions are blocked with an inline error.
-- `validator` - Optional `String Function(String)` that receives trimmed input. Return `''` for valid input, or a non-empty error message to block confirmation.
+- `validator` - Optional `String? Function(String)` that receives trimmed input. Return `null` for valid input, or a non-empty error message to block confirmation. Returning `''` is still accepted as success for backwards compatibility.
 - Returns `String?` - The trimmed input on Enter, or `null` when the user cancels with Esc/Ctrl+C.
 - Controls - Type normally, Backspace deletes, Enter confirms, Esc cancels.
 
@@ -417,7 +426,7 @@ final email = terminice.text(
   placeholder: 'ada@example.com',
   validator: (value) {
     if (!value.contains('@')) return 'Enter a valid email address';
-    return '';
+    return null;
   },
 );
 ```
@@ -719,7 +728,7 @@ Collect a small integer rating with stars, number-key shortcuts, and optional la
 - `maxStars` - Maximum rating value. Defaults to `5` and must be greater than `0`.
 - `initial` - Starting rating. Defaults to `3`; the active value is clamped into `1..maxStars`.
 - `labels` - Optional labels displayed for each rating value when the list has at least `maxStars` entries.
-- Returns `int` - The confirmed rating. Esc/Ctrl+C returns the clamped initial value.
+- Returns `int` - The confirmed rating. Esc/Ctrl+C returns the supplied `initial` value.
 - Controls - Left/Right adjusts the rating, number keys jump directly to a value, Enter confirms, Esc/Ctrl+C cancels to the initial rating.
 
 #### 🧪 Examples
@@ -828,7 +837,7 @@ import 'package:terminice_core/terminice_core.dart';
 - `maskChar` - Character used for masked fields. Defaults to `'•'`.
 - `allowReveal` - Defaults to `false`; when `true`, Ctrl+R toggles plain text for that masked field.
 - `required` - Defaults to `false`; empty trimmed values are rejected with `Required`.
-- `validator` - Optional `String Function(String)` per-field validator. Return `''` for valid input, or a non-empty error message.
+- `validator` - Optional `String? Function(String)` per-field validator. Return `null` for valid input, or a non-empty error message. Returning `''` is still accepted as success for backwards compatibility.
 - `initialValue` - Optional pre-filled text.
 
 #### Examples
@@ -864,7 +873,7 @@ final account = terminice.form(
       label: 'Email',
       required: true,
       validator: (value) =>
-          value.contains('@') ? '' : 'Enter a valid email address',
+          value.contains('@') ? null : 'Enter a valid email address',
     ),
     const FormFieldConfig(
       label: 'Password',
@@ -1543,10 +1552,10 @@ Pick a single calendar date from a framed month view. The selected day stays hig
 - `prompt` - Frame title displayed above the calendar.
 - `initialDate` - Optional starting date. Defaults to `DateTime.now()` and is normalized to year/month/day for the initial selection.
 - `startWeekOnMonday` - Defaults to `true`. When `false`, the calendar renders Sunday as the first weekday.
-- `allowPast` / `allowFuture` - Public API flags for past/future gating. In the current implementation, navigation is not clamped by these flags, so enforce date limits after the picker returns if your command requires them.
+- `allowPast` / `allowFuture` - Defaults to `true`. Set either to `false` to clamp the initial date and keyboard navigation at today.
 - Returns `DateTime?` - The selected date on Enter, or `null` when cancelled.
-- Date behavior - Left/Right move one day, Up/Down move one week, and W/S move one year while keeping the visible month synced to the selected date. Ctrl+E jumps to `DateTime.now()`.
-- Normalization note - The initial selection is date-only. Ctrl+E assigns `DateTime.now()` directly, so normalize the returned value yourself if your storage format requires midnight.
+- Date behavior - Left/Right move one day, Up/Down move one week, and W/S move one year while keeping the visible month synced to the selected date. Ctrl+E jumps to today.
+- Normalization note - The returned selection is date-only.
 - Cancel behavior - Esc/Ctrl+C returns `null`.
 - Controls - Left/Right move by day, Up/Down move by week, W/S move by year, Ctrl+E jumps to today, Enter confirms, Esc/Ctrl+C cancels.
 
@@ -1997,7 +2006,7 @@ ConfigResult? configEditor(
 - Navigation behavior - `↑` / `↓` move through rows, `Enter` opens the focused field or group, and the first row is the root save action.
 - Group behavior - `GroupConfigurable` opens a nested editor with a "Back" action instead of "Save & confirm". Esc or Back in a group returns to the parent and preserves edits in place; only the root save decides whether a result is returned.
 - Theme behavior - A `ThemeConfigurable` at the current editor level updates the editor theme live after a new theme is selected. The editor also starts with that field's selected theme.
-- Cancellation behavior - Esc / Ctrl+C at the root returns `null`. Field-level cancellation depends on the wrapped prompt; fields only update their value when their `edit(...)` method accepts a new value.
+- Cancellation behavior - Esc / Ctrl+C at the root returns `null`. Field-level cancellation leaves the field's existing value unchanged; fields only update their value when their `edit(...)` method accepts a new value.
 - Validation behavior - `Configurable.validate()` calls the field's validator, and `GroupConfigurable.validate()` checks children. The root save action does not currently run a full validation sweep automatically, so run validation yourself if you need a final gate.
 
 #### `Configurable<T>` Basics
@@ -2011,7 +2020,7 @@ Every config field stores display metadata, a typed value, serialization hooks, 
 - `value` - Current typed value.
 - `defaultValue` - Captured from the initial value and used for change detection.
 - `formatter` - Optional display formatter. If omitted, the field's `formatValue()` is used.
-- `validator` - Optional function that returns an error string or `null`.
+- `validator` - Optional function that returns an error string or `null`. Returning `''` is also accepted as a legacy-compatible success value.
 - `icon` - Optional glyph override. Otherwise each field uses its default type icon.
 - `displayValue` - Formatted row value.
 - `typeIcon` - Custom icon or field default.

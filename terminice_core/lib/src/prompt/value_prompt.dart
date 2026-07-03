@@ -213,9 +213,7 @@ class DiscreteValuePrompt {
       bindings: _bindings,
     );
 
-    return (result == PromptResult.cancelled || _cancelled)
-        ? initial.clamp(1, maxValue)
-        : _value;
+    return (result == PromptResult.cancelled || _cancelled) ? initial : _value;
   }
 
   void _initState() {

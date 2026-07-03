@@ -71,14 +71,15 @@ extension RatingPromptExtensions on Terminice {
       fallback: () {
         final defaultValue = _clampRating(initial, maxStars);
         final value = FallbackPrompt.number(
-              title: prompt,
-              defaultValue: defaultValue,
-              min: 1,
-              max: maxStars,
-              validator: (value) =>
-                  value == value.toInt() ? '' : 'Enter a whole number.',
-            ) ??
-            defaultValue;
+          title: prompt,
+          defaultValue: defaultValue,
+          min: 1,
+          max: maxStars,
+          validator: (value) =>
+              value == value.toInt() ? null : 'Enter a whole number.',
+          returnDefaultOnEndOfInput: false,
+        );
+        if (value == null) return initial;
         return _clampRating(value.toInt(), maxStars);
       },
     );

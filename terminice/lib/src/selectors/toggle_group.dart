@@ -132,6 +132,7 @@ extension ToggleGroupExtensions on Terminice {
               if (items[i].initialOn) i,
           },
           labelBuilder: (item) => item.label,
+          returnDefaultOnEndOfInput: true,
         ).toSet();
 
         return {

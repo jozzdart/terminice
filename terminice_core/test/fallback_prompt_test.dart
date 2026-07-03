@@ -24,6 +24,45 @@ void main() {
       expect(terminal.mockOutput.contains('Too short'), isTrue);
     });
 
+    test('text validates with the nullable success convention', () {
+      terminal.mockInput.queueLines(['ab', 'abcd']);
+
+      final result = FallbackPrompt.text(
+        title: 'Name',
+        validator: (value) => value.length < 4 ? 'Too short' : null,
+      );
+
+      expect(result, 'abcd');
+      expect(terminal.mockOutput.contains('Too short'), isTrue);
+    });
+
+    test('text distinguishes EOF from empty default input when opted out', () {
+      terminal.mockInput.queueLine('');
+
+      final emptyResult = FallbackPrompt.text(
+        title: 'Name',
+        defaultValue: 'Ada',
+        returnDefaultOnEndOfInput: false,
+      );
+      final eofResult = FallbackPrompt.text(
+        title: 'Name',
+        defaultValue: 'Ada',
+        returnDefaultOnEndOfInput: false,
+      );
+
+      expect(emptyResult, 'Ada');
+      expect(eofResult, isNull);
+    });
+
+    test('text returns the default on EOF by default', () {
+      final result = FallbackPrompt.text(
+        title: 'Name',
+        defaultValue: 'Ada',
+      );
+
+      expect(result, 'Ada');
+    });
+
     test('password uses line input without changing terminal modes', () {
       terminal.mockInput.queueLine('secret');
 
@@ -104,6 +143,58 @@ void main() {
       expect(result, isNull);
     });
 
+    test('singleSelect distinguishes EOF from empty default input', () {
+      terminal.mockInput.queueLine('');
+
+      final emptyResult = FallbackPrompt.singleSelect(
+        title: 'Pick one',
+        options: ['alpha', 'beta', 'gamma'],
+        defaultIndex: 1,
+        returnDefaultOnEndOfInput: false,
+      );
+      final eofResult = FallbackPrompt.singleSelect(
+        title: 'Pick one',
+        options: ['alpha', 'beta', 'gamma'],
+        defaultIndex: 1,
+        returnDefaultOnEndOfInput: false,
+      );
+      final defaultEofResult = FallbackPrompt.singleSelect(
+        title: 'Pick one',
+        options: ['alpha', 'beta', 'gamma'],
+        defaultIndex: 1,
+      );
+
+      expect(emptyResult, 'beta');
+      expect(eofResult, isNull);
+      expect(defaultEofResult, 'beta');
+    });
+
+    test('multiSelect distinguishes EOF from empty default input', () {
+      terminal.mockInput.queueLine('');
+
+      final emptyResult = FallbackPrompt.multiSelect(
+        title: 'Pick many',
+        options: ['alpha', 'beta', 'gamma'],
+        defaultIndices: {1, 2},
+        returnDefaultOnEndOfInput: false,
+      );
+      final eofResult = FallbackPrompt.multiSelect(
+        title: 'Pick many',
+        options: ['alpha', 'beta', 'gamma'],
+        defaultIndices: {1, 2},
+        returnDefaultOnEndOfInput: false,
+      );
+      final defaultEofResult = FallbackPrompt.multiSelect(
+        title: 'Pick many',
+        options: ['alpha', 'beta', 'gamma'],
+        defaultIndices: {1, 2},
+      );
+
+      expect(emptyResult, ['beta', 'gamma']);
+      expect(eofResult, isEmpty);
+      expect(defaultEofResult, ['beta', 'gamma']);
+    });
+
     test('number retries bad input and returns a valid value', () {
       terminal.mockInput.queueLines(['nope', '11', '7']);
 
@@ -126,6 +217,45 @@ void main() {
 
       expect(result, 5);
       expect(terminal.mockOutput.contains('Enter a finite number.'), isTrue);
+    });
+
+    test('number accepts null and empty-string validator success', () {
+      terminal.mockInput.queueLines(['4', '5']);
+
+      final nullableResult = FallbackPrompt.number(
+        title: 'Even',
+        validator: (value) => value % 2 == 0 ? null : 'Must be even',
+      );
+      final legacyResult = FallbackPrompt.number(
+        title: 'Positive',
+        validator: (value) => value > 0 ? '' : 'Must be positive',
+      );
+
+      expect(nullableResult, 4);
+      expect(legacyResult, 5);
+    });
+
+    test('number distinguishes EOF from empty default input', () {
+      terminal.mockInput.queueLine('');
+
+      final emptyResult = FallbackPrompt.number(
+        title: 'Count',
+        defaultValue: 3,
+        returnDefaultOnEndOfInput: false,
+      );
+      final eofResult = FallbackPrompt.number(
+        title: 'Count',
+        defaultValue: 3,
+        returnDefaultOnEndOfInput: false,
+      );
+      final defaultEofResult = FallbackPrompt.number(
+        title: 'Count',
+        defaultValue: 3,
+      );
+
+      expect(emptyResult, 3);
+      expect(eofResult, isNull);
+      expect(defaultEofResult, 3);
     });
 
     test('range rejects out-of-range input before accepting valid values', () {
@@ -164,6 +294,34 @@ void main() {
       expect(result?.end, 10);
     });
 
+    test('range distinguishes EOF from empty default input', () {
+      terminal.mockInput.queueLines(['', '']);
+
+      final emptyResult = FallbackPrompt.range(
+        title: 'Window',
+        startDefault: 2,
+        endDefault: 4,
+        returnDefaultOnEndOfInput: false,
+      );
+      final eofResult = FallbackPrompt.range(
+        title: 'Window',
+        startDefault: 2,
+        endDefault: 4,
+        returnDefaultOnEndOfInput: false,
+      );
+      final defaultEofResult = FallbackPrompt.range(
+        title: 'Window',
+        startDefault: 2,
+        endDefault: 4,
+      );
+
+      expect(emptyResult?.start, 2);
+      expect(emptyResult?.end, 4);
+      expect(eofResult, isNull);
+      expect(defaultEofResult?.start, 2);
+      expect(defaultEofResult?.end, 4);
+    });
+
     test('form retries cross-validator and applies initial values', () {
       terminal.mockInput.queueLines([
         '',
@@ -199,6 +357,45 @@ void main() {
       expect(result?.values, ['Ada', 'secret', 'secret']);
       expect(terminal.mockOutput.contains('Passwords do not match'), isTrue);
       expect(terminal.mockOutput.contains('masked'), isTrue);
+    });
+
+    test('form treats empty-string cross-validator result as success', () {
+      terminal.mockInput.queueLine('Ada');
+
+      final result = FallbackPrompt.form(
+        fields: [
+          const FallbackFormField(label: 'Name', required: true),
+        ],
+        crossValidator: (_) => '',
+      );
+
+      expect(result?.values, ['Ada']);
+    });
+
+    test('form distinguishes EOF from empty initial-value input', () {
+      terminal.mockInput.queueLine('');
+
+      final emptyResult = FallbackPrompt.form(
+        fields: [
+          const FallbackFormField(label: 'Name', initialValue: 'Ada'),
+        ],
+        returnDefaultOnEndOfInput: false,
+      );
+      final eofResult = FallbackPrompt.form(
+        fields: [
+          const FallbackFormField(label: 'Name', initialValue: 'Ada'),
+        ],
+        returnDefaultOnEndOfInput: false,
+      );
+      final defaultEofResult = FallbackPrompt.form(
+        fields: [
+          const FallbackFormField(label: 'Name', initialValue: 'Ada'),
+        ],
+      );
+
+      expect(emptyResult?.values, ['Ada']);
+      expect(eofResult, isNull);
+      expect(defaultEofResult?.values, ['Ada']);
     });
   });
 }

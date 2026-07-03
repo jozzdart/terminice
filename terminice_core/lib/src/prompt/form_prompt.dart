@@ -36,8 +36,9 @@ class FormFieldConfig {
   /// Whether the field must be non-empty to submit.
   final bool required;
 
-  /// Per-field validator. Return empty string if valid, error message if not.
-  final String Function(String text)? validator;
+  /// Per-field validator. Return `null` if valid, or an error message if not.
+  /// Returning `''` is also accepted as success for backwards compatibility.
+  final String? Function(String text)? validator;
 
   /// Optional initial value pre-filled into the buffer.
   final String? initialValue;
@@ -193,15 +194,18 @@ class FormPrompt {
           s.setError('Required');
           valid = false;
         } else if (s.config.validator != null) {
-          final err = s.config.validator!(s.text.trim());
-          if (err.isNotEmpty) {
+          final err =
+              normalizeValidationError(s.config.validator!(s.text.trim()));
+          if (err != null) {
             s.setError(err);
             valid = false;
           }
         }
       }
       if (valid && crossValidator != null) {
-        final err = crossValidator!(states.map((s) => s.text.trim()).toList());
+        final err = normalizeValidationError(
+          crossValidator!(states.map((s) => s.text.trim()).toList()),
+        );
         if (err != null) {
           crossError = err;
           valid = false;

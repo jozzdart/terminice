@@ -1,12 +1,27 @@
 ## 1.1.0
 
-- **New**: Added centralized `TerminiceConfig` for high-level prompt defaults and configuration editor propagation.
-- **New**: Added compatibility and fallback fluent APIs, including effective theme/defaultTheme behavior for compatibility-derived themes.
-- **Bug fix**: Fixed display-mode chaining so compatibility and fallback settings continue to apply after switching modes.
-- **Fallbacks**: Added high-level line-mode fallback coverage for prompts when raw terminal mode is unavailable or fallback mode is requested.
-- **Config editor**: Propagated editor-launched prompts through the active Terminice configuration.
-- **Documentation and tests**: Updated README coverage and tests for configuration, compatibility, fallback behavior, and display-mode chaining.
-- Bumped `terminice_core` dependency lower bound to `^1.1.0`.
+#### Added
+
+- Added centralized `TerminiceConfig` for high-level prompt defaults and configuration editor propagation.
+- Added compatibility and fallback fluent APIs, including effective theme/defaultTheme behavior for compatibility-derived themes.
+- Added high-level line-mode fallback coverage for prompts when raw terminal mode is unavailable or fallback mode is requested.
+
+#### Changed
+
+- Standardized high-level prompt and config validator semantics on `String?`, with legacy `''` still treated as success.
+- `datePicker` now clamps and blocks `allowPast`/`allowFuture` navigation and initial values while preserving defaults.
+- Clarified `filePicker(foldersOnly:)` behavior: directories navigate in `filePicker`, while `pathPicker` confirms directories.
+- Standardized cancellation results: nullable prompts cancel to `null`, list selectors to `[]`, value prompts keep the exact initial/default, and config fields stay unchanged.
+- High-level fallback prompts and selectors now distinguish EOF from blank lines while preserving blank-line defaults.
+- Propagated editor-launched prompts through the active Terminice configuration.
+
+#### Fixed
+
+- Fixed display-mode chaining so compatibility and fallback settings continue to apply after switching modes.
+
+#### Documentation
+
+- Updated README coverage and tests for configuration, compatibility, fallback behavior, and display-mode chaining.
 
 ## 1.0.1
 

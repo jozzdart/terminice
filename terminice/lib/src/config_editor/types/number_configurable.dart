@@ -121,8 +121,7 @@ class NumberConfigurable extends Configurable<num> {
         if (parsed < min || parsed > max) {
           return 'Must be between $min and $max';
         }
-        if (validator != null) return validator!(parsed) ?? '';
-        return '';
+        return validator?.call(parsed);
       },
       required: true,
     );
