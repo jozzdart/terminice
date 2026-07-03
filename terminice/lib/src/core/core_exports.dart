@@ -7,6 +7,8 @@ export 'package:terminice_core/terminice_core.dart'
         DisplayFeatures,
         HintStyle,
         BadgeTone,
+        TerminalCompatibility,
+        PromptThemeCompatibility,
         // Terminal I/O abstraction
         Terminal,
         TerminalInput,
@@ -15,3 +17,5 @@ export 'package:terminice_core/terminice_core.dart'
         DartTerminalInput,
         DartTerminalOutput,
         TerminalContext;
+
+export 'terminice_config.dart';

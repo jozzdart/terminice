@@ -1,3 +1,13 @@
+## 1.1.0
+
+- **New**: Added centralized `TerminiceConfig` for high-level prompt defaults and configuration editor propagation.
+- **New**: Added compatibility and fallback fluent APIs, including effective theme/defaultTheme behavior for compatibility-derived themes.
+- **Bug fix**: Fixed display-mode chaining so compatibility and fallback settings continue to apply after switching modes.
+- **Fallbacks**: Added high-level line-mode fallback coverage for prompts when raw terminal mode is unavailable or fallback mode is requested.
+- **Config editor**: Propagated editor-launched prompts through the active Terminice configuration.
+- **Documentation and tests**: Updated README coverage and tests for configuration, compatibility, fallback behavior, and display-mode chaining.
+- Bumped `terminice_core` dependency lower bound to `^1.1.0`.
+
 ## 1.0.1
 
 - **Documentation**: Expanded the `README.md` catalogue with in-depth, exui-style reference sections for every public Terminice tool.

@@ -118,6 +118,30 @@ class TerminalColors {
   /// Default high-contrast dark palette tuned for general use.
   static const TerminalColors dark = TerminalColors();
 
+  /// No-op palette for terminals that should receive plain text only.
+  ///
+  /// Every field is empty, including reset, bold, dim, and inverse, so callers
+  /// can safely compose strings without emitting ANSI escape sequences.
+  static const TerminalColors none = TerminalColors(
+    reset: '',
+    bold: '',
+    dim: '',
+    gray: '',
+    accent: '',
+    keyAccent: '',
+    highlight: '',
+    selection: '',
+    checkboxOn: '',
+    checkboxOff: '',
+    inverse: '',
+    info: '',
+    warn: '',
+    error: '',
+  );
+
+  /// Alias for [none] when "plain text" reads better at the call site.
+  static const TerminalColors plain = none;
+
   /// Matrix-inspired neon-green palette for classic hacker aesthetics.
   static const TerminalColors matrix = TerminalColors(
     accent: '\x1B[32m',

@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+
 /// Password prompt with masking, optional reveal toggle, and theme-aware
 /// status hints.
 ///
@@ -47,41 +49,87 @@ extension PasswordPromptExtensions on Terminice {
     bool allowReveal = true,
     bool verify = false,
   }) {
-    if (!verify) {
-      return TextPromptSync(
-        title: prompt,
-        theme: defaultTheme,
-        required: required,
+    return runWithFallback<String?>(
+      interactive: () {
+        if (!verify) {
+          return TextPromptSync(
+            title: prompt,
+            theme: defaultTheme,
+            required: required,
+            masked: true,
+            maskChar: maskChar,
+            allowReveal: allowReveal,
+          ).run();
+        }
+
+        final result = FormPrompt(
+          title: prompt,
+          theme: defaultTheme,
+          fields: [
+            FormFieldConfig(
+              label: 'Password',
+              masked: true,
+              maskChar: maskChar,
+              allowReveal: allowReveal,
+              required: required,
+            ),
+            FormFieldConfig(
+              label: 'Verify password',
+              masked: true,
+              maskChar: maskChar,
+              allowReveal: allowReveal,
+              required: required,
+              placeholder: 're-enter to confirm',
+            ),
+          ],
+          crossValidator: (values) =>
+              values[0] != values[1] ? 'Passwords do not match' : null,
+        ).run();
+
+        return result?[0];
+      },
+      fallback: () => verify
+          ? _fallbackVerifiedPassword(
+              prompt,
+              required: required,
+              maskChar: maskChar,
+              allowReveal: allowReveal,
+            )
+          : FallbackPrompt.password(
+              title: prompt,
+              required: required,
+            ),
+    );
+  }
+}
+
+String? _fallbackVerifiedPassword(
+  String prompt, {
+  required bool required,
+  required String maskChar,
+  required bool allowReveal,
+}) {
+  final result = FallbackPrompt.form(
+    fields: [
+      FallbackFormField(
+        label: prompt,
         masked: true,
         maskChar: maskChar,
         allowReveal: allowReveal,
-      ).run();
-    }
+        required: required,
+      ),
+      FallbackFormField(
+        label: 'Verify password',
+        placeholder: 're-enter to confirm',
+        masked: true,
+        maskChar: maskChar,
+        allowReveal: allowReveal,
+        required: required,
+      ),
+    ],
+    crossValidator: (values) =>
+        values[0] != values[1] ? 'Passwords do not match' : null,
+  );
 
-    final result = FormPrompt(
-      title: prompt,
-      theme: defaultTheme,
-      fields: [
-        FormFieldConfig(
-          label: 'Password',
-          masked: true,
-          maskChar: maskChar,
-          allowReveal: allowReveal,
-          required: required,
-        ),
-        FormFieldConfig(
-          label: 'Verify password',
-          masked: true,
-          maskChar: maskChar,
-          allowReveal: allowReveal,
-          required: required,
-          placeholder: 're-enter to confirm',
-        ),
-      ],
-      crossValidator: (values) =>
-          values[0] != values[1] ? 'Passwords do not match' : null,
-    ).run();
-
-    return result?[0];
-  }
+  return result?[0];
 }

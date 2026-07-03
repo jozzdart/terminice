@@ -22,14 +22,15 @@ bool runEditorLoop({
 }) {
   if (fields.isEmpty) return true;
 
-  var theme = terminice.defaultTheme;
+  var activeTerminice = terminice;
+  PromptTheme currentTheme() => activeTerminice.defaultTheme;
 
   for (final f in fields) {
     if (f is ThemeConfigurable) {
-      theme = f.selectedTheme;
+      activeTerminice = terminice.themed(f.selectedTheme);
       final previous = f.onChanged;
       f.onChanged = (newTheme) {
-        theme = newTheme;
+        activeTerminice = terminice.themed(newTheme);
         previous?.call(newTheme);
       };
     }
@@ -93,6 +94,7 @@ bool runEditorLoop({
     final available = rows > 7 ? rows - 7 : 5;
     nav.maxVisible = available.clamp(1, math.min(totalItems, maxVisible));
 
+    final theme = currentTheme();
     final frame = FrameView(title: title, theme: theme, bindings: bindings);
     frame.render(out, (ctx) {
       ctx.searchLine(
@@ -134,8 +136,6 @@ bool runEditorLoop({
     });
   }
 
-  Terminice themedInstance() => terminice.themed(theme);
-
   final session = TerminalSession(hideCursor: true, rawMode: true);
   final output = RenderOutput();
 
@@ -158,7 +158,7 @@ bool runEditorLoop({
             output.clear();
             session.end();
 
-            fields[fieldIdx].edit(themedInstance());
+            fields[fieldIdx].edit(activeTerminice);
 
             session.start();
             render(output);

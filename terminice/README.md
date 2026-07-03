@@ -41,6 +41,7 @@
 
 - [**Features**](#features)
 - [**How to use `terminice`**](#-how-to-use-terminice)
+- [**Instance Configuration & Fallback**](#centralized-instance-configuration)
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Theming & Display Modes**](#-theming--display-modes)
 - [**Quick Start**](#-quick-start)
@@ -135,6 +136,90 @@ final user = t.text('Username');
 final pass = t.password('Password');
 ```
 
+Display modes preserve the active colors and glyphs, so both of these chains produce Ocean colors with compact display features:
+
+```dart
+final a = terminice.ocean.compact;
+final b = terminice.compact.ocean;
+```
+
+#### Centralized Instance Configuration
+
+Each `Terminice` instance carries a single immutable `TerminiceConfig`. That config controls the effective theme for component calls that use the caller theme, including prompts, selectors, pickers, most guides, and indicators, plus fallback behavior for covered high-level prompts.
+
+```dart
+final t = terminice.withConfig(
+  const TerminiceConfig(
+    baseTheme: PromptTheme.ocean,
+    featureOverride: DisplayFeatures.compact,
+    compatibility: TerminalCompatibility.basic,
+    fallbackMode: TerminiceFallbackMode.auto,
+  ),
+);
+
+final name = t.text('Name');
+final role = t.searchSelector(
+  prompt: 'Role',
+  options: ['Admin', 'User'],
+);
+```
+
+- `baseTheme` is the original theme chosen by the caller.
+- `featureOverride` applies a display mode such as `DisplayFeatures.compact`.
+- `compatibility` adapts the theme for terminal capability.
+- `fallbackMode` decides when covered high-level prompts use line-mode fallback.
+- `TerminiceConfig.effectiveTheme` is the theme produced from those values.
+- `defaultTheme` exposes that effective theme on the `Terminice` instance.
+
+You can build the same configuration fluently:
+
+```dart
+final t = terminice.ocean.compact.basic.autoFallback;
+```
+
+Use `withConfig(...)` to replace the whole instance config while preserving the terminal. Use `withTheme(...)` or `themed(...)` to change the base theme while preserving display mode, compatibility, fallback mode, and terminal. Use `withCompatibility(...)` or `withFallbackMode(...)` when you want to pass the enum explicitly.
+
+Because configuration lives on the instance, changing the instance changes theme and behavior consistently across component calls:
+
+```dart
+final plain = terminice.legacy.fallback;
+
+final project = plain.text('Project name');
+final confirm = plain.confirm(message: 'Create $project?');
+```
+
+#### Compatibility Modes
+
+Compatibility modes are styling transforms. They do not inspect the terminal; choose the mode you want for the `Terminice` instance.
+
+- `terminice.modern` - Default behavior. Preserves the active theme exactly.
+- `terminice.basic` - Uses ASCII glyphs and simpler hints/display while keeping ANSI colors.
+- `terminice.legacy` - Uses ASCII glyphs, disables ANSI colors, and keeps output minimal with no hints.
+
+```dart
+final readable = terminice.fire.basic;
+final plainText = terminice.ocean.legacy;
+```
+
+#### Fallback Policies
+
+The default behavior is unchanged: `terminice` uses the rich interactive prompts unless you opt into fallback.
+
+- `terminice.interactive` - Forces rich prompts. This is the default `fallbackMode`.
+- `terminice.autoFallback` - Uses line-mode fallback when input or output is not a terminal.
+- `terminice.fallback` - Always uses line-mode fallback for covered high-level prompts.
+
+```dart
+final ci = terminice.autoFallback.basic;
+final confirmed = ci.confirm(message: 'Continue?');
+```
+
+Line-mode fallback uses simple text and numbered prompts instead of raw-mode keyboard UIs. Password fallback reads a normal line; it does **not** mask input in line mode.
+
+Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `searchSelector`, `gridSelector`, `checkboxSelector`, `choiceSelector`, `tagSelector`, `toggleGroup`, `commandPalette`, `slider`, `range`, `rating`, and the focused enum/theme selects used by the config editor.
+
+Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, indicators, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy.
+
 # 📚 The `terminice` Catalogue
 
 Explore the complete collection of tools available in `terminice`. Every tool is fully themeable and ready to use with zero setup.
@@ -227,6 +312,8 @@ Control the verbosity and framing of your prompts:
 - **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
 - **`compact`** — Keeps borders but removes hints for a tighter layout.
 - **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
+
+Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
 
 #### ⌨ Example
 

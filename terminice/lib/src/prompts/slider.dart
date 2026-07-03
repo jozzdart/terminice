@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+
 /// Interactive slider prompt for continuous value selection with a
 /// theme-aware bar renderer.
 ///
@@ -58,24 +60,38 @@ extension SliderPromptExtensions on Terminice {
     String unit = '',
     bool showPercent = false,
   }) {
-    final promptObj = ValuePrompt(
-      title: prompt,
-      min: min,
-      max: max,
-      initial: initial,
-      step: step,
-      theme: defaultTheme,
-    );
-
-    return promptObj.run(
-      render: (ctx, value, ratio) {
-        ctx.sliderBar(
-          ratio,
-          width: width,
-          showPercent: showPercent,
-          value: value,
-          unit: unit,
+    return runWithFallback<num>(
+      interactive: () {
+        final promptObj = ValuePrompt(
+          title: prompt,
+          min: min,
+          max: max,
+          initial: initial,
+          step: step,
+          theme: defaultTheme,
         );
+
+        return promptObj.run(
+          render: (ctx, value, ratio) {
+            ctx.sliderBar(
+              ratio,
+              width: width,
+              showPercent: showPercent,
+              value: value,
+              unit: unit,
+            );
+          },
+        );
+      },
+      fallback: () {
+        final defaultValue = initial.clamp(min, max);
+        return FallbackPrompt.number(
+              title: unit.isEmpty ? prompt : '$prompt ($unit)',
+              defaultValue: defaultValue,
+              min: min,
+              max: max,
+            ) ??
+            defaultValue;
       },
     );
   }

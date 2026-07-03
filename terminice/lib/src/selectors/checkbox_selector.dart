@@ -1,6 +1,9 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+import '../core/fallback_selection.dart';
+
 /// Extension providing the [checkboxSelector] prompt for `Terminice`.
 extension CheckboxSelectorExtensions on Terminice {
   /// Renders a keyboard-driven checklist prompt and returns the checked labels.
@@ -39,67 +42,77 @@ extension CheckboxSelectorExtensions on Terminice {
     final theme = defaultTheme;
     if (options.isEmpty) return <String>[];
 
-    // Use SelectableListPrompt for centralized state management
-    final promptObj = SelectableListPrompt<String>(
-      title: prompt,
-      items: options,
-      theme: theme,
-      multiSelect: true,
-      maxVisible: maxVisible,
-      initialSelection: initialSelected,
-    );
+    return runWithFallback<List<String>>(
+      interactive: () {
+        // Use SelectableListPrompt for centralized state management
+        final promptObj = SelectableListPrompt<String>(
+          title: prompt,
+          items: options,
+          theme: theme,
+          multiSelect: true,
+          maxVisible: maxVisible,
+          initialSelection: initialSelected,
+        );
 
-    // Summary line builder (captures promptObj for access to selection state)
-    String buildSummaryLine() {
-      final total = options.length;
-      final count = promptObj.selection.count;
-      if (count == 0) {
-        return '${theme.dim}(none selected)${theme.reset}';
-      }
-      // render up to 3 selections by label, then "+N"
-      final indices = promptObj.selection.getSelectedIndices();
-      final names = <String>[];
-      for (var i = 0; i < indices.length && i < 3; i++) {
-        final name = options[indices[i]];
-        names.add('${theme.accent}$name${theme.reset}');
-      }
-      final more = indices.length > 3
-          ? ' ${theme.dim}(+${indices.length - 3})${theme.reset}'
-          : '';
-      return '${theme.accent}$count${theme.reset}/${theme.dim}$total${theme.reset} • ${names.join('${theme.dim}, ${theme.reset}')} $more';
-    }
-
-    return promptObj.runCustom(
-      // Add select-all binding ('A' key)
-      extraBindings: KeyBindings.letter(
-        char: 'A',
-        onPress: () => promptObj.selection.toggleAll(options.length),
-        hintDescription: 'select all / clear',
-      ),
-
-      // Summary line before items
-      beforeItems: (ctx) {
-        ctx.gutterLine(buildSummaryLine());
-        ctx.writeConnector();
-      },
-
-      // Render each item with checkbox
-      renderItem: (ctx, item, absoluteIdx, isFocused, isChecked) {
-        final arrow = ctx.lb.arrow(isFocused);
-        final check = ctx.lb.checkbox(isChecked);
-
-        // Construct core line and fit within terminal width with graceful truncation
-        final cols = TerminalInfo.columns;
-        var core = '$arrow $check $item';
-        final reserve = 0; // no trailing widget for now
-        final gutterLen = ctx.lb.gutter().length;
-        final maxLabel = (cols - gutterLen - 1 - reserve).clamp(8, cols);
-        if (core.length > maxLabel) {
-          core = '${core.substring(0, maxLabel - 3)}...';
+        // Summary line builder (captures promptObj for access to selection state)
+        String buildSummaryLine() {
+          final total = options.length;
+          final count = promptObj.selection.count;
+          if (count == 0) {
+            return '${theme.dim}(none selected)${theme.reset}';
+          }
+          // render up to 3 selections by label, then "+N"
+          final indices = promptObj.selection.getSelectedIndices();
+          final names = <String>[];
+          for (var i = 0; i < indices.length && i < 3; i++) {
+            final name = options[indices[i]];
+            names.add('${theme.accent}$name${theme.reset}');
+          }
+          final more = indices.length > 3
+              ? ' ${theme.dim}(+${indices.length - 3})${theme.reset}'
+              : '';
+          return '${theme.accent}$count${theme.reset}/${theme.dim}$total${theme.reset} • ${names.join('${theme.dim}, ${theme.reset}')} $more';
         }
 
-        ctx.highlightedLine(core, highlighted: isFocused);
+        return promptObj.runCustom(
+          // Add select-all binding ('A' key)
+          extraBindings: KeyBindings.letter(
+            char: 'A',
+            onPress: () => promptObj.selection.toggleAll(options.length),
+            hintDescription: 'select all / clear',
+          ),
+
+          // Summary line before items
+          beforeItems: (ctx) {
+            ctx.gutterLine(buildSummaryLine());
+            ctx.writeConnector();
+          },
+
+          // Render each item with checkbox
+          renderItem: (ctx, item, absoluteIdx, isFocused, isChecked) {
+            final arrow = ctx.lb.arrow(isFocused);
+            final check = ctx.lb.checkbox(isChecked);
+
+            // Construct core line and fit within terminal width with graceful truncation
+            final cols = TerminalInfo.columns;
+            var core = '$arrow $check $item';
+            final reserve = 0; // no trailing widget for now
+            final gutterLen = ctx.lb.gutter().length;
+            final maxLabel = (cols - gutterLen - 1 - reserve).clamp(8, cols);
+            if (core.length > maxLabel) {
+              core = '${core.substring(0, maxLabel - 3)}...';
+            }
+
+            ctx.highlightedLine(core, highlighted: isFocused);
+          },
+        );
       },
+      fallback: () => FallbackSelection.multi<String>(
+        title: prompt,
+        options: options,
+        defaultIndices: initialSelected,
+        fallbackIndex: 0,
+      ),
     );
   }
 }

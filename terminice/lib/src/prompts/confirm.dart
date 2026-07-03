@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+
 /// Accessible confirm prompt with themed buttons and sensible default focus.
 extension ConfirmPromptExtensions on Terminice {
   /// Confirmation prompt with yes/no options and keyboard hints.
@@ -31,13 +33,19 @@ extension ConfirmPromptExtensions on Terminice {
     String noLabel = 'No',
     bool defaultYes = true,
   }) {
-    return SimplePrompts.confirm(
-      title: prompt,
-      message: message,
-      yesLabel: yesLabel,
-      noLabel: noLabel,
-      defaultYes: defaultYes,
-      theme: defaultTheme,
-    ).run();
+    return runWithFallback<bool>(
+      interactive: () => SimplePrompts.confirm(
+        title: prompt,
+        message: message,
+        yesLabel: yesLabel,
+        noLabel: noLabel,
+        defaultYes: defaultYes,
+        theme: defaultTheme,
+      ).run(),
+      fallback: () => FallbackPrompt.confirm(
+        title: message,
+        defaultValue: defaultYes,
+      ),
+    );
   }
 }

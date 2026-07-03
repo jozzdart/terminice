@@ -1,3 +1,12 @@
+## 1.1.0
+
+- **New**: Added public `FallbackPrompt` line-mode primitives for prompt flows that should not enter raw terminal mode.
+- **New**: Added `FallbackPrompt.range()` and `FallbackPrompt.form()` helpers so bounded range input and fallback form validation share one core implementation.
+- **Behavior**: Fallback prompts read normal input lines while preserving validation feedback and cancellation behavior.
+- **Validation**: Added validator coverage for fallback prompt input paths and guarded numeric fallback input against non-finite values.
+- **Documentation and tests**: Updated README guidance and tests for fallback primitives and line-mode behavior.
+- Bumped `termistyle` dependency lower bound to `^1.1.0`.
+
 ## 1.0.0
 
 - First stable release

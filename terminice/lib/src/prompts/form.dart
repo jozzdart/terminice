@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+
 /// Multi-field text input form rendered inside a single themed frame.
 ///
 /// Each field gets its own label, optional placeholder, masking, and
@@ -57,11 +59,41 @@ extension FormPromptExtensions on Terminice {
     required List<FormFieldConfig> fields,
     String? Function(List<String> values)? crossValidator,
   }) {
-    return FormPrompt(
-      title: prompt,
-      theme: defaultTheme,
-      fields: fields,
-      crossValidator: crossValidator,
-    ).run();
+    return runWithFallback<FormResult?>(
+      interactive: () => FormPrompt(
+        title: prompt,
+        theme: defaultTheme,
+        fields: fields,
+        crossValidator: crossValidator,
+      ).run(),
+      fallback: () => _fallbackForm(
+        fields,
+        crossValidator: crossValidator,
+      ),
+    );
   }
+}
+
+FormResult? _fallbackForm(
+  List<FormFieldConfig> fields, {
+  String? Function(List<String> values)? crossValidator,
+}) {
+  final result = FallbackPrompt.form(
+    fields: fields.map(_toFallbackField).toList(),
+    crossValidator: crossValidator,
+  );
+  return result == null ? null : FormResult(result.values);
+}
+
+FallbackFormField _toFallbackField(FormFieldConfig field) {
+  return FallbackFormField(
+    label: field.label,
+    placeholder: field.placeholder,
+    masked: field.masked,
+    maskChar: field.maskChar,
+    allowReveal: field.allowReveal,
+    required: field.required,
+    validator: field.validator,
+    initialValue: field.initialValue,
+  );
 }

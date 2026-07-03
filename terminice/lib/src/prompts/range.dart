@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+
 /// Dual-handle range prompt for selecting a numeric or percentage span.
 ///
 /// Controls:
@@ -47,104 +49,137 @@ extension RangePromptExtensions on Terminice {
     int width = 28,
     String unit = '%',
   }) {
-    final theme = defaultTheme;
-    final rangePrompt = RangeValuePrompt(
-      title: prompt,
-      min: min,
-      max: max,
-      startInitial: startInitial,
-      endInitial: endInitial,
-      step: step,
-      theme: theme,
-    );
+    return runWithFallback<RangeResult>(
+      interactive: () {
+        final theme = defaultTheme;
+        final rangePrompt = RangeValuePrompt(
+          title: prompt,
+          min: min,
+          max: max,
+          startInitial: startInitial,
+          endInitial: endInitial,
+          step: step,
+          theme: theme,
+        );
 
-    void renderBar(
-      FrameContext ctx,
-      num start,
-      num end,
-      bool editingStart,
-    ) {
-      // Effective width (responsive to terminal columns)
-      final effWidth = math.max(10, math.min(width, TerminalInfo.columns - 8));
+        void renderBar(
+          FrameContext ctx,
+          num start,
+          num end,
+          bool editingStart,
+        ) {
+          // Effective width (responsive to terminal columns)
+          final effWidth =
+              math.max(10, math.min(width, TerminalInfo.columns - 8));
 
-      int valueToIndex(num v, int w) {
-        final ratio = (v - min) / (max - min);
-        return (ratio * w).round().clamp(0, w);
-      }
-
-      // Compute positions
-      final startIdx = valueToIndex(start, effWidth);
-      final endIdx = valueToIndex(end, effWidth);
-
-      // Format values
-      final sRaw = (start == start.roundToDouble()
-              ? start.toInt().toString()
-              : start.toStringAsFixed(1)) +
-          unit;
-      final eRaw = (end == end.roundToDouble()
-              ? end.toInt().toString()
-              : end.toStringAsFixed(1)) +
-          unit;
-
-      // Layout
-      final displayLen = sRaw.length + 1 + eRaw.length;
-      final centerIdx = ((startIdx + endIdx) / 2).round();
-      final leftPad = math.max(0, centerIdx - (displayLen ~/ 2));
-
-      // Range text
-      final rangeTxt = '${theme.bold}${theme.accent}$sRaw—$eRaw${theme.reset}';
-
-      final gutter = ctx.lb.gutter();
-      final activeIdx = editingStart ? startIdx : endIdx;
-
-      // Caret pointer
-      ctx.line('$gutter${' ' * (1 + activeIdx)}${theme.accent}^${theme.reset}');
-      ctx.line('$gutter${' ' * (1 + leftPad)}$rangeTxt');
-
-      // Bar with handles
-      final barLine = StringBuffer();
-      barLine.write(gutter);
-      for (int i = 0; i <= effWidth; i++) {
-        if (i == startIdx) {
-          final isActive = editingStart;
-          String glyph;
-          if (isActive) {
-            glyph = '${theme.inverse}${theme.accent}█${theme.reset}';
-          } else {
-            glyph = '${theme.accent}█${theme.reset}';
+          int valueToIndex(num v, int w) {
+            final ratio = (v - min) / (max - min);
+            return (ratio * w).round().clamp(0, w);
           }
-          barLine.write(glyph);
-        } else if (i == endIdx) {
-          final isActive = !editingStart;
-          String glyph;
-          if (isActive) {
-            glyph = '${theme.inverse}${theme.accent}█${theme.reset}';
-          } else {
-            glyph = '${theme.accent}█${theme.reset}';
+
+          // Compute positions
+          final startIdx = valueToIndex(start, effWidth);
+          final endIdx = valueToIndex(end, effWidth);
+
+          // Format values
+          final sRaw = (start == start.roundToDouble()
+                  ? start.toInt().toString()
+                  : start.toStringAsFixed(1)) +
+              unit;
+          final eRaw = (end == end.roundToDouble()
+                  ? end.toInt().toString()
+                  : end.toStringAsFixed(1)) +
+              unit;
+
+          // Layout
+          final displayLen = sRaw.length + 1 + eRaw.length;
+          final centerIdx = ((startIdx + endIdx) / 2).round();
+          final leftPad = math.max(0, centerIdx - (displayLen ~/ 2));
+
+          // Range text
+          final rangeTxt =
+              '${theme.bold}${theme.accent}$sRaw—$eRaw${theme.reset}';
+
+          final gutter = ctx.lb.gutter();
+          final activeIdx = editingStart ? startIdx : endIdx;
+
+          // Caret pointer
+          ctx.line(
+              '$gutter${' ' * (1 + activeIdx)}${theme.accent}^${theme.reset}');
+          ctx.line('$gutter${' ' * (1 + leftPad)}$rangeTxt');
+
+          // Bar with handles
+          final barLine = StringBuffer();
+          barLine.write(gutter);
+          for (int i = 0; i <= effWidth; i++) {
+            if (i == startIdx) {
+              final isActive = editingStart;
+              String glyph;
+              if (isActive) {
+                glyph = '${theme.inverse}${theme.accent}█${theme.reset}';
+              } else {
+                glyph = '${theme.accent}█${theme.reset}';
+              }
+              barLine.write(glyph);
+            } else if (i == endIdx) {
+              final isActive = !editingStart;
+              String glyph;
+              if (isActive) {
+                glyph = '${theme.inverse}${theme.accent}█${theme.reset}';
+              } else {
+                glyph = '${theme.accent}█${theme.reset}';
+              }
+              barLine.write(glyph);
+            } else if (i > startIdx && i < endIdx) {
+              barLine.write('${theme.accent}━${theme.reset}');
+            } else if (i < effWidth) {
+              barLine.write('${theme.dim}·${theme.reset}');
+            }
           }
-          barLine.write(glyph);
-        } else if (i > startIdx && i < endIdx) {
-          barLine.write('${theme.accent}━${theme.reset}');
-        } else if (i < effWidth) {
-          barLine.write('${theme.dim}·${theme.reset}');
+          ctx.line(barLine.toString());
+
+          // Active indicator
+          final activeLabel = editingStart ? 'start' : 'end';
+          ctx.labeledAccent('Active', activeLabel);
         }
-      }
-      ctx.line(barLine.toString());
 
-      // Active indicator
-      final activeLabel = editingStart ? 'start' : 'end';
-      ctx.labeledAccent('Active', activeLabel);
-    }
-
-    return rangePrompt.run(
-      render: (ctx, start, end, editingStart) {
-        renderBar(
-          ctx,
-          start,
-          end,
-          editingStart,
+        return rangePrompt.run(
+          render: (ctx, start, end, editingStart) {
+            renderBar(
+              ctx,
+              start,
+              end,
+              editingStart,
+            );
+          },
+        );
+      },
+      fallback: () {
+        final result = FallbackPrompt.range(
+          title: prompt,
+          startTitle: _rangePartTitle(prompt, 'start', unit),
+          endTitle: _rangePartTitle(prompt, 'end', unit),
+          startDefault: startInitial,
+          endDefault: endInitial,
+          min: min,
+          max: max,
+        );
+        if (result == null) {
+          return RangeResult(
+            start: math.min(min, max),
+            end: math.max(min, max),
+          );
+        }
+        return RangeResult(
+          start: result.start,
+          end: result.end,
         );
       },
     );
   }
+}
+
+String _rangePartTitle(String prompt, String part, String unit) {
+  if (unit.isEmpty) return '$prompt $part';
+  return '$prompt $part ($unit)';
 }

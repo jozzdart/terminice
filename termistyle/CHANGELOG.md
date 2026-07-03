@@ -1,3 +1,10 @@
+## 1.1.0
+
+- **New**: Added `TerminalCompatibility` for selecting terminal-safe style behavior.
+- **New**: Added `TerminalColors.none` and `TerminalColors.plain` palettes for explicit colorless and plain output modes.
+- **New**: Added `PromptTheme.withCompatibility()` to derive compatibility-aware themes without rebuilding style components by hand.
+- **Documentation and tests**: Updated README coverage and tests for compatibility-driven styling.
+
 ## 1.0.1
 
 - Updated package description

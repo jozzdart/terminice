@@ -333,6 +333,7 @@ The **Prompt** module is the orchestrator that ties IO, Navigation, and Renderin
 - `SimplePrompt`, `PromptState`
 - `TextPromptSync`, `TextInputBuffer`
 - `SelectableListPrompt`, `SearchableListPrompt`, `SelectableGridPrompt` (and more)
+- `FallbackPrompt`
 
 ### Prompt Runner & Render Output
 
@@ -385,6 +386,46 @@ final password = TextPromptSync(
 ).run();
 ```
 
+### Fallback Prompt
+
+`FallbackPrompt` provides line-mode prompt primitives for limited or non-rich terminal environments. It is useful when a prompt should still work without entering raw mode, hiding the cursor, clearing the screen, or relying on ANSI cursor movement. The high-level `terminice` package can build richer workflows on top of core prompts, while these primitives remain the plain-text fallback layer inside `terminice_core`.
+
+The fallback API includes `text`, `password`, `confirm`, `singleSelect`, `multiSelect`, `number`, `range`, and `form`. Each method reads complete lines with `TerminalContext.input.readLineSync` and writes only through `TerminalContext.output.write` or `TerminalContext.output.writeln`.
+
+```dart
+final name = FallbackPrompt.text(
+  title: 'Name',
+  required: true,
+  validator: (value) => value.length < 2 ? 'Too short' : '',
+);
+
+final confirmed = FallbackPrompt.confirm(
+  title: 'Continue?',
+  defaultValue: true,
+);
+
+final count = FallbackPrompt.number(
+  title: 'Count',
+  min: 1,
+  max: 10,
+);
+
+final window = FallbackPrompt.range(
+  title: 'Window',
+  min: 0,
+  max: 100,
+);
+
+final login = FallbackPrompt.form(
+  fields: const [
+    FallbackFormField(label: 'Name', required: true),
+    FallbackFormField(label: 'Password', masked: true, required: true),
+  ],
+);
+```
+
+Fallback validators for `text` and `number` follow the existing Terminice text prompt convention: return `''` for success, or a non-empty string to display as the validation error before asking again. `password` intentionally uses the same line-mode path as `text`, so it does not mask characters or disable terminal echo.
+
 ---
 
 ## Testing
@@ -399,7 +440,7 @@ The **Testing** module provides a suite of mock objects that allow you to test y
 
 ### Mock Terminal
 
-`MockTerminal` is the primary tool for testing interactive prompts. It allows you to queue up a sequence of simulated keystrokes (like typing a string, pressing arrow keys, and hitting Enter) and then inspect the resulting output buffer to ensure your UI rendered correctly.
+`MockTerminal` is the primary tool for testing interactive prompts. It allows you to queue up a sequence of simulated keystrokes (like typing a string, pressing arrow keys, and hitting Enter) and then inspect the resulting output buffer to ensure your UI rendered correctly. It also supports line-based input via `queueLine` and `queueLines`, which makes `FallbackPrompt` flows easy to test without a real terminal.
 
 ```dart
 test('SimplePrompt returns true when user presses y', () {

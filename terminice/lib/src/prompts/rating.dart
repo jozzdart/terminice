@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+
 /// Star rating prompt with gradient stars, optional labels, and numeric
 /// shortcuts.
 ///
@@ -39,29 +41,52 @@ extension RatingPromptExtensions on Terminice {
     assert(maxStars > 0, 'maxStars must be greater than 0');
     assert(initial >= 0, 'initial must be greater than or equal to 0');
 
-    final theme = defaultTheme;
-    void renderLabel(FrameContext ctx, int value, int max) {
-      final effectiveLabels = labels;
-      if (effectiveLabels != null && effectiveLabels.length >= max) {
-        final label = effectiveLabels[(value - 1).clamp(0, max - 1)];
-        ctx.labeledAccent('Rating', label);
-      } else {
-        ctx.numericScale(value, max);
-      }
-    }
+    return runWithFallback<int>(
+      interactive: () {
+        final theme = defaultTheme;
+        void renderLabel(FrameContext ctx, int value, int max) {
+          final effectiveLabels = labels;
+          if (effectiveLabels != null && effectiveLabels.length >= max) {
+            final label = effectiveLabels[(value - 1).clamp(0, max - 1)];
+            ctx.labeledAccent('Rating', label);
+          } else {
+            ctx.numericScale(value, max);
+          }
+        }
 
-    final valuePrompt = DiscreteValuePrompt(
-      title: prompt,
-      maxValue: maxStars,
-      initial: initial,
-      theme: theme,
-    );
+        final valuePrompt = DiscreteValuePrompt(
+          title: prompt,
+          maxValue: maxStars,
+          initial: initial,
+          theme: theme,
+        );
 
-    return valuePrompt.run(
-      render: (ctx, value, max) {
-        ctx.starsDisplay(value, max);
-        renderLabel(ctx, value, max);
+        return valuePrompt.run(
+          render: (ctx, value, max) {
+            ctx.starsDisplay(value, max);
+            renderLabel(ctx, value, max);
+          },
+        );
+      },
+      fallback: () {
+        final defaultValue = _clampRating(initial, maxStars);
+        final value = FallbackPrompt.number(
+              title: prompt,
+              defaultValue: defaultValue,
+              min: 1,
+              max: maxStars,
+              validator: (value) =>
+                  value == value.toInt() ? '' : 'Enter a whole number.',
+            ) ??
+            defaultValue;
+        return _clampRating(value.toInt(), maxStars);
       },
     );
   }
+}
+
+int _clampRating(int value, int maxStars) {
+  if (value < 1) return 1;
+  if (value > maxStars) return maxStars;
+  return value;
 }
