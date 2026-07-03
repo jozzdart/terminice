@@ -289,15 +289,17 @@ void main() {
     test('progressTask validates totals and clamps current progress', () async {
       final invalidTerminal = MockTerminal();
 
-      await expectLater(
-        terminice.withTerminal(invalidTerminal).progressTask<void>(
-              'Invalid',
-              total: 0,
-              display: TaskDisplay.plain,
-              run: (_) {},
-            ),
-        throwsArgumentError,
-      );
+      for (final invalidTotal in [0, -1]) {
+        await expectLater(
+          terminice.withTerminal(invalidTerminal).progressTask<void>(
+                'Invalid',
+                total: invalidTotal,
+                display: TaskDisplay.plain,
+                run: (_) {},
+              ),
+          throwsArgumentError,
+        );
+      }
       expect(invalidTerminal.mockOutput.allOutput, isEmpty);
 
       final terminal = MockTerminal();
@@ -324,6 +326,40 @@ void main() {
 
       expect(result, equals(3));
       expect(terminal.mockOutput.lines, equals(['OK: Clamp (3/3, 100%)']));
+    });
+
+    test('progressTask summaries render clamped display values', () async {
+      final negativeTerminal = MockTerminal();
+
+      await terminice.withTerminal(negativeTerminal).progressTask<void>(
+        'Negative',
+        total: 10,
+        display: TaskDisplay.plain,
+        run: (progress) {
+          progress.update(current: -4);
+        },
+      );
+
+      expect(
+        negativeTerminal.mockOutput.lines,
+        equals(['OK: Negative (0/10, 0%)']),
+      );
+
+      final overTotalTerminal = MockTerminal();
+
+      await terminice.withTerminal(overTotalTerminal).progressTask<void>(
+        'Over',
+        total: 10,
+        display: TaskDisplay.plain,
+        run: (progress) {
+          progress.update(current: 14);
+        },
+      );
+
+      expect(
+        overTotalTerminal.mockOutput.lines,
+        equals(['OK: Over (10/10, 100%)']),
+      );
     });
 
     test('progressTask renders and rethrows failures', () async {
@@ -721,7 +757,74 @@ void main() {
       expect(output, contains('.....'));
       expect(output, isNot(contains('......')));
     });
+
+    test('inlineProgressBar clamps percent display', () {
+      expect(
+        _renderInlineProgress(current: -4, total: 10),
+        equals('Download 0%'),
+      );
+      expect(
+        _renderInlineProgress(current: 14, total: 10),
+        equals('Download 100%'),
+      );
+      expect(
+        _renderInlineProgress(current: 4, total: 0),
+        equals('Download 0%'),
+      );
+      expect(
+        _renderInlineProgress(current: 4, total: -10),
+        equals('Download 0%'),
+      );
+    });
+
+    test('progressBar clamps percent and count display', () {
+      expect(
+        _renderProgressBar(current: -4, total: 10),
+        allOf(contains('Progress: 0%'), contains('(0/10)')),
+      );
+      expect(
+        _renderProgressBar(current: 14, total: 10),
+        allOf(contains('Progress: 100%'), contains('(10/10)')),
+      );
+      expect(
+        _renderProgressBar(current: 4, total: 0),
+        allOf(contains('Progress: 0%'), contains('(0/0)')),
+      );
+      expect(
+        _renderProgressBar(current: 4, total: -10),
+        allOf(contains('Progress: 0%'), contains('(0/0)')),
+      );
+    });
   });
+}
+
+const _plainProgressTheme = PromptTheme(
+  colors: TerminalColors.none,
+  features: DisplayFeatures.minimal,
+);
+
+String _renderInlineProgress({required int current, required int total}) {
+  final terminal = MockTerminal();
+  TerminalContext.current = terminal;
+
+  InlineProgressBar('Download', theme: _plainProgressTheme).show(
+    current: current,
+    total: total,
+  );
+
+  return terminal.mockOutput.lines.single;
+}
+
+String _renderProgressBar({required int current, required int total}) {
+  final terminal = MockTerminal();
+  TerminalContext.current = terminal;
+
+  ProgressBar('Download', width: 10, theme: _plainProgressTheme).show(
+    current: current,
+    total: total,
+  );
+
+  return terminal.mockOutput.allOutput;
 }
 
 bool _containsAnsi(String output) {

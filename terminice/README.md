@@ -263,6 +263,12 @@ Standard input controls for gathering user data.
 - [`date` — Date picker.](#date---keyboard-date-prompt)
 - [`form` — Form prompt.](#form---multi-field-input)
 
+#### 🔄 Flow Composition
+
+Chain several prompts and selectors into one sequential CLI workflow.
+
+- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
+
 #### 🎯 Selectors
 
 Interactive menus for choosing from predefined options.
@@ -939,6 +945,105 @@ print('Captured ${values.length} fields.');
 
 > **Why use this?**
 > Use separate prompts when each answer should feel like its own step. Use `form` when the inputs belong together and should validate as one unit, such as login, signup, or connection settings.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `flow` - Sequential Flow Composition
+
+Compose several prompts and selectors into one synchronous, sequential flow. Use it when a CLI command needs a handful of related answers, conditional follow-up questions, or a typed result map without manually wiring each prompt together.
+
+Flow is sequential composition: steps run from top to bottom and can be skipped with `when`. It is not a back-navigation wizard yet.
+
+- `flow`
+  `(String title)`
+  Creates a `FlowBuilder`.
+- `run()` - Runs applicable steps in order and returns a `FlowResult`.
+- Built-in steps - `text`, `password`, `select`, `checkboxes`, `confirm`, and `custom`.
+- Theming and fallback - Built-in steps call the existing Terminice prompts/selectors through the configured instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
+
+#### Built-In Steps
+
+- `text(key, prompt, {placeholder, required, validator, validate, when})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
+- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when})` - Stores `String`; cancel also cancels the flow by default.
+- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
+- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when})` - Stores an immutable `List<T>`.
+- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
+- `custom<T>(key, label, {run, validate, when, cancelOnNull})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+
+#### Result Access
+
+`FlowResult` keeps collected values in insertion order and preserves partial answers when the flow is cancelled.
+
+- `confirmed` - `true` when every applicable step completed.
+- `cancelled` - `true` when a cancellable step stopped the flow.
+- `cancelledKey` - Key of the step that cancelled, or `null`.
+- `value<T>(key)` - Reads a required typed value and throws if the key is missing or has a different type.
+- `maybe<T>(key)` - Reads a typed value, returning `null` when the key is absent or stored as `null`; wrong non-null types still throw.
+- `contains(key)` - Checks whether a step wrote that key.
+- `toMap()` - Returns an insertion-ordered copy of the collected values.
+
+#### Context, Conditions, and Validation
+
+`FlowContext` is passed to `when`, `validate`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed `value<T>`, `maybe<T>`, `contains`, and `toMap` accessors for values collected by earlier steps.
+
+Flow validators use `String? Function(value, context)`: return `null` for success, return `''` for legacy-compatible success, or return a non-empty error string to reject the step with a `FlowValidationException`.
+
+For `text`, `validator` and `validate` are different layers. `validator` runs inside the prompt for immediate text-input feedback; `validate` runs after the step completes and can inspect earlier flow answers through `FlowContext`.
+
+#### Examples
+
+```dart
+final result = terminice.flow('Create project')
+  .text('name', 'Project name', required: true)
+  .select('template', 'Template', options: ['CLI', 'Server', 'Package'])
+  .checkboxes('features', 'Features', options: ['Git', 'CI', 'Docker'])
+  .confirm('create', message: 'Create project?')
+  .run();
+
+if (result.confirmed && result.value<bool>('create')) {
+  final name = result.value<String>('name');
+  final template = result.maybe<String>('template') ?? 'CLI';
+  final features = result.value<List<String>>('features');
+
+  print('Creating $name from $template with ${features.join(', ')}');
+}
+```
+
+```dart
+final result = terminice.flow('Deployment')
+  .select(
+    'environment',
+    'Environment',
+    options: ['dev', 'staging', 'prod'],
+    validate: (value, _) => value == null ? 'Choose an environment' : null,
+  )
+  .text(
+    'changeId',
+    'Change request',
+    required: false,
+    when: (context) => context.value<String>('environment') == 'prod',
+    validate: (value, context) {
+      final isProd = context.value<String>('environment') == 'prod';
+      if (isProd && value.isEmpty) return 'Production needs a change ID';
+      return null;
+    },
+  )
+  .custom<DateTime>(
+    'startedAt',
+    'Start time',
+    run: (_) => DateTime.now(),
+  )
+  .run();
+
+if (result.cancelled) {
+  print('Stopped at ${result.cancelledKey}.');
+}
+```
+
+> **Why use this?**
+> Use `flow` when several prompt results belong to one command and later steps should react to earlier answers. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
 
 _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
@@ -2034,13 +2139,13 @@ Display bounded progress in a framed widget with a themed bar, percentage, and r
 - `ProgressBar (String prompt, {width = 36, theme = PromptTheme.dark})`
   Direct constructor for custom width or explicit theme. `width` must be greater than `4`.
 - `show({required int current, required int total, int shimmerPhase = 0})` - Renders the current progress state.
-- `current` / `total` - Used to compute the ratio. When `total <= 0`, the visual percentage is `0`.
+- `current` / `total` - Used to compute the ratio. Positive totals clamp the displayed count and percentage into range; when `total <= 0`, the display shows `0/0` and `0%`.
 - `shimmerPhase` - Optional phase offset for the filled bar coloring. Increase it as you update to create motion.
 - `runWith(void Function(void Function(int current, int total) update) callback)` - Runs a synchronous callback with an `update(current, total)` function. Each update increments the shimmer phase internally. This callback is not awaited and remains for synchronous work.
 - `whileRunning<T>(FutureOr<T> Function(TaskProgress progress) run, {required total, message, success, failure, cancel, isCanceled, display, finalBehavior, interval})` - Runs work with a `TaskProgress` handle and returns the typed result.
 - `trackStream<T>(Stream<T> source, {required total, message, success, failure, cancel, isCanceled, display, finalBehavior, interval})` - Collects stream events into a `List<T>` while advancing progress once per event.
 - `clear()` - Clears the current framed progress output.
-- Value behavior - The filled width and percentage are clamped to `0..100%`, while the raw `(current/total)` text displays the values you passed.
+- Value behavior - The displayed count, filled width, and percentage all use normalized progress. Positive totals clamp `current` into `0..total`, and the percentage stays within `0..100%`.
 - Lifecycle - There is no automatic timer for manual rendering. Use `show(...)` from your own loop, `runWith(...)` for synchronous work, or `whileRunning(...)` / `trackStream(...)` for awaited work.
 - Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears the bar after the callback returns normally. Async wrappers handle cleanup and final status rendering.
 
@@ -2129,10 +2234,10 @@ Show a compact percentage beside a label. Despite the name, the current implemen
 - `prompt` - Text displayed before the percentage.
 - Returns `InlineProgressBar` - The line is not displayed until `show(...)` is called.
 - `InlineProgressBar(String prompt, {theme = PromptTheme.dark})` - Direct constructor for an explicit theme.
-- `show({required int current, required int total})` - Computes `(current / total * 100).round()` and renders the percentage next to the prompt.
-- `current` / `total` - Provide the current count and total count. When `total <= 0`, the displayed percentage is `0`.
+- `show({required int current, required int total})` - Renders a normalized percentage next to the prompt.
+- `current` / `total` - Provide the current count and total count. Positive totals clamp `current` into `0..total`; when `total <= 0`, the displayed percentage is `0`.
 - `clear()` - Clears the current inline progress output.
-- Value behavior - The percentage is not clamped in this class. Pass bounded values if you need the display to stay between `0%` and `100%`.
+- Value behavior - The displayed percentage follows the same bounded progress rules as `progressBar`, staying between `0%` and `100%` for positive totals.
 - Lifecycle - There is no `start`, `stop`, or dedicated `runWith` helper. Drive it manually from your own loop or timer.
 - Cleanup behavior - Repeated `show(...)` calls replace the previous line. Call `clear()` when the operation is finished or cancelled.
 

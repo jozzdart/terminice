@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:terminice_core/terminice_core.dart';
 
 import '../core/terminice_api.dart';
+import '../progress_display.dart';
 import '../tasks/async_task.dart';
 import '_indicator_base.dart';
 
@@ -162,9 +163,9 @@ class ProgressBar with IndicatorLifecycle {
   void _render(RenderOutput out, int current, int total, int shimmerPhase) {
     final widgetFrame = FrameView(title: prompt, theme: theme);
     widgetFrame.showTo(out, (ctx) {
-      final ratio = total > 0 ? current / total : 0.0;
-      final filled = (ratio * width).clamp(0, width).round();
-      final percent = (ratio * 100).clamp(0, 100).round();
+      final display = progressDisplay(current: current, total: total);
+      final filled = display.filledUnits(width);
+      final percent = display.percent;
 
       final buffer = StringBuffer();
       for (int i = 0; i < width; i++) {
@@ -196,7 +197,7 @@ class ProgressBar with IndicatorLifecycle {
       ctx.gutterLine(buffer.toString());
       ctx.gutterLine(
           '${theme.dim}Progress:${theme.reset} ${theme.accent}$percent%${theme.reset}   '
-          '${theme.dim}($current/$total)${theme.reset}');
+          '${theme.dim}(${display.current}/${display.total})${theme.reset}');
     });
 
     out.writeln(HintFormat.bullets([

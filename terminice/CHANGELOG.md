@@ -8,6 +8,9 @@
 - Added `task`, `progressTask`, and `trackStream` async helpers for long-running CLI work.
 - Added `TaskProgress`, `TaskDisplay`, and `TaskFinalBehavior` controls for task progress, display style, and final output behavior.
 - Added `whileRunning` and `trackStream` async sugar on loading/progress indicators, with plain fallback output for compatibility-aware sessions.
+- Added `terminice.flow(...)`, a sequential flow builder that composes built-in `text`, `password`, `select`, `checkboxes`, and `confirm` steps plus custom steps.
+- Added typed flow result/context accessors, context-aware `when` conditions, and `String?` flow validators for dependent CLI workflows.
+- Flow built-in steps run through the configured Terminice instance, so existing component theming and fallback behavior carry through.
 
 #### Changed
 
@@ -18,6 +21,7 @@
 - High-level fallback prompts and selectors now distinguish EOF from blank lines while preserving blank-line defaults.
 - Propagated editor-launched prompts through the active Terminice configuration.
 - Async task helpers and indicator sugar clean up terminal state before rethrowing errors or completing cancellation/fallback flows.
+- Progress indicators now normalize displayed counts, percentages, and bar fill consistently, including `total <= 0` as zero progress.
 
 #### Fixed
 

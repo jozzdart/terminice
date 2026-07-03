@@ -1,5 +1,6 @@
 import 'package:terminice/terminice.dart';
 
+import '../progress_display.dart';
 import '_indicator_base.dart';
 
 /// Adds the [inlineProgressBar] method to the [Terminice] instance.
@@ -41,10 +42,10 @@ class InlineProgressBar with IndicatorLifecycle {
   /// Renders the current progress percentage next to the label.
   ///
   /// [current] and [total] are used to compute an integer percentage. Values
-  /// outside the 0-total range are clamped implicitly by integer rounding.
+  /// outside the 0-total range are clamped for display.
   void show({required int current, required int total}) {
     final out = prepareFrame();
-    final percent = total > 0 ? (current / total * 100).round() : 0;
+    final percent = progressDisplay(current: current, total: total).percent;
     out.writeln(
         '${theme.accent}$prompt${theme.reset} ${theme.dim}$percent%${theme.reset}');
   }

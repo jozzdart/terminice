@@ -53,16 +53,19 @@ String _spinnerFrame(SpinnerStyle style, int frame) {
   return frames[frame % frames.length];
 }
 
-int _progressPercent(TaskProgress progress) {
-  return (progress.ratio * 100).round().clamp(0, 100).toInt();
-}
-
 String _progressSummary(TaskProgress progress) {
-  return '${progress.current}/${progress.total}, ${_progressPercent(progress)}%';
+  final display = progressDisplay(
+    current: progress.current,
+    total: progress.total,
+  );
+  return '${display.current}/${display.total}, ${display.percent}%';
 }
 
 String _progressBar(TaskProgress progress, int width) {
-  final filled = (progress.ratio * width).round().clamp(0, width).toInt();
+  final filled = progressDisplay(
+    current: progress.current,
+    total: progress.total,
+  ).filledUnits(width);
   final buffer = StringBuffer('[');
   for (var i = 0; i < width; i++) {
     buffer.write(i < filled ? '█' : '░');
