@@ -1,4 +1,4 @@
-## UPCOMING
+## 1.0.1
 
 - **Documentation**: Expanded the `README.md` catalogue with in-depth, exui-style reference sections for every public Terminice tool.
 - **Documentation**: Added detailed usage notes, parameters, return/cancel behavior, controls, examples, and "why use this" guidance for prompts, selectors, pickers, indicators, configuration editor APIs, and utility guides.
