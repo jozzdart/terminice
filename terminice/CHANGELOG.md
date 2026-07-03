@@ -1,3 +1,9 @@
+## 1.0.1
+
+- **Documentation**: Expanded the `README.md` catalogue with in-depth, exui-style reference sections for every public Terminice tool.
+- **Documentation**: Added detailed usage notes, parameters, return/cancel behavior, controls, examples, and "why use this" guidance for prompts, selectors, pickers, indicators, configuration editor APIs, and utility guides.
+- **Documentation**: Added focused coverage for config editor workflows, `ConfigFactory`, configurable field types, result serialization, indicator lifecycle controllers, filesystem picker behavior, and guide data shapes.
+
 ## 1.0.0
 
 - **First stable release.**

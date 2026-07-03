@@ -143,56 +143,56 @@ Explore the complete collection of tools available in `terminice`. Every tool is
 
 Standard input controls for gathering user data.
 
-- `text` — Single-line text input.
-- `password` — Secure, masked text input.
-- `confirm` — Yes/No boolean confirmation.
-- `multiline` — Multi-line text editor.
-- `slider` — Numeric selection along a single axis.
-- `range` — Dual-thumb slider for selecting a min/max range.
-- `rating` — Star-based rating input.
-- `date` — Simple date text entry.
-- `form` — Group multiple prompts into a single cohesive form.
+- [`text` — Single-line text input.](#text---single-line-text-input)
+- [`password` — Secure, masked text input.](#password---masked-text-input)
+- [`confirm` — Yes/No boolean confirmation.](#confirm---yesno-confirmation)
+- [`multiline` — Multi-line text editor.](#multiline---terminal-text-area)
+- [`slider` — Numeric selection along a single axis.](#slider---numeric-selection)
+- [`range` — Dual-thumb slider for selecting a min/max range.](#range---dual-handle-numeric-range)
+- [`rating` — Star-based rating input.](#rating---star-rating-input)
+- [`date` — Date picker.](#date---keyboard-date-prompt)
+- [`form` — Form prompt.](#form---multi-field-input)
 
 #### 🎯 Selectors
 
 Interactive menus for choosing from predefined options.
 
-- `searchSelector` — Filterable list of options.
-- `choiceSelector` — Simple single-choice list.
-- `checkboxSelector` — Multi-select list with checkboxes.
-- `gridSelector` — 2D grid selection.
-- `tagSelector` — Select and manage multiple tags.
-- `toggleGroup` — Segmented control for mutually exclusive options.
-- `commandPalette` — Global command launcher with fuzzy search.
+- [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
+- [`choiceSelector` — Simple single-choice list.](#choiceselector---card-based-choice-grid)
+- [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
+- [`gridSelector` — 2D grid selection.](#gridselector---two-dimensional-selection-grid)
+- [`tagSelector` — Select and manage multiple tags.](#tagselector---chip-style-multi-select)
+- [`toggleGroup` — Segmented control for mutually exclusive options.](#togglegroup---editable-boolean-switches)
+- [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
 
 #### 🗂️ Pickers
 
 Specialized components for selecting complex data types.
 
-- `filePicker` — Browse and select files from the filesystem.
-- `pathPicker` — Browse and select directories.
-- `colorPicker` — Interactive color selection.
-- `datePicker` — Calendar-based date selection.
+- [`filePicker` — Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
+- [`pathPicker` — Browse and select directories.](#pathpicker---directory-and-path-browser)
+- [`colorPicker` — Interactive color selection.](#colorpicker---ansi-color-grid)
+- [`datePicker` — Calendar-based date selection.](#datepicker---calendar-date-selection)
 
 #### ⏳ Indicators
 
 Visual feedback for long-running tasks.
 
-- `loadingSpinner` — Full-featured loading animation.
-- `inlineSpinner` — Compact loading animation for inline use.
-- `progressBar` — Standard progress bar with percentage.
-- `inlineProgressBar` — Compact progress bar.
-- `progressDots` — Minimalist dot-based progress indicator.
+- [`loadingSpinner` — Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
+- [`inlineSpinner` — Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
+- [`progressBar` — Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
+- [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
+- [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
 
 #### ⚙️ Configuration & Utilities
 
 Advanced tools for building full CLI applications.
 
-- `configEditor` — A searchable, nested settings editor for complex configurations.
-- `cheatSheet` — Display a quick reference guide.
-- `helpCenter` — Interactive help documentation viewer.
-- `hotkeyGuide` — Display available keyboard shortcuts.
-- `themeDemo` — Showcase all available themes and colors.
+- [`configEditor` — A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
+- [`cheatSheet` — Display a quick reference guide.](#cheatsheet---framed-reference-table)
+- [`helpCenter` — Interactive help documentation viewer.](#helpcenter---searchable-help-browser)
+- [`hotkeyGuide` — Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
+- [`themeDemo` — Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
 
 ### ▧ Theming & Display Modes
 
@@ -240,7 +240,7 @@ final age = t.text('Age');
 final role = t.searchSelector(prompt: 'Role', options: ['Admin', 'User']);
 ```
 
-### 🚀 Quick Start
+### Quick Start
 
 Get up and running in seconds. No setup required—just import and call.
 
@@ -284,3 +284,2301 @@ final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
 <img src="assets/quick_start_3.gif" alt="terminice themes showcase" width="1000"/>
 
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
+
+---
+
+### `text` - Single-Line Text Input
+
+Collect a single trimmed string with optional placeholder text and inline validation. This is the default building block for names, IDs, short notes, paths, and other one-line values.
+
+- `text`
+  `(String prompt, {placeholder, validator, required})`
+  Opens a themed text input frame.
+- `prompt` - Title displayed above the input.
+- `placeholder` - Dimmed hint text shown while the input is empty.
+- `required` - Defaults to `true`; empty submissions are blocked with an inline error.
+- `validator` - Optional `String Function(String)` that receives trimmed input. Return `''` for valid input, or a non-empty error message to block confirmation.
+- Returns `String?` - The trimmed input on Enter, or `null` when the user cancels with Esc/Ctrl+C.
+- Controls - Type normally, Backspace deletes, Enter confirms, Esc cancels.
+
+#### Examples
+
+```dart
+final projectName = terminice.text(
+  'Project name',
+  placeholder: 'my_awesome_app',
+);
+
+if (projectName == null) {
+  print('No project created.');
+}
+```
+
+```dart
+final nickname = terminice.text(
+  'Nickname',
+  required: false,
+  placeholder: 'Optional',
+);
+
+print('Nickname: ${nickname?.isEmpty == true ? "(none)" : nickname}');
+```
+
+```dart
+final email = terminice.text(
+  'Email address',
+  placeholder: 'ada@example.com',
+  validator: (value) {
+    if (!value.contains('@')) return 'Enter a valid email address';
+    return '';
+  },
+);
+```
+
+> **Why use this?**
+> Instead of manually wiring stdin reads, trimming, empty checks, and retry loops, `text` gives you a themed prompt with validation and cancellation behavior in one call.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `password` - Masked Text Input
+
+Collect secrets without echoing the raw value. The password prompt uses the same text engine as `text`, but masks input, can optionally reveal with a hotkey, and can run a two-field verification flow.
+
+- `password`
+  `(String prompt, {required, maskChar, allowReveal, verify})`
+  Opens a masked text prompt.
+- `prompt` - Title displayed above the password field.
+- `required` - Defaults to `true`; empty submissions are blocked.
+- `maskChar` - Character repeated for each typed character. Defaults to `'•'`.
+- `allowReveal` - Defaults to `true`; when enabled, Ctrl+R toggles plain-text visibility.
+- `verify` - Defaults to `false`; when `true`, asks for password and confirmation in one form and blocks mismatches.
+- Returns `String?` - The entered password on confirmation, or `null` on cancel.
+- Controls - Type normally, Backspace deletes, Enter confirms, Ctrl+R reveals when enabled, Esc cancels.
+
+#### Examples
+
+```dart
+final token = terminice.password('API token');
+
+if (token == null) {
+  print('Token entry cancelled.');
+}
+```
+
+```dart
+final pin = terminice.password(
+  'Deployment PIN',
+  maskChar: '*',
+  allowReveal: false,
+);
+```
+
+```dart
+final newPassword = terminice.password(
+  'New account password',
+  verify: true,
+);
+
+if (newPassword != null) {
+  print('Password accepted.');
+}
+```
+
+> **Why use this?**
+> Use `password` when the input should behave like text but render safely. Use `verify: true` when a typo would be expensive and you want the confirmation logic built in.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `confirm` - Yes/No Confirmation
+
+Ask for a boolean decision with two labeled choices and a configurable default focus. It is ideal for destructive actions, deployment gates, and "continue?" checkpoints.
+
+- `confirm`
+  `({prompt, required message, yesLabel, noLabel, defaultYes})`
+  Opens a two-option confirmation prompt.
+- `prompt` - Frame title. Defaults to `'Confirm'`.
+- `message` - Main question displayed inside the prompt.
+- `yesLabel` - Positive option label. Defaults to `'Yes'`.
+- `noLabel` - Negative option label. Defaults to `'No'`.
+- `defaultYes` - Defaults to `true`; controls the initially selected option.
+- Returns `bool` - `true` when the positive option is confirmed, `false` when the negative option is confirmed.
+- Cancel behavior - Esc/Ctrl+C returns the default option value from `defaultYes` in the current implementation.
+- Controls - Left/Right toggles the highlighted option, Enter confirms, Esc/Ctrl+C cancels to the default.
+
+#### Examples
+
+```dart
+final shouldDeploy = terminice.confirm(
+  prompt: 'Deploy',
+  message: 'Ship the current build?',
+);
+
+if (shouldDeploy) {
+  print('Deploying...');
+}
+```
+
+```dart
+final deleteFile = terminice.confirm(
+  prompt: 'Delete file',
+  message: 'Remove config.json permanently?',
+  defaultYes: false,
+);
+```
+
+```dart
+final restart = terminice.fire.confirm(
+  prompt: 'Restart service',
+  message: 'Apply changes now?',
+  yesLabel: 'Restart',
+  noLabel: 'Later',
+  defaultYes: false,
+);
+```
+
+> **Why use this?**
+> A plain `stdin.readLineSync()` can only guess what users meant. `confirm` makes the choice explicit, themeable, and keyboard driven.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `multiline` - Terminal Text Area
+
+Capture multi-line text with cursor movement, scrolling, and a dedicated confirm shortcut. This prompt is useful for release notes, commit messages, descriptions, and small config snippets.
+
+- `multiline`
+  `(String prompt, {maxLines, visibleLines, allowEmpty})`
+  Opens an editable multi-line area.
+- `prompt` - Title displayed above the editor.
+- `maxLines` - Maximum number of lines the editor may contain. Defaults to `200`.
+- `visibleLines` - Height of the scrollable viewport. Defaults to `10`.
+- `allowEmpty` - Defaults to `true`; when `false`, Ctrl+D will not confirm until at least one line contains non-whitespace text.
+- Returns `String?` - The lines joined with `\n` after Ctrl+D, or `null` on Esc/Ctrl+C.
+- Controls - Type normally, Enter inserts a new line, Backspace deletes or merges lines, arrows move the cursor, Ctrl+D confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final notes = terminice.multiline('Release notes');
+
+print(notes ?? 'No notes entered.');
+```
+
+```dart
+final commitMessage = terminice.multiline(
+  'Commit message',
+  visibleLines: 5,
+  maxLines: 20,
+  allowEmpty: false,
+);
+```
+
+```dart
+final body = terminice.matrix.multiline(
+  'Issue description (Ctrl+D to save)',
+  visibleLines: 8,
+);
+
+final lineCount = body?.split('\n').length ?? 0;
+print('Captured $lineCount lines.');
+```
+
+> **Why use this?**
+> Use `text` for a short answer. Use `multiline` when Enter should create content instead of submitting the prompt.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `slider` - Numeric Selection
+
+Select a single numeric value within a bounded range using left/right keyboard controls. The rendered bar can show raw values, units, and optional percentage context.
+
+- `slider`
+  `(String prompt, {min, max, initial, step, width, unit, showPercent})`
+  Opens a single-value slider.
+- `prompt` - Title displayed above the slider.
+- `min` - Lowest selectable value. Defaults to `0`.
+- `max` - Highest selectable value. Defaults to `100`.
+- `initial` - Starting value. Defaults to `50`; the active slider value is clamped into the range.
+- `step` - Amount added/subtracted per arrow press. Defaults to `1`.
+- `width` - Visual bar width in characters. Defaults to `28`.
+- `unit` - Suffix appended to the displayed value, such as `'MB'`, `'s'`, or `'%'`.
+- `showPercent` - When `true`, also displays the selected value as a percentage of the range.
+- Returns `num` - The selected value on Enter. Esc/Ctrl+C returns the supplied `initial` value.
+- Controls - Left/Right adjusts by `step`, Enter confirms, Esc/Ctrl+C cancels to `initial`.
+
+#### Examples
+
+```dart
+final memory = terminice.slider(
+  'Memory allocation',
+  min: 128,
+  max: 2048,
+  initial: 512,
+  step: 128,
+  unit: 'MB',
+);
+```
+
+```dart
+final timeout = terminice.slider(
+  'Request timeout',
+  min: 0,
+  max: 120,
+  initial: 30,
+  step: 5,
+  unit: 's',
+);
+```
+
+```dart
+final rollout = terminice.neon.slider(
+  'Rollout',
+  min: 0,
+  max: 100,
+  initial: 25,
+  step: 5,
+  unit: '%',
+  showPercent: true,
+);
+```
+
+> **Why use this?**
+> A slider is faster and safer than asking users to type a number when the valid range is known and small adjustments matter.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `range` - Dual-Handle Numeric Range
+
+Select a start and end value inside the same bounded numeric scale. The active handle can be switched from the keyboard, and confirmed values stay ordered during interaction.
+
+- `range`
+  `(String prompt, {min, max, startInitial, endInitial, step, width, unit})`
+  Opens a two-handle range prompt.
+- `prompt` - Title displayed above the range bar.
+- `min` - Lowest allowed value. Defaults to `0`.
+- `max` - Highest allowed value. Defaults to `100`.
+- `startInitial` - Starting value for the first handle. Defaults to `20`.
+- `endInitial` - Starting value for the second handle. Defaults to `80`.
+- `step` - Amount added/subtracted from the active handle. Defaults to `1`.
+- `width` - Visual bar width in characters. Defaults to `28`; rendering also adapts to terminal width.
+- `unit` - Suffix appended to both displayed values. Defaults to `'%'`.
+- Returns `RangeResult` - Read values with `.start` and `.end`. Import `package:terminice_core/terminice_core.dart` only if you want to name the type explicitly.
+- Cancel behavior - Esc/Ctrl+C returns a `RangeResult` built from the supplied `startInitial` and `endInitial`.
+- Controls - Left/Right adjusts the active handle, Up/Down/Space switches handles, Enter confirms, Esc/Ctrl+C cancels to the initial pair.
+
+#### Examples
+
+```dart
+final budget = terminice.range(
+  'Memory budget',
+  min: 0,
+  max: 32,
+  startInitial: 4,
+  endInitial: 16,
+  step: 1,
+  unit: 'GB',
+);
+
+print('Allowed: ${budget.start}GB to ${budget.end}GB');
+```
+
+```dart
+final quietHours = terminice.range(
+  'Quiet hours',
+  min: 0,
+  max: 24,
+  startInitial: 22,
+  endInitial: 7,
+  unit: 'h',
+);
+```
+
+```dart
+final price = terminice.ocean.range(
+  'Price filter',
+  min: 0,
+  max: 500,
+  startInitial: 50,
+  endInitial: 250,
+  step: 25,
+  unit: r'$',
+);
+```
+
+> **Why use this?**
+> Use `slider` for one value. Use `range` when the user is defining a span, such as min/max price, memory budget, or an allowed operating window.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `rating` - Star Rating Input
+
+Collect a small integer rating with stars, number-key shortcuts, and optional labels for each level. This is a compact fit for priority, satisfaction, quality, and risk scoring.
+
+- `rating`
+  `(String prompt, {maxStars, initial, labels})`
+  Opens a discrete star rating prompt.
+- `prompt` - Title displayed above the rating.
+- `maxStars` - Maximum rating value. Defaults to `5` and must be greater than `0`.
+- `initial` - Starting rating. Defaults to `3`; the active value is clamped into `1..maxStars`.
+- `labels` - Optional labels displayed for each rating value when the list has at least `maxStars` entries.
+- Returns `int` - The confirmed rating. Esc/Ctrl+C returns the clamped initial value.
+- Controls - Left/Right adjusts the rating, number keys jump directly to a value, Enter confirms, Esc/Ctrl+C cancels to the initial rating.
+
+#### 🧪 Examples
+
+```dart
+final satisfaction = terminice.rating('Satisfaction');
+
+print('User rated this $satisfaction/5.');
+```
+
+```dart
+final priority = terminice.rating(
+  'Priority',
+  initial: 3,
+  labels: ['Lowest', 'Low', 'Medium', 'High', 'Critical'],
+);
+```
+
+```dart
+final risk = terminice.fire.rating(
+  'Risk level',
+  maxStars: 10,
+  initial: 4,
+);
+```
+
+> **Why use this?**
+> Ratings keep bounded integer input quick. Number keys make exact selection fast, while labels let you turn numbers into meaningful domain language.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `date` - Keyboard Date Prompt
+
+Collect a calendar date by editing day, month, and year fields directly. It renders a formatted preview so the selected date is easy to verify before confirmation.
+
+- `date`
+  `(String prompt, {initial})`
+  Opens a three-field date selector.
+- `prompt` - Title displayed above the selector. If an empty string is passed, the prompt uses `'Date'`.
+- `initial` - Optional starting `DateTime`. When omitted, the prompt starts from `DateTime.now()`.
+- Returns `DateTime?` - The selected date on Enter, or `null` on Esc/Ctrl+C.
+- Controls - Left/Right switches between day/month/year, Up/Down adjusts the active field, Ctrl+E jumps to today, Enter confirms, Esc/Ctrl+C cancels.
+- Behavior - The prompt edits calendar fields using Dart `DateTime`, so month/year changes follow Dart's normal date normalization.
+
+#### Examples
+
+```dart
+final launchDate = terminice.date(
+  'Launch date',
+  initial: DateTime(2026, 9, 1),
+);
+
+if (launchDate != null) {
+  print('Launch: ${launchDate.toIso8601String().split('T').first}');
+}
+```
+
+```dart
+final birthday = terminice.pastel.date('Birthday');
+
+print(birthday == null ? 'Skipped' : 'Saved birthday');
+```
+
+```dart
+final reviewDate = terminice.date(
+  'Next review',
+  initial: DateTime.now().add(const Duration(days: 30)),
+);
+```
+
+> **Why use this?**
+> Use `date` when free-form date text would be too error-prone, but a full calendar picker would be more UI than the workflow needs.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `form` - Multi-Field Input
+
+Group several text/password-style fields inside one themed frame. Forms support per-field placeholders, masking, required checks, initial values, per-field validators, and cross-field validation on submit.
+
+Form field and result types come from `terminice_core`, so full form examples use:
+
+```dart
+import 'package:terminice/terminice.dart';
+import 'package:terminice_core/terminice_core.dart';
+```
+
+- `form`
+  `(String prompt, {required fields, crossValidator})`
+  Opens a multi-field input form.
+- `prompt` - Title displayed above the form.
+- `fields` - List of `FormFieldConfig` objects, rendered top-to-bottom.
+- `crossValidator` - Optional `String? Function(List<String> values)`. Return `null` for valid form state, or an error message to block submission.
+- Returns `FormResult?` - Confirmed, trimmed field values on success, or `null` on Esc/Ctrl+C. Access values with `result[0]`, `result[1]`, or `result.values`.
+- Empty fields behavior - Passing an empty `fields` list returns `FormResult([])`.
+- Controls - Type into the focused field, Tab/Down moves next, Up moves previous, Enter moves next or submits from the last field, Ctrl+R reveals the focused masked field when allowed, Esc/Ctrl+C cancels.
+
+`FormFieldConfig` supports:
+
+- `label` - Required label shown beside the input.
+- `placeholder` - Optional hint shown when the focused field is empty.
+- `masked` - Defaults to `false`; when `true`, the field displays mask characters.
+- `maskChar` - Character used for masked fields. Defaults to `'•'`.
+- `allowReveal` - Defaults to `false`; when `true`, Ctrl+R toggles plain text for that masked field.
+- `required` - Defaults to `false`; empty trimmed values are rejected with `Required`.
+- `validator` - Optional `String Function(String)` per-field validator. Return `''` for valid input, or a non-empty error message.
+- `initialValue` - Optional pre-filled text.
+
+#### Examples
+
+```dart
+final login = terminice.form(
+  'Login',
+  fields: const [
+    FormFieldConfig(
+      label: 'Username',
+      placeholder: 'ada',
+      required: true,
+    ),
+    FormFieldConfig(
+      label: 'Password',
+      masked: true,
+      allowReveal: true,
+      required: true,
+    ),
+  ],
+);
+
+if (login != null) {
+  print('Signing in ${login[0]}...');
+}
+```
+
+```dart
+final account = terminice.form(
+  'Create account',
+  fields: [
+    FormFieldConfig(
+      label: 'Email',
+      required: true,
+      validator: (value) =>
+          value.contains('@') ? '' : 'Enter a valid email address',
+    ),
+    const FormFieldConfig(
+      label: 'Password',
+      masked: true,
+      allowReveal: true,
+      required: true,
+    ),
+    const FormFieldConfig(
+      label: 'Confirm',
+      masked: true,
+      allowReveal: true,
+      required: true,
+      placeholder: 're-enter password',
+    ),
+  ],
+  crossValidator: (values) {
+    if (values[1] != values[2]) return 'Passwords do not match';
+    return null;
+  },
+);
+```
+
+```dart
+final profile = terminice.ocean.form(
+  'Profile',
+  fields: const [
+    FormFieldConfig(label: 'Display name', initialValue: 'Ada'),
+    FormFieldConfig(label: 'Team', placeholder: 'Platform'),
+    FormFieldConfig(label: 'Pager', required: false),
+  ],
+);
+
+final values = profile?.values ?? const <String>[];
+print('Captured ${values.length} fields.');
+```
+
+> **Why use this?**
+> Use separate prompts when each answer should feel like its own step. Use `form` when the inputs belong together and should validate as one unit, such as login, signup, or connection settings.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `searchSelector` - Filterable List Selection
+
+Pick from a vertical list that can be filtered in place. It works as a quick single-choice selector by default, or as a multi-select searchable checklist when `multiSelect` is enabled.
+
+- `searchSelector`
+  `({required options, prompt, multiSelect, showSearch, maxVisible})`
+  Opens a searchable list prompt.
+- `options` - `List<String>` displayed in the list. Passing an empty list returns `[]` immediately.
+- `prompt` - Frame title. Defaults to `'Select an option'`.
+- `multiSelect` - Defaults to `false`. When `true`, Space toggles the focused row and Enter returns all selected labels.
+- `showSearch` - Defaults to `false`. When `true`, the search field starts open; otherwise `/` toggles search mode.
+- `maxVisible` - Maximum list rows before scrolling. Defaults to `10`; the prompt also adapts to terminal height.
+- Returns `List<String>` - Confirmed labels. Single-select returns a one-item list. Multi-select returns checked labels, or the focused label if nothing was checked.
+- Cancel behavior - Esc/Ctrl+C returns `[]`. Empty options and no-match confirmation also return `[]`.
+- Controls - Up/Down navigates, `/` toggles search, type filters while search is open, Space toggles in multi-select, Enter confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final language = terminice.searchSelector(
+  prompt: 'Primary language',
+  options: const ['Dart', 'Go', 'Rust', 'TypeScript', 'Python'],
+  showSearch: true,
+);
+
+final selectedLanguage = language.isEmpty ? null : language.first;
+print(selectedLanguage ?? 'No language selected.');
+```
+
+```dart
+final services = terminice.searchSelector(
+  prompt: 'Restart services',
+  options: const ['api', 'worker', 'scheduler', 'web', 'metrics'],
+  multiSelect: true,
+  showSearch: true,
+  maxVisible: 4,
+);
+
+if (services.isNotEmpty) {
+  print('Restarting ${services.join(', ')}');
+}
+```
+
+```dart
+final region = terminice.ocean.compact.searchSelector(
+  prompt: 'Region',
+  options: const ['us-east-1', 'us-west-2', 'eu-central-1', 'ap-south-1'],
+);
+
+final selectedRegion = region.isEmpty ? 'none' : region.first;
+print('Region: $selectedRegion');
+```
+
+> **Why use this?**
+> Use `searchSelector` when the list may be longer than the terminal viewport, or when users know the item name and should be able to filter instead of arrowing through everything.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `choiceSelector` - Card-Based Choice Grid
+
+Render choices as two-line cards with a label and optional subtitle. It is useful when each option needs a little context, such as actions, plans, environments, or workflows.
+
+- `choiceSelector`
+  `(String prompt, {required items, multiSelect, columns, cardWidth, maxColumns})`
+  Opens a themed grid of choice cards.
+- `prompt` - Frame title displayed above the grid.
+- `items` - `List<ChoiceItem>`. Passing an empty list returns `[]` immediately.
+- `ChoiceItem(label, {subtitle})` - Card model exported by `package:terminice/terminice.dart`; `label` is returned, `subtitle` is rendered dimmed below it.
+- `multiSelect` - Defaults to `false`. When `true`, each card shows a checkbox and Space toggles the focused card.
+- `columns` - Fixed column count. Defaults to `0`, which lets the selector compute columns from terminal width and item count.
+- `cardWidth` - Optional card width override, clamped by the implementation to 16-44 characters.
+- `maxColumns` - Optional cap used by automatic column layout.
+- Returns `List<String>` - Confirmed `ChoiceItem.label` values. Single-select returns one label. Multi-select returns selected labels, or the focused label if nothing was checked.
+- Cancel behavior - Esc/Ctrl+C returns `[]`.
+- Controls - Arrow keys navigate across cards with wrapping, Space toggles in multi-select, Enter confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final action = terminice.choiceSelector(
+  'Next action',
+  items: const [
+    ChoiceItem('Preview', subtitle: 'Render a local diff'),
+    ChoiceItem('Publish', subtitle: 'Deploy the current build'),
+    ChoiceItem('Rollback', subtitle: 'Restore previous version'),
+  ],
+);
+
+final selectedAction = action.isEmpty ? 'none' : action.first;
+print('Action: $selectedAction');
+```
+
+```dart
+final checks = terminice.choiceSelector(
+  'Run checks',
+  items: const [
+    ChoiceItem('Format', subtitle: 'dart format'),
+    ChoiceItem('Analyze', subtitle: 'dart analyze'),
+    ChoiceItem('Test', subtitle: 'dart test'),
+    ChoiceItem('Build', subtitle: 'compile release artifact'),
+  ],
+  multiSelect: true,
+  columns: 2,
+);
+
+print('Selected checks: ${checks.join(', ')}');
+```
+
+```dart
+final environment = terminice.fire.choiceSelector(
+  'Environment',
+  items: const [
+    ChoiceItem('Dev', subtitle: 'Local dependencies'),
+    ChoiceItem('Stage', subtitle: 'Shared QA stack'),
+    ChoiceItem('Prod', subtitle: 'Customer traffic'),
+  ],
+  cardWidth: 24,
+  maxColumns: 3,
+);
+```
+
+> **Why use this?**
+> Use `searchSelector` for fast text filtering. Use `choiceSelector` when the shape of the decision matters and subtitles help users choose confidently.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `checkboxSelector` - Multi-Select Checklist
+
+Display a vertical checklist with a live summary line and a select-all shortcut. It is the most direct selector for enabling features, choosing tasks, or collecting a small set of labels.
+
+- `checkboxSelector`
+  `(String prompt, {required options, initialSelected, maxVisible})`
+  Opens a multi-select checklist.
+- `prompt` - Frame title displayed above the checklist.
+- `options` - `List<String>` labels displayed beside checkboxes. Passing an empty list returns `[]` immediately.
+- `initialSelected` - Optional `Set<int>` of zero-based option indices that start checked. Invalid indices are ignored by the underlying prompt.
+- `maxVisible` - Maximum visible rows before scrolling. Defaults to `12`; the prompt also adapts to terminal height.
+- Returns `List<String>` - Confirmed labels in option order. If the user confirms while nothing is checked, the currently focused option is returned.
+- Cancel behavior - Esc/Ctrl+C returns `[]`.
+- Controls - Up/Down navigates, Space toggles the focused option, `A` selects all or clears all, Enter confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final features = terminice.checkboxSelector(
+  'Enable features',
+  options: const ['Dark mode', 'Notifications', 'Auto-save', 'Sync'],
+  initialSelected: {0},
+);
+
+print('Enabled: ${features.join(', ')}');
+```
+
+```dart
+final migrations = terminice.checkboxSelector(
+  'Migrations',
+  options: const [
+    'Create users table',
+    'Backfill display names',
+    'Add billing index',
+    'Vacuum old events',
+  ],
+  maxVisible: 3,
+);
+
+if (migrations.isEmpty) {
+  print('No migrations selected.');
+}
+```
+
+```dart
+final labels = terminice.matrix.checkboxSelector(
+  'Issue labels',
+  options: const ['bug', 'feature', 'docs', 'good first issue'],
+  initialSelected: {1, 2},
+);
+```
+
+> **Why use this?**
+> Use `checkboxSelector` when every option is a simple on/off inclusion. Use `choiceSelector` when each option needs a card subtitle, and `tagSelector` when a compact chip layout fits better.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `gridSelector` - Two-Dimensional Selection Grid
+
+Arrange string options into a responsive grid with wrapping arrow-key navigation. It is a good fit for compact fixed vocabularies where scanning by rows and columns is faster than a vertical list.
+
+- `gridSelector`
+  `({required options, prompt, columns, multiSelect, cellWidth, maxColumns, initialSelection})`
+  Opens a grid selector.
+- `options` - `List<String>` labels rendered inside cells. Passing an empty list returns `[]`.
+- `prompt` - Frame title. Defaults to `'Select'`.
+- `columns` - Fixed column count. Defaults to `0`, which computes a responsive column count.
+- `multiSelect` - Defaults to `false`. When `true`, cells include checkbox markers and Space toggles the focused cell.
+- `cellWidth` - Optional fixed width per cell. When omitted, width is computed from item labels and clamped by the core grid prompt.
+- `maxColumns` - Optional cap for automatic layout.
+- `initialSelection` - Optional `Set<int>` of zero-based indices that start selected. Invalid indices are ignored.
+- Returns `List<String>` - Confirmed labels in option order. Single-select returns the focused label. Multi-select returns checked labels, or the focused label if none were checked.
+- Cancel behavior - Esc/Ctrl+C returns `[]`.
+- Controls - Arrow keys move in two dimensions with wrapping, Space toggles in multi-select, Enter confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final color = terminice.gridSelector(
+  prompt: 'Accent color',
+  options: const ['Red', 'Blue', 'Green', 'Yellow'],
+  columns: 2,
+);
+
+final selectedColor = color.isEmpty ? 'none' : color.first;
+print('Color: $selectedColor');
+```
+
+```dart
+final targets = terminice.gridSelector(
+  prompt: 'Deploy targets',
+  options: const ['api', 'web', 'worker', 'scheduler', 'cron', 'docs'],
+  multiSelect: true,
+  initialSelection: {0, 2},
+  maxColumns: 3,
+);
+
+print('Targets: ${targets.join(', ')}');
+```
+
+```dart
+final size = terminice.neon.gridSelector(
+  prompt: 'Instance size',
+  options: const ['small', 'medium', 'large', 'xlarge'],
+  cellWidth: 14,
+);
+```
+
+> **Why use this?**
+> Use `gridSelector` when options are short and benefit from spatial scanning. Use `searchSelector` when the list is long or users need filtering.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `tagSelector` - Chip-Style Multi-Select
+
+Render tags as compact `[ tag ]` chips in a responsive grid. The selector is always multi-select and shows a count summary while the user toggles chips.
+
+- `tagSelector`
+  `({required tags, prompt, maxContentWidth, minContentWidth, minColumnWidth, maxColumnWidth, useTerminalWidth})`
+  Opens a chip-style tag selector.
+- `tags` - `List<String>` labels rendered inside chips. Passing an empty list returns `[]` immediately.
+- `prompt` - Frame title. Defaults to `'Select tags'`.
+- `maxContentWidth` - Optional cap for the inner content width.
+- `minContentWidth` - Lower bound for content width before wrapping. Defaults to `32`.
+- `minColumnWidth` - Minimum chip column width. Defaults to `8`.
+- `maxColumnWidth` - Maximum chip column width. Defaults to `24`.
+- `useTerminalWidth` - Defaults to `true`; when enabled, layout is recomputed from the current terminal width during rendering.
+- Returns `List<String>` - Confirmed tags in tag order. If Enter is pressed before any chip is toggled, the focused tag is returned.
+- Cancel behavior - Esc/Ctrl+C returns `[]`.
+- Controls - Arrow keys move between chips, Space toggles the focused chip, Enter confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final issueLabels = terminice.tagSelector(
+  prompt: 'Issue labels',
+  tags: const ['bug', 'feature', 'docs', 'chore', 'blocked'],
+);
+
+print('Labels: ${issueLabels.join(', ')}');
+```
+
+```dart
+final interests = terminice.tagSelector(
+  prompt: 'Interests',
+  tags: const [
+    'Dart',
+    'CLI',
+    'Automation',
+    'Testing',
+    'Design',
+    'Docs',
+  ],
+  maxContentWidth: 72,
+  minColumnWidth: 12,
+);
+```
+
+```dart
+final compactTags = terminice.pastel.compact.tagSelector(
+  prompt: 'Release tags',
+  tags: const ['stable', 'beta', 'internal', 'breaking', 'security'],
+  maxColumnWidth: 16,
+);
+```
+
+> **Why use this?**
+> Use `tagSelector` when the selected values are labels and a compact chip grid is easier to scan than a tall checklist.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `toggleGroup` - Editable Boolean Switches
+
+Edit several independent on/off states in one prompt. Unlike a radio group, `toggleGroup` is not mutually exclusive: every row has its own boolean state.
+
+- `toggleGroup (String prompt, {required items, alignContent})`
+  Opens a vertical group of switches.
+- `prompt` - Frame title displayed above the switches.
+- `items` - `List<ToggleItem>`. Passing an empty list returns `{}` immediately.
+- `ToggleItem(label, {initialOn})` - Switch model exported by `package:terminice/terminice.dart`; `initialOn` defaults to `false`.
+- `alignContent` - Present in the public API for alignment control; the current renderer pads labels into a tidy column.
+- Returns `Map<String, bool>` - Confirmed switch states keyed by `ToggleItem.label`. Keep labels unique, because duplicate labels overwrite earlier entries in the returned map.
+- Cancel behavior - Esc/Ctrl+C returns a map built from the initial states, not an empty map.
+- Controls - Up/Down navigates rows, Left/Right/Space toggles the focused switch, `A` toggles all switches, Enter confirms, Esc/Ctrl+C cancels to the initial map.
+
+#### Examples
+
+```dart
+final settings = terminice.toggleGroup(
+  'Settings',
+  items: const [
+    ToggleItem('Auto deploy', initialOn: true),
+    ToggleItem('Send email'),
+    ToggleItem('Write audit log', initialOn: true),
+  ],
+);
+
+if (settings['Auto deploy'] == true) {
+  print('Auto deploy is enabled.');
+}
+```
+
+```dart
+final flags = terminice.toggleGroup(
+  'Feature flags',
+  items: const [
+    ToggleItem('New checkout'),
+    ToggleItem('Fast search', initialOn: true),
+    ToggleItem('Verbose logs'),
+  ],
+);
+
+for (final entry in flags.entries) {
+  print('${entry.key}: ${entry.value ? "on" : "off"}');
+}
+```
+
+```dart
+final permissions = terminice.monochrome.toggleGroup(
+  'Permissions',
+  items: const [
+    ToggleItem('Read', initialOn: true),
+    ToggleItem('Write'),
+    ToggleItem('Admin'),
+  ],
+);
+```
+
+> **Why use this?**
+> Use `checkboxSelector` when you only need a list of enabled labels. Use `toggleGroup` when both enabled and disabled states matter after the prompt returns.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `commandPalette` - Fuzzy Command Launcher
+
+Open a command palette that searches command titles and optional subtitles, ranks matches, and returns the selected command entry. It behaves like a compact launcher for CLIs with many actions.
+
+- `commandPalette (String prompt, {required commands, maxVisible})`
+  Opens a ranked command list with an always-visible search input.
+- `prompt` - Frame title displayed above the palette.
+- `commands` - `List<CommandEntry>`. Passing an empty list returns `null` immediately.
+- `CommandEntry({required id, required title, subtitle})` - Command model exported by `package:terminice/terminice.dart`.
+- `id` - Stable identifier returned with the selected entry; use it for dispatching.
+- `title` - Primary searchable label shown in the list.
+- `subtitle` - Optional secondary searchable text rendered dimmed beside the title.
+- `maxVisible` - Maximum result rows before scrolling. Defaults to `12`; the prompt also adapts to terminal height.
+- Ranking - Empty query shows all commands. Non-empty query uses fuzzy matching by default, searches title first, falls back to subtitle, and Ctrl+R toggles fuzzy vs substring mode.
+- Returns `CommandEntry?` - The selected entry on Enter, or `null` when cancelled, when commands are empty, or when Enter is pressed with no matches.
+- Cancel behavior - Esc/Ctrl+C returns `null`.
+- Controls - Type to search, Backspace edits, Up/Down navigates matches, Ctrl+R toggles ranking mode, Enter confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final command = terminice.commandPalette(
+  'Command Palette',
+  commands: const [
+    CommandEntry(id: 'open', title: 'Open Project', subtitle: 'Ctrl+O'),
+    CommandEntry(id: 'build', title: 'Build Release', subtitle: 'compile'),
+    CommandEntry(id: 'deploy', title: 'Deploy', subtitle: 'production'),
+  ],
+);
+
+switch (command?.id) {
+  case 'open':
+    print('Opening project...');
+    break;
+  case 'build':
+    print('Building release...');
+    break;
+  case 'deploy':
+    print('Deploying...');
+    break;
+  default:
+    print('No command selected.');
+}
+```
+
+```dart
+final selected = terminice.commandPalette(
+  'Git action',
+  commands: const [
+    CommandEntry(id: 'status', title: 'Git: Status', subtitle: 'working tree'),
+    CommandEntry(id: 'commit', title: 'Git: Commit', subtitle: 'create commit'),
+    CommandEntry(id: 'push', title: 'Git: Push', subtitle: 'origin'),
+    CommandEntry(id: 'pull', title: 'Git: Pull', subtitle: 'origin'),
+  ],
+  maxVisible: 4,
+);
+
+print('Selected command id: ${selected?.id ?? "none"}');
+```
+
+```dart
+final tool = terminice.arcane.commandPalette(
+  'Toolbox',
+  commands: const [
+    CommandEntry(id: 'format', title: 'Format Dart', subtitle: 'dart format'),
+    CommandEntry(id: 'analyze', title: 'Analyze Dart', subtitle: 'dart analyze'),
+    CommandEntry(id: 'test', title: 'Run Tests', subtitle: 'dart test'),
+  ],
+);
+```
+
+> **Why use this?**
+> Use `commandPalette` when the user is choosing an action by name. It returns the whole `CommandEntry`, so display text and dispatch IDs can stay separate.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `filePicker` - Searchable File Browser
+
+Browse the filesystem from a starting directory and return the selected file path. The picker renders each directory as an enterable row, adds a parent-directory row when possible, and uses the searchable selector UI so users can filter large folders before choosing.
+
+- `filePicker(String prompt, {startDirectory, showHidden, foldersOnly})`
+  Opens a searchable filesystem browser.
+- `prompt` - Base title for the frame. The current path is appended in parentheses and shortened when it is longer than 60 visible characters.
+- `startDirectory` - Optional `Directory` used as the first folder. Defaults to `Directory.current`.
+- `showHidden` - Defaults to `false`. When `true`, entries whose basename starts with `.` are included.
+- `foldersOnly` - Defaults to `false`. When `true`, file choices are not returned; directories remain navigation targets. Use `pathPicker` when you need a confirmed directory path.
+- Returns `String?` - The selected file path when a file is confirmed, or `null` when the user cancels.
+- Filesystem behavior - Entries come from `Directory.listSync(followLinks: false)`, sorted with directories first and then by case-insensitive basename. Symlinks are not followed by the listing helper. Unreadable directories can surface the underlying `FileSystemException`.
+- Cancel behavior - Esc/Ctrl+C inside the embedded search selector returns `null`.
+- Controls - Up/Down navigates rows, `/` toggles search, typing filters while search is open, Enter enters a directory or confirms a file, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final configPath = terminice.filePicker(
+  'Select config file',
+  startDirectory: Directory.current,
+  showHidden: true,
+);
+
+if (configPath == null) {
+  print('No config selected.');
+} else {
+  final contents = File(configPath).readAsStringSync();
+  print('Loaded ${contents.length} characters from $configPath');
+}
+```
+
+```dart
+final assetPath = terminice.ocean.compact.filePicker(
+  'Select asset',
+  startDirectory: Directory.current,
+);
+
+if (assetPath != null) {
+  print('Asset: $assetPath');
+}
+```
+
+```dart
+final picked = terminice.filePicker(
+  'Browse without dotfiles',
+  startDirectory: Directory.systemTemp,
+);
+
+print(picked ?? 'Selection cancelled.');
+```
+
+> **Why use this?**
+> Use `filePicker` when the user needs to choose an existing file from a folder tree. Use `pathPicker` when confirming the current directory is part of the workflow.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `pathPicker` - Directory and Path Browser
+
+Choose a directory, or optionally a file, from a dynamic filesystem list. Unlike `filePicker`, this prompt includes an explicit `✓ Select this directory` row, so it is the right picker for output folders, project roots, cache locations, and other directory targets.
+
+- `pathPicker (String prompt, {startDirectory, showHidden, allowFiles, maxVisible})`
+  Opens a dynamic path browser.
+- `prompt` - Frame title displayed above the picker.
+- `startDirectory` - Optional `Directory` used as the starting point. Defaults to `Directory.current`.
+- `showHidden` - Defaults to `false`. When enabled, dotfiles and dot directories are included.
+- `allowFiles` - Defaults to `false`. When `true`, files are shown and can be confirmed; when `false`, only directories plus navigation rows are shown.
+- `maxVisible` - Maximum visible rows before the list scrolls. Defaults to `18`.
+- Returns `String?` - The chosen directory path from `✓ Select this directory`, the chosen file path when `allowFiles` is enabled, or `null` on cancel.
+- Filesystem behavior - Entries are rebuilt as the current directory changes. Directories are sorted before files, hidden entries are filtered unless requested, and symlinks are not followed while listing. Permission errors while reading a directory are swallowed so the parent/current-directory controls can still render.
+- Cancel behavior - Esc/Ctrl+C returns `null`.
+- Controls - Up/Down navigates, Enter/Right enters a directory or confirms the focused action, Left moves to the parent directory when one exists, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final projectRoot = terminice.pathPicker(
+  'Select project root',
+  startDirectory: Directory.current,
+);
+
+if (projectRoot != null) {
+  print('Project root: $projectRoot');
+}
+```
+
+```dart
+final inputPath = terminice.pathPicker(
+  'Select input path',
+  startDirectory: Directory.current,
+  allowFiles: true,
+  maxVisible: 12,
+);
+
+if (inputPath != null) {
+  final type = FileSystemEntity.typeSync(inputPath);
+  final kind = type == FileSystemEntityType.directory ? 'directory' : 'file';
+  print('Selected $kind: $inputPath');
+}
+```
+
+```dart
+final exportDir = terminice.neon.pathPicker(
+  'Choose export folder',
+  startDirectory: Directory.systemTemp,
+  showHidden: true,
+);
+
+print(exportDir == null ? 'No export folder selected.' : exportDir);
+```
+
+> **Why use this?**
+> Use `pathPicker` for directory-first workflows because it can confirm the current folder directly. Turn on `allowFiles` when a command accepts either a file path or a directory path.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `colorPicker` - ANSI Color Grid
+
+Pick a terminal-friendly color from a live ANSI swatch grid. The picker maps horizontal movement to hue, vertical movement to brightness, and separate shortcuts to saturation, presets, randomization, reset, and hex entry.
+
+- `colorPicker (String prompt, {initialHex, cols, rows})`
+  Opens an interactive color grid.
+- `prompt` - Frame title displayed above the grid.
+- `initialHex` - Optional starting color. Accepts `#RRGGBB` or `RRGGBB`; invalid values are ignored. The picker positions the cursor near the requested color on the HSV grid.
+- `cols` - Number of hue columns. Defaults to `24`; larger values give finer horizontal hue steps.
+- `rows` - Number of brightness rows. Defaults to `8`; larger values give finer vertical brightness steps.
+- Returns `String?` - The selected color as uppercase `#RRGGBB`, or `null` when cancelled.
+- Color behavior - The return value is generated from the currently highlighted HSV grid cell. Hex entry and `initialHex` move the grid selection to the nearest represented color rather than storing a separate exact text value.
+- Hex entry - Press `H` to type a hex value. Enter applies valid input and leaves invalid input unchanged; Esc exits hex entry without cancelling the picker.
+- Cancel behavior - Esc/Ctrl+C outside hex entry returns `null`.
+- Controls - Arrow keys move the cursor, Left/Right wrap across hue columns, `S` cycles saturation breakpoints, `[` and `]` fine-tune saturation, `-` and `=`/`+` adjust brightness, `1-0` jump to presets, `R` randomizes, `X` resets, Enter confirms.
+
+#### Examples
+
+```dart
+final accent = terminice.colorPicker(
+  'Accent color',
+  initialHex: '#3B82F6',
+);
+
+print(accent == null ? 'No accent selected.' : 'Accent: $accent');
+```
+
+```dart
+final brandColor = terminice.colorPicker(
+  'Brand color',
+  initialHex: 'ffcc00',
+  cols: 36,
+  rows: 10,
+);
+
+if (brandColor != null) {
+  print('Use $brandColor in generated config.');
+}
+```
+
+```dart
+final dangerColor = terminice.arcane.colorPicker(
+  'Danger color',
+  cols: 16,
+  rows: 6,
+);
+
+print(dangerColor ?? '#EF4444');
+```
+
+> **Why use this?**
+> Use `colorPicker` when the user should see the color before committing it. It is faster than asking for raw hex, but still lets precise users jump in with `H`.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `datePicker` - Calendar Date Selection
+
+Pick a single calendar date from a framed month view. The selected day stays highlighted as the user moves by day, week, or year, and today is accented for orientation.
+
+- `datePicker (String prompt, {initialDate, startWeekOnMonday, allowPast, allowFuture})`
+  Opens an interactive calendar.
+- `prompt` - Frame title displayed above the calendar.
+- `initialDate` - Optional starting date. Defaults to `DateTime.now()` and is normalized to year/month/day for the initial selection.
+- `startWeekOnMonday` - Defaults to `true`. When `false`, the calendar renders Sunday as the first weekday.
+- `allowPast` / `allowFuture` - Public API flags for past/future gating. In the current implementation, navigation is not clamped by these flags, so enforce date limits after the picker returns if your command requires them.
+- Returns `DateTime?` - The selected date on Enter, or `null` when cancelled.
+- Date behavior - Left/Right move one day, Up/Down move one week, and W/S move one year while keeping the visible month synced to the selected date. Ctrl+E jumps to `DateTime.now()`.
+- Normalization note - The initial selection is date-only. Ctrl+E assigns `DateTime.now()` directly, so normalize the returned value yourself if your storage format requires midnight.
+- Cancel behavior - Esc/Ctrl+C returns `null`.
+- Controls - Left/Right move by day, Up/Down move by week, W/S move by year, Ctrl+E jumps to today, Enter confirms, Esc/Ctrl+C cancels.
+
+#### Examples
+
+```dart
+final releaseDate = terminice.datePicker(
+  'Release date',
+  initialDate: DateTime(2026, 1, 15),
+);
+
+if (releaseDate != null) {
+  final yyyy = releaseDate.year.toString().padLeft(4, '0');
+  final mm = releaseDate.month.toString().padLeft(2, '0');
+  final dd = releaseDate.day.toString().padLeft(2, '0');
+  print('Release: $yyyy-$mm-$dd');
+}
+```
+
+```dart
+final birthday = terminice.datePicker(
+  'Birthday',
+  startWeekOnMonday: false,
+);
+
+if (birthday != null && birthday.isAfter(DateTime.now())) {
+  print('Birthday cannot be in the future.');
+}
+```
+
+```dart
+DateTime dateOnly(DateTime value) {
+  return DateTime(value.year, value.month, value.day);
+}
+
+final shipDate = terminice.ocean.datePicker(
+  'Ship date',
+  initialDate: DateTime.now(),
+);
+
+final normalizedShipDate = shipDate == null ? null : dateOnly(shipDate);
+print(normalizedShipDate ?? 'No ship date selected.');
+```
+
+> **Why use this?**
+> Use `datePicker` when a visual calendar prevents off-by-one mistakes. Use the simpler `date` prompt when users already know the exact date string they want to type.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `loadingSpinner` - Framed Loading Spinner
+
+Show a framed, theme-aware spinner for an ongoing task. This is the most expressive spinner: it has a frame title, a message line, themed spinner glyphs, and footer hints describing the active style.
+
+- `loadingSpinner (String prompt, {message, style})`
+  Creates a `LoadingSpinner` controller.
+- `prompt` - Frame title displayed above the spinner.
+- `message` - Text shown next to the animated glyph. Defaults to `'Loading'`.
+- `style` - A `SpinnerStyle` value. Defaults to `SpinnerStyle.dots`; supported styles are `dots`, `bars`, and `arcs`.
+- Returns `LoadingSpinner` - The spinner is not displayed until you call `show(...)` or advance it through `runWith(...)`.
+- `show(int frame)` - Renders one frame. The frame index wraps around the style's glyph list, so any increasing integer works.
+- `runWith(void Function(void Function() tick) callback)` - Runs a synchronous callback with a `tick()` function. Each tick renders the next frame, starting at `0`.
+- `clear()` - Clears the current spinner frame and resets the internal render state.
+- Lifecycle - There is no `start`/`stop` timer. Drive animation from your own loop, timer, or synchronous `runWith` callback.
+- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears the spinner after the callback returns normally.
+- Async note - `runWith` does not await futures. Use a normal async loop with `show(...)` when the work uses `await`.
+
+#### Examples
+
+```dart
+void main() async {
+  final spinner = terminice.loadingSpinner(
+    'Installing',
+    message: 'Resolving packages',
+    style: SpinnerStyle.bars,
+  );
+
+  try {
+    for (var frame = 0; frame < 12; frame++) {
+      spinner.show(frame);
+      await Future.delayed(const Duration(milliseconds: 80));
+    }
+  } finally {
+    spinner.clear();
+  }
+
+  print('Install complete.');
+}
+```
+
+```dart
+void runStep(String step) {
+  // Do synchronous work for this step.
+}
+
+final spinner = terminice.ocean.loadingSpinner(
+  'Build',
+  message: 'Compiling',
+  style: SpinnerStyle.arcs,
+);
+
+spinner.runWith((tick) {
+  for (final step in ['resolve', 'compile', 'package']) {
+    tick();
+    runStep(step);
+  }
+});
+```
+
+```dart
+final spinner = LoadingSpinner(
+  'Deploy',
+  message: 'Publishing release',
+  style: SpinnerStyle.dots,
+  theme: PromptTheme.neon,
+);
+
+try {
+  for (var frame = 0; frame < 8; frame++) {
+    spinner.show(frame);
+  }
+} finally {
+  spinner.clear();
+}
+```
+
+> **Why use this?**
+> Use `loadingSpinner` when the task is indeterminate but important enough to deserve its own framed status area. Use `inlineSpinner` when you want the same idea in a single log-style line.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `inlineSpinner` - One-Line Spinner
+
+Render a compact spinner beside a status label. It is designed for log-style CLIs, CI output, polling loops, and places where a framed widget would be too much visual weight.
+
+- `inlineSpinner (String prompt, {style})`
+  Creates an `InlineSpinner` controller.
+- `prompt` - Text displayed next to the spinner glyph.
+- `style` - A `SpinnerStyle` value. Defaults to `SpinnerStyle.dots`; supported styles are `dots`, `bars`, and `arcs`.
+- Returns `InlineSpinner` - The line is not displayed until `show(...)` is called.
+- `show(int frame)` - Renders one inline frame and clears the previous inline frame if this controller already drew one.
+- `clear()` - Removes the current inline spinner output and resets the controller.
+- `InlineSpinner.framesForStyle(SpinnerStyle style)` - Returns the Unicode frame list used by a style, useful when you want to loop exactly one cycle.
+- Lifecycle - There is no `start`, `stop`, or dedicated `runWith` helper on `InlineSpinner`. Call `show(...)` from your own loop or timer and finish with `clear()`.
+- Async/timer note - If you animate with `Timer.periodic`, cancel the timer yourself before calling `clear()`.
+
+#### Examples
+
+```dart
+void main() async {
+  final spinner = terminice.inlineSpinner(
+    'Waiting for deployment',
+    style: SpinnerStyle.arcs,
+  );
+
+  try {
+    for (var frame = 0; frame < 18; frame++) {
+      spinner.show(frame);
+      await Future.delayed(const Duration(milliseconds: 70));
+    }
+  } finally {
+    spinner.clear();
+  }
+
+  print('Deployment is ready.');
+}
+```
+
+```dart
+final spinner = terminice.matrix.inlineSpinner(
+  'Scanning files',
+  style: SpinnerStyle.dots,
+);
+
+final frameCount = InlineSpinner.framesForStyle(SpinnerStyle.dots).length;
+
+try {
+  for (var frame = 0; frame < frameCount; frame++) {
+    spinner.show(frame);
+  }
+} finally {
+  spinner.clear();
+}
+```
+
+```dart
+final spinner = InlineSpinner(
+  'Syncing cache',
+  style: SpinnerStyle.bars,
+  theme: PromptTheme.fire,
+);
+
+try {
+  for (var frame = 0; frame < 10; frame++) {
+    spinner.show(frame);
+  }
+} finally {
+  spinner.clear();
+}
+```
+
+> **Why use this?**
+> Use `inlineSpinner` for short-lived or repeated status updates where you do not want a full frame. It gives users motion and context without taking over the terminal.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `progressBar` - Framed Determinate Progress
+
+Display bounded progress in a framed widget with a themed bar, percentage, and raw count. The bar is determinate: you provide `current` and `total` on every update.
+
+- `progressBar (String prompt)`
+  Creates a themed `ProgressBar` controller with the default width.
+- `prompt` - Frame title displayed above the bar.
+- Returns `ProgressBar` - The bar is not displayed until you call `show(...)` or `runWith(...)`.
+- `ProgressBar (String prompt, {width = 36, theme = PromptTheme.dark})`
+  Direct constructor for custom width or explicit theme. `width` must be greater than `4`.
+- `show({required int current, required int total, int shimmerPhase = 0})` - Renders the current progress state.
+- `current` / `total` - Used to compute the ratio. When `total <= 0`, the visual percentage is `0`.
+- `shimmerPhase` - Optional phase offset for the filled bar coloring. Increase it as you update to create motion.
+- `runWith(void Function(void Function(int current, int total) update) callback)` - Runs a synchronous callback with an `update(current, total)` function. Each update increments the shimmer phase internally.
+- `clear()` - Clears the current framed progress output.
+- Value behavior - The filled width and percentage are clamped to `0..100%`, while the raw `(current/total)` text displays the values you passed.
+- Lifecycle - There is no automatic timer. Use `show(...)` from an async loop, or use `runWith(...)` for synchronous work.
+- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears the bar after the callback returns normally.
+
+#### Examples
+
+```dart
+void main() async {
+  final bar = terminice.progressBar('Downloading SDK');
+  const total = 100;
+
+  try {
+    for (var current = 0; current <= total; current += 10) {
+      bar.show(
+        current: current,
+        total: total,
+        shimmerPhase: current,
+      );
+      await Future.delayed(const Duration(milliseconds: 90));
+    }
+  } finally {
+    bar.clear();
+  }
+
+  print('Download complete.');
+}
+```
+
+```dart
+final files = ['a.dart', 'b.dart', 'c.dart', 'd.dart'];
+final bar = terminice.pastel.progressBar('Formatting files');
+
+bar.runWith((update) {
+  for (var index = 0; index < files.length; index++) {
+    update(index + 1, files.length);
+    // Format files[index] synchronously here.
+  }
+});
+```
+
+```dart
+final bar = ProgressBar(
+  'Uploading archive',
+  width: 48,
+  theme: PromptTheme.ocean,
+);
+
+try {
+  bar.show(current: 32, total: 64);
+  bar.show(current: 64, total: 64, shimmerPhase: 1);
+} finally {
+  bar.clear();
+}
+```
+
+> **Why use this?**
+> Use `progressBar` when you know the total amount of work and want a framed progress readout. Use `loadingSpinner` or `progressDots` when the task has no reliable total.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `inlineProgressBar` - One-Line Percent Indicator
+
+Show a compact percentage beside a label. Despite the name, the current implementation is a one-line percent readout rather than a graphical bar, making it useful for dense logs and script output.
+
+- `inlineProgressBar(String prompt)` - Creates an `InlineProgressBar` controller.
+- `prompt` - Text displayed before the percentage.
+- Returns `InlineProgressBar` - The line is not displayed until `show(...)` is called.
+- `InlineProgressBar(String prompt, {theme = PromptTheme.dark})` - Direct constructor for an explicit theme.
+- `show({required int current, required int total})` - Computes `(current / total * 100).round()` and renders the percentage next to the prompt.
+- `current` / `total` - Provide the current count and total count. When `total <= 0`, the displayed percentage is `0`.
+- `clear()` - Clears the current inline progress output.
+- Value behavior - The percentage is not clamped in this class. Pass bounded values if you need the display to stay between `0%` and `100%`.
+- Lifecycle - There is no `start`, `stop`, or dedicated `runWith` helper. Drive it manually from your own loop or timer.
+- Cleanup behavior - Repeated `show(...)` calls replace the previous line. Call `clear()` when the operation is finished or cancelled.
+
+#### Examples
+
+```dart
+void main() async {
+  final progress = terminice.inlineProgressBar('Indexing');
+  const total = 50;
+
+  try {
+    for (var current = 0; current <= total; current += 5) {
+      progress.show(current: current, total: total);
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+  } finally {
+    progress.clear();
+  }
+
+  print('Index ready.');
+}
+```
+
+```dart
+final progress = terminice.monochrome.inlineProgressBar('Processed rows');
+
+try {
+  progress.show(current: 250, total: 1000);
+  progress.show(current: 1000, total: 1000);
+} finally {
+  progress.clear();
+}
+```
+
+```dart
+final progress = InlineProgressBar(
+  'Uploading',
+  theme: PromptTheme.arcane,
+);
+
+try {
+  progress.show(current: 3, total: 12);
+} finally {
+  progress.clear();
+}
+```
+
+> **Why use this?**
+> Use `inlineProgressBar` when you want the smallest possible determinate progress signal. Use `progressBar` when the user benefits from a framed bar and raw count display.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `progressDots` - Framed Dot Progress
+
+Show ambient progress with a title, message, and cycling dots. It is useful for work that is active but not measurable, such as waiting for a service, preparing a cache, or polling an external process.
+
+- `progressDots(String prompt)` - Creates a themed `ProgressDots` controller.
+- `prompt` - Frame title displayed above the dots.
+- Returns `ProgressDots` - The indicator is not displayed until you call `show(...)` or `runWith(...)`.
+- `ProgressDots(String prompt, {message = 'Working', maxDots = 3, theme = PromptTheme.dark})` - Direct constructor for custom text, dot count, or explicit theme. `maxDots` must be greater than `0`.
+- `message` - Text displayed before the animated dots.
+- `maxDots` - Maximum number of dots shown before the animation cycles back to zero dots.
+- `show({required int phase})` - Renders the dot count for a phase. The count is `phase % (maxDots + 1)`, so `phase: 0` shows the message with no dots.
+- `runWith(void Function(void Function() tick) callback)` - Runs a synchronous callback with a `tick()` function. Each tick advances the phase by one.
+- `clear()` - Clears the current framed dot indicator.
+- Lifecycle - There is no automatic timer. Use `show(...)` from an async loop, or use `runWith(...)` for synchronous work.
+- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears after the callback returns normally.
+- Async note - Like the other `runWith` helpers, this callback is synchronous; use manual `show(...)` calls for awaited work.
+
+#### Examples
+
+```dart
+void main() async {
+  final dots = terminice.progressDots('Starting server');
+
+  try {
+    for (var phase = 0; phase < 10; phase++) {
+      dots.show(phase: phase);
+      await Future.delayed(const Duration(milliseconds: 120));
+    }
+  } finally {
+    dots.clear();
+  }
+
+  print('Server started.');
+}
+```
+
+```dart
+final dots = ProgressDots(
+  'Migrating database',
+  message: 'Applying migrations',
+  maxDots: 5,
+  theme: PromptTheme.fire,
+);
+
+try {
+  for (var phase = 0; phase < 12; phase++) {
+    dots.show(phase: phase);
+  }
+} finally {
+  dots.clear();
+}
+```
+
+```dart
+void doSynchronousPoll() {
+  // Check one condition or process one item here.
+}
+
+final dots = terminice.neon.progressDots('Waiting for job');
+
+dots.runWith((tick) {
+  for (var attempt = 0; attempt < 4; attempt++) {
+    tick();
+    doSynchronousPoll();
+  }
+});
+```
+
+> **Why use this?**
+> Use `progressDots` when you want calmer feedback than a spinner and do not have a meaningful total for a progress bar.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `configEditor` - Searchable Nested Settings Editor
+
+Build a full terminal settings screen from typed `Configurable` fields. The editor renders a searchable list, opens the right prompt for each value, supports nested groups, tracks modified fields, and returns a `ConfigResult` only when the root editor is saved.
+
+```dart
+ConfigResult? configEditor(
+  String prompt, {
+  required List<Configurable> fields,
+  int maxVisible = 18,
+});
+```
+
+- `configEditor(String prompt, {required fields, maxVisible = 18})` - Opens the editor with `prompt` as the frame title.
+- `fields` - A mutable list of `Configurable` objects. The editor updates the field instances in place as the user edits values.
+- `maxVisible` - Upper limit for visible rows. The actual viewport is also clamped to the terminal height.
+- Returns `ConfigResult?` - Returns `ConfigResult(fields: fields, confirmed: true)` when the root "Save & confirm" row is selected, or `null` when the root editor is cancelled.
+- Empty behavior - If `fields` is empty, the method returns an immediate confirmed `ConfigResult`.
+- Search behavior - Search is active by default. Typing filters by field `label` or `key`; `/` toggles search on and off.
+- Navigation behavior - `↑` / `↓` move through rows, `Enter` opens the focused field or group, and the first row is the root save action.
+- Group behavior - `GroupConfigurable` opens a nested editor with a "Back" action instead of "Save & confirm". Esc or Back in a group returns to the parent and preserves edits in place; only the root save decides whether a result is returned.
+- Theme behavior - A `ThemeConfigurable` at the current editor level updates the editor theme live after a new theme is selected. The editor also starts with that field's selected theme.
+- Cancellation behavior - Esc / Ctrl+C at the root returns `null`. Field-level cancellation depends on the wrapped prompt; fields only update their value when their `edit(...)` method accepts a new value.
+- Validation behavior - `Configurable.validate()` calls the field's validator, and `GroupConfigurable.validate()` checks children. The root save action does not currently run a full validation sweep automatically, so run validation yourself if you need a final gate.
+
+#### `Configurable<T>` Basics
+
+Every config field stores display metadata, a typed value, serialization hooks, and its own editor.
+
+- `key` - Stable lookup and serialization key.
+- `label` - Human-readable row label.
+- `description` - Optional helper text shown under the focused row.
+- `hint` - Optional metadata available to field implementations.
+- `value` - Current typed value.
+- `defaultValue` - Captured from the initial value and used for change detection.
+- `formatter` - Optional display formatter. If omitted, the field's `formatValue()` is used.
+- `validator` - Optional function that returns an error string or `null`.
+- `icon` - Optional glyph override. Otherwise each field uses its default type icon.
+- `displayValue` - Formatted row value.
+- `typeIcon` - Custom icon or field default.
+- `edit(Terminice terminice)` - Opens the appropriate prompt and returns `true` when the field changes.
+- `toJsonValue()` / `loadJsonValue(dynamic)` - Convert to and from JSON-compatible values.
+- `isModified` - `true` when `value != defaultValue`; groups recurse into children.
+- `reset()` - Restores the initial value; groups reset all children.
+- `validate()` - Returns an error message or `null`.
+
+#### `ConfigResult` Behavior
+
+- `fields` - Final top-level fields, including groups.
+- `confirmed` - Always `true` for values returned by `configEditor`; cancellation is represented by `null`.
+- `toMap()` - Serializes top-level fields into `{key: value}`. Groups serialize as nested maps.
+- `get<T>(String key)` - Looks up a top-level field value and casts it to `T`; nested group children are not searched recursively.
+- `field(String key)` - Returns a top-level `Configurable`, or `null`.
+- `hasChanges` - `true` if any top-level field is modified. Group fields report child changes.
+- `modified` - Top-level fields whose values differ from their defaults.
+- `loadFromMap(Map<String, dynamic> map)` - Loads matching top-level keys. Group fields load matching child keys from nested maps.
+
+#### Common Configurable Types
+
+- `BoolConfigurable` - Uses `confirm(...)`; stores a `bool`; displays `trueLabel` or `falseLabel`; serializes to `bool`. The confirm prompt is opened with the current value as `defaultYes`, so cancelling leaves the field unchanged.
+- `StringConfigurable` - Uses `text(...)` or `multiline(...)`; stores a `String`; serializes to `String`. Single-line editing shows the current value as the placeholder when no explicit placeholder is set; multiline editing starts from an empty buffer.
+- `PasswordConfigurable` - Uses `password(...)`; stores a `String`; masks the list display; serializes to `String`.
+- `NumberConfigurable` - Uses `text(...)` with parsing or `slider(...)`; stores `num`; serializes to `int` when `integerOnly` is true.
+- `EnumConfigurable` - Uses a focused searchable selector; stores a `String`; the initial value must be in `options`.
+- `RangeConfigurable` - Uses `range(...)`; stores `RangeValue(start, end)`; serializes to `{'start': start, 'end': end}`.
+- `RatingConfigurable` - Uses `rating(...)`; stores an `int`; supports optional labels.
+- `ThemeConfigurable` - Uses a focused selector over `Map<String, PromptTheme>`; stores the selected theme key; default options come from `builtInThemes`.
+- `GroupConfigurable` - Opens a nested editor; stores a computed map of child values; serializes children under the group key.
+
+#### Factory Helper
+
+Use `terminice.config` when you prefer compact field declarations. It returns a `ConfigFactory` with helpers that mirror the concrete configurable classes.
+
+- `terminice.config` - Returns `const ConfigFactory()`.
+- `boolean({required key, required label, value = false, description, hint, formatter, validator, icon, trueLabel = 'Yes', falseLabel = 'No'})`
+- `string({required key, required label, value = '', description, hint, formatter, validator, icon, placeholder, multiline = false, required = false, visibleLines = 10})`
+- `password({required key, required label, value = '', description, hint, formatter, validator, icon, maskChar = '•', allowReveal = true, required = false, verify = false})`
+- `number({required key, required label, required value, description, hint, formatter, validator, icon, min = 0, max = 100, step = 1, unit = '', sliderWidth = 28, useSlider = false, showPercent = false, integerOnly = false})`
+- `select({required key, required label, required value, required options, description, hint, formatter, validator, icon})`
+- `range({required key, required label, required start, required end, description, hint, formatter, validator, icon, min = 0, max = 100, step = 1, unit = '%', width = 28})`
+- `rating({required key, required label, value = 3, description, hint, formatter, validator, icon, maxStars = 5, labels})`
+- `theme({required key, required label, value = 'dark', description, hint, formatter, validator, icon, themes, onChanged})`
+- `group({required key, required label, required children, description, hint, icon})`
+
+#### Examples
+
+```dart
+import 'dart:convert';
+
+import 'package:terminice/terminice.dart';
+
+void main() {
+  final result = terminice.configEditor(
+    'App Settings',
+    fields: [
+      ThemeConfigurable(
+        key: 'theme',
+        label: 'Theme',
+        value: 'dark',
+        description: 'Changes the editor palette live.',
+      ),
+      BoolConfigurable(
+        key: 'telemetry',
+        label: 'Telemetry',
+        value: false,
+        trueLabel: 'Enabled',
+        falseLabel: 'Disabled',
+      ),
+      StringConfigurable(
+        key: 'appName',
+        label: 'App Name',
+        value: 'terminice_app',
+        required: true,
+        placeholder: 'my_cli',
+      ),
+      NumberConfigurable(
+        key: 'port',
+        label: 'Port',
+        value: 8080,
+        min: 1,
+        max: 65535,
+        integerOnly: true,
+      ),
+      GroupConfigurable(
+        key: 'security',
+        label: 'Security',
+        children: [
+          PasswordConfigurable(
+            key: 'apiKey',
+            label: 'API Key',
+            verify: true,
+          ),
+          EnumConfigurable(
+            key: 'authMode',
+            label: 'Auth Mode',
+            value: 'token',
+            options: ['token', 'oauth2', 'basic', 'none'],
+          ),
+        ],
+      ),
+    ],
+  );
+
+  if (result == null) {
+    print('Cancelled.');
+    return;
+  }
+
+  print('Changed: ${result.hasChanges}');
+  print(const JsonEncoder.withIndent('  ').convert(result.toMap()));
+}
+```
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  final c = terminice.config;
+
+  final result = terminice.matrix.configEditor(
+    'Release Preferences',
+    fields: [
+      c.theme(
+        key: 'theme',
+        label: 'Theme',
+        value: 'matrix',
+      ),
+      c.string(
+        key: 'releaseName',
+        label: 'Release Name',
+        value: 'v1.0.0',
+        required: true,
+      ),
+      c.number(
+        key: 'parallelJobs',
+        label: 'Parallel Jobs',
+        value: 4,
+        min: 1,
+        max: 16,
+        useSlider: true,
+        integerOnly: true,
+      ),
+      c.range(
+        key: 'rollout',
+        label: 'Rollout Window',
+        start: 10,
+        end: 50,
+        unit: '%',
+      ),
+      c.rating(
+        key: 'risk',
+        label: 'Risk Level',
+        value: 2,
+        labels: ['Tiny', 'Low', 'Medium', 'High', 'Critical'],
+      ),
+    ],
+  );
+
+  final jobs = result?.get<num>('parallelJobs');
+  if (jobs != null) {
+    print('Running with ${jobs.toInt()} parallel jobs.');
+  }
+}
+```
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  final c = terminice.config;
+  final fields = [
+    c.string(key: 'host', label: 'Host', value: 'localhost'),
+    c.number(
+      key: 'port',
+      label: 'Port',
+      value: 8080,
+      min: 1,
+      max: 65535,
+      integerOnly: true,
+    ),
+    c.group(
+      key: 'proxy',
+      label: 'Proxy',
+      children: [
+        c.boolean(key: 'enabled', label: 'Enabled'),
+        c.string(key: 'url', label: 'URL'),
+      ],
+    ),
+  ];
+
+  final saved = <String, dynamic>{
+    'host': 'api.example.com',
+    'port': 443,
+    'proxy': {
+      'enabled': true,
+      'url': 'http://proxy.example.com:3128',
+    },
+  };
+
+  ConfigResult(fields: fields, confirmed: true).loadFromMap(saved);
+
+  final result = terminice.configEditor(
+    'Connection',
+    fields: fields,
+    maxVisible: 8,
+  );
+
+  if (result != null) {
+    final connection = result.toMap();
+    print(connection['proxy']);
+  }
+}
+```
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  final fields = [
+    StringConfigurable(
+      key: 'packageName',
+      label: 'Package Name',
+      required: true,
+      validator: (value) {
+        final ok = RegExp(r'^[a-z_][a-z0-9_]*$').hasMatch(value);
+        return ok ? null : 'Use a valid Dart package name.';
+      },
+    ),
+    NumberConfigurable(
+      key: 'timeout',
+      label: 'Timeout',
+      value: 30,
+      min: 1,
+      max: 300,
+      unit: 's',
+      validator: (value) =>
+          value < 10 ? 'Timeout should be at least 10 seconds.' : null,
+    ),
+  ];
+
+  final result = terminice.configEditor('New Project', fields: fields);
+  if (result == null) return;
+
+  final errors = <String>[];
+  for (final field in result.fields) {
+    final error = field.validate();
+    if (error != null) {
+      errors.add('${field.label}: $error');
+    }
+  }
+
+  if (errors.isNotEmpty) {
+    for (final error in errors) {
+      print(error);
+    }
+    return;
+  }
+
+  print('Config accepted.');
+}
+```
+
+> **Why use this?**
+> Use `configEditor` when a CLI needs a durable settings workflow with typed values, nested groups, live theme selection, and JSON-friendly output. Use individual prompts when you only need one or two answers.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `cheatSheet` - Framed Reference Table
+
+Render a themed, non-interactive reference table inside a `FrameView`. It is designed for command lists, shortcut cards, option summaries, or any small table users may want to glance at while using a CLI.
+
+```dart
+void cheatSheet(
+  String prompt, {
+  required List<List<String>> entries,
+  List<String> columns = const ['Command', 'Shortcut', 'Usage'],
+  List<ColumnAlign>? columnAlignments,
+  bool zebraStripes = true,
+});
+```
+
+- `cheatSheet(String prompt, {required entries, columns, columnAlignments, zebraStripes = true})` - Renders the table immediately.
+- `prompt` - Frame title displayed above the table.
+- `entries` - Table rows. Every row must contain the same number of cells as `columns`.
+- `columns` - Header labels. Defaults to `['Command', 'Shortcut', 'Usage']` and must not be empty.
+- `columnAlignments` - Optional per-column alignment list using `ColumnAlign.left`, `ColumnAlign.center`, and `ColumnAlign.right`. When omitted, all columns are left-aligned.
+- `zebraStripes` - When true, alternating rows are dimmed by the table renderer.
+- Return behavior - Returns `void`; it renders once and does not wait for input.
+- Assertion behavior - Asserts that `columns` is non-empty, every row matches the column count, and `columnAlignments` matches the column count when provided.
+- Rendering behavior - Column widths are computed from the headers and entries, and cells are padded by alignment. There is no terminal-width wrapping in `cheatSheet`, so keep row text concise.
+- Import note - Basic usage only needs `package:terminice/terminice.dart`. If you use `ColumnAlign` directly, import it from `package:terminice_core/terminice_core.dart`.
+
+#### Examples
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  terminice.cheatSheet(
+    'Navigation Shortcuts',
+    columns: const ['Command', 'Shortcut', 'Usage'],
+    entries: const [
+      ['List files', 'ls', 'Show directory contents'],
+      ['Change directory', 'cd <path>', 'Move into a folder'],
+      ['Print directory', 'pwd', 'Show the current path'],
+    ],
+  );
+}
+```
+
+```dart
+import 'package:terminice/terminice.dart';
+import 'package:terminice_core/terminice_core.dart' show ColumnAlign;
+
+void main() {
+  terminice.ocean.cheatSheet(
+    'Deployment Matrix',
+    columns: const ['Env', 'Region', 'Replicas', 'Status'],
+    columnAlignments: const [
+      ColumnAlign.left,
+      ColumnAlign.center,
+      ColumnAlign.right,
+      ColumnAlign.left,
+    ],
+    entries: const [
+      ['staging', 'us-east', '2', 'ready'],
+      ['production', 'eu-west', '8', 'locked'],
+      ['sandbox', 'local', '1', 'open'],
+    ],
+  );
+}
+```
+
+```dart
+final rows = <List<String>>[
+  for (final command in ['build', 'test', 'publish'])
+    [
+      'terminice $command',
+      command == 'publish' ? 'Ctrl+P' : 'Enter',
+      'Run the $command task',
+    ],
+];
+
+terminice.fire.cheatSheet(
+  'CLI Commands',
+  entries: rows,
+  zebraStripes: false,
+);
+```
+
+> **Why use this?**
+> Use `cheatSheet` when the information is static and should stay compact. Use `helpCenter` when the user needs search, preview text, and a selected document result.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `helpCenter` - Searchable Help Browser
+
+Launch an interactive help viewer with live search, a result list, and a preview pane. It returns the selected `HelpDoc`, which makes it useful for opening follow-up docs, routing to a tutorial, or tracking which help topic the user chose.
+
+```dart
+HelpDoc? helpCenter({
+  String title = 'Help Center',
+  required List<HelpDoc> docs,
+  int maxVisibleResults = 10,
+  int maxPreviewLines = 8,
+});
+
+const HelpDoc({
+  required String id,
+  required String title,
+  required String content,
+  String? category,
+});
+```
+
+- `helpCenter`
+  `({title = 'Help Center', required docs, maxVisibleResults = 10, maxPreviewLines = 8})`
+  Opens the interactive viewer.
+- `title` - Frame title.
+- `docs` - Searchable document list. If empty, `helpCenter` returns `null` immediately.
+- `maxVisibleResults` - Maximum visible rows in the result list.
+- `maxPreviewLines` - Maximum lines shown in the preview pane.
+- Returns `HelpDoc?` - The selected document on Enter, or `null` when cancelled or no document is selected.
+- `HelpDoc.id` - Stable identifier for routing, analytics, or persistence.
+- `HelpDoc.title` - Main result label.
+- `HelpDoc.content` - Markdown or plaintext body shown in the preview pane. It is displayed as text; Markdown is not parsed into rich terminal formatting.
+- `HelpDoc.category` - Optional grouping label appended to the result row.
+- Search behavior - Typing filters by title, category, and content. Title matches are ranked before content-only matches.
+- Controls - `↑` / `↓` move through results, `←` / `→` scroll the preview through content lines, `Enter` confirms, and Esc / Ctrl+C cancels.
+- Preview behavior - The preview resets to the top when the selected result or search query changes.
+
+#### Examples
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  final doc = terminice.helpCenter(
+    docs: const [
+      HelpDoc(
+        id: 'shortcuts',
+        title: 'Keyboard shortcuts',
+        category: 'Basics',
+        content: 'Use arrow keys to move and Enter to confirm.',
+      ),
+      HelpDoc(
+        id: 'config',
+        title: 'Configuration files',
+        category: 'Advanced',
+        content: 'Store settings as JSON and load them before configEditor.',
+      ),
+    ],
+  );
+
+  if (doc != null) {
+    print('Selected help topic: ${doc.id}');
+  }
+}
+```
+
+```dart
+final docs = [
+  const HelpDoc(
+    id: 'deploy',
+    title: 'Deploy a service',
+    category: 'Workflows',
+    content: '''
+1. Build the project.
+2. Run the smoke tests.
+3. Publish the release artifact.
+4. Promote the deployment.
+''',
+  ),
+  const HelpDoc(
+    id: 'rollback',
+    title: 'Rollback safely',
+    category: 'Workflows',
+    content: '''
+Use rollback when a deployment fails health checks.
+Check logs before promoting the previous artifact.
+''',
+  ),
+];
+
+final selected = terminice.arcane.helpCenter(
+  title: 'Operator Help',
+  docs: docs,
+  maxVisibleResults: 6,
+  maxPreviewLines: 5,
+);
+
+switch (selected?.id) {
+  case 'deploy':
+    print('Opening deploy runbook...');
+    break;
+  case 'rollback':
+    print('Opening rollback runbook...');
+    break;
+}
+```
+
+```dart
+List<HelpDoc> commandDocs(Map<String, String> commands) {
+  return [
+    for (final entry in commands.entries)
+      HelpDoc(
+        id: entry.key,
+        title: entry.key,
+        category: 'Command',
+        content: entry.value,
+      ),
+  ];
+}
+
+final chosen = terminice.helpCenter(
+  title: 'Command Reference',
+  docs: commandDocs({
+    'init': 'Create a starter project in the current directory.',
+    'doctor': 'Check whether the local environment is ready.',
+    'publish': 'Upload the package after validation passes.',
+  }),
+);
+
+print(chosen?.title ?? 'No topic selected.');
+```
+
+> **Why use this?**
+> Use `helpCenter` when documentation needs search and a meaningful return value. Use `cheatSheet` when a simple static table is enough.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `hotkeyGuide` - Interactive Shortcut Guide
+
+Show keyboard shortcuts in a compact framed grid and wait until the user closes it. This is a good companion for complex prompts, editors, command palettes, or any CLI mode with more than a few bindings.
+
+```dart
+void hotkeyGuide({
+  required List<List<String>> shortcuts,
+  String title = 'Hotkeys',
+  List<String> footer = const ['Esc or ? to close'],
+});
+```
+
+- `hotkeyGuide`
+  `({required shortcuts, title = 'Hotkeys', footer = const ['Esc or ? to close']})`
+  Renders the guide and blocks until a close key is pressed.
+- `shortcuts` - Rows passed to `HintFormat.grid(...)`. Each row should use the same number of columns for clean alignment.
+- `title` - Frame title.
+- `footer` - Hint strings rendered after the grid using comma formatting. Pass an empty list to omit the footer.
+- Return behavior - Returns `void`; it does not report which close key was used.
+- Controls - Esc, Enter, or `?` closes the guide. Ctrl+C is also handled by the standard cancel binding.
+- Rendering behavior - The guide uses the current `Terminice` theme and `HintFormat.grid` for aligned shortcut columns.
+- Data shape - A two-column row usually works well for key/action pairs; three columns are useful when you want context or notes.
+
+#### Examples
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  terminice.hotkeyGuide(
+    title: 'Selection Shortcuts',
+    shortcuts: const [
+      ['↑ / ↓', 'Move focus'],
+      ['Space', 'Toggle item'],
+      ['Enter', 'Confirm selection'],
+      ['Esc', 'Cancel'],
+    ],
+  );
+}
+```
+
+```dart
+terminice.neon.hotkeyGuide(
+  title: 'Editor Hotkeys',
+  shortcuts: const [
+    ['Ctrl+D', 'Save multiline input', 'Editor'],
+    ['Ctrl+R', 'Reveal password', 'Password fields'],
+    ['/', 'Toggle search', 'Lists'],
+    ['?', 'Close this guide', 'Help'],
+  ],
+  footer: const ['Enter to close', 'Esc to close', '? to close'],
+);
+```
+
+```dart
+void showPromptHelp() {
+  terminice.compact.hotkeyGuide(
+    title: 'Prompt Controls',
+    shortcuts: const [
+      ['← / →', 'Adjust sliders or buttons'],
+      ['↑ / ↓', 'Navigate lists'],
+      ['Type', 'Filter searchable prompts'],
+      ['Ctrl+C', 'Cancel current prompt'],
+    ],
+    footer: const [],
+  );
+}
+```
+
+> **Why use this?**
+> Use `hotkeyGuide` when shortcuts are part of the workflow and users need an in-terminal reminder. Use `cheatSheet` for broader reference data that is not specifically about keys.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `themeDemo` - Interactive Theme Gallery
+
+Preview curated `PromptTheme` presets in the terminal, then optionally open a sample selector using the highlighted theme. The method is intentionally a demo utility: it does not return the selected theme, but it is handy for screenshots, onboarding, and choosing a palette before wiring a theme into your own CLI.
+
+```dart
+void themeDemo();
+```
+
+- `themeDemo()` - Opens the theme preview gallery.
+- Themes shown - `Dark`, `Matrix`, `Fire`, `Pastel`, `Ocean`, `Monochrome`, `Neon`, `Arcane`, and `Phantom`.
+- Preview content - Shows theme glyphs for arrows, checkboxes, borders, highlighted text, and inverse text.
+- Controls - `↑` / `↓` browse themes, `Enter` accepts the highlighted theme and opens a sample `searchSelector`, and Esc / Ctrl+C exits without launching the sample prompt.
+- Return behavior - Returns `void`; the chosen theme name is not returned to your code.
+- Preview prompt behavior - Pressing Enter launches a multi-select `searchSelector` over sample fruit names using the selected theme.
+- Theming note - The gallery uses its own curated theme map rather than the caller's `defaultTheme`, so `terminice.fire.themeDemo()` still starts from the built-in gallery.
+- Selection note - If you need a user-selectable theme in a real settings flow, use `ThemeConfigurable` inside `configEditor` instead.
+
+#### Examples
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  terminice.themeDemo();
+}
+```
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  terminice.themeDemo();
+
+  final theme = terminice.searchSelector(
+    prompt: 'Use which theme?',
+    options: const [
+      'dark',
+      'matrix',
+      'fire',
+      'pastel',
+      'ocean',
+      'monochrome',
+      'neon',
+      'arcane',
+      'phantom',
+    ],
+  );
+
+  print('Theme choice: ${theme.isEmpty ? 'none' : theme.first}');
+}
+```
+
+```dart
+import 'package:terminice/terminice.dart';
+
+void main() {
+  final result = terminice.configEditor(
+    'Theme Settings',
+    fields: [
+      ThemeConfigurable(
+        key: 'theme',
+        label: 'Theme',
+        value: 'ocean',
+        description: 'Pick a PromptTheme for the rest of the app.',
+      ),
+      BoolConfigurable(
+        key: 'compactMode',
+        label: 'Compact Mode',
+        value: false,
+      ),
+    ],
+  );
+
+  print(result?.toMap() ?? 'cancelled');
+}
+```
+
+> **Why use this?**
+> Use `themeDemo` to inspect the visual language of Terminice themes quickly. Use `ThemeConfigurable` when your application needs to save the chosen theme.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
