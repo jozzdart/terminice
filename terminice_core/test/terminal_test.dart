@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:test/test.dart';
 import 'package:terminice_core/terminice_core.dart';
 
@@ -410,6 +412,102 @@ void main() {
       TerminalControl.clearAndHome();
       expect(terminal.mockOutput.contains('\x1B[2J'), isTrue);
       expect(terminal.mockOutput.contains('\x1B[H'), isTrue);
+    });
+  });
+
+  group('TerminalSession with MockTerminal', () {
+    late MockTerminal terminal;
+
+    setUp(() {
+      terminal = MockTerminal();
+      TerminalContext.current = terminal;
+    });
+
+    tearDown(() {
+      TerminalContext.reset();
+    });
+
+    void expectSessionRestored(TerminalSession session) {
+      expect(session.isActive, isFalse);
+      expect(terminal.mockInput.echoMode, isTrue);
+      expect(terminal.mockInput.lineMode, isTrue);
+
+      final output = terminal.mockOutput.allOutput;
+      final hideIndex = output.indexOf('\x1B[?25l');
+      final showIndex = output.indexOf('\x1B[?25h');
+      expect(hideIndex, isNot(equals(-1)));
+      expect(showIndex, greaterThan(hideIndex));
+    }
+
+    test('runAsync restores raw mode and cursor after async success', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      final result = await session.runAsync(() async {
+        expect(session.isActive, isTrue);
+        expect(terminal.mockInput.echoMode, isFalse);
+        expect(terminal.mockInput.lineMode, isFalse);
+
+        await Future<void>.value();
+        return 'done';
+      });
+
+      expect(result, equals('done'));
+      expectSessionRestored(session);
+    });
+
+    test('runAsync restores raw mode and cursor after async error', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      await expectLater(
+        session.runAsync<void>(() async {
+          expect(session.isActive, isTrue);
+          expect(terminal.mockInput.echoMode, isFalse);
+          expect(terminal.mockInput.lineMode, isFalse);
+
+          await Future<void>.value();
+          throw StateError('boom');
+        }),
+        throwsA(isA<StateError>()),
+      );
+
+      expectSessionRestored(session);
+    });
+
+    test('runAsync restores raw mode and cursor after sync throw', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      await expectLater(
+        session.runAsync<void>(() {
+          expect(session.isActive, isTrue);
+          expect(terminal.mockInput.echoMode, isFalse);
+          expect(terminal.mockInput.lineMode, isFalse);
+
+          throw ArgumentError('boom');
+        }),
+        throwsA(isA<ArgumentError>()),
+      );
+
+      expectSessionRestored(session);
+    });
+
+    test('runWithOutputAsync clears output after ending session', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      await session.runWithOutputAsync<void>(
+        (out) async {
+          out.writeln('Working');
+          await Future<void>.value();
+        },
+        clearOnEnd: true,
+      );
+
+      expectSessionRestored(session);
+
+      final output = terminal.mockOutput.allOutput;
+      final showIndex = output.indexOf('\x1B[?25h');
+      final clearIndex = output.indexOf('\x1B[1A');
+      expect(clearIndex, greaterThan(showIndex));
+      expect(output.contains('\x1B[0J'), isTrue);
     });
   });
 

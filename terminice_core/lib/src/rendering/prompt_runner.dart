@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:terminice_core/terminice_core.dart';
 
 /// Result from a prompt indicating whether it was confirmed or cancelled.
@@ -125,6 +127,12 @@ class TerminalSession {
     }
   }
 
+  /// Runs [body] within this session, ensuring cleanup after awaited work.
+  Future<T> runAsync<T>(FutureOr<T> Function() body) {
+    start();
+    return Future.sync(body).whenComplete(end);
+  }
+
   /// Runs [body] with a [RenderOutput], clearing output at the end if requested.
   T runWithOutput<T>(
     T Function(RenderOutput out) body, {
@@ -138,6 +146,19 @@ class TerminalSession {
       end();
       if (clearOnEnd) out.clear();
     }
+  }
+
+  /// Runs [body] with a [RenderOutput], ensuring cleanup after awaited work.
+  Future<T> runWithOutputAsync<T>(
+    FutureOr<T> Function(RenderOutput out) body, {
+    bool clearOnEnd = false,
+  }) {
+    final out = RenderOutput();
+    start();
+    return Future.sync(() => body(out)).whenComplete(() {
+      end();
+      if (clearOnEnd) out.clear();
+    });
   }
 }
 

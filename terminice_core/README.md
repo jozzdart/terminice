@@ -349,6 +349,19 @@ final result = runner.runWithBindings(
 );
 ```
 
+For display sessions that wrap asynchronous work, `TerminalSession` also has async lifecycle helpers. `runAsync` keeps cursor/raw-mode state active until awaited work completes, and `runWithOutputAsync` provides a `RenderOutput` with the same cleanup guarantees as `runWithOutput`.
+
+```dart
+final session = TerminalSession(hideCursor: true);
+
+await session.runWithOutputAsync((out) async {
+  out.writeln('Loading...');
+  await loadData();
+  out.clear();
+  out.writeln('Done.');
+}, clearOnEnd: true);
+```
+
 ### Simple Prompt
 
 For basic "one value in, one value out" interactions, `SimplePrompt` eliminates boilerplate. It automatically handles cancellation (e.g., pressing `Esc`), default values, and integrates `PromptRunner` with `FrameView` under the hood.

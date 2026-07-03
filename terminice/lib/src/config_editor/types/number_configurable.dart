@@ -102,8 +102,7 @@ class NumberConfigurable extends Configurable<num> {
       showPercent: showPercent,
     );
     if (result != value) {
-      value = integerOnly ? result.toInt() : result;
-      return true;
+      return trySetValue(integerOnly ? result.toInt() : result);
     }
     return false;
   }
@@ -121,14 +120,13 @@ class NumberConfigurable extends Configurable<num> {
         if (parsed < min || parsed > max) {
           return 'Must be between $min and $max';
         }
-        return validator?.call(parsed);
+        return validationErrorFor(integerOnly ? parsed.toInt() : parsed);
       },
       required: true,
     );
     if (result != null) {
       final parsed = num.parse(result);
-      value = integerOnly ? parsed.toInt() : parsed;
-      return true;
+      return trySetValue(integerOnly ? parsed.toInt() : parsed);
     }
     return false;
   }

@@ -1,7 +1,11 @@
-import 'package:terminice/terminice.dart';
+import 'dart:async';
+
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/terminice_api.dart';
+import '../tasks/async_task.dart';
 import '_indicator_base.dart';
+import 'inline_spinner.dart';
 
 /// Adds the [progressDots] method to the [Terminice] instance.
 extension ProgressDotsExtensions on Terminice {
@@ -17,7 +21,7 @@ extension ProgressDotsExtensions on Terminice {
   ///
   /// The [prompt] is the label displayed above the dots.
   ProgressDots progressDots(String prompt) {
-    return ProgressDots(prompt, theme: defaultTheme);
+    return ProgressDots._fromTerminice(prompt, this, theme: defaultTheme);
   }
 }
 
@@ -59,6 +63,8 @@ class ProgressDots with IndicatorLifecycle {
   /// The theme controlling the colors used for the dots and text.
   final PromptTheme theme;
 
+  final Terminice? _taskClient;
+
   /// Creates a new [ProgressDots] indicator.
   ///
   /// The [prompt] is the label displayed above the dots.
@@ -70,7 +76,15 @@ class ProgressDots with IndicatorLifecycle {
     this.message = 'Working',
     this.maxDots = 3,
     this.theme = PromptTheme.dark,
-  }) : assert(maxDots > 0);
+  })  : _taskClient = null,
+        assert(maxDots > 0);
+
+  ProgressDots._fromTerminice(
+    this.prompt,
+    this._taskClient, {
+    this.theme = PromptTheme.dark,
+  })  : message = 'Working',
+        maxDots = 3;
 
   /// Shows the dots at the given phase.
   void show({required int phase}) {
@@ -86,6 +100,38 @@ class ProgressDots with IndicatorLifecycle {
         show(phase: phase++);
       });
     });
+  }
+
+  /// Runs [run] while showing progress dots and returns its typed result.
+  ///
+  /// Errors are rendered with the same cleanup and rethrow behavior as
+  /// [AsyncTaskExtensions.task].
+  Future<T> whileRunning<T>(
+    FutureOr<T> Function() run, {
+    String? message,
+    String? success,
+    TaskErrorMessage? failure,
+    TaskErrorMessage? cancel,
+    TaskCancelPredicate? isCanceled,
+    Duration interval = const Duration(milliseconds: 80),
+    TaskDisplay display = TaskDisplay.auto,
+    TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
+  }) {
+    return indicatorTaskClient(theme, _taskClient).task<T>(
+      prompt,
+      run: run,
+      message: message ?? this.message,
+      success: success,
+      failure: failure,
+      cancel: cancel,
+      isCanceled: isCanceled,
+      interval: interval,
+      style: SpinnerStyle.dots,
+      indicator: TaskRunningIndicator.dots,
+      maxDots: maxDots,
+      display: display,
+      finalBehavior: finalBehavior,
+    );
   }
 
   void _render(RenderOutput out, int phase) {

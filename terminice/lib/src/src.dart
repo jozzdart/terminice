@@ -30,6 +30,7 @@ export 'selectors/search_selector.dart';
 export 'selectors/tag_selector.dart';
 export 'selectors/toggle_group.dart';
 export 'style/theme_extensions.dart';
+export 'tasks/async_task.dart';
 export 'config_editor/configurable.dart';
 export 'config_editor/config_editor.dart';
 export 'config_editor/config_factory.dart';

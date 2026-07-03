@@ -100,7 +100,18 @@ abstract class Configurable<T> {
   void reset() => value = defaultValue;
 
   /// Validates the current value. Returns `null` if valid, error message otherwise.
-  String? validate() => normalizeValidationError(validator?.call(value));
+  String? validate() => validationErrorFor(value);
+
+  /// Validates a candidate value using the shared validator semantics.
+  String? validationErrorFor(T candidate) =>
+      normalizeValidationError(validator?.call(candidate));
+
+  /// Sets [value] to [candidate] only when it passes validation.
+  bool trySetValue(T candidate) {
+    if (validationErrorFor(candidate) != null) return false;
+    value = candidate;
+    return true;
+  }
 }
 
 /// Result returned by the config editor after the user confirms.

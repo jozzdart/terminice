@@ -95,7 +95,7 @@ class ThemeConfigurable extends Configurable<String> {
       maxVisible: 10,
     );
     if (selected == null || selected == value) return false;
-    value = selected;
+    if (!trySetValue(selected)) return false;
     onChanged?.call(selectedTheme);
     return true;
   }

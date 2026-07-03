@@ -65,8 +65,7 @@ class PasswordConfigurable extends Configurable<String> {
       verify: verify,
     );
     if (result != null) {
-      value = result;
-      return true;
+      return trySetValue(result);
     }
     return false;
   }

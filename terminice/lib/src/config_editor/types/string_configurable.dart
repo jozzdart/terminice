@@ -75,12 +75,11 @@ class StringConfigurable extends Configurable<String> {
     final result = terminice.text(
       label,
       placeholder: placeholder ?? value,
-      validator: validator,
+      validator: validationErrorFor,
       required: required,
     );
     if (result != null) {
-      value = result;
-      return true;
+      return trySetValue(result);
     }
     return false;
   }
@@ -92,8 +91,7 @@ class StringConfigurable extends Configurable<String> {
       allowEmpty: !required,
     );
     if (result != null) {
-      value = result;
-      return true;
+      return trySetValue(result);
     }
     return false;
   }

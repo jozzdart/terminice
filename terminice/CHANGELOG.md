@@ -5,6 +5,9 @@
 - Added centralized `TerminiceConfig` for high-level prompt defaults and configuration editor propagation.
 - Added compatibility and fallback fluent APIs, including effective theme/defaultTheme behavior for compatibility-derived themes.
 - Added high-level line-mode fallback coverage for prompts when raw terminal mode is unavailable or fallback mode is requested.
+- Added `task`, `progressTask`, and `trackStream` async helpers for long-running CLI work.
+- Added `TaskProgress`, `TaskDisplay`, and `TaskFinalBehavior` controls for task progress, display style, and final output behavior.
+- Added `whileRunning` and `trackStream` async sugar on loading/progress indicators, with plain fallback output for compatibility-aware sessions.
 
 #### Changed
 
@@ -14,6 +17,7 @@
 - Standardized cancellation results: nullable prompts cancel to `null`, list selectors to `[]`, value prompts keep the exact initial/default, and config fields stay unchanged.
 - High-level fallback prompts and selectors now distinguish EOF from blank lines while preserving blank-line defaults.
 - Propagated editor-launched prompts through the active Terminice configuration.
+- Async task helpers and indicator sugar clean up terminal state before rethrowing errors or completing cancellation/fallback flows.
 
 #### Fixed
 

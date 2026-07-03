@@ -52,8 +52,7 @@ class BoolConfigurable extends Configurable<bool> {
       defaultYes: value,
     );
     if (result != value) {
-      value = result;
-      return true;
+      return trySetValue(result);
     }
     return false;
   }

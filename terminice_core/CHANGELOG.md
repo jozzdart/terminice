@@ -6,7 +6,9 @@
 - **Behavior**: Standardized nullable validator semantics and shared normalization so `null` and legacy `''` both mean success.
 - **Behavior**: Fallback prompts now distinguish EOF or unavailable stdin from blank input, preserving blank-line default acceptance.
 - **Behavior**: `SimplePrompts.number()` cancellation returns the exact caller-supplied initial value while confirmed values remain clamped.
+- **New**: Added `TerminalSession.runAsync()` and `runWithOutputAsync()` helpers for awaited operations with guaranteed cleanup.
 - **Validation**: Added validator coverage for fallback prompt input paths and guarded numeric fallback input against non-finite values.
+- **Tests**: Added async terminal cleanup coverage for successful, failing, and cancelling session operations.
 - **Documentation and tests**: Updated README guidance and tests for fallback primitives and line-mode behavior.
 - Bumped `termistyle` dependency lower bound to `^1.1.0`.
 
