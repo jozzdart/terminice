@@ -143,56 +143,56 @@ Explore the complete collection of tools available in `terminice`. Every tool is
 
 Standard input controls for gathering user data.
 
-- `text` — Single-line text input.
-- `password` — Secure, masked text input.
-- `confirm` — Yes/No boolean confirmation.
-- `multiline` — Multi-line text editor.
-- `slider` — Numeric selection along a single axis.
-- `range` — Dual-thumb slider for selecting a min/max range.
-- `rating` — Star-based rating input.
-- `date` — Simple date text entry.
-- `form` — Group multiple prompts into a single cohesive form.
+- [`text` — Single-line text input.](#-text---single-line-text-input)
+- [`password` — Secure, masked text input.](#-password---masked-text-input)
+- [`confirm` — Yes/No boolean confirmation.](#-confirm---yesno-confirmation)
+- [`multiline` — Multi-line text editor.](#-multiline---terminal-text-area)
+- [`slider` — Numeric selection along a single axis.](#️-slider---numeric-selection)
+- [`range` — Dual-thumb slider for selecting a min/max range.](#️-range---dual-handle-numeric-range)
+- [`rating` — Star-based rating input.](#-rating---star-rating-input)
+- [`date` — Date picker.](#-date---keyboard-date-prompt)
+- [`form` — Form prompt.](#-form---multi-field-input)
 
 #### 🎯 Selectors
 
 Interactive menus for choosing from predefined options.
 
-- `searchSelector` — Filterable list of options.
-- `choiceSelector` — Simple single-choice list.
-- `checkboxSelector` — Multi-select list with checkboxes.
-- `gridSelector` — 2D grid selection.
-- `tagSelector` — Select and manage multiple tags.
-- `toggleGroup` — Segmented control for mutually exclusive options.
-- `commandPalette` — Global command launcher with fuzzy search.
+- [`searchSelector` — Filterable list of options.](#-searchselector---filterable-list-selection)
+- [`choiceSelector` — Simple single-choice list.](#-choiceselector---card-based-choice-grid)
+- [`checkboxSelector` — Multi-select list with checkboxes.](#️-checkboxselector---multi-select-checklist)
+- [`gridSelector` — 2D grid selection.](#-gridselector---two-dimensional-selection-grid)
+- [`tagSelector` — Select and manage multiple tags.](#️-tagselector---chip-style-multi-select)
+- [`toggleGroup` — Segmented control for mutually exclusive options.](#️-togglegroup---editable-boolean-switches)
+- [`commandPalette` — Global command launcher with fuzzy search.](#-commandpalette---fuzzy-command-launcher)
 
 #### 🗂️ Pickers
 
 Specialized components for selecting complex data types.
 
-- `filePicker` — Browse and select files from the filesystem.
-- `pathPicker` — Browse and select directories.
-- `colorPicker` — Interactive color selection.
-- `datePicker` — Calendar-based date selection.
+- [`filePicker` — Browse and select files from the filesystem.](#️-filepicker---searchable-file-browser)
+- [`pathPicker` — Browse and select directories.](#️-pathpicker---directory-and-path-browser)
+- [`colorPicker` — Interactive color selection.](#-colorpicker---ansi-color-grid)
+- [`datePicker` — Calendar-based date selection.](#-datepicker---calendar-date-selection)
 
 #### ⏳ Indicators
 
 Visual feedback for long-running tasks.
 
-- `loadingSpinner` — Full-featured loading animation.
-- `inlineSpinner` — Compact loading animation for inline use.
-- `progressBar` — Standard progress bar with percentage.
-- `inlineProgressBar` — Compact progress bar.
-- `progressDots` — Minimalist dot-based progress indicator.
+- [`loadingSpinner` — Full-featured loading animation.](#-loadingspinner---framed-loading-spinner)
+- [`inlineSpinner` — Compact loading animation for inline use.](#-inlinespinner---one-line-spinner)
+- [`progressBar` — Standard progress bar with percentage.](#-progressbar---framed-determinate-progress)
+- [`inlineProgressBar` — Compact progress bar.](#-inlineprogressbar---one-line-percent-indicator)
+- [`progressDots` — Minimalist dot-based progress indicator.](#-progressdots---framed-dot-progress)
 
 #### ⚙️ Configuration & Utilities
 
 Advanced tools for building full CLI applications.
 
-- `configEditor` — A searchable, nested settings editor for complex configurations.
-- `cheatSheet` — Display a quick reference guide.
-- `helpCenter` — Interactive help documentation viewer.
-- `hotkeyGuide` — Display available keyboard shortcuts.
-- `themeDemo` — Showcase all available themes and colors.
+- [`configEditor` — A searchable, nested settings editor for complex configurations.](#-configeditor---searchable-nested-settings-editor)
+- [`cheatSheet` — Display a quick reference guide.](#-cheatsheet---framed-reference-table)
+- [`helpCenter` — Interactive help documentation viewer.](#-helpcenter---searchable-help-browser)
+- [`hotkeyGuide` — Display available keyboard shortcuts.](#️-hotkeyguide---interactive-shortcut-guide)
+- [`themeDemo` — Showcase all available themes and colors.](#-themedemo---interactive-theme-gallery)
 
 ### ▧ Theming & Display Modes
 
