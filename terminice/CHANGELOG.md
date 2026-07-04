@@ -29,6 +29,8 @@
 - Added a Flow v2 example covering templates, review metadata, progress titles, and typed result helpers.
 - Added README coverage and a runnable example for class-based, callback-based, and Flow-integrated custom components.
 - Added README, library docs, and an output-only example for message primitives.
+- Added README guidance for using Terminice inside command apps with plain argument dispatch, `package:args`/`CommandRunner`, Mason-style command classes, CI/fallback output, and `TerminiceTester` command tests.
+- Added command app integration examples at `example/command_app_example.dart` and `example/command_app_testing_example.dart`.
 - Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
 
 ## 1.1.0

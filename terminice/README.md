@@ -46,6 +46,7 @@
 - [**Instance Configuration & Fallback**](#centralized-instance-configuration)
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Theming & Display Modes**](#-theming--display-modes)
+- [**Command App Integration**](#command-app-integration)
 - [**Testing Terminice CLIs**](#testing-terminice-clis)
 - [**Custom Components & Extensibility**](#custom-components--extensibility)
 - [**Quick Start**](#-quick-start)
@@ -463,6 +464,167 @@ final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
 <img src="assets/quick_start_3.gif" alt="terminice themes showcase" width="1000"/>
 
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
+
+## Command App Integration
+
+Terminice is the terminal UI layer inside command apps. It does not parse arguments, dispatch commands, run command classes, or replace your logging framework. Use the command structure you already prefer, then call Terminice from inside handlers when you need prompts, flows, terminal-facing messages, async task feedback, fallback/CI output, custom components, or testable terminal UI.
+
+For command structure, use plain `main(List<String> args)`, `package:args` with `CommandRunner`, Mason-style command classes, or your own router. Keep Terminice at the edge where the command talks to the user.
+
+See [example/command_app_example.dart](example/command_app_example.dart) for a complete manual-dispatch command app and [example/command_app_testing_example.dart](example/command_app_testing_example.dart) for command handler tests.
+
+### Plain main and manual dispatch
+
+```dart
+import 'dart:io';
+
+import 'package:terminice/terminice.dart';
+
+Future<void> main(List<String> args) async {
+  exitCode = await runCommandApp(args, terminice.autoFallback);
+}
+
+Future<int> runCommandApp(List<String> args, Terminice t) async {
+  final command = args.isEmpty ? null : args.first;
+
+  switch (command) {
+    case 'init':
+      final name = t.text('Project name', placeholder: 'demo');
+      await t.task('Install starter files', run: installFiles);
+      t.success('Created $name');
+      return 0;
+    default:
+      t.info('Commands: init');
+      return 64;
+  }
+}
+```
+
+### package:args CommandRunner
+
+This is a README-only integration pattern. If your app uses `package:args`, add it to your app and pass a configured `Terminice` instance into each command.
+
+```dart
+import 'dart:io';
+
+import 'package:args/command_runner.dart';
+import 'package:terminice/terminice.dart';
+
+class InitCommand extends Command<int> {
+  InitCommand(this.t) {
+    argParser.addFlag('yes', abbr: 'y');
+  }
+
+  final Terminice t;
+
+  @override
+  String get name => 'init';
+
+  @override
+  String get description => 'Create a starter project.';
+
+  @override
+  Future<int> run() async {
+    final name = t.text('Project name', placeholder: 'demo');
+    final yes = argResults!.flag('yes') || t.confirm(message: 'Create?');
+
+    if (!yes) return 1;
+
+    await t.task('Creating $name', run: () async {});
+    t.success('Created $name');
+    return 0;
+  }
+}
+
+Future<void> main(List<String> args) async {
+  final runner = CommandRunner<int>('tool', 'Example command app')
+    ..addCommand(InitCommand(terminice.autoFallback));
+
+  exitCode = await runner.run(args) ?? 0;
+}
+```
+
+### Mason-style command classes
+
+If your app follows a command-class pattern, inject `Terminice` the same way you would inject a logger or project service.
+
+```dart
+class CreateCommand {
+  CreateCommand({required this.terminice});
+
+  final Terminice terminice;
+
+  Future<int> run({required bool dryRun}) async {
+    final name = terminice.text('Project name');
+
+    if (dryRun) {
+      terminice.detail('Would create $name');
+      return 0;
+    }
+
+    await terminice.task('Generating files', run: generateFiles);
+    terminice.success('Created $name');
+    return 0;
+  }
+}
+```
+
+### CI and noninteractive mode
+
+Prefer flags for required CI values and choose a plain/fallback Terminice instance when the command is noninteractive.
+
+```dart
+Future<int> publish({
+  required bool ci,
+  required bool yes,
+  required Terminice terminice,
+}) async {
+  final t = ci ? terminice.legacy.fallback : terminice.autoFallback;
+
+  if (ci && !yes) {
+    t.error('CI publish requires --yes.');
+    return 64;
+  }
+
+  final confirmed = yes || t.confirm(message: 'Publish package?');
+  if (!confirmed) return 1;
+
+  await t.task(
+    'Upload package',
+    display: ci ? TaskDisplay.plain : TaskDisplay.auto,
+    run: uploadPackage,
+    success: 'Package published',
+  );
+
+  return 0;
+}
+```
+
+### Testing command handlers
+
+Make command handlers accept a `Terminice` instance, then run them through `TerminiceTester`.
+
+```dart
+import 'package:test/test.dart';
+import 'package:terminice/testing.dart';
+
+import '../example/command_app_example.dart';
+
+void main() {
+  test('init command completes from fallback input', () async {
+    final tester = TerminiceTester.fallback(
+      lines: const ['demo', '1', '1,3', 'yes'],
+    );
+
+    final code = await tester.runAsync(
+      (t) => runCommandApp(const ['init'], t),
+    );
+
+    expect(code, 0);
+    expect(tester.output.plainText, contains('Created demo'));
+  });
+}
+```
 
 ## Testing Terminice CLIs
 

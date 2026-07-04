@@ -19,6 +19,10 @@
 /// so theme, terminal, compatibility, fallback behavior, and testing harnesses
 /// carry through automatically.
 ///
+/// In command apps, use Terminice as the terminal UI layer inside your own
+/// `main(List<String> args)`, command runner, or command class handlers.
+/// Terminice does not parse or dispatch commands for you.
+///
 /// ### Quick Start
 ///
 /// Everything starts with the global `terminice` instance. All prompts, selectors,
