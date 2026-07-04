@@ -10,7 +10,7 @@ Use it when you are building a terminal tool, prompt library, ASCII art renderer
 
 ```yaml
 dependencies:
-  termistyle: ^1.0.0
+  termistyle: ^1.1.0
 ```
 
 ```dart
@@ -21,11 +21,11 @@ import 'package:termistyle/termistyle.dart';
 
 A `PromptTheme` composes three independent concerns into one styling bundle:
 
-| Concern  | Class             | Built-in presets                                                             |
-| -------- | ----------------- | ---------------------------------------------------------------------------- |
+| Concern  | Class             | Built-in presets                                                                                |
+| -------- | ----------------- | ----------------------------------------------------------------------------------------------- |
 | Colors   | `TerminalColors`  | dark, none/plain, matrix, fire, pastel, ocean, monochrome, neon, arcane, phantom (11 constants) |
-| Glyphs   | `TerminalGlyphs`  | unicode, ascii, rounded, double, heavy, dotted, arcane, phantom, minimal (9) |
-| Features | `DisplayFeatures` | standard, minimal, compact, verbose, clean, focus (6)                        |
+| Glyphs   | `TerminalGlyphs`  | unicode, ascii, rounded, double, heavy, dotted, arcane, phantom, minimal (9)                    |
+| Features | `DisplayFeatures` | standard, minimal, compact, verbose, clean, focus (6)                                           |
 
 Eleven ready-made themes ship out of the box: `dark`, `minimal`, `compact`, `matrix`, `fire`, `pastel`, `ocean`, `monochrome`, `neon`, `arcane`, `phantom`.
 
