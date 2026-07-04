@@ -38,8 +38,6 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
 
 #### Table of Contents
 
-- [**Features**](#features)
-- [**Meet Terminice**](#meet-terminice)
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Quick Start**](#quick-start)
 - [**Theming & Display Modes**](#-theming--display-modes)
@@ -52,6 +50,7 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
   - [Centralized Instance Configuration](#centralized-instance-configuration)
   - [Compatibility Modes](#compatibility-modes)
   - [Fallback Policies](#fallback-policies)
+- [**Comparison & Alternatives**](#comparison--alternatives)
 - [**Command App Integration**](#command-app-integration)
 - [**Testing Terminice CLIs**](#testing-terminice-clis)
 - [**Custom Components & Extensibility**](#custom-components--extensibility)
@@ -441,6 +440,101 @@ Line-mode fallback uses simple text and numbered prompts instead of raw-mode key
 Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `searchSelector`, `gridSelector`, `checkboxSelector`, `choiceSelector`, `tagSelector`, `toggleGroup`, `commandPalette`, `slider`, `range`, `rating`, and the focused enum/theme selects used by the config editor.
 
 Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, manual indicator controller calls such as `show(...)`, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy. Async task helpers use plain task rendering in fallback/plain modes.
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+# Comparison & Alternatives
+
+Terminice is best when you want rich, branded terminal interactions inside a normal Dart CLI without adopting a full command framework or full-screen TUI architecture.
+
+It is not trying to replace every CLI package:
+
+- Use `package:args`, `CommandRunner`, or your own router for argument parsing and command dispatch.
+- Use `dart:io`, process helpers, or `dcli` for system scripting and filesystem work.
+- Use a TUI framework when your app should own the whole terminal screen.
+- Use Terminice for the human-facing layer: prompts, selectors, pickers, flows, tasks, messages, config editors, themes, fallbacks, tests, and reusable custom components.
+
+### Prompt Libraries At A Glance
+
+- `✓` = built in
+- `Limited` = partial or adjacent
+- `No` = not the package's focus
+- `Build` = possible if you design it yourself.
+
+| Capability                                               | `terminice` | promptly | promptr | prompts | interact | prompt  |
+| -------------------------------------------------------- | ----------- | -------- | ------- | ------- | -------- | ------- |
+| Basic prompts                                            | ✓           | ✓        | ✓       | ✓       | ✓        | ✓       |
+| Password / masked input                                  | ✓           | ✓        | Limited | No      | ✓        | Limited |
+| Searchable selectors                                     | ✓           | Limited  | No      | No      | No       | No      |
+| Multi-select checklists                                  | ✓           | ✓        | ✓       | No      | ✓        | No      |
+| Grid / card / tag selectors                              | ✓           | No       | No      | No      | No       | No      |
+| File / path pickers                                      | ✓           | No       | No      | No      | No       | No      |
+| Date / color pickers                                     | ✓           | No       | No      | No      | No       | No      |
+| Async tasks / progress helpers                           | ✓           | Limited  | No      | No      | Limited  | No      |
+| Message primitives                                       | ✓           | Limited  | No      | No      | No       | No      |
+| Flow builder with review/back/progress                   | ✓           | Limited  | No      | No      | No       | No      |
+| Config editor / help browsers / theme demo               | ✓           | No       | No      | No      | No       | No      |
+| One instance controls theme + mode + fallback + terminal | ✓           | Limited  | No      | No      | Limited  | No      |
+| CI / non-TTY fallback behavior                           | ✓           | No       | No      | No      | No       | No      |
+| Scripted terminal testing harness                        | ✓           | No       | No      | No      | No       | Limited |
+| Custom components that inherit Terminice behavior        | ✓           | No       | No      | No      | No       | No      |
+
+### CLI Utilities And TUI Frameworks At A Glance
+
+| Capability                        | `terminice`        | mason_logger    | dcli              | dart_console                  | TUI frameworks         |
+| --------------------------------- | ------------------ | --------------- | ----------------- | ----------------------------- | ---------------------- |
+| Message primitives                | ✓                  | ✓               | Limited           | Build                         | Build                  |
+| Async task wrappers               | ✓                  | Limited         | No                | Build                         | Build                  |
+| Rich prompt catalogue             | ✓                  | Limited         | Limited           | Build                         | Limited                |
+| Searchable menus                  | ✓                  | No              | No                | Build                         | Limited                |
+| Pickers and config editors        | ✓                  | No              | No                | Build                         | Build                  |
+| Central theme system              | ✓                  | Limited         | No                | Build                         | ✓                      |
+| Fallback / CI compatibility modes | ✓                  | Limited         | Script-level      | Build                         | Framework-specific     |
+| First-class testing utilities     | ✓                  | No              | Normal Dart tests | Build                         | Limited                |
+| Custom UI extension point         | ✓                  | No              | No                | Build                         | ✓                      |
+| Architecture cost                 | Small method calls | Logger instance | Scripting SDK     | Low-level terminal primitives | Full app/runtime model |
+
+### When Each Package Fits
+
+- `promptly` - promising and broad, but pre-production. Choose Terminice for a mature-feeling UI layer that does not own command architecture.
+- `promptr` - clean for simple prompts. Choose Terminice when you need menus, pickers, progress, flows, fallback, testing, and themes.
+- `prompts` - tiny and synchronous, but last published in 2021. Choose Terminice for modern CLI UX.
+- `interact` - closest older component prompt package, but last published in 2023 and SDK metadata is below Dart 3. Choose Terminice for current Dart and broader UX.
+- `prompt` - historical package from 2015. Choose Terminice for real modern CLI work.
+- `mason_logger` - great logger. Choose Terminice when logging is only one part of a bigger interactive CLI.
+- `dcli` - great scripting SDK. Choose Terminice for the human-facing UI on top.
+- `dart_console` - great low-level terminal control. Choose Terminice when you want finished components.
+- `dart_tui`, `commander_ui`, `termui`, `pixel_prompt` - great for terminal apps. Choose Terminice for command interactions without full TUI architecture.
+
+### Why `terminice` Feels More Robust
+
+A terminal UI package should not only look good in a perfect local shell. It should stay predictable when the app grows, runs in CI, gets tested, changes theme, or needs one custom interaction.
+
+#### Can I start with one line?
+
+Yes. Use `terminice.text('Name')`, `terminice.confirm(...)`, or `terminice.success(...)` directly. No widget tree, no app runtime, no command framework migration.
+
+#### Will everything keep the same style?
+
+Yes. Theme, display mode, glyphs, compatibility settings, fallback policy, terminal I/O, and test behavior travel through the `Terminice` instance you use. Change the instance, and the components follow.
+
+#### What happens outside a rich terminal?
+
+Terminice is designed for real environments: local shells, CI, scripts, non-TTY output, limited terminals, and legacy/plain modes. `autoFallback`, `legacy`, and plain task rendering let the same CLI stay usable without pretending every terminal can do everything.
+
+#### Can I test the interactions?
+
+Yes. `TerminiceTester` gives you scripted input, mock terminals, captured output snapshots, async handler support, and deterministic fallback-mode tests. Your prompts can be covered like the rest of your CLI logic.
+
+#### Can it grow past simple prompts?
+
+Yes. The same package gives you selectors, pickers, messages, async tasks, progress tracking, flows, review steps, config editors, and custom components. You can start small and add depth without switching tools or rebuilding the UI layer.
+
+#### Does it replace my CLI architecture?
+
+No. Keep `package:args`, `CommandRunner`, Mason-style commands, `dart:io`, `dcli`, process tools, or your own app structure. Terminice stays focused on the human-facing layer: the questions, choices, progress, feedback, fallback behavior, and tests.
+
+That is the core difference: many alternatives solve one slice well. Terminice connects the slices so your CLI keeps one look, one behavior model, and one testing story as it becomes more serious.
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
