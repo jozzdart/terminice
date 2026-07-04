@@ -1,3 +1,27 @@
+## 1.2.0
+
+#### Added
+
+- Added Flow v2 review workflows with a post-run `.review(...)` step that lets users submit, edit, or cancel collected answers.
+- Added review edit loops that rerun from the selected step, refresh downstream answers, and re-evaluate conditional `when` branches.
+- Added `.progress()` metadata for built-in flow prompts, currently rendering step counts in prompt titles.
+- Added reusable flow templates through `include(FlowTemplate)` for composing shared flow chunks.
+- Added per-step review metadata: `reviewLabel`, `summarize`, `includeInReview`, and `editable`.
+- Added password review masking by default, while allowing custom summaries or review exclusion for sensitive values.
+- Added typed flow result/context helpers: `string`, `maybeString`, `flag`, `maybeFlag`, `list<T>`, and `valueOr<T>`.
+
+#### Changed
+
+- Flow is now documented as the primary primitive for sequential and flow/wizard-style review workflows without introducing a separate wizard API.
+- Review cancellation preserves collected values without assigning a step-specific cancellation key.
+- Edit cancellation restores the pre-edit snapshot so partial reruns do not corrupt the confirmed review state.
+
+#### Documentation
+
+- Updated README Flow coverage for review actions, edit reruns, conditional re-evaluation, progress titles, templates, review metadata, password masking, and typed access helpers.
+- Added a Flow v2 example covering templates, review metadata, progress titles, and typed result helpers.
+- Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
+
 ## 1.1.0
 
 #### Added

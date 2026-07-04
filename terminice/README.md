@@ -2351,7 +2351,7 @@ _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Compose several prompts and selectors into one synchronous, sequential flow. Use it when a CLI command needs a handful of related answers, conditional follow-up questions, or a typed result map without manually wiring each prompt together.
 
-Flow is sequential composition: steps run from top to bottom and can be skipped with `when`. It is not a back-navigation wizard yet.
+Flow is the primary primitive for multi-step Terminice workflows. Steps run from top to bottom, can be skipped with `when`, and can end in a review/edit loop for flow/wizard-style confirmation without introducing a separate `wizard()` API.
 
 - `flow`
   `(String title)`
@@ -2359,15 +2359,37 @@ Flow is sequential composition: steps run from top to bottom and can be skipped 
 - `run()` - Runs applicable steps in order and returns a `FlowResult`.
 - Built-in steps - `text`, `password`, `select`, `checkboxes`, `confirm`, and `custom`.
 - Theming and fallback - Built-in steps call the existing Terminice prompts/selectors through the configured instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
+- Templates - `include(FlowTemplate)` lets you reuse a chunk of steps. Duplicate keys are rejected immediately, just like steps added directly to the builder.
+- Review - `.review(...)` adds a final review screen after all applicable steps complete.
+- Progress titles - `.progress()` decorates built-in prompt titles as `Step 1/N - Prompt`.
 
 #### Built-In Steps
 
-- `text(key, prompt, {placeholder, required, validator, validate, when})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
-- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when})` - Stores `String`; cancel also cancels the flow by default.
-- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
-- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when})` - Stores an immutable `List<T>`.
-- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
-- `custom<T>(key, label, {run, validate, when, cancelOnNull})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+- `text(key, prompt, {placeholder, required, validator, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
+- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `String`; cancel also cancels the flow by default. Review summaries mask password values by default using eight mask characters.
+- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
+- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores an immutable `List<T>`.
+- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
+- `custom<T>(key, label, {run, validate, when, cancelOnNull, reviewLabel, summarize, includeInReview, editable})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+
+Built-in steps are included in review and editable by default. Custom steps default to hidden from review and non-editable unless you opt in with `includeInReview: true` and `editable: true`.
+
+#### Review Workflows
+
+`.review(...)` displays collected review items and then asks the user to choose Submit, Edit, or Cancel.
+
+- Submit - Returns a confirmed `FlowResult` with the current values.
+- Edit - Opens a searchable list of editable review items. Choosing an item reruns the flow from that step.
+- Cancel - Returns a cancelled `FlowResult`, keeps the collected values, and leaves `cancelledKey` as `null`.
+
+When an edit reruns, values from the edited step onward are removed and collected again. Conditions are evaluated again too: newly enabled conditional steps run, and values from skipped conditional steps disappear. If the user cancels during the edit rerun, the pre-edit snapshot is restored and the review screen is shown again.
+
+Review metadata lets each step control how it appears:
+
+- `reviewLabel` - Replaces the prompt label in the summary.
+- `summarize` - Converts the raw value into display text.
+- `includeInReview` - Shows or hides the value in review.
+- `editable` - Controls whether the value can be selected from the Edit list.
 
 #### Result Access
 
@@ -2378,12 +2400,16 @@ Flow is sequential composition: steps run from top to bottom and can be skipped 
 - `cancelledKey` - Key of the step that cancelled, or `null`.
 - `value<T>(key)` - Reads a required typed value and throws if the key is missing or has a different type.
 - `maybe<T>(key)` - Reads a typed value, returning `null` when the key is absent or stored as `null`; wrong non-null types still throw.
+- `string(key)` / `maybeString(key)` - Convenience helpers for string values.
+- `flag(key)` / `maybeFlag(key)` - Convenience helpers for boolean values.
+- `list<T>(key)` - Reads a typed `List<T>`.
+- `valueOr<T>(key, fallback)` - Reads a typed value or returns `fallback` when the key is absent or stored as `null`.
 - `contains(key)` - Checks whether a step wrote that key.
 - `toMap()` - Returns an insertion-ordered copy of the collected values.
 
 #### Context, Conditions, and Validation
 
-`FlowContext` is passed to `when`, `validate`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed `value<T>`, `maybe<T>`, `contains`, and `toMap` accessors for values collected by earlier steps.
+`FlowContext` is passed to `when`, `validate`, `summarize`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed result helpers for values collected by earlier steps.
 
 Flow validators use `String? Function(value, context)`: return `null` for success, return `''` for legacy-compatible success, or return a non-empty error string to reject the step with a `FlowValidationException`.
 
@@ -2392,17 +2418,51 @@ For `text`, `validator` and `validate` are different layers. `validator` runs in
 #### Examples
 
 ```dart
-final result = terminice.flow('Create project')
-  .text('name', 'Project name', required: true)
-  .select('template', 'Template', options: ['CLI', 'Server', 'Package'])
-  .checkboxes('features', 'Features', options: ['Git', 'CI', 'Docker'])
-  .confirm('create', message: 'Create project?')
-  .run();
+void projectDetails(FlowBuilder flow) {
+  flow
+      .text(
+        'name',
+        'Project name',
+        required: true,
+        reviewLabel: 'Project',
+      )
+      .select<String>(
+        'template',
+        'Template',
+        options: ['CLI', 'Server', 'Package'],
+        summarize: (value, _) => value ?? 'CLI',
+      );
+}
 
-if (result.confirmed && result.value<bool>('create')) {
-  final name = result.value<String>('name');
-  final template = result.maybe<String>('template') ?? 'CLI';
-  final features = result.value<List<String>>('features');
+final result = terminice.flow('Create project')
+    .progress()
+    .include(projectDetails)
+    .checkboxes<String>(
+      'features',
+      'Features',
+      options: ['Git', 'CI', 'Docker'],
+      summarize: (values, _) => values.isEmpty ? 'none' : values.join(', '),
+    )
+    .password(
+      'token',
+      'API token',
+      includeInReview: false,
+      allowReveal: false,
+    )
+    .confirm(
+      'create',
+      prompt: 'Create',
+      message: 'Create project?',
+      reviewLabel: 'Ready',
+      summarize: (value, _) => value ? 'yes' : 'no',
+    )
+    .review(title: 'Review project')
+    .run();
+
+if (result.confirmed && result.flag('create')) {
+  final name = result.string('name');
+  final template = result.valueOr<String>('template', 'CLI');
+  final features = result.list<String>('features');
 
   print('Creating $name from $template with ${features.join(', ')}');
 }
@@ -2430,17 +2490,26 @@ final result = terminice.flow('Deployment')
   .custom<DateTime>(
     'startedAt',
     'Start time',
+    includeInReview: true,
+    editable: false,
+    summarize: (value, _) => value.toIso8601String(),
     run: (_) => DateTime.now(),
   )
+  .review()
   .run();
 
 if (result.cancelled) {
-  print('Stopped at ${result.cancelledKey}.');
+  final stoppedAt = result.cancelledKey;
+  if (stoppedAt == null) {
+    print('Review cancelled.');
+  } else {
+    print('Stopped at $stoppedAt.');
+  }
 }
 ```
 
 > **Why use this?**
-> Use `flow` when several prompt results belong to one command and later steps should react to earlier answers. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
+> Use `flow` when several prompt results belong to one command, later steps should react to earlier answers, or users should review and edit a full answer set before submission. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
 
 _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 

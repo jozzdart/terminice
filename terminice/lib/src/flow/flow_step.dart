@@ -1,5 +1,11 @@
 part of 'flow.dart';
 
+/// Adds reusable steps to a [FlowBuilder].
+typedef FlowTemplate = void Function(FlowBuilder flow);
+
+/// Builds a review summary string for a completed flow step value.
+typedef FlowSummary<T> = String Function(T value, FlowContext context);
+
 /// Decides whether a flow step should run.
 typedef FlowCondition = bool Function(FlowContext context);
 
@@ -42,9 +48,12 @@ class FlowValidationException implements Exception {
   }
 }
 
-abstract class _FlowStep {
+abstract class _FlowStep<T> {
   String get key;
   String get label;
+  String? get reviewLabel;
+  bool get includeInReview;
+  bool get editable;
   FlowCondition? get when;
   bool get cancelOnNull;
 
@@ -53,6 +62,8 @@ abstract class _FlowStep {
   Object? run(FlowContext context);
 
   String? validationErrorFor(Object? value, FlowContext context);
+
+  String? reviewSummaryFor(Object? value, FlowContext context);
 }
 
 typedef _FlowValueValidator = String? Function(
@@ -60,7 +71,12 @@ typedef _FlowValueValidator = String? Function(
   FlowContext context,
 );
 
-class _CustomFlowStep<T> extends _FlowStep {
+typedef _FlowValueSummary = String Function(
+  Object? value,
+  FlowContext context,
+);
+
+class _CustomFlowStep<T> extends _FlowStep<T> {
   _CustomFlowStep({
     required this.key,
     required this.label,
@@ -68,7 +84,12 @@ class _CustomFlowStep<T> extends _FlowStep {
     required FlowValidator<T>? validate,
     required this.when,
     required this.cancelOnNull,
+    required this.reviewLabel,
+    required FlowSummary<T>? summarize,
+    required this.includeInReview,
+    required this.editable,
   })  : _run = run,
+        _summarize = _flowSummaryFor<T>(key, label, summarize),
         _validate = _flowValidatorFor<T>(key, label, validate);
 
   @override
@@ -77,9 +98,20 @@ class _CustomFlowStep<T> extends _FlowStep {
   @override
   final String label;
 
+  @override
+  final String? reviewLabel;
+
   final FlowStepRunner<T> _run;
 
+  final _FlowValueSummary? _summarize;
+
   final _FlowValueValidator? _validate;
+
+  @override
+  final bool includeInReview;
+
+  @override
+  final bool editable;
 
   @override
   final FlowCondition? when;
@@ -95,6 +127,13 @@ class _CustomFlowStep<T> extends _FlowStep {
     final validator = _validate;
     if (validator == null) return null;
     return validator(value, context);
+  }
+
+  @override
+  String? reviewSummaryFor(Object? value, FlowContext context) {
+    final summarize = _summarize;
+    if (summarize == null) return null;
+    return summarize(value, context);
   }
 }
 
@@ -113,5 +152,23 @@ _FlowValueValidator? _flowValidatorFor<T>(
       );
     }
     return normalizeValidationError(validate(value, context));
+  };
+}
+
+_FlowValueSummary? _flowSummaryFor<T>(
+  String key,
+  String label,
+  FlowSummary<T>? summarize,
+) {
+  if (summarize == null) return null;
+
+  return (Object? value, FlowContext context) {
+    if (value is! T) {
+      throw StateError(
+        "Flow step '$key' ($label) returned ${_typeName(value)}, "
+        'which cannot be summarized as $T.',
+      );
+    }
+    return summarize(value, context);
   };
 }

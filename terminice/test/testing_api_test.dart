@@ -25,6 +25,42 @@ void main() {
       expect(tester.output.plainText, contains('Create project?'));
     });
 
+    test('runs fallback reviewed flows with scripted review actions', () {
+      final tester = TerminiceTester.fallback(lines: ['Ada', '1']);
+
+      final result = tester.run(
+        (t) => t.flow('Profile').text('name', 'Name').review().run(),
+      );
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'name': 'Ada'}));
+      expect(tester.output.plainText, contains('Review Profile'));
+    });
+
+    test('runs interactive reviewed flows with key scripts', () {
+      final tester = TerminiceTester.interactive(
+        script: TerminalScript.build((script) => script.enter()),
+      );
+
+      final result = tester.run(
+        (t) => t
+            .flow('Profile')
+            .custom<String>(
+              'name',
+              'Name',
+              includeInReview: true,
+              run: (_) => 'Ada',
+            )
+            .review()
+            .run(),
+      );
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'name': 'Ada'}));
+      expect(tester.output.plainText, contains('Review Profile'));
+      expect(tester.output.plainText, contains('Name: Ada'));
+    });
+
     test('runs interactive scripts against rich prompts', () {
       final tester = TerminiceTester.interactive(
         script: TerminalScript.build((script) => script.right().enter()),
