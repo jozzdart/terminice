@@ -38,8 +38,9 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
 
 #### Table of Contents
 
+- [Meet Terminice](#meet-terminice)
 - [**The Terminice Catalogue ★**](#-the-terminice-catalogue)
-- [**Quick Start**](#quick-start)
+- [Quick Start](#quick-start)
 - [**Theming & Display Modes**](#-theming--display-modes)
 - [**Core Concepts & Behavior**](#core-concepts--behavior)
   - [Prompt Execution & Async Tasks](#prompt-execution--async-tasks)
