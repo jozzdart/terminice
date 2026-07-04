@@ -1,4 +1,5 @@
 export 'core/core_exports.dart';
+export 'core/component_runner.dart';
 export 'core/terminice_api.dart';
 export 'flow/flow.dart';
 export 'guides/cheat_sheet.dart';

@@ -9,10 +9,14 @@
 - Added per-step review metadata: `reviewLabel`, `summarize`, `includeInReview`, and `editable`.
 - Added password review masking by default, while allowing custom summaries or review exclusion for sensitive values.
 - Added typed flow result/context helpers: `string`, `maybeString`, `flag`, `maybeFlag`, `list<T>`, and `valueOr<T>`.
+- Added `TerminiceComponent<T>`, `TerminiceComponentContext`, `runComponent(...)`, and `runWithComponent(...)` for lightweight custom component extensibility.
+- Added `FlowBuilder.component<T>(...)` and `FlowContext.runComponent(...)` so reusable custom components can participate in flow validation, cancellation, review metadata, and edit reruns.
+- Added `FlowContext.promptTitle(...)` and `fallbackPromptTitle(...)` helpers for progress-aware custom component prompts.
 
 #### Changed
 
 - Flow is now documented as the primary primitive for sequential and flow/wizard-style review workflows without introducing a separate wizard API.
+- Flow component steps now use `validate` naming and default to review-included/editable behavior like prompt steps.
 - Review cancellation preserves collected values without assigning a step-specific cancellation key.
 - Edit cancellation restores the pre-edit snapshot so partial reruns do not corrupt the confirmed review state.
 
@@ -20,6 +24,7 @@
 
 - Updated README Flow coverage for review actions, edit reruns, conditional re-evaluation, progress titles, templates, review metadata, password masking, and typed access helpers.
 - Added a Flow v2 example covering templates, review metadata, progress titles, and typed result helpers.
+- Added README coverage and a runnable example for class-based, callback-based, and Flow-integrated custom components.
 - Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
 
 ## 1.1.0

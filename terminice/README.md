@@ -36,6 +36,7 @@
 - **Zero boilerplate** — One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
 - **Cross-platform** — Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
 - **Modular architecture** — Built on `terminice_core`, which exposes navigation primitives, prompt scaffolds, and rendering utilities for when you need full control.
+- **Custom components** — Package your own reusable prompts and workflows with the same Terminice theme, terminal, fallback, compatibility, and test harness behavior as built-ins.
 
 #### Table of Contents
 
@@ -45,6 +46,7 @@
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Theming & Display Modes**](#-theming--display-modes)
 - [**Testing Terminice CLIs**](#testing-terminice-clis)
+- [**Custom Components & Extensibility**](#custom-components--extensibility)
 - [**Quick Start**](#-quick-start)
 
 ### 📖 How to use `terminice`
@@ -306,6 +308,12 @@ Future and stream wrappers for long-running work.
 - [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
 - [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
 
+#### 🧩 Extensibility
+
+Build reusable, typed components for project-specific CLI UI.
+
+- [`custom components` — Reusable class or callback components.](#custom-components--extensibility)
+
 #### 🔄 Flow Composition
 
 Chain several prompts and selectors into one sequential CLI workflow.
@@ -485,6 +493,86 @@ expect(count, 42);
 expect(tester.output.normalizedText, equals('OK: cache ready'));
 expect(tester.output.containsAnsiControls, isFalse);
 ```
+
+## Custom Components & Extensibility
+
+Wrap project-specific terminal UI in a `TerminiceComponent<T>` when it should be reusable, typed, and configured by the caller. Components receive a `TerminiceComponentContext`, so they inherit the active Terminice instance: theme and display mode, terminal, compatibility settings, fallback policy, and the same `TerminiceTester` harness used by your tests.
+
+Most projects should start with the built-in Terminice prompts, selectors, pickers, indicators, tasks, config editors, and flows. They cover the common CLI surface without any extra abstraction.
+
+Custom components are the escape hatch for the cases where the catalogue is almost enough, but your CLI has a domain-specific interaction that deserves a name. Instead of copying Terminice internals, forking a prompt, or dropping to a lower-level TUI package, you can package the custom piece and still keep the Terminice experience around it.
+
+Use custom components when you want:
+
+- A reusable project-specific prompt, picker, or mini-workflow.
+- A custom interaction that still inherits the caller's theme, terminal, fallback mode, and compatibility settings.
+- A component that works in normal calls, flows, and `TerminiceTester` without separate test plumbing.
+- A small extension point without turning your CLI into a full TUI application.
+
+Use a class when the component has a name or options:
+
+```dart
+class ProjectSlugComponent extends TerminiceComponent<String> {
+  const ProjectSlugComponent({this.prompt = 'Project slug'});
+
+  final String prompt;
+
+  @override
+  String run(TerminiceComponentContext context) {
+    final value = context.terminice.text(
+      prompt,
+      placeholder: 'my_cli',
+    );
+
+    return value == null || value.isEmpty ? 'my_cli' : value;
+  }
+}
+
+final slug = terminice.ocean.autoFallback.runComponent(
+  const ProjectSlugComponent(),
+);
+```
+
+Use a callback for local one-offs:
+
+```dart
+final region = terminice.runWithComponent<String>((context) {
+  final selected = context.terminice.searchSelector(
+    prompt: 'Region',
+    options: ['local', 'staging', 'production'],
+  );
+
+  return selected.isEmpty ? 'local' : selected.first;
+});
+```
+
+Components also drop into flows as typed steps:
+
+```dart
+final regionComponent = TerminiceComponent<String>.from((context) {
+  final selected = context.terminice.searchSelector(
+    prompt: 'Region',
+    options: ['local', 'staging', 'production'],
+  );
+
+  return selected.isEmpty ? 'local' : selected.first;
+});
+
+final result = terminice.flow('Create project')
+    .component<String>(
+      'slug',
+      'Project slug',
+      component: const ProjectSlugComponent(),
+    )
+    .component<String>(
+      'region',
+      'Region',
+      component: regionComponent,
+    )
+    .run();
+```
+
+For lower-level flow wiring, `FlowContext.runComponent(component)` runs through the flow's configured Terminice instance. `FlowContext.promptTitle(title)` gives progress-aware titles when `.progress()` is enabled, while `fallbackPromptTitle(title)` keeps fallback/plain prompts clean.
 
 ---
 
@@ -2353,17 +2441,19 @@ Compose several prompts and selectors into one synchronous, sequential flow. Use
 
 Flow is the primary primitive for multi-step Terminice workflows. Steps run from top to bottom, can be skipped with `when`, and can end in a review/edit loop for flow/wizard-style confirmation without introducing a separate `wizard()` API.
 
+For one prompt, call the prompt directly. Flow starts paying for itself when a command needs several related answers, a final review screen, edit-before-submit behavior, reusable step groups, or tests that exercise the whole workflow. It keeps that glue code inside Terminice instead of spreading state, validation, cancellation, and review logic through your command handler.
+
 - `flow`
   `(String title)`
   Creates a `FlowBuilder`.
 - `run()` - Runs applicable steps in order and returns a `FlowResult`.
-- Built-in steps - `text`, `password`, `select`, `checkboxes`, `confirm`, and `custom`.
-- Theming and fallback - Built-in steps call the existing Terminice prompts/selectors through the configured instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
+- Step APIs - `text`, `password`, `select`, `checkboxes`, `confirm`, `component`, and `custom`.
+- Theming and fallback - Prompt and component steps run through the configured Terminice instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
 - Templates - `include(FlowTemplate)` lets you reuse a chunk of steps. Duplicate keys are rejected immediately, just like steps added directly to the builder.
 - Review - `.review(...)` adds a final review screen after all applicable steps complete.
 - Progress titles - `.progress()` decorates built-in prompt titles as `Step 1/N - Prompt`.
 
-#### Built-In Steps
+#### Step APIs
 
 - `text(key, prompt, {placeholder, required, validator, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
 - `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `String`; cancel also cancels the flow by default. Review summaries mask password values by default using eight mask characters.
@@ -2371,8 +2461,9 @@ Flow is the primary primitive for multi-step Terminice workflows. Steps run from
 - `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores an immutable `List<T>`.
 - `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
 - `custom<T>(key, label, {run, validate, when, cancelOnNull, reviewLabel, summarize, includeInReview, editable})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+- `component<T>(key, title, {component, validate, when, nullable, reviewLabel, summarize, includeInReview, editable})` - Runs a reusable `TerminiceComponent<T>` through the flow's configured Terminice instance. `nullable: true` stores `null` and continues; otherwise `null` cancels the flow.
 
-Built-in steps are included in review and editable by default. Custom steps default to hidden from review and non-editable unless you opt in with `includeInReview: true` and `editable: true`.
+Prompt and component steps are included in review and editable by default. Custom steps default to hidden from review and non-editable unless you opt in with `includeInReview: true` and `editable: true`.
 
 #### Review Workflows
 
@@ -2409,7 +2500,7 @@ Review metadata lets each step control how it appears:
 
 #### Context, Conditions, and Validation
 
-`FlowContext` is passed to `when`, `validate`, `summarize`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed result helpers for values collected by earlier steps.
+`FlowContext` is passed to `when`, `validate`, `summarize`, and `custom` runners. It exposes the configured `terminice` instance, `runComponent(component)`, progress-aware `promptTitle(title)`, plain `fallbackPromptTitle(title)`, and the same typed result helpers for values collected by earlier steps.
 
 Flow validators use `String? Function(value, context)`: return `null` for success, return `''` for legacy-compatible success, or return a non-empty error string to reject the step with a `FlowValidationException`.
 

@@ -30,6 +30,189 @@ void main() {
       expect(result.value<int>('age'), 36);
     });
 
+    test('component step stores typed values and result is confirmed', () {
+      final result = terminice
+          .flow('Component')
+          .component<int>(
+            'port',
+            'Port',
+            component: TerminiceComponent<int>.from((_) => 9000),
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.value<int>('port'), 9000);
+      expect(result.toMap(), equals({'port': 9000}));
+    });
+
+    test('component steps inherit validation and cancellation behavior', () {
+      expect(
+        () => terminice
+            .flow('Invalid component')
+            .component<String>(
+              'name',
+              'Name',
+              component: TerminiceComponent<String>.from((_) => 'Ada'),
+              validate: (_, __) => 'Wrong value',
+            )
+            .run(),
+        throwsA(
+          isA<FlowValidationException>()
+              .having((error) => error.key, 'key', 'name')
+              .having((error) => error.label, 'label', 'Name')
+              .having((error) => error.message, 'message', 'Wrong value'),
+        ),
+      );
+
+      var afterStepRan = false;
+
+      final result = terminice
+          .flow('Cancel component')
+          .custom<String>(
+            'before',
+            'Before',
+            run: (_) => 'kept',
+          )
+          .component<String?>(
+            'cancelled',
+            'Cancelled',
+            component: TerminiceComponent<String?>.from((_) => null),
+          )
+          .custom<String>(
+        'after',
+        'After',
+        run: (_) {
+          afterStepRan = true;
+          return 'unexpected';
+        },
+      ).run();
+
+      expect(result.confirmed, isFalse);
+      expect(result.cancelledKey, 'cancelled');
+      expect(result.toMap(), equals({'before': 'kept'}));
+      expect(afterStepRan, isFalse);
+    });
+
+    test('component review metadata participates in review and edits', () {
+      var runs = 0;
+      final terminal = _terminalWithLines(['2', '2', '1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Component review')
+          .component<String>(
+            'generated',
+            'Generated',
+            component: TerminiceComponent<String>.from((_) {
+              runs++;
+              return 'value $runs';
+            }),
+            reviewLabel: 'Friendly',
+            summarize: (value, _) => 'summary $value',
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(result.value<String>('generated'), 'value 2');
+      expect(runs, 2);
+      expect(output, contains('Friendly: summary value 1'));
+      expect(output, contains('Friendly: summary value 2'));
+      expect(output, contains('Edit review item'));
+    });
+
+    test('component review defaults can be opted out', () {
+      final terminal = _terminalWithLines(['1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Hidden component review')
+          .component<String>(
+            'generated',
+            'Generated',
+            component: TerminiceComponent<String>.from((_) => 'value'),
+            includeInReview: false,
+            editable: false,
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'generated': 'value'}));
+      expect(output, contains('Review Hidden component review'));
+      expect(output, contains('(no review items)'));
+      expect(output, isNot(contains('Generated: value')));
+    });
+
+    test('flow context component helpers expose progress-aware titles', () {
+      String? promptTitle;
+      String? fallbackTitle;
+      final terminal = _terminalWithLines(['1']);
+      final component = TerminiceComponent<String>.from((context) {
+        context.output.writeln(promptTitle);
+        context.output.writeln(fallbackTitle);
+        return 'value';
+      });
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Component titles')
+          .progress()
+          .custom<String>(
+            'component',
+            'Component',
+            includeInReview: true,
+            reviewLabel: 'Component label',
+            run: (context) {
+              promptTitle = context.promptTitle('Run component');
+              fallbackTitle = context.fallbackPromptTitle('Fallback title');
+              return context.runComponent(component);
+            },
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+      final reviewStart = output.indexOf('Review Component titles');
+
+      expect(result.confirmed, isTrue);
+      expect(promptTitle, 'Step 1/1 - Run component');
+      expect(fallbackTitle, 'Fallback title');
+      expect(reviewStart, greaterThanOrEqualTo(0));
+
+      final reviewOutput = output.substring(reviewStart);
+
+      expect(reviewOutput, contains('Component label: value'));
+      expect(reviewOutput, isNot(contains('Step 1/1')));
+    });
+
+    test('component steps compose through templates and chaining', () {
+      void template(FlowBuilder flow) {
+        flow.component<int>(
+          'template',
+          'Template',
+          component: TerminiceComponent<int>.from((_) => 1),
+        );
+      }
+
+      final result = terminice
+          .flow('Component template')
+          .include(template)
+          .component<String>(
+            'after',
+            'After',
+            component: TerminiceComponent<String>.from((_) => 'done'),
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'template': 1, 'after': 'done'}));
+    });
+
     test('duplicate step keys are rejected while building', () {
       final builder = terminice.flow('Duplicates').custom<String>(
             'name',
@@ -623,7 +806,7 @@ void main() {
       expect(otherOutput, isNot(contains('No editable review items.')));
     });
 
-    test('progress decorates built-in fallback prompt titles when enabled', () {
+    test('progress decorates prompt titles but keeps fallback text plain', () {
       final terminal = _terminalWithLines(['Ada', 'yes']);
 
       final result = terminice.fallback
@@ -636,7 +819,11 @@ void main() {
 
       expect(result.confirmed, isTrue);
       expect(terminal.outputSnapshot.plainText, contains('Step 1/2 - First'));
-      expect(terminal.outputSnapshot.plainText, contains('Step 2/2 - Ready?'));
+      expect(terminal.outputSnapshot.plainText, contains('Ready? [Y/n]: '));
+      expect(
+        terminal.outputSnapshot.plainText,
+        isNot(contains('Step 2/2 - Ready?')),
+      );
     });
 
     test('progress labels do not leak into review labels', () {
@@ -666,7 +853,8 @@ void main() {
       final reviewOutput = output.substring(reviewStart);
 
       expect(output, contains('Step 1/2 - Name'));
-      expect(output, contains('Step 2/2 - Ready?'));
+      expect(output, contains('Ready? [Y/n]: '));
+      expect(output, isNot(contains('Step 2/2 - Ready?')));
       expect(reviewOutput, contains('Display name: Ada'));
       expect(reviewOutput, contains('Ready status: yes'));
       expect(reviewOutput, isNot(contains('Step 1/2')));
@@ -1125,6 +1313,31 @@ void main() {
       expect(result.toMap(), equals({'include': false, 'after': 'done'}));
     });
 
+    test('when restores configured terminal after skipping a step', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Conditional terminal')
+          .custom<String>(
+            'skipped',
+            'Skipped',
+            when: (_) {
+              TerminalContext.current = other;
+              return false;
+            },
+            run: (_) => fail('Skipped step ran.'),
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.contains('skipped'), isFalse);
+      expect(result.toMap(), isEmpty);
+      expect(TerminalContext.current, same(configured));
+    });
+
     test('null custom step cancels by default with partial values preserved',
         () {
       var afterStepRan = false;
@@ -1158,6 +1371,28 @@ void main() {
       expect(result.contains('after'), isFalse);
       expect(result.toMap(), equals({'name': 'Ada'}));
       expect(afterStepRan, isFalse);
+    });
+
+    test('null custom step restores configured terminal when cancelling', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client.flow('Cancel terminal').custom<String>(
+        'cancelled',
+        'Cancelled',
+        run: (_) {
+          TerminalContext.current = other;
+          return null;
+        },
+      ).run();
+
+      expect(result.confirmed, isFalse);
+      expect(result.cancelledKey, 'cancelled');
+      expect(result.contains('cancelled'), isFalse);
+      expect(result.toMap(), isEmpty);
+      expect(TerminalContext.current, same(configured));
     });
 
     test('cancelOnNull false stores null and continues', () {
@@ -1281,6 +1516,81 @@ void main() {
               .having((error) => error.message, 'message', 'Wrong value'),
         ),
       );
+    });
+
+    test('validator success restores configured terminal', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Valid terminal')
+          .custom<String>(
+            'name',
+            'Name',
+            run: (_) => 'Ada',
+            validate: (_, __) {
+              TerminalContext.current = other;
+              return null;
+            },
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.value<String>('name'), 'Ada');
+      expect(TerminalContext.current, same(configured));
+    });
+
+    test('validator failure restores configured terminal', () {
+      final rejectingConfigured = MockTerminal();
+      final rejectingOther = MockTerminal();
+      final rejectingClient = terminice.withTerminal(rejectingConfigured);
+      TerminalContext.current = rejectingOther;
+
+      expect(
+        () => rejectingClient
+            .flow('Invalid terminal')
+            .custom<String>(
+              'name',
+              'Name',
+              run: (_) => 'Ada',
+              validate: (_, __) {
+                TerminalContext.current = rejectingOther;
+                return 'Wrong value';
+              },
+            )
+            .run(),
+        throwsA(
+          isA<FlowValidationException>()
+              .having((error) => error.key, 'key', 'name')
+              .having((error) => error.message, 'message', 'Wrong value'),
+        ),
+      );
+      expect(TerminalContext.current, same(rejectingConfigured));
+
+      final throwingConfigured = MockTerminal();
+      final throwingOther = MockTerminal();
+      final throwingClient = terminice.withTerminal(throwingConfigured);
+      final thrownError = StateError('Validator failed.');
+      TerminalContext.current = throwingOther;
+
+      expect(
+        () => throwingClient
+            .flow('Throwing terminal')
+            .custom<String>(
+              'name',
+              'Name',
+              run: (_) => 'Ada',
+              validate: (_, __) {
+                TerminalContext.current = throwingOther;
+                throw thrownError;
+              },
+            )
+            .run(),
+        throwsA(same(thrownError)),
+      );
+      expect(TerminalContext.current, same(throwingConfigured));
     });
 
     test('validation exception includes key label message and readable text',

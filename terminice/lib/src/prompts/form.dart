@@ -1,8 +1,6 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-import '../core/component_runner.dart';
-
 /// Multi-field text input form rendered inside a single themed frame.
 ///
 /// Each field gets its own label, optional placeholder, masking, and

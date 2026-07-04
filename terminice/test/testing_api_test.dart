@@ -74,6 +74,25 @@ void main() {
       expect(tester.output.plainText, contains('Create project?'));
     });
 
+    test('runs custom components with scripted terminal and captured output',
+        () {
+      final tester = TerminiceTester.fallback(lines: ['Ada']);
+
+      final result = tester.run(
+        (t) => t.runWithComponent((context) {
+          context.output.writeln('Component started');
+          final name = context.terminice.text('Name');
+          context.output.writeln('Hello $name');
+          return name;
+        }),
+      );
+
+      expect(result, equals('Ada'));
+      expect(tester.output.plainText, contains('Component started'));
+      expect(tester.output.plainText, contains('Name'));
+      expect(tester.output.plainText, contains('Hello Ada'));
+    });
+
     test('uses auto fallback for non-interactive terminals', () {
       final tester = TerminiceTester.nonInteractive(lines: ['Ada']);
 

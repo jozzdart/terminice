@@ -25,7 +25,13 @@ class FlowContext with _FlowValueAccess {
   /// Terminice instance configured for the current flow.
   Terminice get terminice => _terminice;
 
-  String _promptTitle(String title) {
+  /// Runs [component] with the Terminice instance configured for this flow.
+  T runComponent<T>(TerminiceComponent<T> component) {
+    return _terminice.runComponent<T>(component);
+  }
+
+  /// Returns [title] decorated with the current flow progress when enabled.
+  String promptTitle(String title) {
     final progress = _progress;
     final stepIndex = _stepIndex;
     final stepCount = _stepCount;
@@ -35,9 +41,9 @@ class FlowContext with _FlowValueAccess {
     return progress.titleFor(title, index: stepIndex, total: stepCount);
   }
 
-  String _fallbackPromptTitle(String title) {
-    if (!_terminice.shouldUseFallback) return title;
-    return _promptTitle(title);
+  /// Returns the plain [title] for fallback or basic prompt text.
+  String fallbackPromptTitle(String title) {
+    return title;
   }
 }
 

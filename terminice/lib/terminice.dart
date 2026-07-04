@@ -8,6 +8,11 @@
 /// **Zero boilerplate.** No widget trees or manual state management. Just call a method
 /// and get a polished, keyboard-driven UI instantly.
 ///
+/// Build reusable project-specific UI with `TerminiceComponent<T>` or callback
+/// components. Custom components run through the configured Terminice instance,
+/// so theme, terminal, compatibility, fallback behavior, and testing harnesses
+/// carry through automatically.
+///
 /// ### Quick Start
 ///
 /// Everything starts with the global `terminice` instance. All prompts, selectors,

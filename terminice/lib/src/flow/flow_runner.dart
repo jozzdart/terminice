@@ -62,16 +62,15 @@ class _FlowRunner {
       stepCount: _steps.length,
     );
 
-    _terminice.activate();
-    if (!step.shouldRun(context)) return null;
+    if (!_withActiveFlowTerminal(() => step.shouldRun(context))) return null;
 
-    _terminice.activate();
-    final value = step.run(context);
+    final value = _withActiveFlowTerminal(() => step.run(context));
 
     if (value == null && step.cancelOnNull) return step.key;
 
-    _terminice.activate();
-    final validationError = step.validationErrorFor(value, context);
+    final validationError = _withActiveFlowTerminal(
+      () => step.validationErrorFor(value, context),
+    );
     if (validationError != null) {
       throw FlowValidationException(
         key: step.key,
@@ -82,6 +81,15 @@ class _FlowRunner {
 
     state.values[step.key] = value;
     return null;
+  }
+
+  T _withActiveFlowTerminal<T>(T Function() body) {
+    _terminice.activate();
+    try {
+      return body();
+    } finally {
+      _terminice.activate();
+    }
   }
 
   FlowResult _runReviewLoop(

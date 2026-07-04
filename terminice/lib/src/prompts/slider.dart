@@ -1,8 +1,6 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-import '../core/component_runner.dart';
-
 /// Interactive slider prompt for continuous value selection with a
 /// theme-aware bar renderer.
 ///

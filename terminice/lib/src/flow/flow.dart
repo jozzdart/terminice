@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:terminice_core/terminice_core.dart'
     show TerminalContext, normalizeValidationError;
 
+import '../core/component_runner.dart';
 import '../core/terminice_api.dart';
 import '../prompts/confirm.dart';
 import '../prompts/password.dart';
@@ -152,6 +153,37 @@ class FlowBuilder {
     return this;
   }
 
+  /// Adds a reusable Terminice component step to the flow.
+  ///
+  /// The component runs through [FlowContext.runComponent] and delegates to
+  /// [custom] so conditions, validation, cancellation, review metadata, and
+  /// edit reruns behave like other first-class prompt steps.
+  FlowBuilder component<T>(
+    String key,
+    String title, {
+    required TerminiceComponent<T> component,
+    FlowValidator<T>? validate,
+    FlowCondition? when,
+    bool nullable = false,
+    String? reviewLabel,
+    FlowSummary<T>? summarize,
+    bool includeInReview = true,
+    bool editable = true,
+  }) {
+    return custom<T>(
+      key,
+      title,
+      run: (context) => context.runComponent<T>(component),
+      validate: validate,
+      when: when,
+      cancelOnNull: !nullable,
+      reviewLabel: reviewLabel,
+      summarize: summarize,
+      includeInReview: includeInReview,
+      editable: editable,
+    );
+  }
+
   void _addStep(_FlowStep<dynamic> step) {
     if (step.key.trim().isEmpty) {
       throw ArgumentError.value(
@@ -197,7 +229,7 @@ class FlowBuilder {
       key,
       prompt,
       run: (context) => _terminice.text(
-        context._promptTitle(prompt),
+        context.promptTitle(prompt),
         placeholder: placeholder,
         required: required,
         validator: validator,
@@ -233,7 +265,7 @@ class FlowBuilder {
       key,
       prompt,
       run: (context) => _terminice.password(
-        context._promptTitle(prompt),
+        context.promptTitle(prompt),
         required: required,
         maskChar: maskChar,
         allowReveal: allowReveal,
@@ -278,7 +310,7 @@ class FlowBuilder {
       run: (context) {
         final selected = _terminice.searchSelector(
           options: optionLabels.labels,
-          prompt: context._promptTitle(prompt),
+          prompt: context.promptTitle(prompt),
           showSearch: showSearch,
           maxVisible: maxVisible,
         );
@@ -323,7 +355,7 @@ class FlowBuilder {
       prompt,
       run: (context) {
         final selected = _terminice.checkboxSelector(
-          context._promptTitle(prompt),
+          context.promptTitle(prompt),
           options: optionLabels.labels,
           initialSelected: initialSelected,
           maxVisible: maxVisible,
@@ -362,8 +394,8 @@ class FlowBuilder {
       key,
       prompt,
       run: (context) => _terminice.confirm(
-        prompt: context._promptTitle(prompt),
-        message: context._fallbackPromptTitle(message),
+        prompt: context.promptTitle(prompt),
+        message: context.fallbackPromptTitle(message),
         yesLabel: yesLabel,
         noLabel: noLabel,
         defaultYes: defaultYes,
