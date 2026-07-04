@@ -112,11 +112,12 @@ The goal is simple: make beautiful terminal UIs easy for anyone, while still giv
 # ▣ The `terminice` Catalogue
 
 Explore the complete collection of tools available in `terminice`.
-Every tool is fully themeable and ready to use with zero setup.
+
+Each linked component or tool below has its own in-depth documentation section with API notes, behavior details, controls, examples, and usage guidance.
+
+Every tool is fully themeable and ready to use with zero setup. The catalogue is grouped by how a CLI uses each tool: **Prompts** gather values, **Selectors** choose from known options, **Pickers** browse real-world data such as files or dates, **Indicators** show work in progress, **Workflow & CLI UX** connects components into complete command experiences, and **Configuration & Guides** handles settings, help, shortcuts, and theme exploration.
 
 #### ▤ Prompts
-
-Standard input controls for gathering user data.
 
 - [`text` — Single-line text input.](#text---single-line-text-input)
 - [`password` — Secure, masked text input.](#password---masked-text-input)
@@ -130,8 +131,6 @@ Standard input controls for gathering user data.
 
 #### ▥ Selectors
 
-Interactive menus for choosing from predefined options.
-
 - [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
 - [`choiceSelector` — Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
 - [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
@@ -142,16 +141,12 @@ Interactive menus for choosing from predefined options.
 
 #### ▦ Pickers
 
-Specialized components for selecting complex data types.
-
 - [`filePicker` — Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
 - [`pathPicker` — Browse and select directories.](#pathpicker---directory-and-path-browser)
 - [`colorPicker` — Interactive color selection.](#colorpicker---ansi-color-grid)
 - [`datePicker` — Calendar-based date selection.](#datepicker---calendar-date-selection)
 
 #### ▧ Indicators
-
-Visual feedback for long-running tasks.
 
 - [`loadingSpinner` — Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
 - [`inlineSpinner` — Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
@@ -160,8 +155,6 @@ Visual feedback for long-running tasks.
 - [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
 
 #### ▨ Workflow & CLI UX
-
-Helpers for turning individual components into complete command-line experiences.
 
 - [`message primitives` — `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
 - [`task` — Run a task with spinner or dots status.](#task---async-status-wrapper)
@@ -174,8 +167,6 @@ Helpers for turning individual components into complete command-line experiences
 - [`custom components` — Reusable class or callback components.](#custom-components--extensibility)
 
 #### ▩ Configuration & Guides
-
-Advanced tools for settings, documentation, shortcuts, and theme exploration.
 
 - [`configEditor` — A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
 - [`cheatSheet` — Display a quick reference guide.](#cheatsheet---framed-reference-table)
