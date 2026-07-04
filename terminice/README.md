@@ -15,13 +15,11 @@
   </a>
 </p>
 
-> **The ultimate UI toolkit for Dart command-line apps.**
+> **Polished CLI interactions with tiny Dart calls.**
 
-**`terminice`** gives you **30+ ready-to-use terminal components**—from simple prompts to complex searchable menus and config editors.
+`Terminice` turns prompts, menus, progress, messages, config, themes, fallback behavior, and testing into one cohesive terminal UI layer. It is quick for small tools, robust for serious CLIs, and flexible enough to grow with your app.
 
-**Universal theming out of the box.** Every single prompt, selector, picker, and indicator automatically adapts to your chosen theme. Pick from **11 built-in themes** or customize your own via a fluent API.
-
-**Zero boilerplate.** No widget trees or manual state management. Just call a method and get a polished, keyboard-driven UI instantly.
+Ships with 30+ ready-made components, 11 themes, display modes, fallback policies, test utilities, and custom component hooks. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
 
 <p align="center">
   <img src="assets/showcase.gif" alt="terminice interactive showcase" width="1000"/>
