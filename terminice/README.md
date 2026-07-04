@@ -30,12 +30,11 @@
 ### Features
 
 - **Testable by design** - Script input and assert output without depending on real stdin/stdout.
-- **Zero boilerplate** — One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
+- **Zero boilerplate** - One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
 - **30+ terminal components** - Prompts, menus, pickers, indicators, messages, flows, and config tools.
-- **11 color themes** — Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
+- **11 color themes** - Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
 - **One style everywhere** - Themes, display modes, glyphs, and compatibility settings travel through one `Terminice` instance.
-- **Progress and task feedback** — Loading spinners, inline spinners, progress bars, progress dots, and async task helpers for long-running `Future` and `Stream` work.
-- **Cross-platform** — Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
+- **Cross-platform** - Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
 - **No framework lock-in** - Keep your parser, command runner, process tools, and app structure.
 - **Customizable when needed** - Extend with your own components and themes without losing Terminice behavior.
 
@@ -45,8 +44,8 @@
 - [**Meet Terminice**](#meet-terminice)
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Quick Start**](#quick-start)
-- [**Core Concepts & Behavior**](#core-concepts--behavior)
 - [**Theming & Display Modes**](#-theming--display-modes)
+- [**Core Concepts & Behavior**](#core-concepts--behavior)
 - [**Command App Integration**](#command-app-integration)
 - [**Testing Terminice CLIs**](#testing-terminice-clis)
 - [**Custom Components & Extensibility**](#custom-components--extensibility)
