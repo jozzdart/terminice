@@ -1022,105 +1022,6 @@ _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
-### `flow` - Sequential Flow Composition
-
-Compose several prompts and selectors into one synchronous, sequential flow. Use it when a CLI command needs a handful of related answers, conditional follow-up questions, or a typed result map without manually wiring each prompt together.
-
-Flow is sequential composition: steps run from top to bottom and can be skipped with `when`. It is not a back-navigation wizard yet.
-
-- `flow`
-  `(String title)`
-  Creates a `FlowBuilder`.
-- `run()` - Runs applicable steps in order and returns a `FlowResult`.
-- Built-in steps - `text`, `password`, `select`, `checkboxes`, `confirm`, and `custom`.
-- Theming and fallback - Built-in steps call the existing Terminice prompts/selectors through the configured instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
-
-#### Built-In Steps
-
-- `text(key, prompt, {placeholder, required, validator, validate, when})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
-- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when})` - Stores `String`; cancel also cancels the flow by default.
-- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
-- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when})` - Stores an immutable `List<T>`.
-- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
-- `custom<T>(key, label, {run, validate, when, cancelOnNull})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
-
-#### Result Access
-
-`FlowResult` keeps collected values in insertion order and preserves partial answers when the flow is cancelled.
-
-- `confirmed` - `true` when every applicable step completed.
-- `cancelled` - `true` when a cancellable step stopped the flow.
-- `cancelledKey` - Key of the step that cancelled, or `null`.
-- `value<T>(key)` - Reads a required typed value and throws if the key is missing or has a different type.
-- `maybe<T>(key)` - Reads a typed value, returning `null` when the key is absent or stored as `null`; wrong non-null types still throw.
-- `contains(key)` - Checks whether a step wrote that key.
-- `toMap()` - Returns an insertion-ordered copy of the collected values.
-
-#### Context, Conditions, and Validation
-
-`FlowContext` is passed to `when`, `validate`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed `value<T>`, `maybe<T>`, `contains`, and `toMap` accessors for values collected by earlier steps.
-
-Flow validators use `String? Function(value, context)`: return `null` for success, return `''` for legacy-compatible success, or return a non-empty error string to reject the step with a `FlowValidationException`.
-
-For `text`, `validator` and `validate` are different layers. `validator` runs inside the prompt for immediate text-input feedback; `validate` runs after the step completes and can inspect earlier flow answers through `FlowContext`.
-
-#### Examples
-
-```dart
-final result = terminice.flow('Create project')
-  .text('name', 'Project name', required: true)
-  .select('template', 'Template', options: ['CLI', 'Server', 'Package'])
-  .checkboxes('features', 'Features', options: ['Git', 'CI', 'Docker'])
-  .confirm('create', message: 'Create project?')
-  .run();
-
-if (result.confirmed && result.value<bool>('create')) {
-  final name = result.value<String>('name');
-  final template = result.maybe<String>('template') ?? 'CLI';
-  final features = result.value<List<String>>('features');
-
-  print('Creating $name from $template with ${features.join(', ')}');
-}
-```
-
-```dart
-final result = terminice.flow('Deployment')
-  .select(
-    'environment',
-    'Environment',
-    options: ['dev', 'staging', 'prod'],
-    validate: (value, _) => value == null ? 'Choose an environment' : null,
-  )
-  .text(
-    'changeId',
-    'Change request',
-    required: false,
-    when: (context) => context.value<String>('environment') == 'prod',
-    validate: (value, context) {
-      final isProd = context.value<String>('environment') == 'prod';
-      if (isProd && value.isEmpty) return 'Production needs a change ID';
-      return null;
-    },
-  )
-  .custom<DateTime>(
-    'startedAt',
-    'Start time',
-    run: (_) => DateTime.now(),
-  )
-  .run();
-
-if (result.cancelled) {
-  print('Stopped at ${result.cancelledKey}.');
-}
-```
-
-> **Why use this?**
-> Use `flow` when several prompt results belong to one command and later steps should react to earlier answers. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
-
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
-
----
-
 ### `searchSelector` - Filterable List Selection
 
 Pick from a vertical list that can be filtered in place. It works as a quick single-choice selector by default, or as a multi-select searchable checklist when `multiSelect` is enabled.
@@ -2441,6 +2342,105 @@ await terminice.progressDots('Waiting for job').whileRunning(
 
 > **Why use this?**
 > Use `progressDots` when you want calmer feedback than a spinner and do not have a meaningful total for a progress bar.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `flow` - Sequential Flow Composition
+
+Compose several prompts and selectors into one synchronous, sequential flow. Use it when a CLI command needs a handful of related answers, conditional follow-up questions, or a typed result map without manually wiring each prompt together.
+
+Flow is sequential composition: steps run from top to bottom and can be skipped with `when`. It is not a back-navigation wizard yet.
+
+- `flow`
+  `(String title)`
+  Creates a `FlowBuilder`.
+- `run()` - Runs applicable steps in order and returns a `FlowResult`.
+- Built-in steps - `text`, `password`, `select`, `checkboxes`, `confirm`, and `custom`.
+- Theming and fallback - Built-in steps call the existing Terminice prompts/selectors through the configured instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
+
+#### Built-In Steps
+
+- `text(key, prompt, {placeholder, required, validator, validate, when})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
+- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when})` - Stores `String`; cancel also cancels the flow by default.
+- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
+- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when})` - Stores an immutable `List<T>`.
+- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
+- `custom<T>(key, label, {run, validate, when, cancelOnNull})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+
+#### Result Access
+
+`FlowResult` keeps collected values in insertion order and preserves partial answers when the flow is cancelled.
+
+- `confirmed` - `true` when every applicable step completed.
+- `cancelled` - `true` when a cancellable step stopped the flow.
+- `cancelledKey` - Key of the step that cancelled, or `null`.
+- `value<T>(key)` - Reads a required typed value and throws if the key is missing or has a different type.
+- `maybe<T>(key)` - Reads a typed value, returning `null` when the key is absent or stored as `null`; wrong non-null types still throw.
+- `contains(key)` - Checks whether a step wrote that key.
+- `toMap()` - Returns an insertion-ordered copy of the collected values.
+
+#### Context, Conditions, and Validation
+
+`FlowContext` is passed to `when`, `validate`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed `value<T>`, `maybe<T>`, `contains`, and `toMap` accessors for values collected by earlier steps.
+
+Flow validators use `String? Function(value, context)`: return `null` for success, return `''` for legacy-compatible success, or return a non-empty error string to reject the step with a `FlowValidationException`.
+
+For `text`, `validator` and `validate` are different layers. `validator` runs inside the prompt for immediate text-input feedback; `validate` runs after the step completes and can inspect earlier flow answers through `FlowContext`.
+
+#### Examples
+
+```dart
+final result = terminice.flow('Create project')
+  .text('name', 'Project name', required: true)
+  .select('template', 'Template', options: ['CLI', 'Server', 'Package'])
+  .checkboxes('features', 'Features', options: ['Git', 'CI', 'Docker'])
+  .confirm('create', message: 'Create project?')
+  .run();
+
+if (result.confirmed && result.value<bool>('create')) {
+  final name = result.value<String>('name');
+  final template = result.maybe<String>('template') ?? 'CLI';
+  final features = result.value<List<String>>('features');
+
+  print('Creating $name from $template with ${features.join(', ')}');
+}
+```
+
+```dart
+final result = terminice.flow('Deployment')
+  .select(
+    'environment',
+    'Environment',
+    options: ['dev', 'staging', 'prod'],
+    validate: (value, _) => value == null ? 'Choose an environment' : null,
+  )
+  .text(
+    'changeId',
+    'Change request',
+    required: false,
+    when: (context) => context.value<String>('environment') == 'prod',
+    validate: (value, context) {
+      final isProd = context.value<String>('environment') == 'prod';
+      if (isProd && value.isEmpty) return 'Production needs a change ID';
+      return null;
+    },
+  )
+  .custom<DateTime>(
+    'startedAt',
+    'Start time',
+    run: (_) => DateTime.now(),
+  )
+  .run();
+
+if (result.cancelled) {
+  print('Stopped at ${result.cancelledKey}.');
+}
+```
+
+> **Why use this?**
+> Use `flow` when several prompt results belong to one command and later steps should react to earlier answers. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
 
 _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
