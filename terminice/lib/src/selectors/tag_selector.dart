@@ -1,6 +1,9 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+import '../core/fallback_selection.dart';
+
 /// Extension providing the [tagSelector] prompt for `Terminice`.
 extension TagSelectorExtensions on Terminice {
   /// Renders a chip-style selector and returns the confirmed tags.
@@ -40,96 +43,108 @@ extension TagSelectorExtensions on Terminice {
     bool useTerminalWidth = true,
   }) {
     if (tags.isEmpty) return [];
-    final theme = defaultTheme;
-    String renderChip(
-        String tag, bool isFocused, bool isSelected, int colWidth) {
-      final raw = '[ $tag ]';
-      final padding = (colWidth - raw.length).clamp(0, 1000);
-      final padded = raw + ' ' * padding;
+    return runWithFallback<List<String>>(
+      interactive: () {
+        final theme = defaultTheme;
+        String renderChip(
+            String tag, bool isFocused, bool isSelected, int colWidth) {
+          final raw = '[ $tag ]';
+          final padding = (colWidth - raw.length).clamp(0, 1000);
+          final padded = raw + ' ' * padding;
 
-      if (isFocused) {
-        return '${theme.inverse}${theme.selection}$padded${theme.reset}';
-      }
-      if (isSelected) {
-        return padded.replaceFirst(tag, '${theme.accent}$tag${theme.reset}');
-      }
-      return '${theme.dim}$padded${theme.reset}';
-    }
-
-    // Compute layout for chip-style grid
-    _TagSelectorLayout computeLayout() {
-      const framePrefix = 2;
-      final termCols = useTerminalWidth ? TerminalInfo.columns : 80;
-      final targetContent = (maxContentWidth != null)
-          ? maxContentWidth.clamp(minContentWidth, termCols - 4)
-          : (termCols - 4).clamp(minContentWidth, termCols);
-
-      final longest = tags.fold<int>(0, (m, t) => t.length > m ? t.length : m);
-      final naturalChip = longest + 4; // [ tag ]
-      final colWidth = naturalChip.clamp(minColumnWidth, maxColumnWidth);
-
-      final available = targetContent - framePrefix;
-      final cols =
-          available <= 0 ? 1 : (available + 1) ~/ (colWidth + 1).clamp(1, 99);
-
-      return _TagSelectorLayout(
-          contentWidth: targetContent, colWidth: colWidth, cols: cols);
-    }
-
-    final initialLayout = computeLayout();
-
-    // Use SelectableGridPrompt with custom chip rendering
-    final gridPrompt = SelectableGridPrompt<String>(
-      title: prompt,
-      items: tags,
-      theme: theme,
-      multiSelect: true,
-      columns: initialLayout.cols,
-      cellWidth: initialLayout.colWidth,
-    );
-
-    // Run with custom rendering for chip style
-    return gridPrompt.runCustom(
-      renderContent: (ctx) {
-        final l = computeLayout();
-        // Update columns in case terminal resized
-        gridPrompt.grid.columns = l.cols;
-
-        // Summary line
-        final count = gridPrompt.selection.count;
-        final summary = count == 0
-            ? ctx.lb.emptyMessage('none selected')
-            : '${theme.accent}$count selected${theme.reset}';
-
-        // Only show inline hints if the theme's hint style is inline
-        if (theme.features.hintStyle == HintStyle.inline) {
-          ctx.gutterLine('${HintFormat.comma([
-                'Space to toggle',
-                'Enter to confirm',
-                'Esc to cancel'
-              ], theme)}  $summary');
-        } else {
-          ctx.gutterLine(summary);
-        }
-
-        ctx.writeConnector();
-
-        final rows = (tags.length / l.cols).ceil().clamp(1, 999);
-        for (var r = 0; r < rows; r++) {
-          final pieces = <String>[];
-          for (var c = 0; c < l.cols; c++) {
-            final idx = r * l.cols + c;
-            if (idx >= tags.length) break;
-            pieces.add(renderChip(
-              tags[idx],
-              gridPrompt.grid.isFocused(idx),
-              gridPrompt.selection.isSelected(idx),
-              l.colWidth,
-            ));
+          if (isFocused) {
+            return '${theme.inverse}${theme.selection}$padded${theme.reset}';
           }
-          ctx.gutterLine(pieces.join(' '));
+          if (isSelected) {
+            return padded.replaceFirst(
+                tag, '${theme.accent}$tag${theme.reset}');
+          }
+          return '${theme.dim}$padded${theme.reset}';
         }
+
+        // Compute layout for chip-style grid
+        _TagSelectorLayout computeLayout() {
+          const framePrefix = 2;
+          final termCols = useTerminalWidth ? TerminalInfo.columns : 80;
+          final targetContent = (maxContentWidth != null)
+              ? maxContentWidth.clamp(minContentWidth, termCols - 4)
+              : (termCols - 4).clamp(minContentWidth, termCols);
+
+          final longest =
+              tags.fold<int>(0, (m, t) => t.length > m ? t.length : m);
+          final naturalChip = longest + 4; // [ tag ]
+          final colWidth = naturalChip.clamp(minColumnWidth, maxColumnWidth);
+
+          final available = targetContent - framePrefix;
+          final cols = available <= 0
+              ? 1
+              : (available + 1) ~/ (colWidth + 1).clamp(1, 99);
+
+          return _TagSelectorLayout(
+              contentWidth: targetContent, colWidth: colWidth, cols: cols);
+        }
+
+        final initialLayout = computeLayout();
+
+        // Use SelectableGridPrompt with custom chip rendering
+        final gridPrompt = SelectableGridPrompt<String>(
+          title: prompt,
+          items: tags,
+          theme: theme,
+          multiSelect: true,
+          columns: initialLayout.cols,
+          cellWidth: initialLayout.colWidth,
+        );
+
+        // Run with custom rendering for chip style
+        return gridPrompt.runCustom(
+          renderContent: (ctx) {
+            final l = computeLayout();
+            // Update columns in case terminal resized
+            gridPrompt.grid.columns = l.cols;
+
+            // Summary line
+            final count = gridPrompt.selection.count;
+            final summary = count == 0
+                ? ctx.lb.emptyMessage('none selected')
+                : '${theme.accent}$count selected${theme.reset}';
+
+            // Only show inline hints if the theme's hint style is inline
+            if (theme.features.hintStyle == HintStyle.inline) {
+              ctx.gutterLine('${HintFormat.comma([
+                    'Space to toggle',
+                    'Enter to confirm',
+                    'Esc to cancel'
+                  ], theme)}  $summary');
+            } else {
+              ctx.gutterLine(summary);
+            }
+
+            ctx.writeConnector();
+
+            final rows = (tags.length / l.cols).ceil().clamp(1, 999);
+            for (var r = 0; r < rows; r++) {
+              final pieces = <String>[];
+              for (var c = 0; c < l.cols; c++) {
+                final idx = r * l.cols + c;
+                if (idx >= tags.length) break;
+                pieces.add(renderChip(
+                  tags[idx],
+                  gridPrompt.grid.isFocused(idx),
+                  gridPrompt.selection.isSelected(idx),
+                  l.colWidth,
+                ));
+              }
+              ctx.gutterLine(pieces.join(' '));
+            }
+          },
+        );
       },
+      fallback: () => FallbackSelection.multi<String>(
+        title: prompt,
+        options: tags,
+        fallbackIndex: 0,
+      ),
     );
   }
 }

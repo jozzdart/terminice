@@ -10,7 +10,7 @@ Use it when you are building a terminal tool, prompt library, ASCII art renderer
 
 ```yaml
 dependencies:
-  termistyle: ^1.0.0
+  termistyle: ^1.1.0
 ```
 
 ```dart
@@ -21,11 +21,11 @@ import 'package:termistyle/termistyle.dart';
 
 A `PromptTheme` composes three independent concerns into one styling bundle:
 
-| Concern  | Class             | Built-in presets                                                             |
-| -------- | ----------------- | ---------------------------------------------------------------------------- |
-| Colors   | `TerminalColors`  | dark, matrix, fire, pastel, ocean, monochrome, neon, arcane, phantom (10)    |
-| Glyphs   | `TerminalGlyphs`  | unicode, ascii, rounded, double, heavy, dotted, arcane, phantom, minimal (9) |
-| Features | `DisplayFeatures` | standard, minimal, compact, verbose, clean, focus (6)                        |
+| Concern  | Class             | Built-in presets                                                                                |
+| -------- | ----------------- | ----------------------------------------------------------------------------------------------- |
+| Colors   | `TerminalColors`  | dark, none/plain, matrix, fire, pastel, ocean, monochrome, neon, arcane, phantom (11 constants) |
+| Glyphs   | `TerminalGlyphs`  | unicode, ascii, rounded, double, heavy, dotted, arcane, phantom, minimal (9)                    |
+| Features | `DisplayFeatures` | standard, minimal, compact, verbose, clean, focus (6)                                           |
 
 Eleven ready-made themes ship out of the box: `dark`, `minimal`, `compact`, `matrix`, `fire`, `pastel`, `ocean`, `monochrome`, `neon`, `arcane`, `phantom`.
 
@@ -47,6 +47,30 @@ final tweaked = PromptTheme.dark.copyWith(
 ```
 
 Every color, glyph, and feature flag supports `copyWith` for fine-grained overrides.
+
+## Compatibility modes
+
+`TerminalCompatibility` adapts any `PromptTheme` for a chosen terminal capability level. It is a pure styling layer: it does not inspect the terminal or perform I/O, so callers choose the mode and apply it explicitly.
+
+```dart
+final theme = PromptTheme.arcane.withCompatibility(
+  TerminalCompatibility.basic,
+);
+
+final legacy = TerminalCompatibility.legacy.applyTo(PromptTheme.ocean);
+```
+
+| Mode     | Behavior                                                                 |
+| -------- | ------------------------------------------------------------------------ |
+| `modern` | Preserves the theme exactly as provided                                  |
+| `basic`  | Uses ASCII glyphs and simpler display features while keeping ANSI colors |
+| `legacy` | Uses ASCII glyphs, no ANSI colors, no hints, and minimal output          |
+
+Use `basic` for terminals that support color but render box-drawing or rich prompt chrome poorly. It swaps in `TerminalGlyphs.ascii`, disables inverse highlights and connectors, and reduces bullet/grid hints to inline hints.
+
+Use `legacy` for plain-text output. It uses `TerminalColors.none`, ASCII glyphs, and a minimal display with no borders, bold titles, inverse highlights, connectors, or hints.
+
+`TerminalColors.none` and `TerminalColors.plain` are no-op palettes for disabling ANSI output directly. Every color and effect field is an empty string, including reset, bold, dim, and inverse; `plain` exposes the same values for call sites where "plain text" reads more clearly than "none".
 
 ## Inline styling
 
@@ -161,16 +185,17 @@ print(s.spinner(tick, frames: SpinnerFrames.arcs));
 
 ### Style primitives
 
-| Export            | Description                                                   |
-| ----------------- | ------------------------------------------------------------- |
-| `PromptTheme`     | Composable theme bundle (colors + glyphs + features)          |
-| `TerminalColors`  | ANSI color palette with `copyWith` and 10 presets             |
-| `TerminalGlyphs`  | Box-drawing symbols with `copyWith` and 9 presets             |
-| `DisplayFeatures` | Behavioral flags with `copyWith` and 6 presets                |
-| `HintStyle`       | Enum: `bullets`, `grid`, `inline`, `none`                     |
-| `BadgeTone`       | Enum: `neutral`, `info`, `success`, `warning`, `danger`       |
-| `StatTone`        | Enum: `info`, `warn`, `error`, `accent`, `success`, `neutral` |
-| `SpinnerFrames`   | Enum: `dots`, `bars`, `arcs`                                  |
+| Export                  | Description                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| `PromptTheme`           | Composable theme bundle (colors + glyphs + features)                         |
+| `TerminalCompatibility` | Enum: `modern`, `basic`, `legacy`; adapts a theme for terminal capability    |
+| `TerminalColors`        | ANSI color palette with `copyWith`, visual presets, and no-op `none`/`plain` |
+| `TerminalGlyphs`        | Box-drawing symbols with `copyWith` and 9 presets                            |
+| `DisplayFeatures`       | Behavioral flags with `copyWith` and 6 presets                               |
+| `HintStyle`             | Enum: `bullets`, `grid`, `inline`, `none`                                    |
+| `BadgeTone`             | Enum: `neutral`, `info`, `success`, `warning`, `danger`                      |
+| `StatTone`              | Enum: `info`, `warn`, `error`, `accent`, `success`, `neutral`                |
+| `SpinnerFrames`         | Enum: `dots`, `bars`, `arcs`                                                 |
 
 ### Rendering utilities
 

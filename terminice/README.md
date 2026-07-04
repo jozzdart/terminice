@@ -32,7 +32,7 @@
 - **30+ built-in prompts** — Text, password, confirm, multiline editor, slider, range, rating, date, form, and 7 selector variants. Plus pickers for files, paths, colors, and dates.
 - **11 color themes** — Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
 - **Config editor** — A searchable, nested settings editor that composes existing prompts into a unified configuration flow with live theme switching, validation, and JSON serialization.
-- **Progress indicators** — Loading spinners, inline spinners, progress bars, inline progress bars, and progress dots, all theme-integrated.
+- **Progress and task feedback** — Loading spinners, inline spinners, progress bars, progress dots, and async task helpers for long-running `Future` and `Stream` work.
 - **Zero boilerplate** — One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
 - **Cross-platform** — Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
 - **Modular architecture** — Built on `terminice_core`, which exposes navigation primitives, prompt scaffolds, and rendering utilities for when you need full control.
@@ -41,8 +41,10 @@
 
 - [**Features**](#features)
 - [**How to use `terminice`**](#-how-to-use-terminice)
+- [**Instance Configuration & Fallback**](#centralized-instance-configuration)
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Theming & Display Modes**](#-theming--display-modes)
+- [**Testing Terminice CLIs**](#testing-terminice-clis)
 - [**Quick Start**](#-quick-start)
 
 ### 📖 How to use `terminice`
@@ -62,9 +64,9 @@ void main() {
 }
 ```
 
-#### Synchronous Execution
+#### Prompt Execution & Async Tasks
 
-Unlike many Dart libraries, **`terminice` is fully synchronous**. You do not need to `await` any prompt. When you call a method, it blocks execution until the user provides input or cancels, returning the result directly.
+Prompts, selectors, pickers, and config editors are synchronous. You do not need to `await` user-input prompts; each call blocks until the user provides input or cancels, then returns the result directly.
 
 ```dart
 // No async/await required!
@@ -74,7 +76,23 @@ final age = terminice.slider('Age', min: 0, max: 100);
 print('Hello $name, you are $age years old.');
 ```
 
-_(Note: Indicators like `loadingSpinner` return an object that you control asynchronously, but user-input prompts are synchronous)._
+For long-running work, `terminice` also includes async task helpers. They render status while your `Future` or `Stream` is active, return the typed result on success, and rethrow errors after rendering the final failure or cancel status.
+
+```dart
+final result = await terminice.task('Publishing', run: publish);
+
+await terminice.progressTask(
+  'Uploading',
+  total: files.length,
+  run: (progress) async { ... },
+);
+
+final items = await terminice.trackStream(
+  'Downloading',
+  stream,
+  total: count,
+);
+```
 
 #### Shared API Design
 
@@ -85,9 +103,18 @@ Most tools in the library share a consistent set of parameters to keep the API p
 - `required`: (On text/password prompts) Prevents the user from submitting an empty value.
 - `validator`: A function that returns a `String?` error message if the input is invalid.
 
+#### Cancellation Behavior
+
+Prompts use a consistent cancellation policy:
+
+- Nullable prompts return `null` when cancelled.
+- Value prompts return the exact caller-supplied `initial` or default value when cancelled, even if the active interactive value is clamped while editing.
+- Config editor fields leave their existing value unchanged when a field edit is cancelled.
+- List and multi selectors return a non-null list; cancelled multi-selection prompts may return `[]`.
+
 #### Validation
 
-Validating input is built directly into the prompts. Simply provide a `validator` function that returns a `String` error message if the input is invalid, or `null` if it passes.
+Validating input is built directly into the prompts. Simply provide a `validator` function that returns a `String` error message if the input is invalid, or `null` if it passes. Returning `''` is also accepted as a legacy-compatible success value.
 
 ```dart
 final email = terminice.text(
@@ -135,6 +162,90 @@ final user = t.text('Username');
 final pass = t.password('Password');
 ```
 
+Display modes preserve the active colors and glyphs, so both of these chains produce Ocean colors with compact display features:
+
+```dart
+final a = terminice.ocean.compact;
+final b = terminice.compact.ocean;
+```
+
+#### Centralized Instance Configuration
+
+Each `Terminice` instance carries a single immutable `TerminiceConfig`. That config controls the effective theme for component calls that use the caller theme, including prompts, selectors, pickers, most guides, and indicators, plus fallback behavior for covered high-level prompts.
+
+```dart
+final t = terminice.withConfig(
+  const TerminiceConfig(
+    baseTheme: PromptTheme.ocean,
+    featureOverride: DisplayFeatures.compact,
+    compatibility: TerminalCompatibility.basic,
+    fallbackMode: TerminiceFallbackMode.auto,
+  ),
+);
+
+final name = t.text('Name');
+final role = t.searchSelector(
+  prompt: 'Role',
+  options: ['Admin', 'User'],
+);
+```
+
+- `baseTheme` is the original theme chosen by the caller.
+- `featureOverride` applies a display mode such as `DisplayFeatures.compact`.
+- `compatibility` adapts the theme for terminal capability.
+- `fallbackMode` decides when covered high-level prompts use line-mode fallback.
+- `TerminiceConfig.effectiveTheme` is the theme produced from those values.
+- `defaultTheme` exposes that effective theme on the `Terminice` instance.
+
+You can build the same configuration fluently:
+
+```dart
+final t = terminice.ocean.compact.basic.autoFallback;
+```
+
+Use `withConfig(...)` to replace the whole instance config while preserving the terminal. Use `withTheme(...)` or `themed(...)` to change the base theme while preserving display mode, compatibility, fallback mode, and terminal. Use `withCompatibility(...)` or `withFallbackMode(...)` when you want to pass the enum explicitly.
+
+Because configuration lives on the instance, changing the instance changes theme and behavior consistently across component calls:
+
+```dart
+final plain = terminice.legacy.fallback;
+
+final project = plain.text('Project name');
+final confirm = plain.confirm(message: 'Create $project?');
+```
+
+#### Compatibility Modes
+
+Compatibility modes are styling transforms. They do not inspect the terminal; choose the mode you want for the `Terminice` instance.
+
+- `terminice.modern` - Default behavior. Preserves the active theme exactly.
+- `terminice.basic` - Uses ASCII glyphs and simpler hints/display while keeping ANSI colors.
+- `terminice.legacy` - Uses ASCII glyphs, disables ANSI colors, and keeps output minimal with no hints.
+
+```dart
+final readable = terminice.fire.basic;
+final plainText = terminice.ocean.legacy;
+```
+
+#### Fallback Policies
+
+The default behavior is unchanged: `terminice` uses the rich interactive prompts unless you opt into fallback.
+
+- `terminice.interactive` - Forces rich prompts. This is the default `fallbackMode`.
+- `terminice.autoFallback` - Uses line-mode fallback when input or output is not a terminal.
+- `terminice.fallback` - Always uses line-mode fallback for covered high-level prompts.
+
+```dart
+final ci = terminice.autoFallback.basic;
+final confirmed = ci.confirm(message: 'Continue?');
+```
+
+Line-mode fallback uses simple text and numbered prompts instead of raw-mode keyboard UIs. Password fallback reads a normal line; it does **not** mask input in line mode.
+
+Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `searchSelector`, `gridSelector`, `checkboxSelector`, `choiceSelector`, `tagSelector`, `toggleGroup`, `commandPalette`, `slider`, `range`, `rating`, and the focused enum/theme selects used by the config editor.
+
+Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, manual indicator controller calls such as `show(...)`, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy. Async task helpers use plain task rendering in fallback/plain modes.
+
 # 📚 The `terminice` Catalogue
 
 Explore the complete collection of tools available in `terminice`. Every tool is fully themeable and ready to use with zero setup.
@@ -158,11 +269,11 @@ Standard input controls for gathering user data.
 Interactive menus for choosing from predefined options.
 
 - [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
-- [`choiceSelector` — Simple single-choice list.](#choiceselector---card-based-choice-grid)
+- [`choiceSelector` — Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
 - [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
 - [`gridSelector` — 2D grid selection.](#gridselector---two-dimensional-selection-grid)
 - [`tagSelector` — Select and manage multiple tags.](#tagselector---chip-style-multi-select)
-- [`toggleGroup` — Segmented control for mutually exclusive options.](#togglegroup---editable-boolean-switches)
+- [`toggleGroup` — Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
 - [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
 
 #### 🗂️ Pickers
@@ -183,6 +294,23 @@ Visual feedback for long-running tasks.
 - [`progressBar` — Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
 - [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
 - [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
+
+#### 🔁 Async Task Helpers
+
+Future and stream wrappers for long-running work.
+
+- [`task` — Run a task with spinner or dots status.](#task---async-status-wrapper)
+- [`progressTask` — Run a task with determinate progress.](#progresstask---async-progress-wrapper)
+- [`trackStream` — Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
+- [`TaskProgress` — Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
+- [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
+- [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
+
+#### 🔄 Flow Composition
+
+Chain several prompts and selectors into one sequential CLI workflow.
+
+- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
 
 #### ⚙️ Configuration & Utilities
 
@@ -227,6 +355,8 @@ Control the verbosity and framing of your prompts:
 - **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
 - **`compact`** — Keeps borders but removes hints for a tighter layout.
 - **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
+
+Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
 
 #### ⌨ Example
 
@@ -285,6 +415,77 @@ final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
 
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
 
+## Testing Terminice CLIs
+
+Serious CLIs need tests that do not depend on a real terminal, real stdin, or timing-sensitive stdout capture. Import the sidecar testing library from tests:
+
+```dart
+import 'package:test/test.dart';
+import 'package:terminice/testing.dart';
+```
+
+`package:terminice/testing.dart` re-exports the public Terminice API, core mock-terminal testing primitives, and `TerminiceTester`. It is intentionally a test sidecar; these utilities are not exported from `package:terminice/terminice.dart`.
+
+### Fallback and Line-Mode Flows
+
+Use `TerminiceTester.fallback` for deterministic line-mode coverage. This is ideal for testing flow logic, validators, cancellation behavior, and CI-safe prompt paths.
+
+```dart
+test('creates a project from fallback input', () {
+  final tester = TerminiceTester.fallback(lines: ['demo', 'yes']);
+
+  final result = tester.run(
+    (t) => t
+        .flow('Create project')
+        .text('name', 'Project name')
+        .confirm('create', message: 'Create project?')
+        .run(),
+  );
+
+  expect(result.toMap(), equals({'name': 'demo', 'create': true}));
+  expect(tester.output.plainText, contains('Create project?'));
+});
+```
+
+### Interactive Key Scripts
+
+Use `TerminiceTester.interactive` with `TerminalScript` when you want to exercise the rich raw-mode prompt path. Scripts are reusable and can queue text, key presses, arrows, Enter, Escape, Tab, Space, and Ctrl keys.
+
+```dart
+test('chooses No in the interactive confirm prompt', () {
+  final tester = TerminiceTester.interactive(
+    script: TerminalScript.build((script) => script.right().enter()),
+  );
+
+  final result = tester.run(
+    (t) => t.confirm(message: 'Publish release?'),
+  );
+
+  expect(result, isFalse);
+  expect(tester.output.containsAnsiControls, isTrue);
+});
+```
+
+### Output Assertions
+
+Every tester exposes `tester.output`, a `TerminalOutputSnapshot` with `raw`, `plainText`, `normalizedText`, `plainLines`, and `containsAnsiControls`. Prefer `plainText` when ANSI styling is irrelevant, `normalizedText` for stable line assertions, and `containsAnsiControls` when you need to prove a path rendered with or without terminal control output.
+
+```dart
+final tester = TerminiceTester.nonInteractive();
+
+final count = await tester.runAsync(
+  (t) => t.task<int>(
+    'Warm cache',
+    run: () async => 42,
+    success: 'cache ready',
+  ),
+);
+
+expect(count, 42);
+expect(tester.output.normalizedText, equals('OK: cache ready'));
+expect(tester.output.containsAnsiControls, isFalse);
+```
+
 ---
 
 ### `text` - Single-Line Text Input
@@ -297,7 +498,7 @@ Collect a single trimmed string with optional placeholder text and inline valida
 - `prompt` - Title displayed above the input.
 - `placeholder` - Dimmed hint text shown while the input is empty.
 - `required` - Defaults to `true`; empty submissions are blocked with an inline error.
-- `validator` - Optional `String Function(String)` that receives trimmed input. Return `''` for valid input, or a non-empty error message to block confirmation.
+- `validator` - Optional `String? Function(String)` that receives trimmed input. Return `null` for valid input, or a non-empty error message to block confirmation. Returning `''` is still accepted as success for backwards compatibility.
 - Returns `String?` - The trimmed input on Enter, or `null` when the user cancels with Esc/Ctrl+C.
 - Controls - Type normally, Backspace deletes, Enter confirms, Esc cancels.
 
@@ -330,7 +531,7 @@ final email = terminice.text(
   placeholder: 'ada@example.com',
   validator: (value) {
     if (!value.contains('@')) return 'Enter a valid email address';
-    return '';
+    return null;
   },
 );
 ```
@@ -632,7 +833,7 @@ Collect a small integer rating with stars, number-key shortcuts, and optional la
 - `maxStars` - Maximum rating value. Defaults to `5` and must be greater than `0`.
 - `initial` - Starting rating. Defaults to `3`; the active value is clamped into `1..maxStars`.
 - `labels` - Optional labels displayed for each rating value when the list has at least `maxStars` entries.
-- Returns `int` - The confirmed rating. Esc/Ctrl+C returns the clamped initial value.
+- Returns `int` - The confirmed rating. Esc/Ctrl+C returns the supplied `initial` value.
 - Controls - Left/Right adjusts the rating, number keys jump directly to a value, Enter confirms, Esc/Ctrl+C cancels to the initial rating.
 
 #### 🧪 Examples
@@ -741,7 +942,7 @@ import 'package:terminice_core/terminice_core.dart';
 - `maskChar` - Character used for masked fields. Defaults to `'•'`.
 - `allowReveal` - Defaults to `false`; when `true`, Ctrl+R toggles plain text for that masked field.
 - `required` - Defaults to `false`; empty trimmed values are rejected with `Required`.
-- `validator` - Optional `String Function(String)` per-field validator. Return `''` for valid input, or a non-empty error message.
+- `validator` - Optional `String? Function(String)` per-field validator. Return `null` for valid input, or a non-empty error message. Returning `''` is still accepted as success for backwards compatibility.
 - `initialValue` - Optional pre-filled text.
 
 #### Examples
@@ -777,7 +978,7 @@ final account = terminice.form(
       label: 'Email',
       required: true,
       validator: (value) =>
-          value.contains('@') ? '' : 'Enter a valid email address',
+          value.contains('@') ? null : 'Enter a valid email address',
     ),
     const FormFieldConfig(
       label: 'Password',
@@ -1456,10 +1657,10 @@ Pick a single calendar date from a framed month view. The selected day stays hig
 - `prompt` - Frame title displayed above the calendar.
 - `initialDate` - Optional starting date. Defaults to `DateTime.now()` and is normalized to year/month/day for the initial selection.
 - `startWeekOnMonday` - Defaults to `true`. When `false`, the calendar renders Sunday as the first weekday.
-- `allowPast` / `allowFuture` - Public API flags for past/future gating. In the current implementation, navigation is not clamped by these flags, so enforce date limits after the picker returns if your command requires them.
+- `allowPast` / `allowFuture` - Defaults to `true`. Set either to `false` to clamp the initial date and keyboard navigation at today.
 - Returns `DateTime?` - The selected date on Enter, or `null` when cancelled.
-- Date behavior - Left/Right move one day, Up/Down move one week, and W/S move one year while keeping the visible month synced to the selected date. Ctrl+E jumps to `DateTime.now()`.
-- Normalization note - The initial selection is date-only. Ctrl+E assigns `DateTime.now()` directly, so normalize the returned value yourself if your storage format requires midnight.
+- Date behavior - Left/Right move one day, Up/Down move one week, and W/S move one year while keeping the visible month synced to the selected date. Ctrl+E jumps to today.
+- Normalization note - The returned selection is date-only.
 - Cancel behavior - Esc/Ctrl+C returns `null`.
 - Controls - Left/Right move by day, Up/Down move by week, W/S move by year, Ctrl+E jumps to today, Enter confirms, Esc/Ctrl+C cancels.
 
@@ -1511,6 +1712,226 @@ _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
+### `task` - Async Status Wrapper
+
+Run a synchronous or asynchronous operation while `terminice` renders a small status indicator. Use it when the work is indeterminate: publishing, polling, resolving dependencies, or any operation where there is no useful total.
+
+- `task<T>(String prompt, {required run, message, success, failure, cancel, isCanceled, interval, style, indicator, maxDots, display, finalBehavior})`
+  Runs `run` and completes with its typed result.
+- `prompt` - Main status label. It is also the default success message.
+- `run` - A `FutureOr<T> Function()` containing the work.
+- `message` - Optional detail shown beside the prompt while running.
+- `success` - Optional final success text. Defaults to `prompt`.
+- `failure` - Optional `String Function(Object error, StackTrace stackTrace)` for failure text. Defaults to `'$prompt failed: $error'`.
+- `cancel` - Optional formatter for cancellation text. Defaults to `'$prompt canceled'`.
+- `isCanceled` - Optional predicate that decides whether a thrown error should be labelled as cancellation instead of failure.
+- `interval`, `style`, `indicator`, `maxDots` - Tune the running animation. `indicator` can use spinner frames or cycling dots.
+- `display` - A `TaskDisplay` value: `auto`, `inline`, or `plain`. `TaskDisplay.plain`, fallback modes, non-terminal IO, and non-modern compatibility avoid ANSI cursor control and animation.
+- `finalBehavior` - A `TaskFinalBehavior` value controlling whether the final status line remains visible.
+- Returns `Future<T>` - The exact result from `run`.
+- Error behavior - Synchronous throws and asynchronous errors render failure or cancel status, then rethrow the original error with its stack trace.
+
+#### Examples
+
+```dart
+final result = await terminice.task('Publishing', run: publish);
+```
+
+```dart
+try {
+  await terminice.task(
+    'Deploying',
+    run: deploy,
+    isCanceled: (error) => error is OperationCanceledException,
+    cancel: (error, stack) => 'Deployment canceled',
+  );
+} catch (error) {
+  // The final status was already rendered; handle or rethrow as needed.
+}
+```
+
+> **Why use this?**
+> Use `task` when you want async status and cleanup without manually wiring timers, cursor hiding, final status lines, or error rendering.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `progressTask` - Async Progress Wrapper
+
+Run work with a determinate progress bar. `progressTask` passes a mutable `TaskProgress` object into your callback, so the task can update count and detail text as it advances.
+
+- `progressTask<T>(String prompt, {required total, required run, message, success, failure, cancel, isCanceled, display, finalBehavior, interval, progressWidth})`
+  Runs `run` while rendering progress.
+- `prompt` - Main status label.
+- `total` - Total units of work. Must be greater than `0`.
+- `run` - A `FutureOr<T> Function(TaskProgress progress)` callback.
+- `message` - Optional initial detail text.
+- `success`, `failure`, `cancel`, `isCanceled` - Same semantics as `task`.
+- `display` - A `TaskDisplay` value: `auto`, `inline`, or `plain`. Plain and fallback rendering avoid ANSI/control output.
+- `finalBehavior` - Controls whether the final status line is persisted or cleared.
+- `interval` - Animation refresh interval. Defaults to `80ms`.
+- `progressWidth` - Width of the inline progress bar used by task rendering.
+- Returns `Future<T>` - The result from `run`.
+- Progress behavior - Current progress is clamped to `0..total`; invalid totals are rejected before the task starts.
+- Error behavior - Errors are rendered as failure or cancel status, then rethrown.
+
+#### Examples
+
+```dart
+await terminice.progressTask(
+  'Uploading',
+  total: files.length,
+  run: (progress) async { ... },
+);
+```
+
+```dart
+await terminice.progressTask(
+  'Uploading',
+  total: files.length,
+  run: (progress) async {
+    for (final file in files) {
+      progress.update(message: file.path);
+      await upload(file);
+      progress.increment();
+    }
+  },
+);
+```
+
+> **Why use this?**
+> Use `progressTask` when your async work has a known total and the task itself should own progress updates.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `trackStream` - Stream Progress Collector
+
+Collect every event from a stream while advancing determinate progress once per event. The returned list preserves stream order.
+
+- `trackStream<T>(String prompt, Stream<T> source, {required total, message, success, failure, cancel, isCanceled, display, finalBehavior, interval, progressWidth})`
+  Tracks and collects `source`.
+- `prompt` - Main status label.
+- `source` - Stream to listen to.
+- `total` - Expected number of events. Must be greater than `0`.
+- `message`, `success`, `failure`, `cancel`, `isCanceled`, `display`, `finalBehavior`, `interval`, `progressWidth` - Same behavior as `progressTask`.
+- Returns `Future<List<T>>` - All stream values, in order.
+- Error behavior - Stream errors render failure or cancel status, then rethrow.
+
+#### Examples
+
+```dart
+final items = await terminice.trackStream(
+  'Downloading',
+  stream,
+  total: count,
+);
+```
+
+```dart
+final records = await terminice.ocean.trackStream(
+  'Importing records',
+  readRecords(),
+  total: expectedRecords,
+  success: 'Imported records',
+);
+```
+
+> **Why use this?**
+> Use `trackStream` when each stream event maps to one progress unit and you want the collected values back after rendering completes.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `TaskProgress` - Mutable Progress State
+
+`TaskProgress` is the handle passed to `progressTask` callbacks and indicator `whileRunning` callbacks. Mutating it updates the rendered progress.
+
+- `current` - Completed units, clamped to the inclusive `0..total` range.
+- `total` - Total units expected for the task. Must be greater than `0`.
+- `message` - Optional detail shown beside the prompt.
+- `ratio` - Completion ratio between `0` and `1`.
+- `isComplete` - `true` when `current >= total`.
+- `update({current, total, message})` - Updates progress. Passing `null` for `message` leaves the current message unchanged.
+- `increment([by = 1])` - Advances `current` by `by`, clamped to `total`.
+
+#### Examples
+
+```dart
+await terminice.progressTask(
+  'Processing',
+  total: jobs.length,
+  run: (progress) async {
+    for (final job in jobs) {
+      progress.update(message: job.name);
+      await job.run();
+      progress.increment();
+    }
+  },
+);
+```
+
+> **Why use this?**
+> Use `TaskProgress` as the single source of truth for count, total, and per-step detail during async progress rendering.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `TaskDisplay` - Task Rendering Mode
+
+Choose how async task helpers render while work is running.
+
+- `TaskDisplay.auto` - Default. Uses animated inline rendering when the current terminal and `Terminice` configuration support it; otherwise uses plain line output.
+- `TaskDisplay.inline` - Requests animated inline rendering when available; falls back to plain output when animation is unavailable.
+- `TaskDisplay.plain` - Uses simple final lines without ANSI cursor control, raw mode, or animation.
+- Fallback behavior - Non-terminal IO, `terminice.fallback`, and non-modern compatibility modes use plain rendering. `terminice.autoFallback` uses plain rendering when fallback is needed.
+
+#### Examples
+
+```dart
+await terminice.task(
+  'Publishing',
+  run: publish,
+  display: TaskDisplay.plain,
+);
+```
+
+> **Why use this?**
+> Use `TaskDisplay.plain` for logs, CI, tests, or any output stream where control sequences would be noisy.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `TaskFinalBehavior` - Final Output Policy
+
+Control what remains on screen after an async task finishes.
+
+- `TaskFinalBehavior.persist` - Default. Leaves one final success, failure, or cancel status line.
+- `TaskFinalBehavior.clear` - Clears the animated task display when it finishes. In plain mode, it suppresses the final status line.
+- Applies to success, failure, and cancellation rendering.
+
+#### Examples
+
+```dart
+await terminice.task(
+  'Refreshing cache',
+  run: refreshCache,
+  finalBehavior: TaskFinalBehavior.clear,
+);
+```
+
+> **Why use this?**
+> Use `persist` when the task result should remain in command history. Use `clear` for transient status that should disappear after completion.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
 ### `loadingSpinner` - Framed Loading Spinner
 
 Show a framed, theme-aware spinner for an ongoing task. This is the most expressive spinner: it has a frame title, a message line, themed spinner glyphs, and footer hints describing the active style.
@@ -1520,13 +1941,13 @@ Show a framed, theme-aware spinner for an ongoing task. This is the most express
 - `prompt` - Frame title displayed above the spinner.
 - `message` - Text shown next to the animated glyph. Defaults to `'Loading'`.
 - `style` - A `SpinnerStyle` value. Defaults to `SpinnerStyle.dots`; supported styles are `dots`, `bars`, and `arcs`.
-- Returns `LoadingSpinner` - The spinner is not displayed until you call `show(...)` or advance it through `runWith(...)`.
+- Returns `LoadingSpinner` - The spinner is not displayed until you call `show(...)`, advance it through `runWith(...)`, or wrap work with `whileRunning(...)`.
 - `show(int frame)` - Renders one frame. The frame index wraps around the style's glyph list, so any increasing integer works.
-- `runWith(void Function(void Function() tick) callback)` - Runs a synchronous callback with a `tick()` function. Each tick renders the next frame, starting at `0`.
+- `runWith(void Function(void Function() tick) callback)` - Runs a synchronous callback with a `tick()` function. Each tick renders the next frame, starting at `0`. This callback is not awaited and remains for synchronous work.
+- `whileRunning<T>(FutureOr<T> Function() run, {message, success, failure, cancel, isCanceled, interval, display, finalBehavior})` - Runs async or sync work with spinner task rendering and returns the typed result.
 - `clear()` - Clears the current spinner frame and resets the internal render state.
-- Lifecycle - There is no `start`/`stop` timer. Drive animation from your own loop, timer, or synchronous `runWith` callback.
-- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears the spinner after the callback returns normally.
-- Async note - `runWith` does not await futures. Use a normal async loop with `show(...)` when the work uses `await`.
+- Lifecycle - There is no `start`/`stop` timer for manual rendering. Drive animation from your own loop, timer, synchronous `runWith` callback, or use `whileRunning(...)` for awaited work.
+- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears the spinner after the callback returns normally. `whileRunning` handles async cleanup and final status rendering.
 
 #### Examples
 
@@ -1568,6 +1989,15 @@ spinner.runWith((tick) {
     runStep(step);
   }
 });
+```
+
+```dart
+final release = await terminice.loadingSpinner(
+  'Publishing',
+  message: 'Uploading archive',
+).whileRunning(publish);
+
+print('Published $release.');
 ```
 
 ```dart
@@ -1678,17 +2108,19 @@ Display bounded progress in a framed widget with a themed bar, percentage, and r
 - `progressBar (String prompt)`
   Creates a themed `ProgressBar` controller with the default width.
 - `prompt` - Frame title displayed above the bar.
-- Returns `ProgressBar` - The bar is not displayed until you call `show(...)` or `runWith(...)`.
+- Returns `ProgressBar` - The bar is not displayed until you call `show(...)`, `runWith(...)`, `whileRunning(...)`, or `trackStream(...)`.
 - `ProgressBar (String prompt, {width = 36, theme = PromptTheme.dark})`
   Direct constructor for custom width or explicit theme. `width` must be greater than `4`.
 - `show({required int current, required int total, int shimmerPhase = 0})` - Renders the current progress state.
-- `current` / `total` - Used to compute the ratio. When `total <= 0`, the visual percentage is `0`.
+- `current` / `total` - Used to compute the ratio. Positive totals clamp the displayed count and percentage into range; when `total <= 0`, the display shows `0/0` and `0%`.
 - `shimmerPhase` - Optional phase offset for the filled bar coloring. Increase it as you update to create motion.
-- `runWith(void Function(void Function(int current, int total) update) callback)` - Runs a synchronous callback with an `update(current, total)` function. Each update increments the shimmer phase internally.
+- `runWith(void Function(void Function(int current, int total) update) callback)` - Runs a synchronous callback with an `update(current, total)` function. Each update increments the shimmer phase internally. This callback is not awaited and remains for synchronous work.
+- `whileRunning<T>(FutureOr<T> Function(TaskProgress progress) run, {required total, message, success, failure, cancel, isCanceled, display, finalBehavior, interval})` - Runs work with a `TaskProgress` handle and returns the typed result.
+- `trackStream<T>(Stream<T> source, {required total, message, success, failure, cancel, isCanceled, display, finalBehavior, interval})` - Collects stream events into a `List<T>` while advancing progress once per event.
 - `clear()` - Clears the current framed progress output.
-- Value behavior - The filled width and percentage are clamped to `0..100%`, while the raw `(current/total)` text displays the values you passed.
-- Lifecycle - There is no automatic timer. Use `show(...)` from an async loop, or use `runWith(...)` for synchronous work.
-- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears the bar after the callback returns normally.
+- Value behavior - The displayed count, filled width, and percentage all use normalized progress. Positive totals clamp `current` into `0..total`, and the percentage stays within `0..100%`.
+- Lifecycle - There is no automatic timer for manual rendering. Use `show(...)` from your own loop, `runWith(...)` for synchronous work, or `whileRunning(...)` / `trackStream(...)` for awaited work.
+- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears the bar after the callback returns normally. Async wrappers handle cleanup and final status rendering.
 
 #### Examples
 
@@ -1727,6 +2159,25 @@ bar.runWith((update) {
 ```
 
 ```dart
+await terminice.progressBar('Uploading').whileRunning(
+  (progress) async {
+    for (final file in files) {
+      await upload(file);
+      progress.increment();
+    }
+  },
+  total: files.length,
+);
+```
+
+```dart
+final downloads = await terminice.progressBar('Downloading').trackStream(
+  downloadStream,
+  total: expectedDownloads,
+);
+```
+
+```dart
 final bar = ProgressBar(
   'Uploading archive',
   width: 48,
@@ -1756,10 +2207,10 @@ Show a compact percentage beside a label. Despite the name, the current implemen
 - `prompt` - Text displayed before the percentage.
 - Returns `InlineProgressBar` - The line is not displayed until `show(...)` is called.
 - `InlineProgressBar(String prompt, {theme = PromptTheme.dark})` - Direct constructor for an explicit theme.
-- `show({required int current, required int total})` - Computes `(current / total * 100).round()` and renders the percentage next to the prompt.
-- `current` / `total` - Provide the current count and total count. When `total <= 0`, the displayed percentage is `0`.
+- `show({required int current, required int total})` - Renders a normalized percentage next to the prompt.
+- `current` / `total` - Provide the current count and total count. Positive totals clamp `current` into `0..total`; when `total <= 0`, the displayed percentage is `0`.
 - `clear()` - Clears the current inline progress output.
-- Value behavior - The percentage is not clamped in this class. Pass bounded values if you need the display to stay between `0%` and `100%`.
+- Value behavior - The displayed percentage follows the same bounded progress rules as `progressBar`, staying between `0%` and `100%` for positive totals.
 - Lifecycle - There is no `start`, `stop`, or dedicated `runWith` helper. Drive it manually from your own loop or timer.
 - Cleanup behavior - Repeated `show(...)` calls replace the previous line. Call `clear()` when the operation is finished or cancelled.
 
@@ -1820,16 +2271,16 @@ Show ambient progress with a title, message, and cycling dots. It is useful for 
 
 - `progressDots(String prompt)` - Creates a themed `ProgressDots` controller.
 - `prompt` - Frame title displayed above the dots.
-- Returns `ProgressDots` - The indicator is not displayed until you call `show(...)` or `runWith(...)`.
+- Returns `ProgressDots` - The indicator is not displayed until you call `show(...)`, `runWith(...)`, or `whileRunning(...)`.
 - `ProgressDots(String prompt, {message = 'Working', maxDots = 3, theme = PromptTheme.dark})` - Direct constructor for custom text, dot count, or explicit theme. `maxDots` must be greater than `0`.
 - `message` - Text displayed before the animated dots.
 - `maxDots` - Maximum number of dots shown before the animation cycles back to zero dots.
 - `show({required int phase})` - Renders the dot count for a phase. The count is `phase % (maxDots + 1)`, so `phase: 0` shows the message with no dots.
-- `runWith(void Function(void Function() tick) callback)` - Runs a synchronous callback with a `tick()` function. Each tick advances the phase by one.
+- `runWith(void Function(void Function() tick) callback)` - Runs a synchronous callback with a `tick()` function. Each tick advances the phase by one. This callback is not awaited and remains for synchronous work.
+- `whileRunning<T>(FutureOr<T> Function() run, {message, success, failure, cancel, isCanceled, interval, display, finalBehavior})` - Runs async or sync work with dot task rendering and returns the typed result.
 - `clear()` - Clears the current framed dot indicator.
-- Lifecycle - There is no automatic timer. Use `show(...)` from an async loop, or use `runWith(...)` for synchronous work.
-- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears after the callback returns normally.
-- Async note - Like the other `runWith` helpers, this callback is synchronous; use manual `show(...)` calls for awaited work.
+- Lifecycle - There is no automatic timer for manual rendering. Use `show(...)` from your own loop, `runWith(...)` for synchronous work, or `whileRunning(...)` for awaited work.
+- Cleanup behavior - Manual loops should call `clear()` in `finally`. `runWith` hides the cursor while it runs and clears after the callback returns normally. `whileRunning` handles async cleanup and final status rendering.
 
 #### Examples
 
@@ -1882,8 +2333,114 @@ dots.runWith((tick) {
 });
 ```
 
+```dart
+await terminice.progressDots('Waiting for job').whileRunning(
+  waitForRemoteJob,
+  success: 'Job finished',
+);
+```
+
 > **Why use this?**
 > Use `progressDots` when you want calmer feedback than a spinner and do not have a meaningful total for a progress bar.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### `flow` - Sequential Flow Composition
+
+Compose several prompts and selectors into one synchronous, sequential flow. Use it when a CLI command needs a handful of related answers, conditional follow-up questions, or a typed result map without manually wiring each prompt together.
+
+Flow is sequential composition: steps run from top to bottom and can be skipped with `when`. It is not a back-navigation wizard yet.
+
+- `flow`
+  `(String title)`
+  Creates a `FlowBuilder`.
+- `run()` - Runs applicable steps in order and returns a `FlowResult`.
+- Built-in steps - `text`, `password`, `select`, `checkboxes`, `confirm`, and `custom`.
+- Theming and fallback - Built-in steps call the existing Terminice prompts/selectors through the configured instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
+
+#### Built-In Steps
+
+- `text(key, prompt, {placeholder, required, validator, validate, when})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
+- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when})` - Stores `String`; cancel also cancels the flow by default.
+- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
+- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when})` - Stores an immutable `List<T>`.
+- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
+- `custom<T>(key, label, {run, validate, when, cancelOnNull})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+
+#### Result Access
+
+`FlowResult` keeps collected values in insertion order and preserves partial answers when the flow is cancelled.
+
+- `confirmed` - `true` when every applicable step completed.
+- `cancelled` - `true` when a cancellable step stopped the flow.
+- `cancelledKey` - Key of the step that cancelled, or `null`.
+- `value<T>(key)` - Reads a required typed value and throws if the key is missing or has a different type.
+- `maybe<T>(key)` - Reads a typed value, returning `null` when the key is absent or stored as `null`; wrong non-null types still throw.
+- `contains(key)` - Checks whether a step wrote that key.
+- `toMap()` - Returns an insertion-ordered copy of the collected values.
+
+#### Context, Conditions, and Validation
+
+`FlowContext` is passed to `when`, `validate`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed `value<T>`, `maybe<T>`, `contains`, and `toMap` accessors for values collected by earlier steps.
+
+Flow validators use `String? Function(value, context)`: return `null` for success, return `''` for legacy-compatible success, or return a non-empty error string to reject the step with a `FlowValidationException`.
+
+For `text`, `validator` and `validate` are different layers. `validator` runs inside the prompt for immediate text-input feedback; `validate` runs after the step completes and can inspect earlier flow answers through `FlowContext`.
+
+#### Examples
+
+```dart
+final result = terminice.flow('Create project')
+  .text('name', 'Project name', required: true)
+  .select('template', 'Template', options: ['CLI', 'Server', 'Package'])
+  .checkboxes('features', 'Features', options: ['Git', 'CI', 'Docker'])
+  .confirm('create', message: 'Create project?')
+  .run();
+
+if (result.confirmed && result.value<bool>('create')) {
+  final name = result.value<String>('name');
+  final template = result.maybe<String>('template') ?? 'CLI';
+  final features = result.value<List<String>>('features');
+
+  print('Creating $name from $template with ${features.join(', ')}');
+}
+```
+
+```dart
+final result = terminice.flow('Deployment')
+  .select(
+    'environment',
+    'Environment',
+    options: ['dev', 'staging', 'prod'],
+    validate: (value, _) => value == null ? 'Choose an environment' : null,
+  )
+  .text(
+    'changeId',
+    'Change request',
+    required: false,
+    when: (context) => context.value<String>('environment') == 'prod',
+    validate: (value, context) {
+      final isProd = context.value<String>('environment') == 'prod';
+      if (isProd && value.isEmpty) return 'Production needs a change ID';
+      return null;
+    },
+  )
+  .custom<DateTime>(
+    'startedAt',
+    'Start time',
+    run: (_) => DateTime.now(),
+  )
+  .run();
+
+if (result.cancelled) {
+  print('Stopped at ${result.cancelledKey}.');
+}
+```
+
+> **Why use this?**
+> Use `flow` when several prompt results belong to one command and later steps should react to earlier answers. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
 
 _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
@@ -1910,7 +2467,7 @@ ConfigResult? configEditor(
 - Navigation behavior - `↑` / `↓` move through rows, `Enter` opens the focused field or group, and the first row is the root save action.
 - Group behavior - `GroupConfigurable` opens a nested editor with a "Back" action instead of "Save & confirm". Esc or Back in a group returns to the parent and preserves edits in place; only the root save decides whether a result is returned.
 - Theme behavior - A `ThemeConfigurable` at the current editor level updates the editor theme live after a new theme is selected. The editor also starts with that field's selected theme.
-- Cancellation behavior - Esc / Ctrl+C at the root returns `null`. Field-level cancellation depends on the wrapped prompt; fields only update their value when their `edit(...)` method accepts a new value.
+- Cancellation behavior - Esc / Ctrl+C at the root returns `null`. Field-level cancellation leaves the field's existing value unchanged; fields only update their value when their `edit(...)` method accepts a new value.
 - Validation behavior - `Configurable.validate()` calls the field's validator, and `GroupConfigurable.validate()` checks children. The root save action does not currently run a full validation sweep automatically, so run validation yourself if you need a final gate.
 
 #### `Configurable<T>` Basics
@@ -1924,7 +2481,7 @@ Every config field stores display metadata, a typed value, serialization hooks, 
 - `value` - Current typed value.
 - `defaultValue` - Captured from the initial value and used for change detection.
 - `formatter` - Optional display formatter. If omitted, the field's `formatValue()` is used.
-- `validator` - Optional function that returns an error string or `null`.
+- `validator` - Optional function that returns an error string or `null`. Returning `''` is also accepted as a legacy-compatible success value.
 - `icon` - Optional glyph override. Otherwise each field uses its default type icon.
 - `displayValue` - Formatted row value.
 - `typeIcon` - Custom icon or field default.

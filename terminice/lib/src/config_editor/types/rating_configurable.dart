@@ -63,8 +63,7 @@ class RatingConfigurable extends Configurable<int> {
       labels: labels,
     );
     if (result != value) {
-      value = result;
-      return true;
+      return trySetValue(result);
     }
     return false;
   }

@@ -307,16 +307,20 @@ class SimplePrompts {
     int step = 1,
     PromptTheme theme = PromptTheme.dark,
   }) {
+    int clampValue(int value) => value.clamp(min, max).toInt();
+    final interactiveStart = clampValue(initial);
     return SimplePrompt<int>(
       title: title,
       theme: theme,
-      initialValue: initial.clamp(min, max),
-      buildBindings: (state) =>
-          KeyBindings.horizontalNavigation(
-            onLeft: () => state.value = (state.value - step).clamp(min, max),
-            onRight: () => state.value = (state.value + step).clamp(min, max),
-          ) +
-          KeyBindings.prompt(onCancel: state.cancel),
+      initialValue: initial,
+      buildBindings: (state) {
+        state.value = interactiveStart;
+        return KeyBindings.horizontalNavigation(
+              onLeft: () => state.value = clampValue(state.value - step),
+              onRight: () => state.value = clampValue(state.value + step),
+            ) +
+            KeyBindings.prompt(onCancel: state.cancel);
+      },
       render: (ctx, state) {
         ctx.gutterLine('${ctx.theme.accent}${state.value}${ctx.theme.reset}'
             '${ctx.theme.dim} (range: $min–$max)${ctx.theme.reset}');
@@ -412,7 +416,7 @@ class TextInputState {
 /// final result = TextPromptSync(
 ///   title: 'Enter name',
 ///   placeholder: 'Your name...',
-///   validator: (text) => text.length < 2 ? 'Too short' : '',
+///   validator: (text) => text.length < 2 ? 'Too short' : null,
 /// ).run();
 /// ```
 class TextPromptSync {
@@ -425,8 +429,9 @@ class TextPromptSync {
   /// Placeholder text shown when empty.
   final String? placeholder;
 
-  /// Validator function. Return empty string if valid, error message if not.
-  final String Function(String text)? validator;
+  /// Validator function. Return `null` if valid, or an error message if not.
+  /// Returning `''` is also accepted as success for backwards compatibility.
+  final String? Function(String text)? validator;
 
   /// Whether input is required (non-empty).
   final bool required;
@@ -474,8 +479,8 @@ class TextPromptSync {
 
           // Custom validation
           if (validator != null) {
-            final error = validator!(text);
-            if (error.isNotEmpty) {
+            final error = normalizeValidationError(validator!(text));
+            if (error != null) {
               state.setError(error);
               return KeyActionResult.handled;
             }
@@ -563,7 +568,7 @@ class SyncPrompts {
   static TextPromptSync text({
     required String title,
     String? placeholder,
-    String Function(String)? validator,
+    String? Function(String)? validator,
     bool required = false,
     PromptTheme theme = PromptTheme.dark,
   }) {
@@ -606,12 +611,12 @@ class SyncPrompts {
   /// ```dart
   /// final email = SyncPrompts.validated(
   ///   title: 'Enter email',
-  ///   validator: (t) => t.contains('@') ? '' : 'Invalid email',
+  ///   validator: (t) => t.contains('@') ? null : 'Invalid email',
   /// ).run();
   /// ```
   static TextPromptSync validated({
     required String title,
-    required String Function(String) validator,
+    required String? Function(String) validator,
     String? placeholder,
     PromptTheme theme = PromptTheme.dark,
   }) {

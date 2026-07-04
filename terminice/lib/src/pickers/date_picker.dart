@@ -43,10 +43,20 @@ extension DatePickerExtensions on Terminice {
     bool allowFuture = true,
   }) {
     final theme = defaultTheme;
-    final initial = initialDate ?? DateTime.now();
-    DateTime selected = DateTime(initial.year, initial.month, initial.day);
+    final today = _dateOnly(DateTime.now());
+    final bounds = _DateBounds(
+      lower: allowPast ? null : today,
+      upper: allowFuture ? null : today,
+    );
+    final initial = _dateOnly(initialDate ?? today);
+    DateTime selected = _clampDate(initial, bounds);
     DateTime viewMonth = DateTime(selected.year, selected.month);
     bool cancelled = false;
+
+    void select(DateTime candidate) {
+      selected = _clampDate(candidate, bounds);
+      viewMonth = DateTime(selected.year, selected.month);
+    }
 
     // Use KeyBindings for declarative key handling
     final bindings = KeyBindings([
@@ -54,8 +64,7 @@ extension DatePickerExtensions on Terminice {
           KeyBinding.single(
             KeyEventType.arrowLeft,
             (event) {
-              selected = selected.subtract(const Duration(days: 1));
-              viewMonth = DateTime(selected.year, selected.month);
+              select(selected.subtract(const Duration(days: 1)));
               return KeyActionResult.handled;
             },
             hintLabel: '←/→',
@@ -64,8 +73,7 @@ extension DatePickerExtensions on Terminice {
           KeyBinding.single(
             KeyEventType.arrowRight,
             (event) {
-              selected = selected.add(const Duration(days: 1));
-              viewMonth = DateTime(selected.year, selected.month);
+              select(selected.add(const Duration(days: 1)));
               return KeyActionResult.handled;
             },
           ),
@@ -73,8 +81,7 @@ extension DatePickerExtensions on Terminice {
           KeyBinding.single(
             KeyEventType.arrowUp,
             (event) {
-              selected = selected.subtract(const Duration(days: 7));
-              viewMonth = DateTime(selected.year, selected.month);
+              select(selected.subtract(const Duration(days: 7)));
               return KeyActionResult.handled;
             },
             hintLabel: '↑/↓',
@@ -83,8 +90,7 @@ extension DatePickerExtensions on Terminice {
           KeyBinding.single(
             KeyEventType.arrowDown,
             (event) {
-              selected = selected.add(const Duration(days: 7));
-              viewMonth = DateTime(selected.year, selected.month);
+              select(selected.add(const Duration(days: 7)));
               return KeyActionResult.handled;
             },
           ),
@@ -92,9 +98,7 @@ extension DatePickerExtensions on Terminice {
           KeyBinding.char(
             (c) => c.toLowerCase() == 'w',
             (event) {
-              selected =
-                  DateTime(selected.year + 1, selected.month, selected.day);
-              viewMonth = DateTime(selected.year, selected.month);
+              select(DateTime(selected.year + 1, selected.month, selected.day));
               return KeyActionResult.handled;
             },
             hintLabel: 'W/S',
@@ -103,9 +107,7 @@ extension DatePickerExtensions on Terminice {
           KeyBinding.char(
             (c) => c.toLowerCase() == 's',
             (event) {
-              selected =
-                  DateTime(selected.year - 1, selected.month, selected.day);
-              viewMonth = DateTime(selected.year, selected.month);
+              select(DateTime(selected.year - 1, selected.month, selected.day));
               return KeyActionResult.handled;
             },
           ),
@@ -113,8 +115,7 @@ extension DatePickerExtensions on Terminice {
           KeyBinding.single(
             KeyEventType.ctrlE,
             (event) {
-              selected = DateTime.now();
-              viewMonth = DateTime(selected.year, selected.month);
+              select(today);
               return KeyActionResult.handled;
             },
             hintLabel: 'Ctrl+E',
@@ -182,7 +183,7 @@ extension DatePickerExtensions on Terminice {
             } else {
               final current = DateTime(viewMonth.year, viewMonth.month, day);
               final isSelected = current.isSameDay(selected);
-              final isToday = current.isSameDay(DateTime.now());
+              final isToday = current.isSameDay(today);
               final text = day.toString().padLeft(2);
 
               if (isSelected) {
@@ -214,4 +215,26 @@ extension DatePickerExtensions on Terminice {
 
     return (cancelled || result == PromptResult.cancelled) ? null : selected;
   }
+}
+
+class _DateBounds {
+  final DateTime? lower;
+  final DateTime? upper;
+
+  const _DateBounds({this.lower, this.upper});
+}
+
+DateTime _dateOnly(DateTime value) {
+  return DateTime(value.year, value.month, value.day);
+}
+
+DateTime _clampDate(DateTime value, _DateBounds bounds) {
+  final date = _dateOnly(value);
+  final lower = bounds.lower;
+  if (lower != null && date.isBefore(lower)) return lower;
+
+  final upper = bounds.upper;
+  if (upper != null && date.isAfter(upper)) return upper;
+
+  return date;
 }

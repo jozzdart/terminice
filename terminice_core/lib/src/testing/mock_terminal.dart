@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:terminice_core/terminice_core.dart';
 
 /// A mock terminal implementation for testing.
@@ -14,10 +16,10 @@ class MockTerminal implements Terminal {
   }
 
   @override
-  TerminalInput get input => _input;
+  MockTerminalInput get input => _input;
 
   @override
-  TerminalOutput get output => _output;
+  MockTerminalOutput get output => _output;
 
   /// Access to the mock input for test setup.
   MockTerminalInput get mockInput => _input;
@@ -52,7 +54,7 @@ class MockTerminalInput implements TerminalInput {
 
   /// Queue a string as bytes (UTF-8).
   void queueString(String str) {
-    _byteQueue.addAll(str.codeUnits);
+    _byteQueue.addAll(utf8.encode(str));
   }
 
   /// Queue key events by type.
@@ -102,7 +104,7 @@ class MockTerminalInput implements TerminalInput {
         break;
       case KeyEventType.char:
         if (char != null && char.isNotEmpty) {
-          queueByte(char.codeUnitAt(0));
+          queueString(String.fromCharCode(char.runes.first));
         }
         break;
       case KeyEventType.ctrlGeneric:

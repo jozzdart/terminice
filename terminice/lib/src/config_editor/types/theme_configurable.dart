@@ -87,7 +87,7 @@ class ThemeConfigurable extends Configurable<String> {
   bool edit(Terminice terminice) {
     final keys = themes.keys.toList();
     final selected = focusedSelect(
-      theme: terminice.defaultTheme,
+      terminice: terminice,
       options: keys,
       title: label,
       initialIndex: keys.indexOf(value).clamp(0, keys.length - 1),
@@ -95,7 +95,7 @@ class ThemeConfigurable extends Configurable<String> {
       maxVisible: 10,
     );
     if (selected == null || selected == value) return false;
-    value = selected;
+    if (!trySetValue(selected)) return false;
     onChanged?.call(selectedTheme);
     return true;
   }

@@ -1,6 +1,9 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+import '../core/fallback_selection.dart';
+
 /// Presents a filterable list with optional multi-select controls.
 ///
 /// Controls:
@@ -39,13 +42,20 @@ extension SearchSelectorExtensions on Terminice {
     int maxVisible = 10,
   }) {
     if (options.isEmpty) return [];
-    return SearchableListPrompt<String>(
-      title: prompt,
-      items: options,
-      theme: defaultTheme,
-      multiSelect: multiSelect,
-      maxVisible: maxVisible,
-      searchEnabled: showSearch,
-    ).run();
+    return runWithFallback<List<String>>(
+      interactive: () => SearchableListPrompt<String>(
+        title: prompt,
+        items: options,
+        theme: defaultTheme,
+        multiSelect: multiSelect,
+        maxVisible: maxVisible,
+        searchEnabled: showSearch,
+      ).run(),
+      fallback: () => FallbackSelection.selectedList<String>(
+        title: prompt,
+        options: options,
+        multiSelect: multiSelect,
+      ),
+    );
   }
 }

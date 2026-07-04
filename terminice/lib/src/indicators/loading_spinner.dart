@@ -1,7 +1,11 @@
-import 'package:terminice/terminice.dart';
+import 'dart:async';
+
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/terminice_api.dart';
+import '../tasks/async_task.dart';
 import '_indicator_base.dart';
+import 'inline_spinner.dart';
 
 /// Adds the [loadingSpinner] method to the [Terminice] instance.
 extension LoadingSpinnerExtensions on Terminice {
@@ -23,8 +27,9 @@ extension LoadingSpinnerExtensions on Terminice {
     String message = 'Loading',
     SpinnerStyle style = SpinnerStyle.dots,
   }) {
-    return LoadingSpinner(
+    return LoadingSpinner._fromTerminice(
       prompt,
+      this,
       message: message,
       style: style,
       theme: defaultTheme,
@@ -69,6 +74,8 @@ class LoadingSpinner with IndicatorLifecycle {
   /// The theme controlling the colors used for the spinner and text.
   final PromptTheme theme;
 
+  final Terminice? _taskClient;
+
   /// Creates a loading spinner.
   ///
   /// The [prompt] is the label displayed above the spinner.
@@ -77,6 +84,14 @@ class LoadingSpinner with IndicatorLifecycle {
   /// The [theme] controls the colors used for the spinner and text.
   LoadingSpinner(
     this.prompt, {
+    this.message = 'Loading',
+    this.style = SpinnerStyle.dots,
+    this.theme = PromptTheme.dark,
+  }) : _taskClient = null;
+
+  LoadingSpinner._fromTerminice(
+    this.prompt,
+    this._taskClient, {
     this.message = 'Loading',
     this.style = SpinnerStyle.dots,
     this.theme = PromptTheme.dark,
@@ -96,6 +111,36 @@ class LoadingSpinner with IndicatorLifecycle {
         show(frame++);
       });
     });
+  }
+
+  /// Runs [run] while showing this spinner and returns its typed result.
+  ///
+  /// Errors are rendered with the same cleanup and rethrow behavior as
+  /// [AsyncTaskExtensions.task].
+  Future<T> whileRunning<T>(
+    FutureOr<T> Function() run, {
+    String? message,
+    String? success,
+    TaskErrorMessage? failure,
+    TaskErrorMessage? cancel,
+    TaskCancelPredicate? isCanceled,
+    Duration interval = const Duration(milliseconds: 80),
+    TaskDisplay display = TaskDisplay.auto,
+    TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
+  }) {
+    return indicatorTaskClient(theme, _taskClient).task<T>(
+      prompt,
+      run: run,
+      message: message ?? this.message,
+      success: success,
+      failure: failure,
+      cancel: cancel,
+      isCanceled: isCanceled,
+      interval: interval,
+      style: style,
+      display: display,
+      finalBehavior: finalBehavior,
+    );
   }
 
   void _render(RenderOutput out, int frameIndex) {

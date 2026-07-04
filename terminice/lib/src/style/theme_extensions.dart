@@ -25,15 +25,13 @@ extension ThemeExtensions on Terminice {
 
   /// Minimal display mode - no borders, inline hints.
   /// Uses current colors with minimal features.
-  Terminice get minimal => themed(PromptTheme.minimal);
+  Terminice get minimal => withFeatures(DisplayFeatures.minimal);
 
   /// Compact display mode - borders but no hints.
-  Terminice get compact => themed(PromptTheme.compact);
+  Terminice get compact => withFeatures(DisplayFeatures.compact);
 
   /// Verbose display mode - full borders with grid hints.
-  Terminice get verbose => themed(defaultTheme.copyWith(
-        features: DisplayFeatures.verbose,
-      ));
+  Terminice get verbose => withFeatures(DisplayFeatures.verbose);
 
   // ════════════════════════════════════════════════════════════════════════════
   // COLOR THEME PRESETS
@@ -72,16 +70,11 @@ extension ThemeExtensions on Terminice {
 
   /// Returns a new client with custom colors, preserving glyphs and features.
   Terminice withColors(TerminalColors colors) {
-    return themed(defaultTheme.copyWith(colors: colors));
+    return themed(baseTheme.copyWith(colors: colors));
   }
 
   /// Returns a new client with custom glyphs, preserving colors and features.
   Terminice withGlyphs(TerminalGlyphs glyphs) {
-    return themed(defaultTheme.copyWith(glyphs: glyphs));
-  }
-
-  /// Returns a new client with custom display features, preserving colors and glyphs.
-  Terminice withFeatures(DisplayFeatures features) {
-    return themed(defaultTheme.copyWith(features: features));
+    return themed(baseTheme.copyWith(glyphs: glyphs));
   }
 }

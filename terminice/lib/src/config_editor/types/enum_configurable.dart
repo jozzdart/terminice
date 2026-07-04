@@ -44,7 +44,7 @@ class EnumConfigurable extends Configurable<String> {
   @override
   bool edit(Terminice terminice) {
     final selected = focusedSelect(
-      theme: terminice.defaultTheme,
+      terminice: terminice,
       options: options,
       title: label,
       initialIndex: options.indexOf(value).clamp(0, options.length - 1),
@@ -52,12 +52,7 @@ class EnumConfigurable extends Configurable<String> {
       maxVisible: 10,
     );
     if (selected == null || selected == value) return false;
-    if (validator != null) {
-      final error = validator!(selected);
-      if (error != null) return false;
-    }
-    value = selected;
-    return true;
+    return trySetValue(selected);
   }
 
   @override

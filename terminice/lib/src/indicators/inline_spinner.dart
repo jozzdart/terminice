@@ -1,5 +1,6 @@
-import 'package:terminice/terminice.dart';
+import 'package:terminice_core/terminice_core.dart';
 
+import '../core/terminice_api.dart';
 import '_indicator_base.dart';
 
 /// Adds the [inlineSpinner] method to the [Terminice] instance.

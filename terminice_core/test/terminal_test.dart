@@ -1,7 +1,18 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:test/test.dart';
 import 'package:terminice_core/terminice_core.dart';
 
 import 'mock_terminal.dart';
+
+List<int> _drainBytes(MockTerminalInput input) {
+  final bytes = <int>[];
+  while (input.bytesRemaining > 0) {
+    bytes.add(input.readByteSync());
+  }
+  return bytes;
+}
 
 void main() {
   group('Terminal Interface', () {
@@ -75,10 +86,15 @@ void main() {
       expect(input.readByteSync(), equals(65));
     });
 
-    test('queueString adds string as bytes', () {
+    test('queueString adds string as UTF-8 bytes', () {
       input.queueString('AB');
       expect(input.readByteSync(), equals(65));
       expect(input.readByteSync(), equals(66));
+    });
+
+    test('queueString adds non-ASCII text as UTF-8 bytes', () {
+      input.queueString('é界');
+      expect(_drainBytes(input), equals(utf8.encode('é界')));
     });
 
     test('queueKey queues enter key', () {
@@ -106,6 +122,11 @@ void main() {
     test('queueKey queues character', () {
       input.queueKey(KeyEventType.char, 'a');
       expect(input.readByteSync(), equals(97));
+    });
+
+    test('queueKey queues non-ASCII character as UTF-8 bytes', () {
+      input.queueKey(KeyEventType.char, 'éx');
+      expect(_drainBytes(input), equals(utf8.encode('é')));
     });
 
     test('queueLine adds line to queue', () {
@@ -345,27 +366,164 @@ void main() {
       expect(TerminalContext.hasCustomTerminal, isFalse);
     });
 
+    test('hasInitializedTerminal returns false before first access', () {
+      TerminalContext.reset();
+      expect(TerminalContext.hasInitializedTerminal, isFalse);
+    });
+
     test('hasCustomTerminal returns true after accessing current', () {
       TerminalContext.reset();
       TerminalContext.current; // triggers lazy init
       expect(TerminalContext.hasCustomTerminal, isTrue);
+      expect(TerminalContext.hasInitializedTerminal, isTrue);
     });
 
     test('hasCustomTerminal returns true after setting custom', () {
       TerminalContext.current = MockTerminal();
       expect(TerminalContext.hasCustomTerminal, isTrue);
+      expect(TerminalContext.hasInitializedTerminal, isTrue);
     });
 
     test('hasCustomTerminal returns false after reset', () {
       TerminalContext.current = MockTerminal();
       TerminalContext.reset();
       expect(TerminalContext.hasCustomTerminal, isFalse);
+      expect(TerminalContext.hasInitializedTerminal, isFalse);
     });
 
     test('setting null resets to default', () {
       TerminalContext.current = MockTerminal();
       TerminalContext.current = null;
       expect(TerminalContext.current, isA<DartTerminal>());
+    });
+
+    test('capture restores an initialized custom terminal', () {
+      final first = MockTerminal();
+      final second = MockTerminal();
+      TerminalContext.current = first;
+
+      final snapshot = TerminalContext.capture();
+      expect(snapshot.hadInitializedTerminal, isTrue);
+      expect(snapshot.terminal, same(first));
+
+      TerminalContext.current = second;
+      snapshot.restore();
+
+      expect(TerminalContext.current, same(first));
+    });
+
+    test('capture restores an initialized default terminal', () {
+      final initial = TerminalContext.current;
+      final replacement = MockTerminal();
+
+      final snapshot = TerminalContext.capture();
+      TerminalContext.current = replacement;
+      snapshot.restore();
+
+      expect(TerminalContext.current, same(initial));
+    });
+
+    test('capture restores an uninitialized context without lazy init', () {
+      TerminalContext.reset();
+
+      final snapshot = TerminalContext.capture();
+      expect(snapshot.hadInitializedTerminal, isFalse);
+      expect(snapshot.terminal, isNull);
+
+      TerminalContext.current = MockTerminal();
+      snapshot.restore();
+
+      expect(TerminalContext.hasInitializedTerminal, isFalse);
+    });
+
+    test('runWith restores previous terminal after success', () {
+      final previous = MockTerminal();
+      final target = MockTerminal();
+      TerminalContext.current = previous;
+
+      final result = TerminalContext.runWith(target, () {
+        expect(TerminalContext.current, same(target));
+        return 7;
+      });
+
+      expect(result, equals(7));
+      expect(TerminalContext.current, same(previous));
+    });
+
+    test('runWith restores previous terminal after error', () {
+      final previous = MockTerminal();
+      final target = MockTerminal();
+      final error = StateError('boom');
+      TerminalContext.current = previous;
+
+      expect(
+        () => TerminalContext.runWith<void>(target, () {
+          expect(TerminalContext.current, same(target));
+          throw error;
+        }),
+        throwsA(same(error)),
+      );
+      expect(TerminalContext.current, same(previous));
+    });
+
+    test('runWith restores an uninitialized context', () {
+      final target = MockTerminal();
+      TerminalContext.reset();
+
+      TerminalContext.runWith(target, () {
+        expect(TerminalContext.current, same(target));
+      });
+
+      expect(TerminalContext.hasInitializedTerminal, isFalse);
+    });
+
+    test('runWithAsync restores previous terminal after success', () async {
+      final previous = MockTerminal();
+      final target = MockTerminal();
+      TerminalContext.current = previous;
+
+      final result = await TerminalContext.runWithAsync(target, () async {
+        expect(TerminalContext.current, same(target));
+        await Future<void>.value();
+        expect(TerminalContext.current, same(target));
+        return 7;
+      });
+
+      expect(result, equals(7));
+      expect(TerminalContext.current, same(previous));
+    });
+
+    test('runWithAsync restores previous terminal after error', () async {
+      final previous = MockTerminal();
+      final target = MockTerminal();
+      final error = StateError('async boom');
+      TerminalContext.current = previous;
+
+      await expectLater(
+        TerminalContext.runWithAsync<void>(target, () async {
+          expect(TerminalContext.current, same(target));
+          await Future<void>.value();
+          throw error;
+        }),
+        throwsA(same(error)),
+      );
+      expect(TerminalContext.current, same(previous));
+    });
+
+    test('runWithAsync restores an uninitialized context after error',
+        () async {
+      final target = MockTerminal();
+      final error = StateError('async boom');
+      TerminalContext.reset();
+
+      await expectLater(
+        TerminalContext.runWithAsync<void>(target, () async {
+          expect(TerminalContext.current, same(target));
+          throw error;
+        }),
+        throwsA(same(error)),
+      );
+      expect(TerminalContext.hasInitializedTerminal, isFalse);
     });
   });
 
@@ -410,6 +568,102 @@ void main() {
       TerminalControl.clearAndHome();
       expect(terminal.mockOutput.contains('\x1B[2J'), isTrue);
       expect(terminal.mockOutput.contains('\x1B[H'), isTrue);
+    });
+  });
+
+  group('TerminalSession with MockTerminal', () {
+    late MockTerminal terminal;
+
+    setUp(() {
+      terminal = MockTerminal();
+      TerminalContext.current = terminal;
+    });
+
+    tearDown(() {
+      TerminalContext.reset();
+    });
+
+    void expectSessionRestored(TerminalSession session) {
+      expect(session.isActive, isFalse);
+      expect(terminal.mockInput.echoMode, isTrue);
+      expect(terminal.mockInput.lineMode, isTrue);
+
+      final output = terminal.mockOutput.allOutput;
+      final hideIndex = output.indexOf('\x1B[?25l');
+      final showIndex = output.indexOf('\x1B[?25h');
+      expect(hideIndex, isNot(equals(-1)));
+      expect(showIndex, greaterThan(hideIndex));
+    }
+
+    test('runAsync restores raw mode and cursor after async success', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      final result = await session.runAsync(() async {
+        expect(session.isActive, isTrue);
+        expect(terminal.mockInput.echoMode, isFalse);
+        expect(terminal.mockInput.lineMode, isFalse);
+
+        await Future<void>.value();
+        return 'done';
+      });
+
+      expect(result, equals('done'));
+      expectSessionRestored(session);
+    });
+
+    test('runAsync restores raw mode and cursor after async error', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      await expectLater(
+        session.runAsync<void>(() async {
+          expect(session.isActive, isTrue);
+          expect(terminal.mockInput.echoMode, isFalse);
+          expect(terminal.mockInput.lineMode, isFalse);
+
+          await Future<void>.value();
+          throw StateError('boom');
+        }),
+        throwsA(isA<StateError>()),
+      );
+
+      expectSessionRestored(session);
+    });
+
+    test('runAsync restores raw mode and cursor after sync throw', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      await expectLater(
+        session.runAsync<void>(() {
+          expect(session.isActive, isTrue);
+          expect(terminal.mockInput.echoMode, isFalse);
+          expect(terminal.mockInput.lineMode, isFalse);
+
+          throw ArgumentError('boom');
+        }),
+        throwsA(isA<ArgumentError>()),
+      );
+
+      expectSessionRestored(session);
+    });
+
+    test('runWithOutputAsync clears output after ending session', () async {
+      final session = TerminalSession(hideCursor: true, rawMode: true);
+
+      await session.runWithOutputAsync<void>(
+        (out) async {
+          out.writeln('Working');
+          await Future<void>.value();
+        },
+        clearOnEnd: true,
+      );
+
+      expectSessionRestored(session);
+
+      final output = terminal.mockOutput.allOutput;
+      final showIndex = output.indexOf('\x1B[?25h');
+      final clearIndex = output.indexOf('\x1B[1A');
+      expect(clearIndex, greaterThan(showIndex));
+      expect(output.contains('\x1B[0J'), isTrue);
     });
   });
 
@@ -526,6 +780,12 @@ void main() {
       expect(event.type, equals(KeyEventType.esc));
     });
 
+    test('reads arrow key', () {
+      terminal.mockInput.queueKey(KeyEventType.arrowUp);
+      final event = KeyEventReader.read();
+      expect(event.type, equals(KeyEventType.arrowUp));
+    });
+
     test('reads ctrl+c', () {
       terminal.mockInput.queueKey(KeyEventType.ctrlC);
       final event = KeyEventReader.read();
@@ -543,6 +803,39 @@ void main() {
       final event = KeyEventReader.read();
       expect(event.type, equals(KeyEventType.char));
       expect(event.char, equals('a'));
+    });
+
+    test('reads UTF-8 characters', () {
+      final chars = ['é', '界', String.fromCharCode(0x1D11E)];
+      terminal.mockInput.queueString(chars.join());
+
+      for (final char in chars) {
+        final event = KeyEventReader.read();
+        expect(event.type, equals(KeyEventType.char));
+        expect(event.char, equals(char));
+      }
+    });
+
+    test('replays non-continuation byte after malformed UTF-8 starter', () {
+      terminal.mockInput.queueBytes([0xC3, 0x61]);
+
+      final malformed = KeyEventReader.read();
+      expect(malformed.type, equals(KeyEventType.unknown));
+      expect(malformed.char, isNull);
+
+      final replayed = KeyEventReader.read();
+      expect(replayed.type, equals(KeyEventType.char));
+      expect(replayed.char, equals('a'));
+      expect(terminal.mockInput.bytesRemaining, equals(0));
+    });
+
+    test('reads incomplete UTF-8 starter at EOF as unknown', () {
+      terminal.mockInput.queueByte(0xC3);
+
+      final event = KeyEventReader.read();
+      expect(event.type, equals(KeyEventType.unknown));
+      expect(event.char, isNull);
+      expect(terminal.mockInput.bytesRemaining, equals(0));
     });
 
     test('reads backspace', () {

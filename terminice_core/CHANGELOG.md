@@ -1,3 +1,22 @@
+## 1.1.0
+
+- **New**: Added public `FallbackPrompt` line-mode primitives for prompt flows that should not enter raw terminal mode.
+- **New**: Added `FallbackPrompt.range()` and `FallbackPrompt.form()` helpers so bounded range input and fallback form validation share one core implementation.
+- **New**: Added `TerminalScript` for reusable line, text, and key-event input scripts in mock-terminal tests.
+- **New**: Added `TerminalOutputSnapshot` for stable raw, plain-text, normalized-text, and ANSI/control-output assertions.
+- **New**: Added `TerminalContext.capture()`, `TerminalContextSnapshot`, `TerminalContext.runWith()`, `TerminalContext.runWithAsync()`, and `TerminalContext.hasInitializedTerminal` for scoped terminal replacement and precise context restoration.
+- **New**: Public testing exports now include mock-terminal script and output snapshot extensions for `MockTerminal`, `MockTerminalInput`, and `MockTerminalOutput`.
+- **Behavior**: `MockTerminalInput`, `TerminalScript` raw text/key input, and `KeyEventReader` now handle valid multi-byte UTF-8 characters as `KeyEventType.char` events.
+- **Behavior**: Fallback prompts read normal input lines while preserving validation feedback and cancellation behavior.
+- **Behavior**: Standardized nullable validator semantics and shared normalization so `null` and legacy `''` both mean success.
+- **Behavior**: Fallback prompts now distinguish EOF or unavailable stdin from blank input, preserving blank-line default acceptance.
+- **Behavior**: `SimplePrompts.number()` cancellation returns the exact caller-supplied initial value while confirmed values remain clamped.
+- **New**: Added `TerminalSession.runAsync()` and `runWithOutputAsync()` helpers for awaited operations with guaranteed cleanup.
+- **Validation**: Added validator coverage for fallback prompt input paths and guarded numeric fallback input against non-finite values.
+- **Tests**: Added async terminal cleanup coverage for successful, failing, and cancelling session operations.
+- **Documentation and tests**: Updated README guidance and tests for fallback primitives and line-mode behavior.
+- Bumped `termistyle` dependency lower bound to `^1.1.0`.
+
 ## 1.0.0
 
 - First stable release

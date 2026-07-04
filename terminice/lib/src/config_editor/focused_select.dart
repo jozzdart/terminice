@@ -1,5 +1,9 @@
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+import '../core/fallback_selection.dart';
+import '../core/terminice_api.dart';
+
 /// A searchable single-select prompt that starts the cursor on a given index.
 ///
 /// Functionally equivalent to [SearchableListPrompt] in single-select mode
@@ -9,7 +13,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// A `✓` marker is rendered next to the item at [initialIndex] so the user
 /// can see which value was previously set even after scrolling away.
 String? focusedSelect({
-  required PromptTheme theme,
+  required Terminice terminice,
   required List<String> options,
   required String title,
   int initialIndex = 0,
@@ -19,6 +23,31 @@ String? focusedSelect({
   if (options.isEmpty) return null;
 
   final clampedInit = initialIndex.clamp(0, options.length - 1);
+  return terminice.runWithFallback<String?>(
+    interactive: () => _interactiveFocusedSelect(
+      theme: terminice.defaultTheme,
+      options: options,
+      title: title,
+      clampedInit: clampedInit,
+      showSearch: showSearch,
+      maxVisible: maxVisible,
+    ),
+    fallback: () => FallbackSelection.single<String>(
+      title: title,
+      options: options,
+      defaultIndex: clampedInit,
+    ),
+  );
+}
+
+String? _interactiveFocusedSelect({
+  required PromptTheme theme,
+  required List<String> options,
+  required String title,
+  required int clampedInit,
+  required bool showSearch,
+  required int maxVisible,
+}) {
   final nav = ListNavigator(
     itemCount: options.length,
     maxVisible: maxVisible,

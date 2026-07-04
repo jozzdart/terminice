@@ -13,4 +13,6 @@
 library testing;
 
 export 'package:terminice_core/terminice_core.dart';
+export 'src/testing/output_snapshot.dart';
 export 'src/testing/mock_terminal.dart';
+export 'src/testing/terminal_script.dart';

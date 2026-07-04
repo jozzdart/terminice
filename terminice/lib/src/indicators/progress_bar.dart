@@ -1,6 +1,10 @@
-import 'package:terminice/terminice.dart';
+import 'dart:async';
+
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/terminice_api.dart';
+import '../progress_display.dart';
+import '../tasks/async_task.dart';
 import '_indicator_base.dart';
 
 /// Adds the [progressBar] method to the [Terminice] instance.
@@ -17,7 +21,7 @@ extension ProgressBarExtensions on Terminice {
   ///
   /// The [prompt] is the label displayed above the progress bar.
   ProgressBar progressBar(String prompt) {
-    return ProgressBar(prompt, theme: defaultTheme);
+    return ProgressBar._fromTerminice(prompt, this, theme: defaultTheme);
   }
 }
 
@@ -52,6 +56,8 @@ class ProgressBar with IndicatorLifecycle {
   /// The theme controlling the colors used for the progress bar and text.
   final PromptTheme theme;
 
+  final Terminice? _taskClient;
+
   /// Creates a progress bar.
   ///
   /// The [prompt] is the label displayed above the progress bar.
@@ -60,6 +66,14 @@ class ProgressBar with IndicatorLifecycle {
   /// The [theme] controls the colors used for the progress bar and text.
   ProgressBar(
     this.prompt, {
+    this.width = 36,
+    this.theme = PromptTheme.dark,
+  })  : _taskClient = null,
+        assert(width > 4);
+
+  ProgressBar._fromTerminice(
+    this.prompt,
+    this._taskClient, {
     this.width = 36,
     this.theme = PromptTheme.dark,
   }) : assert(width > 4);
@@ -85,12 +99,73 @@ class ProgressBar with IndicatorLifecycle {
     });
   }
 
+  /// Runs [run] with a progress handle while rendering determinate progress.
+  ///
+  /// Errors are rendered with the same cleanup and rethrow behavior as
+  /// [AsyncTaskExtensions.progressTask].
+  Future<T> whileRunning<T>(
+    FutureOr<T> Function(TaskProgress progress) run, {
+    required int total,
+    String? message,
+    String? success,
+    TaskErrorMessage? failure,
+    TaskErrorMessage? cancel,
+    TaskCancelPredicate? isCanceled,
+    TaskDisplay display = TaskDisplay.auto,
+    TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
+    Duration interval = const Duration(milliseconds: 80),
+  }) {
+    return indicatorTaskClient(theme, _taskClient).progressTask<T>(
+      prompt,
+      total: total,
+      run: run,
+      message: message,
+      success: success,
+      failure: failure,
+      cancel: cancel,
+      isCanceled: isCanceled,
+      display: display,
+      finalBehavior: finalBehavior,
+      interval: interval,
+      progressWidth: width,
+    );
+  }
+
+  /// Collects [source] while advancing the progress bar once per event.
+  Future<List<T>> trackStream<T>(
+    Stream<T> source, {
+    required int total,
+    String? message,
+    String? success,
+    TaskErrorMessage? failure,
+    TaskErrorMessage? cancel,
+    TaskCancelPredicate? isCanceled,
+    TaskDisplay display = TaskDisplay.auto,
+    TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
+    Duration interval = const Duration(milliseconds: 80),
+  }) {
+    return indicatorTaskClient(theme, _taskClient).trackStream<T>(
+      prompt,
+      source,
+      total: total,
+      message: message,
+      success: success,
+      failure: failure,
+      cancel: cancel,
+      isCanceled: isCanceled,
+      display: display,
+      finalBehavior: finalBehavior,
+      interval: interval,
+      progressWidth: width,
+    );
+  }
+
   void _render(RenderOutput out, int current, int total, int shimmerPhase) {
     final widgetFrame = FrameView(title: prompt, theme: theme);
     widgetFrame.showTo(out, (ctx) {
-      final ratio = total > 0 ? current / total : 0.0;
-      final filled = (ratio * width).clamp(0, width).round();
-      final percent = (ratio * 100).clamp(0, 100).round();
+      final display = progressDisplay(current: current, total: total);
+      final filled = display.filledUnits(width);
+      final percent = display.percent;
 
       final buffer = StringBuffer();
       for (int i = 0; i < width; i++) {
@@ -122,7 +197,7 @@ class ProgressBar with IndicatorLifecycle {
       ctx.gutterLine(buffer.toString());
       ctx.gutterLine(
           '${theme.dim}Progress:${theme.reset} ${theme.accent}$percent%${theme.reset}   '
-          '${theme.dim}($current/$total)${theme.reset}');
+          '${theme.dim}(${display.current}/${display.total})${theme.reset}');
     });
 
     out.writeln(HintFormat.bullets([

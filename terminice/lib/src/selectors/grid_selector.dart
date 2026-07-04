@@ -1,6 +1,9 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+import '../core/fallback_selection.dart';
+
 /// Generic 2D grid selector with arrow-key navigation.
 ///
 /// Controls:
@@ -40,15 +43,24 @@ extension GridSelectorExtensions on Terminice {
     int? maxColumns,
     Set<int>? initialSelection,
   }) {
-    return SelectableGridPrompt<String>(
-      title: prompt,
-      items: options,
-      theme: defaultTheme,
-      multiSelect: multiSelect,
-      columns: columns,
-      cellWidth: cellWidth,
-      maxColumns: maxColumns,
-      initialSelection: initialSelection,
-    ).run();
+    if (options.isEmpty) return <String>[];
+    return runWithFallback<List<String>>(
+      interactive: () => SelectableGridPrompt<String>(
+        title: prompt,
+        items: options,
+        theme: defaultTheme,
+        multiSelect: multiSelect,
+        columns: columns,
+        cellWidth: cellWidth,
+        maxColumns: maxColumns,
+        initialSelection: initialSelection,
+      ).run(),
+      fallback: () => FallbackSelection.selectedList<String>(
+        title: prompt,
+        options: options,
+        multiSelect: multiSelect,
+        defaultIndices: initialSelection,
+      ),
+    );
   }
 }

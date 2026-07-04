@@ -1,6 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/component_runner.dart';
+
 /// Text input prompt with placeholder support, inline validation, and clear
 /// control hints that render cleanly on pub.dev.
 ///
@@ -35,15 +37,23 @@ extension TextPromptExtensions on Terminice {
   String? text(
     String prompt, {
     String? placeholder,
-    String Function(String)? validator,
+    String? Function(String)? validator,
     bool required = true,
   }) {
-    return TextPromptSync(
-      title: prompt,
-      theme: defaultTheme,
-      placeholder: placeholder,
-      validator: validator,
-      required: required,
-    ).run();
+    return runWithFallback<String?>(
+      interactive: () => TextPromptSync(
+        title: prompt,
+        theme: defaultTheme,
+        placeholder: placeholder,
+        validator: validator,
+        required: required,
+      ).run(),
+      fallback: () => FallbackPrompt.text(
+        title: prompt,
+        required: required,
+        validator: validator,
+        returnDefaultOnEndOfInput: false,
+      ),
+    );
   }
 }

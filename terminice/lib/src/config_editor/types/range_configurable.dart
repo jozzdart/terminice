@@ -100,8 +100,7 @@ class RangeConfigurable extends Configurable<RangeValue> {
     );
     final newValue = RangeValue(result.start, result.end);
     if (newValue != value) {
-      value = newValue;
-      return true;
+      return trySetValue(newValue);
     }
     return false;
   }

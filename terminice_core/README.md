@@ -116,6 +116,26 @@ final rows = TerminalContext.output.terminalLines;
 TerminalContext.output.write('\x1B[31mHello\x1B[0m');
 ```
 
+For scoped test setup or nested terminal replacement, use the context helpers so the previous terminal is restored even when the body throws:
+
+```dart
+final result = TerminalContext.runWith(mockTerminal, () {
+  return component.run();
+});
+
+await TerminalContext.runWithAsync(mockTerminal, () async {
+  await component.runAsync();
+});
+
+final snapshot = TerminalContext.capture();
+try {
+  TerminalContext.current = mockTerminal;
+  // Run code with the mock terminal...
+} finally {
+  snapshot.restore();
+}
+```
+
 ### Terminal Control & Raw Mode
 
 Interactive CLI applications require "raw mode" to read keystrokes immediately without waiting for the user to press Enter, and to prevent those keystrokes from echoing to the screen. `TerminalControl` handles entering raw mode and capturing the previous state so it can be safely restored. It also provides helpers for cursor visibility and screen clearing.
@@ -137,7 +157,7 @@ try {
 
 ### Key Events
 
-Terminals send input as a stream of bytes. While normal characters are single bytes, special keys like arrows or `F1` are sent as multi-byte ANSI escape sequences (e.g., `ESC [ A` for up arrow). `KeyEventReader` synchronously reads from the terminal input, intercepts these sequences, and normalizes them into a simple, predictable `KeyEvent` object.
+Terminals send input as a stream of bytes. Printable text is decoded as UTF-8, so valid one-byte ASCII and multi-byte characters both become `KeyEventType.char` events. Special keys like arrows or `F1` are sent as multi-byte ANSI escape sequences (e.g., `ESC [ A` for up arrow). `KeyEventReader` synchronously reads from the terminal input, intercepts these sequences, and normalizes them into a simple, predictable `KeyEvent` object.
 
 ```dart
 // Read a single normalized key event
@@ -333,6 +353,7 @@ The **Prompt** module is the orchestrator that ties IO, Navigation, and Renderin
 - `SimplePrompt`, `PromptState`
 - `TextPromptSync`, `TextInputBuffer`
 - `SelectableListPrompt`, `SearchableListPrompt`, `SelectableGridPrompt` (and more)
+- `FallbackPrompt`
 
 ### Prompt Runner & Render Output
 
@@ -346,6 +367,19 @@ final result = runner.runWithBindings(
   },
   bindings: myKeyBindings,
 );
+```
+
+For display sessions that wrap asynchronous work, `TerminalSession` also has async lifecycle helpers. `runAsync` keeps cursor/raw-mode state active until awaited work completes, and `runWithOutputAsync` provides a `RenderOutput` with the same cleanup guarantees as `runWithOutput`.
+
+```dart
+final session = TerminalSession(hideCursor: true);
+
+await session.runWithOutputAsync((out) async {
+  out.writeln('Loading...');
+  await loadData();
+  out.clear();
+  out.writeln('Done.');
+}, clearOnEnd: true);
 ```
 
 ### Simple Prompt
@@ -385,6 +419,46 @@ final password = TextPromptSync(
 ).run();
 ```
 
+### Fallback Prompt
+
+`FallbackPrompt` provides line-mode prompt primitives for limited or non-rich terminal environments. It is useful when a prompt should still work without entering raw mode, hiding the cursor, clearing the screen, or relying on ANSI cursor movement. The high-level `terminice` package can build richer workflows on top of core prompts, while these primitives remain the plain-text fallback layer inside `terminice_core`.
+
+The fallback API includes `text`, `password`, `confirm`, `singleSelect`, `multiSelect`, `number`, `range`, and `form`. Each method reads complete lines with `TerminalContext.input.readLineSync` and writes only through `TerminalContext.output.write` or `TerminalContext.output.writeln`.
+
+```dart
+final name = FallbackPrompt.text(
+  title: 'Name',
+  required: true,
+  validator: (value) => value.length < 2 ? 'Too short' : null,
+);
+
+final confirmed = FallbackPrompt.confirm(
+  title: 'Continue?',
+  defaultValue: true,
+);
+
+final count = FallbackPrompt.number(
+  title: 'Count',
+  min: 1,
+  max: 10,
+);
+
+final window = FallbackPrompt.range(
+  title: 'Window',
+  min: 0,
+  max: 100,
+);
+
+final login = FallbackPrompt.form(
+  fields: const [
+    FallbackFormField(label: 'Name', required: true),
+    FallbackFormField(label: 'Password', masked: true, required: true),
+  ],
+);
+```
+
+Fallback validators for `text` and `number` return `null` for success, or a non-empty string to display as the validation error before asking again. Returning `''` is still accepted as success for backwards compatibility. `password` intentionally uses the same line-mode path as `text`, so it does not mask characters or disable terminal echo.
+
 ---
 
 ## Testing
@@ -394,12 +468,16 @@ The **Testing** module provides a suite of mock objects that allow you to test y
 ### API Surface
 
 - `MockTerminal`, `MockTerminalInput`, `MockTerminalOutput`
+- `TerminalScript`, `TerminalScriptBuilder`, `TerminalScriptStep`
+- `TerminalOutputSnapshot`
 - `SpyTerminal`
 - `ErrorTerminal`
 
 ### Mock Terminal
 
-`MockTerminal` is the primary tool for testing interactive prompts. It allows you to queue up a sequence of simulated keystrokes (like typing a string, pressing arrow keys, and hitting Enter) and then inspect the resulting output buffer to ensure your UI rendered correctly.
+`MockTerminal` is the primary tool for testing interactive prompts. It lets you queue simulated keystrokes, line-mode input, and raw text bytes, then inspect the output buffer after your component runs. The helpers are exported from `package:terminice_core/testing.dart`.
+
+For high-level `terminice` applications, prefer the sidecar `package:terminice/testing.dart`, which layers `TerminiceTester` on top of these core primitives.
 
 ```dart
 test('SimplePrompt returns true when user presses y', () {
@@ -422,6 +500,62 @@ test('SimplePrompt returns true when user presses y', () {
   // Assert the visual output
   expect(mock.mockOutput.allOutput, contains('Delete file?'));
 });
+```
+
+### Terminal Scripts
+
+`TerminalScript` is an immutable, reusable input script for a `MockTerminal`. Use it when a test needs a readable sequence of line-mode answers, typed text, or interactive key presses.
+
+```dart
+test('queues interactive input with a script', () {
+  final terminal = MockTerminal()
+    ..queueScript(
+      TerminalScript.build(
+        (script) => script.text('Ada').enter(),
+      ),
+    );
+
+  TerminalContext.current = terminal;
+
+  final result = TextPromptSync(title: 'Name').run();
+
+  expect(result, equals('Ada'));
+  expect(terminal.outputSnapshot.plainText, contains('Name'));
+});
+```
+
+Line-mode scripts pair naturally with `FallbackPrompt`:
+
+```dart
+test('reads fallback lines without stdin', () {
+  final terminal = MockTerminal()
+    ..queueScript(TerminalScript.lines(['3']));
+
+  TerminalContext.current = terminal;
+
+  final count = FallbackPrompt.number(title: 'Count', min: 1, max: 5);
+
+  expect(count, equals(3));
+  expect(terminal.outputSnapshot.normalizedText, contains('Count'));
+});
+```
+
+### Output Snapshots
+
+`TerminalOutputSnapshot` wraps captured output with assertion-friendly views:
+
+- `raw` - the exact bytes written as a Dart string.
+- `plainText` - output with ANSI/control sequences stripped.
+- `normalizedText` - plain text with normalized line endings and trimmed trailing whitespace/newlines.
+- `plainLines` - stripped output split into lines.
+- `containsAnsiControls` - whether the raw output contained terminal controls.
+
+```dart
+final output = terminal.outputSnapshot;
+
+expect(output.plainText, contains('Ready'));
+expect(output.normalizedText, equals('OK: Ready'));
+expect(output.containsAnsiControls, isFalse);
 ```
 
 ### Spy and Error Terminals

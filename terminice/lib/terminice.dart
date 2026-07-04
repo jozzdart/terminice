@@ -19,7 +19,7 @@
 /// void main() {
 ///   // Use the global instance directly
 ///   final name = terminice.text('What is your name?');
-///   
+///
 ///   // Chain a theme and a display mode directly
 ///   final choice = terminice.ocean.compact.confirm(message: 'Save changes?');
 /// }

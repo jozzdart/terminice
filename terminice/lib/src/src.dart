@@ -1,5 +1,6 @@
 export 'core/core_exports.dart';
 export 'core/terminice_api.dart';
+export 'flow/flow.dart';
 export 'guides/cheat_sheet.dart';
 export 'guides/help_center.dart';
 export 'guides/hotkey_guide.dart';
@@ -30,6 +31,7 @@ export 'selectors/search_selector.dart';
 export 'selectors/tag_selector.dart';
 export 'selectors/toggle_group.dart';
 export 'style/theme_extensions.dart';
+export 'tasks/async_task.dart';
 export 'config_editor/configurable.dart';
 export 'config_editor/config_editor.dart';
 export 'config_editor/config_factory.dart';
