@@ -182,13 +182,7 @@ abstract class _AnimatedTaskRenderer extends _TaskRenderer {
   }
 
   T _withTerminal<T>(T Function() body) {
-    final previous = TerminalContext.current;
-    TerminalContext.current = terminal;
-    try {
-      return body();
-    } finally {
-      TerminalContext.current = previous;
-    }
+    return TerminalContext.runWith(terminal, body);
   }
 
   void _recordRenderFailure(Object error, StackTrace stackTrace) {

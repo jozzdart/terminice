@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:test/test.dart';
-import 'package:terminice/terminice.dart';
-
-import 'mock_terminal.dart';
+import 'package:terminice/testing.dart';
 
 void main() {
   setUp(TerminalContext.reset);
@@ -148,8 +146,9 @@ void main() {
       );
 
       expect(result, equals(7));
-      expect(_stripAnsi(target.mockOutput.allOutput), contains('Origin'));
-      expect(_stripAnsi(target.mockOutput.allOutput), contains('done'));
+      final output = target.outputSnapshot;
+      expect(output.plainText, contains('Origin'));
+      expect(output.plainText, contains('done'));
       _expectCursorRestored(target.mockOutput.allOutput);
       expect(other.mockOutput.allOutput, isEmpty);
     });
@@ -166,8 +165,9 @@ void main() {
 
       expect(result, equals(1));
       expect(terminal.mockOutput.lines, equals(['OK: done']));
-      expect(_containsAnsi(terminal.mockOutput.allOutput), isFalse);
-      expect(_isAscii(terminal.mockOutput.allOutput), isTrue);
+      final output = terminal.outputSnapshot;
+      expect(output.containsAnsiControls, isFalse);
+      expect(output.isAscii, isTrue);
     });
 
     test('auto display uses plain output for non-interactive terminals',
@@ -183,7 +183,7 @@ void main() {
           );
 
       expect(terminal.mockOutput.lines, equals(['OK: done']));
-      expect(_containsAnsi(terminal.mockOutput.allOutput), isFalse);
+      expect(terminal.outputSnapshot.containsAnsiControls, isFalse);
     });
 
     test('basic compatibility keeps auto output ASCII and ANSI-free', () async {
@@ -195,8 +195,9 @@ void main() {
           );
 
       expect(terminal.mockOutput.lines, equals(['OK: Basic']));
-      expect(_containsAnsi(terminal.mockOutput.allOutput), isFalse);
-      expect(_isAscii(terminal.mockOutput.allOutput), isTrue);
+      final output = terminal.outputSnapshot;
+      expect(output.containsAnsiControls, isFalse);
+      expect(output.isAscii, isTrue);
     });
 
     test('indicator whileRunning preserves fallback origin', () async {
@@ -212,8 +213,9 @@ void main() {
 
       expect(result, equals(7));
       expect(terminal.mockOutput.lines, equals(['OK: installed']));
-      expect(_containsAnsi(terminal.mockOutput.allOutput), isFalse);
-      expect(_isAscii(terminal.mockOutput.allOutput), isTrue);
+      final output = terminal.outputSnapshot;
+      expect(output.containsAnsiControls, isFalse);
+      expect(output.isAscii, isTrue);
     });
 
     test('progressBar whileRunning preserves basic origin', () async {
@@ -231,8 +233,9 @@ void main() {
       );
 
       expect(terminal.mockOutput.lines, equals(['OK: uploaded (1/1, 100%)']));
-      expect(_containsAnsi(terminal.mockOutput.allOutput), isFalse);
-      expect(_isAscii(terminal.mockOutput.allOutput), isTrue);
+      final output = terminal.outputSnapshot;
+      expect(output.containsAnsiControls, isFalse);
+      expect(output.isAscii, isTrue);
     });
 
     test('progressDots whileRunning preserves legacy origin', () async {
@@ -247,8 +250,9 @@ void main() {
           );
 
       expect(terminal.mockOutput.lines, equals(['OK: waited']));
-      expect(_containsAnsi(terminal.mockOutput.allOutput), isFalse);
-      expect(_isAscii(terminal.mockOutput.allOutput), isTrue);
+      final output = terminal.outputSnapshot;
+      expect(output.containsAnsiControls, isFalse);
+      expect(output.isAscii, isTrue);
     });
 
     test('progressTask exposes progress updates and typed results', () async {
@@ -400,8 +404,9 @@ void main() {
 
       expect(result, equals(2));
       expect(terminal.mockOutput.lines, equals(['OK: done (2/2, 100%)']));
-      expect(_containsAnsi(terminal.mockOutput.allOutput), isFalse);
-      expect(_isAscii(terminal.mockOutput.allOutput), isTrue);
+      final output = terminal.outputSnapshot;
+      expect(output.containsAnsiControls, isFalse);
+      expect(output.isAscii, isTrue);
     });
 
     test('trackStream collects values and advances progress', () async {
@@ -712,7 +717,7 @@ void main() {
       );
 
       expect(values, equals(['a', 'b']));
-      final output = _stripAnsi(terminal.mockOutput.allOutput);
+      final output = terminal.outputSnapshot.plainText;
       final bars = RegExp(r'\[([█░]+)\]').allMatches(output).toList();
       expect(bars, isNotEmpty);
       expect(bars.every((match) => match.group(1)!.length == 5), isTrue);
@@ -731,7 +736,7 @@ void main() {
         interval: const Duration(seconds: 1),
       );
 
-      final output = _stripAnsi(terminal.mockOutput.allOutput);
+      final output = terminal.outputSnapshot.plainText;
       final bars = RegExp(r'\[([█░]+)\]').allMatches(output).toList();
       expect(bars, isNotEmpty);
       expect(bars.every((match) => match.group(1)!.length == 5), isTrue);
@@ -745,7 +750,7 @@ void main() {
         () async {
           await _waitForOutput(
             terminal,
-            (output) => _stripAnsi(output).contains('.....'),
+            (output) => output.plainText.contains('.....'),
           );
         },
         display: TaskDisplay.inline,
@@ -753,7 +758,7 @@ void main() {
         finalBehavior: TaskFinalBehavior.clear,
       );
 
-      final output = _stripAnsi(terminal.mockOutput.allOutput);
+      final output = terminal.outputSnapshot.plainText;
       expect(output, contains('.....'));
       expect(output, isNot(contains('......')));
     });
@@ -824,19 +829,7 @@ String _renderProgressBar({required int current, required int total}) {
     total: total,
   );
 
-  return terminal.mockOutput.allOutput;
-}
-
-bool _containsAnsi(String output) {
-  return RegExp(r'\x1B\[[0-?]*[ -/]*[@-~]').hasMatch(output);
-}
-
-String _stripAnsi(String output) {
-  return output.replaceAll(RegExp(r'\x1B\[[0-?]*[ -/]*[@-~]'), '');
-}
-
-bool _isAscii(String output) {
-  return output.runes.every((rune) => rune <= 0x7f);
+  return terminal.outputSnapshot.plainText;
 }
 
 const _asyncRenderInterval = Duration(milliseconds: 10);
@@ -852,11 +845,11 @@ void _expectCursorRestored(String output) {
 
 Future<void> _waitForOutput(
   MockTerminal terminal,
-  bool Function(String output) matches,
+  bool Function(TerminalOutputSnapshot output) matches,
 ) async {
   final deadline = DateTime.now().add(_asyncWaitTimeout);
   while (DateTime.now().isBefore(deadline)) {
-    if (matches(terminal.mockOutput.allOutput)) return;
+    if (matches(terminal.outputSnapshot)) return;
     await Future<void>.delayed(_asyncPollInterval);
   }
   fail('Timed out waiting for output:\n${terminal.mockOutput.allOutput}');

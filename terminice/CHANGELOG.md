@@ -11,6 +11,9 @@
 - Added `terminice.flow(...)`, a sequential flow builder that composes built-in `text`, `password`, `select`, `checkboxes`, and `confirm` steps plus custom steps.
 - Added typed flow result/context accessors, context-aware `when` conditions, and `String?` flow validators for dependent CLI workflows.
 - Flow built-in steps run through the configured Terminice instance, so existing component theming and fallback behavior carry through.
+- Added `package:terminice/testing.dart`, a sidecar test library that re-exports Terminice APIs, core testing primitives, and high-level CLI test helpers without expanding the main runtime import.
+- Added `TerminiceTester` helpers for fallback, non-interactive, and rich interactive prompt tests with captured output snapshots.
+- Added testing docs and an example covering fallback flows, scripted interactive input, async task capture, and output assertions.
 
 #### Changed
 

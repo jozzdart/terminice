@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' show sleep;
 
+import 'terminal.dart';
 import 'terminal_context.dart';
 import 'terminal_control.dart';
 
@@ -52,12 +53,16 @@ class KeyEvent {
 /// [TerminalControl.enterRaw] / [TerminalModeState] so prompts can switch in
 /// and out of raw mode safely.
 class KeyEventReader {
+  static int? _pendingByte;
+  static Terminal? _pendingTerminal;
+
   /// Reads the next key event from stdin.
   ///
   /// Expects stdin to be in raw mode. For ESC-based sequences, briefly peeks
   /// ahead to differentiate a lone ESC from arrow keys or other CSI sequences.
   static KeyEvent read() {
-    final byte = TerminalContext.input.readByteSync();
+    final terminal = TerminalContext.current;
+    final byte = _readByte(terminal);
 
     // Enter
     if (byte == 10 || byte == 13) return const KeyEvent(KeyEventType.enter);
@@ -117,11 +122,80 @@ class KeyEventReader {
     }
 
     // Printable char
-    final ch = utf8.decode([byte], allowMalformed: true);
-    if (RegExp(r'^[ -~]$').hasMatch(ch)) {
+    final ch = _readUtf8Character(terminal, byte);
+    if (ch != null && _isPrintableCharacter(ch)) {
       return KeyEvent(KeyEventType.char, ch);
     }
 
     return const KeyEvent(KeyEventType.unknown);
+  }
+
+  static int _readByte(Terminal terminal) {
+    final pendingByte = _pendingByte;
+    if (pendingByte != null) {
+      if (identical(_pendingTerminal, terminal)) {
+        _pendingByte = null;
+        _pendingTerminal = null;
+        return pendingByte;
+      }
+      _pendingByte = null;
+      _pendingTerminal = null;
+    }
+
+    return terminal.input.readByteSync();
+  }
+
+  static void _replayByte(Terminal terminal, int byte) {
+    _pendingByte = byte;
+    _pendingTerminal = terminal;
+  }
+
+  static String? _readUtf8Character(Terminal terminal, int firstByte) {
+    if (firstByte < 0 || firstByte > 0xFF) return null;
+
+    if (firstByte < 0x80) {
+      return String.fromCharCode(firstByte);
+    }
+
+    final sequenceLength = _utf8SequenceLength(firstByte);
+    if (sequenceLength == null) return null;
+
+    final bytes = <int>[firstByte];
+    try {
+      for (var i = 1; i < sequenceLength; i++) {
+        final nextByte = terminal.input.readByteSync();
+        if (!_isUtf8ContinuationByte(nextByte)) {
+          _replayByte(terminal, nextByte);
+          return null;
+        }
+        bytes.add(nextByte);
+      }
+      return utf8.decode(bytes);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static int? _utf8SequenceLength(int firstByte) {
+    if (firstByte >= 0xC2 && firstByte <= 0xDF) return 2;
+    if (firstByte >= 0xE0 && firstByte <= 0xEF) return 3;
+    if (firstByte >= 0xF0 && firstByte <= 0xF4) return 4;
+    return null;
+  }
+
+  static bool _isUtf8ContinuationByte(int byte) {
+    return byte >= 0x80 && byte <= 0xBF;
+  }
+
+  static bool _isPrintableCharacter(String char) {
+    if (char.isEmpty) return false;
+
+    for (final rune in char.runes) {
+      if (rune < 0x20 || (rune >= 0x7F && rune <= 0x9F)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

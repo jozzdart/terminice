@@ -44,6 +44,7 @@
 - [**Instance Configuration & Fallback**](#centralized-instance-configuration)
 - [**The Terminice Catalogue**](#-the-terminice-catalogue)
 - [**Theming & Display Modes**](#-theming--display-modes)
+- [**Testing Terminice CLIs**](#testing-terminice-clis)
 - [**Quick Start**](#-quick-start)
 
 ### 📖 How to use `terminice`
@@ -263,22 +264,16 @@ Standard input controls for gathering user data.
 - [`date` — Date picker.](#date---keyboard-date-prompt)
 - [`form` — Form prompt.](#form---multi-field-input)
 
-#### 🔄 Flow Composition
-
-Chain several prompts and selectors into one sequential CLI workflow.
-
-- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
-
 #### 🎯 Selectors
 
 Interactive menus for choosing from predefined options.
 
 - [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
-- [`choiceSelector` — Simple single-choice list.](#choiceselector---card-based-choice-grid)
+- [`choiceSelector` — Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
 - [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
 - [`gridSelector` — 2D grid selection.](#gridselector---two-dimensional-selection-grid)
 - [`tagSelector` — Select and manage multiple tags.](#tagselector---chip-style-multi-select)
-- [`toggleGroup` — Segmented control for mutually exclusive options.](#togglegroup---editable-boolean-switches)
+- [`toggleGroup` — Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
 - [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
 
 #### 🗂️ Pickers
@@ -310,6 +305,12 @@ Future and stream wrappers for long-running work.
 - [`TaskProgress` — Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
 - [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
 - [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
+
+#### 🔄 Flow Composition
+
+Chain several prompts and selectors into one sequential CLI workflow.
+
+- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
 
 #### ⚙️ Configuration & Utilities
 
@@ -413,6 +414,77 @@ final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
 <img src="assets/quick_start_3.gif" alt="terminice themes showcase" width="1000"/>
 
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
+
+## Testing Terminice CLIs
+
+Serious CLIs need tests that do not depend on a real terminal, real stdin, or timing-sensitive stdout capture. Import the sidecar testing library from tests:
+
+```dart
+import 'package:test/test.dart';
+import 'package:terminice/testing.dart';
+```
+
+`package:terminice/testing.dart` re-exports the public Terminice API, core mock-terminal testing primitives, and `TerminiceTester`. It is intentionally a test sidecar; these utilities are not exported from `package:terminice/terminice.dart`.
+
+### Fallback and Line-Mode Flows
+
+Use `TerminiceTester.fallback` for deterministic line-mode coverage. This is ideal for testing flow logic, validators, cancellation behavior, and CI-safe prompt paths.
+
+```dart
+test('creates a project from fallback input', () {
+  final tester = TerminiceTester.fallback(lines: ['demo', 'yes']);
+
+  final result = tester.run(
+    (t) => t
+        .flow('Create project')
+        .text('name', 'Project name')
+        .confirm('create', message: 'Create project?')
+        .run(),
+  );
+
+  expect(result.toMap(), equals({'name': 'demo', 'create': true}));
+  expect(tester.output.plainText, contains('Create project?'));
+});
+```
+
+### Interactive Key Scripts
+
+Use `TerminiceTester.interactive` with `TerminalScript` when you want to exercise the rich raw-mode prompt path. Scripts are reusable and can queue text, key presses, arrows, Enter, Escape, Tab, Space, and Ctrl keys.
+
+```dart
+test('chooses No in the interactive confirm prompt', () {
+  final tester = TerminiceTester.interactive(
+    script: TerminalScript.build((script) => script.right().enter()),
+  );
+
+  final result = tester.run(
+    (t) => t.confirm(message: 'Publish release?'),
+  );
+
+  expect(result, isFalse);
+  expect(tester.output.containsAnsiControls, isTrue);
+});
+```
+
+### Output Assertions
+
+Every tester exposes `tester.output`, a `TerminalOutputSnapshot` with `raw`, `plainText`, `normalizedText`, `plainLines`, and `containsAnsiControls`. Prefer `plainText` when ANSI styling is irrelevant, `normalizedText` for stable line assertions, and `containsAnsiControls` when you need to prove a path rendered with or without terminal control output.
+
+```dart
+final tester = TerminiceTester.nonInteractive();
+
+final count = await tester.runAsync(
+  (t) => t.task<int>(
+    'Warm cache',
+    run: () async => 42,
+    success: 'cache ready',
+  ),
+);
+
+expect(count, 42);
+expect(tester.output.normalizedText, equals('OK: cache ready'));
+expect(tester.output.containsAnsiControls, isFalse);
+```
 
 ---
 
