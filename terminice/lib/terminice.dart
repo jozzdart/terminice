@@ -8,6 +8,12 @@
 /// **Zero boilerplate.** No widget trees or manual state management. Just call a method
 /// and get a polished, keyboard-driven UI instantly.
 ///
+/// Small message primitives such as `info`, `success`, `warn`, `error`,
+/// `detail`, `log`, and `newline` are available on the same instance. They are
+/// conveniences for terminal-facing status lines, not a full logging framework,
+/// and they inherit the caller's theme, terminal, compatibility, fallback
+/// behavior, and testing harness.
+///
 /// Build reusable project-specific UI with `TerminiceComponent<T>` or callback
 /// components. Custom components run through the configured Terminice instance,
 /// so theme, terminal, compatibility, fallback behavior, and testing harnesses
@@ -24,6 +30,9 @@
 /// void main() {
 ///   // Use the global instance directly
 ///   final name = terminice.text('What is your name?');
+///
+///   terminice.info('Installing dependencies');
+///   terminice.success('Project ready');
 ///
 ///   // Chain a theme and a display mode directly
 ///   final choice = terminice.ocean.compact.confirm(message: 'Save changes?');

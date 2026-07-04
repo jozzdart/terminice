@@ -1,9 +1,5 @@
 part of 'async_task.dart';
 
-const _taskSuccessStatus = 'OK';
-const _taskFailureStatus = 'ERROR';
-const _taskCancelStatus = 'CANCELED';
-
 int _validateTotal(int total) {
   if (total <= 0) {
     throw ArgumentError.value(total, 'total', 'must be greater than zero');
@@ -33,10 +29,6 @@ int _clampCurrent(int current, int total) {
   if (current < 0) return 0;
   if (current > total) return total;
   return current;
-}
-
-String _statusLine(String status, String message, String suffix) {
-  return '$status: $message$suffix';
 }
 
 String _runningText(String prompt, String? detail) {

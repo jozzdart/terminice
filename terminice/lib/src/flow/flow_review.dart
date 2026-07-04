@@ -23,11 +23,7 @@ class _FlowReview {
   final FlowReviewOptions _options;
 
   _FlowReviewAction chooseAction(_FlowRunState state) {
-    final items = _FlowReviewItems.build(
-      steps: _steps,
-      state: state,
-      terminice: _terminice,
-    );
+    final items = _buildItems(state);
     _writeSummary(items);
 
     final optionsByLabel = _reviewActionOptions();
@@ -43,11 +39,10 @@ class _FlowReview {
   }
 
   int? chooseEditStartIndex(_FlowRunState state) {
-    final editableItems = _FlowReviewItems.build(
-      steps: _steps,
-      state: state,
-      terminice: _terminice,
-    ).where((item) => item.summary.editable).toList(growable: false);
+    final editableItems =
+        _buildItems(state).where((item) => item.summary.editable).toList(
+              growable: false,
+            );
 
     if (editableItems.isEmpty) {
       _writeLine('No editable review items.');
@@ -88,6 +83,28 @@ class _FlowReview {
   }
 
   String get _reviewTitle => _options.title ?? 'Review $_flowTitle';
+
+  List<_FlowReviewItem> _buildItems(_FlowRunState state) {
+    return _FlowReviewItems.build(
+      steps: _steps,
+      state: state,
+      terminice: _terminice,
+      reviewSummaryFor: (step, value, context) {
+        return _withActiveReviewTerminal(
+          () => step.reviewSummaryFor(value, context),
+        );
+      },
+    );
+  }
+
+  T _withActiveReviewTerminal<T>(T Function() body) {
+    _terminice.activate();
+    try {
+      return body();
+    } finally {
+      _terminice.activate();
+    }
+  }
 
   void _writeSummary(List<_FlowReviewItem> items) {
     _writeLine(_reviewTitle);
@@ -148,6 +165,11 @@ class _FlowReviewItems {
     required List<_FlowStep<dynamic>> steps,
     required _FlowRunState state,
     required Terminice terminice,
+    required String? Function(
+      _FlowStep<dynamic> step,
+      Object? value,
+      FlowContext context,
+    ) reviewSummaryFor,
   }) {
     final items = <_FlowReviewItem>[];
 
@@ -159,8 +181,8 @@ class _FlowReviewItems {
 
       final context = state.contextFor(terminice);
       final value = state.values[step.key];
-      final summary =
-          step.reviewSummaryFor(value, context) ?? _defaultReviewSummary(value);
+      final summary = reviewSummaryFor(step, value, context) ??
+          _defaultReviewSummary(value);
 
       items.add(
         _FlowReviewItem(

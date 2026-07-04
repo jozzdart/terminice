@@ -806,6 +806,119 @@ void main() {
       expect(otherOutput, isNot(contains('No editable review items.')));
     });
 
+    test('review summary restores configured terminal after rendering', () {
+      final configured = _terminalWithLines(['1']);
+      final other = MockTerminal();
+      final client = terminice.fallback.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Review terminal restore')
+          .custom<String>(
+            'name',
+            'Name',
+            includeInReview: true,
+            run: (_) => 'Ada',
+            summarize: (value, _) {
+              TerminalContext.current = other;
+              return 'summary $value';
+            },
+          )
+          .review()
+          .run();
+
+      final configuredOutput = configured.outputSnapshot.plainText;
+      final otherOutput = other.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(configuredOutput, contains('Review Review terminal restore'));
+      expect(configuredOutput, contains('Name: summary Ada'));
+      expect(otherOutput, isNot(contains('Review Review terminal restore')));
+      expect(otherOutput, isNot(contains('Name: summary Ada')));
+      expect(TerminalContext.current, same(configured));
+    });
+
+    test('review summaries re-activate configured terminal between items', () {
+      final configured = _terminalWithLines(['2', '1', '1']);
+      final other = MockTerminal();
+      final client = terminice.fallback.withTerminal(configured);
+      final secondSummaryTerminals = <Terminal>[];
+      var firstSummaryCalls = 0;
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Review item routing')
+          .custom<String>(
+            'first',
+            'First',
+            includeInReview: true,
+            editable: true,
+            run: (_) => 'one',
+            summarize: (value, _) {
+              firstSummaryCalls++;
+              TerminalContext.current = other;
+              return 'first $value';
+            },
+          )
+          .custom<String>(
+            'second',
+            'Second',
+            includeInReview: true,
+            editable: true,
+            run: (_) => 'two',
+            summarize: (value, _) {
+              secondSummaryTerminals.add(TerminalContext.current);
+              TerminalContext.output.writeln('second summary callback');
+              return 'second $value';
+            },
+          )
+          .review()
+          .run();
+
+      final configuredOutput = configured.outputSnapshot.plainText;
+      final otherOutput = other.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(firstSummaryCalls, greaterThanOrEqualTo(2));
+      expect(secondSummaryTerminals, everyElement(same(configured)));
+      expect(configuredOutput, contains('First: first one'));
+      expect(configuredOutput, contains('Second: second two'));
+      expect(configuredOutput, contains('Edit review item'));
+      expect(configuredOutput, contains('second summary callback'));
+      expect(otherOutput, isNot(contains('First: first one')));
+      expect(otherOutput, isNot(contains('Second: second two')));
+      expect(otherOutput, isNot(contains('Edit review item')));
+      expect(otherOutput, isNot(contains('second summary callback')));
+      expect(TerminalContext.current, same(configured));
+    });
+
+    test('throwing review summary restores configured terminal', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.fallback.withTerminal(configured);
+      final thrownError = StateError('Summary failed.');
+      TerminalContext.current = other;
+
+      expect(
+        () => client
+            .flow('Throwing review')
+            .custom<String>(
+              'name',
+              'Name',
+              includeInReview: true,
+              run: (_) => 'Ada',
+              summarize: (_, __) {
+                TerminalContext.current = other;
+                throw thrownError;
+              },
+            )
+            .review()
+            .run(),
+        throwsA(same(thrownError)),
+      );
+      expect(TerminalContext.current, same(configured));
+    });
+
     test('progress decorates prompt titles but keeps fallback text plain', () {
       final terminal = _terminalWithLines(['Ada', 'yes']);
 

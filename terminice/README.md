@@ -33,6 +33,7 @@
 - **11 color themes** — Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
 - **Config editor** — A searchable, nested settings editor that composes existing prompts into a unified configuration flow with live theme switching, validation, and JSON serialization.
 - **Progress and task feedback** — Loading spinners, inline spinners, progress bars, progress dots, and async task helpers for long-running `Future` and `Stream` work.
+- **Message primitives** — Small `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline` helpers for polished CLI status lines around prompts, tasks, and flows.
 - **Zero boilerplate** — One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
 - **Cross-platform** — Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
 - **Modular architecture** — Built on `terminice_core`, which exposes navigation primitives, prompt scaffolds, and rendering utilities for when you need full control.
@@ -95,6 +96,40 @@ final items = await terminice.trackStream(
   total: count,
 );
 ```
+
+#### Message Primitives
+
+Use message primitives for the small status lines that make a CLI feel intentional between prompts, tasks, and command flows. They are mason_logger-style conveniences: quick to call, theme-aware, and routed through the same `Terminice` instance as the rest of your UI.
+
+```dart
+terminice.info('Installing dependencies');
+terminice.success('Project ready');
+terminice.warn('Using cached config');
+terminice.error('Publish failed'); // `terminice.err(...)` is the same helper.
+
+terminice.detail('Run with --verbose for more output');
+terminice.log('Next: dart run');
+terminice.newline();
+```
+
+Messages inherit the caller's theme, terminal, compatibility, fallback policy, and testing harness. In fallback, noninteractive, basic, legacy, no-color, or ASCII-style paths, they render ANSI-free plain lines.
+
+```dart
+final t = terminice.ocean.autoFallback;
+
+t.info('Installing dependencies');
+
+await t.task(
+  'Resolving packages',
+  run: runPubGet,
+  success: 'Dependencies installed',
+);
+
+t.success('Project ready');
+t.detail('Run with --verbose for more output');
+```
+
+They are intentionally not a full logging framework. There are no levels, sinks, appenders, timestamps, filtering rules, or log records. Use `package:logging` or your application's logging stack when you need application logs; use Terminice messages when you want concise terminal-facing output.
 
 #### Shared API Design
 
@@ -296,6 +331,12 @@ Visual feedback for long-running tasks.
 - [`progressBar` — Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
 - [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
 - [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
+
+#### 💬 Messages
+
+Small output helpers for status and plain CLI lines.
+
+- [`message primitives` — `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
 
 #### 🔁 Async Task Helpers
 
@@ -1795,6 +1836,62 @@ print(normalizedShipDate ?? 'No ship date selected.');
 
 > **Why use this?**
 > Use `datePicker` when a visual calendar prevents off-by-one mistakes. Use the simpler `date` prompt when users already know the exact date string they want to type.
+
+_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### Message Primitives - Small Status Lines
+
+Write small, synchronous terminal messages through the configured `Terminice` instance. These helpers are useful for the connective tissue around richer UI: setup notes before a prompt, final status after a task, warnings inside a flow, or quiet detail text after a command completes.
+
+- `log(Object? message)` - Writes `message.toString()` as a plain line with no status decoration.
+- `info(Object? message)` - Writes an informational status line.
+- `success(Object? message)` - Writes a success status line.
+- `warn(Object? message)` - Writes a warning status line.
+- `error(Object? message)` - Writes an error status line.
+- `err(Object? message)` - Alias for `error`.
+- `detail(Object? message)` - Writes a modest detail line for secondary context.
+- `newline([int count = 1])` - Writes one or more blank lines.
+- Plain rendering - Fallback, noninteractive terminals, basic/legacy compatibility, no-color themes, and ASCII glyph themes render ANSI-free plain lines.
+- Scope - These are CLI message primitives, not logging infrastructure. They do not manage levels, sinks, timestamps, structured records, or filtering.
+
+#### Examples
+
+```dart
+terminice.info('Installing dependencies');
+terminice.success('Project ready');
+terminice.warn('Using cached config');
+terminice.error('Publish failed');
+terminice.err('Retry failed');
+terminice.detail('Run with --verbose for more output');
+terminice.log('Next: dart run');
+terminice.newline();
+```
+
+```dart
+final t = terminice.autoFallback;
+
+t.info('Installing dependencies');
+
+await t.task(
+  'Resolving packages',
+  run: runPubGet,
+  success: 'Dependencies installed',
+);
+
+final publish = t.confirm(message: 'Publish release?');
+
+if (publish) {
+  t.success('Project ready');
+} else {
+  t.warn('Publish skipped');
+  t.detail('Run with --verbose for more output');
+}
+```
+
+> **Why use this?**
+> Use message primitives when you want polished, consistent terminal-facing status lines without bringing in a logging framework. They give command output the same theme, terminal, fallback, compatibility, and test behavior as Terminice prompts and tasks.
 
 _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 

@@ -12,6 +12,8 @@
 - Added `TerminiceComponent<T>`, `TerminiceComponentContext`, `runComponent(...)`, and `runWithComponent(...)` for lightweight custom component extensibility.
 - Added `FlowBuilder.component<T>(...)` and `FlowContext.runComponent(...)` so reusable custom components can participate in flow validation, cancellation, review metadata, and edit reruns.
 - Added `FlowContext.promptTitle(...)` and `fallbackPromptTitle(...)` helpers for progress-aware custom component prompts.
+- Added small CLI message primitives: `log`, `info`, `success`, `warn`, `error`, `err`, `detail`, and `newline`.
+- Added theme-aware message rendering with ANSI-free fallback output for noninteractive, fallback, basic, legacy, no-color, and ASCII-style paths.
 
 #### Changed
 
@@ -19,12 +21,14 @@
 - Flow component steps now use `validate` naming and default to review-included/editable behavior like prompt steps.
 - Review cancellation preserves collected values without assigning a step-specific cancellation key.
 - Edit cancellation restores the pre-edit snapshot so partial reruns do not corrupt the confirmed review state.
+- Task final status rendering now shares the plain status-label helper used by message fallbacks while preserving existing task output.
 
 #### Documentation
 
 - Updated README Flow coverage for review actions, edit reruns, conditional re-evaluation, progress titles, templates, review metadata, password masking, and typed access helpers.
 - Added a Flow v2 example covering templates, review metadata, progress titles, and typed result helpers.
 - Added README coverage and a runnable example for class-based, callback-based, and Flow-integrated custom components.
+- Added README, library docs, and an output-only example for message primitives.
 - Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
 
 ## 1.1.0
