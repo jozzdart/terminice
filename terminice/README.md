@@ -457,32 +457,34 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 
 ## Command App Integration
 
-Terminice is the terminal UI layer inside command apps. It does not parse arguments, dispatch commands, run command classes, or replace your logging framework. Use the command structure you already prefer, then call Terminice from inside handlers when you need prompts, flows, terminal-facing messages, async task feedback, fallback/CI output, custom components, or testable terminal UI.
+Terminice is the human-facing terminal UX layer for command apps.
 
-For command structure, use plain `main(List<String> args)`, `package:args` with `CommandRunner`, Mason-style command classes, or your own router. Keep Terminice at the edge where the command talks to the user.
+It does not parse arguments, dispatch commands, replace `package:args`, replace `CommandRunner`, or replace Mason-style command classes. Keep your existing command structure. Use Terminice inside the handler when that handler needs prompts, menus, progress, status messages, fallback output, or testable terminal I/O.
 
-See [example/command_app_example.dart](example/command_app_example.dart) for a complete manual-dispatch command app and [example/command_app_testing_example.dart](example/command_app_testing_example.dart) for command handler tests.
+Full examples:
 
-### Plain main and manual dispatch
+- [example/command_app_example.dart](example/command_app_example.dart)
+- [example/command_app_testing_example.dart](example/command_app_testing_example.dart)
+
+### 1. Parse and route elsewhere
+
+Use plain `main(List<String> args)`, `package:args`, `CommandRunner`, Mason-style commands, or your own router.
 
 ```dart
-import 'dart:io';
-
-import 'package:terminice/terminice.dart';
-
 Future<void> main(List<String> args) async {
-  exitCode = await runCommandApp(args, terminice.autoFallback);
+  final options = CommandOptions.parse(args);
+
+  exitCode = await runCommand(options, terminice.autoFallback);
 }
+```
 
-Future<int> runCommandApp(List<String> args, Terminice t) async {
-  final command = args.isEmpty ? null : args.first;
+Terminice comes in after routing:
 
-  switch (command) {
+```dart
+Future<int> runCommand(CommandOptions options, Terminice t) async {
+  switch (options.command) {
     case 'init':
-      final name = t.text('Project name', placeholder: 'demo');
-      await t.task('Install starter files', run: installFiles);
-      t.success('Created $name');
-      return 0;
+      return runInit(options, t);
     default:
       t.info('Commands: init');
       return 64;
@@ -490,202 +492,172 @@ Future<int> runCommandApp(List<String> args, Terminice t) async {
 }
 ```
 
-### package:args CommandRunner
+### 2. Pass Terminice into handlers
 
-This is a README-only integration pattern. If your app uses `package:args`, add it to your app and pass a configured `Terminice` instance into each command.
-
-```dart
-import 'dart:io';
-
-import 'package:args/command_runner.dart';
-import 'package:terminice/terminice.dart';
-
-class InitCommand extends Command<int> {
-  InitCommand(this.t) {
-    argParser.addFlag('yes', abbr: 'y');
-  }
-
-  final Terminice t;
-
-  @override
-  String get name => 'init';
-
-  @override
-  String get description => 'Create a starter project.';
-
-  @override
-  Future<int> run() async {
-    final name = t.text('Project name', placeholder: 'demo');
-    final yes = argResults!.flag('yes') || t.confirm(message: 'Create?');
-
-    if (!yes) return 1;
-
-    await t.task('Creating $name', run: () async {});
-    t.success('Created $name');
-    return 0;
-  }
-}
-
-Future<void> main(List<String> args) async {
-  final runner = CommandRunner<int>('tool', 'Example command app')
-    ..addCommand(InitCommand(terminice.autoFallback));
-
-  exitCode = await runner.run(args) ?? 0;
-}
-```
-
-### Mason-style command classes
-
-If your app follows a command-class pattern, inject `Terminice` the same way you would inject a logger or project service.
+Treat `Terminice` like a logger, file system, or project service. Pass it in or inject it.
 
 ```dart
-class CreateCommand {
-  CreateCommand({required this.terminice});
+Future<int> runInit(InitOptions options, Terminice t) async {
+  final name = options.name ?? t.text('Project name');
+  final ok = options.yes || t.confirm(message: 'Create $name?');
 
-  final Terminice terminice;
+  if (!ok) return 1;
 
-  Future<int> run({required bool dryRun}) async {
-    final name = terminice.text('Project name');
-
-    if (dryRun) {
-      terminice.detail('Would create $name');
-      return 0;
-    }
-
-    await terminice.task('Generating files', run: generateFiles);
-    terminice.success('Created $name');
-    return 0;
-  }
-}
-```
-
-### CI and noninteractive mode
-
-Prefer flags for required CI values and choose a plain/fallback Terminice instance when the command is noninteractive.
-
-```dart
-Future<int> publish({
-  required bool ci,
-  required bool yes,
-  required Terminice terminice,
-}) async {
-  final t = ci ? terminice.legacy.fallback : terminice.autoFallback;
-
-  if (ci && !yes) {
-    t.error('CI publish requires --yes.');
-    return 64;
-  }
-
-  final confirmed = yes || t.confirm(message: 'Publish package?');
-  if (!confirmed) return 1;
-
-  await t.task(
-    'Upload package',
-    display: ci ? TaskDisplay.plain : TaskDisplay.auto,
-    run: uploadPackage,
-    success: 'Package published',
-  );
-
+  await t.task('Creating $name', run: createFiles);
+  t.success('Created $name');
   return 0;
 }
 ```
 
-### Testing command handlers
-
-Make command handlers accept a `Terminice` instance, then run them through `TerminiceTester`.
+The same shape works in `CommandRunner` and Mason-style command classes:
 
 ```dart
-import 'package:test/test.dart';
-import 'package:terminice/testing.dart';
+class InitCommand extends Command<int> {
+  InitCommand(this.t);
 
-import '../example/command_app_example.dart';
+  final Terminice t;
 
-void main() {
-  test('init command completes from fallback input', () async {
-    final tester = TerminiceTester.fallback(
-      lines: const ['demo', '1', '1,3', 'yes'],
-    );
-
-    final code = await tester.runAsync(
-      (t) => runCommandApp(const ['init'], t),
-    );
-
-    expect(code, 0);
-    expect(tester.output.plainText, contains('Created demo'));
-  });
+  @override
+  Future<int> run() {
+    final options = InitOptions.from(argResults!);
+    return runInit(options, t);
+  }
 }
+```
+
+### 3. Keep command options in charge
+
+Prefer flags and parsed options for automation. Use prompts only when the command actually needs a human answer.
+
+```dart
+final name = options.name ?? t.text('Project name');
+final confirmed = options.yes || t.confirm(message: 'Continue?');
+```
+
+That keeps scripts predictable and still gives local users a friendly flow.
+
+### 4. Switch output for CI
+
+Use a fallback/plain instance for CI, noninteractive scripts, or limited terminals.
+
+```dart
+final t = options.ci ? terminice.legacy.fallback : terminice.autoFallback;
+
+if (options.ci && options.name == null) {
+  t.error('CI requires --name.');
+  return 64;
+}
+```
+
+Task output can switch too:
+
+```dart
+await t.task(
+  'Publish package',
+  display: options.ci ? TaskDisplay.plain : TaskDisplay.auto,
+  run: publishPackage,
+);
+```
+
+### 5. Test handlers directly
+
+Handlers that accept `Terminice` are easy to test. Script fallback input, run the handler, and assert captured output.
+
+```dart
+final tester = TerminiceTester.fallback(lines: const ['demo', 'yes']);
+
+final code = await tester.runAsync(
+  (t) => runCommandApp(const ['init'], t),
+);
+
+expect(code, 0);
+expect(tester.output.plainText, contains('Created demo'));
 ```
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
 ## Testing Terminice CLIs
 
-Serious CLIs need tests that do not depend on a real terminal, real stdin, or timing-sensitive stdout capture. Import the sidecar testing library from tests:
+Import the test sidecar from your test files:
 
 ```dart
 import 'package:test/test.dart';
 import 'package:terminice/testing.dart';
 ```
 
-`package:terminice/testing.dart` re-exports the public Terminice API, core mock-terminal testing primitives, and `TerminiceTester`. It is intentionally a test sidecar; these utilities are not exported from `package:terminice/terminice.dart`.
-
-### Fallback and Line-Mode Flows
-
-Use `TerminiceTester.fallback` for deterministic line-mode coverage. This is ideal for testing flow logic, validators, cancellation behavior, and CI-safe prompt paths.
+Start with a fallback tester. It scripts line input, runs your code with a fake terminal, and lets you assert the result.
 
 ```dart
-test('creates a project from fallback input', () {
-  final tester = TerminiceTester.fallback(lines: ['demo', 'yes']);
+final tester = TerminiceTester.fallback(lines: ['demo']);
 
-  final result = tester.run(
-    (t) => t
-        .flow('Create project')
-        .text('name', 'Project name')
-        .confirm('create', message: 'Create project?')
-        .run(),
-  );
+final name = tester.run((t) => t.text('Project name'));
 
-  expect(result.toMap(), equals({'name': 'demo', 'create': true}));
-  expect(tester.output.plainText, contains('Create project?'));
-});
+expect(name, equals('demo'));
 ```
 
-### Interactive Key Scripts
-
-Use `TerminiceTester.interactive` with `TerminalScript` when you want to exercise the rich raw-mode prompt path. Scripts are reusable and can queue text, key presses, arrows, Enter, Escape, Tab, Space, and Ctrl keys.
+Use `runAsync` for async command handlers or tasks.
 
 ```dart
-test('chooses No in the interactive confirm prompt', () {
-  final tester = TerminiceTester.interactive(
-    script: TerminalScript.build((script) => script.right().enter()),
-  );
-
-  final result = tester.run(
-    (t) => t.confirm(message: 'Publish release?'),
-  );
-
-  expect(result, isFalse);
-  expect(tester.output.containsAnsiControls, isTrue);
-});
-```
-
-### Output Assertions
-
-Every tester exposes `tester.output`, a `TerminalOutputSnapshot` with `raw`, `plainText`, `normalizedText`, `plainLines`, and `containsAnsiControls`. Prefer `plainText` when ANSI styling is irrelevant, `normalizedText` for stable line assertions, and `containsAnsiControls` when you need to prove a path rendered with or without terminal control output.
-
-```dart
-final tester = TerminiceTester.nonInteractive();
-
-final count = await tester.runAsync(
-  (t) => t.task<int>(
-    'Warm cache',
-    run: () async => 42,
-    success: 'cache ready',
-  ),
+final code = await tester.runAsync(
+  (t) => runCommandApp(['init'], t),
 );
 
-expect(count, 42);
-expect(tester.output.normalizedText, equals('OK: cache ready'));
+expect(code, equals(0));
+```
+
+`TerminiceTester` is the high-level harness around `MockTerminal`. It creates a `Terminice` instance for the fake terminal, feeds scripted input, captures output, and restores the previous `TerminalContext` after `run` or `runAsync`.
+
+`package:terminice/testing.dart` re-exports the public Terminice API, core terminal testing tools, and `TerminiceTester`. Keep production code on `package:terminice/terminice.dart`.
+
+### Choosing a Test Mode
+
+Use `TerminiceTester.fallback` for most prompt tests. It forces deterministic line mode, which is ideal for flows, validators, cancellation, command handlers, and CI.
+
+Use `TerminiceTester.nonInteractive` when you want to simulate a process with no TTY and verify the normal `autoFallback` decision.
+
+```dart
+final tester = TerminiceTester.nonInteractive(lines: ['Ada']);
+```
+
+Use `TerminiceTester.interactive` when behavior depends on rich raw-mode input: arrows, focus movement, Escape, Tab, Space, Ctrl shortcuts, or ANSI control output.
+
+```dart
+final tester = TerminiceTester.interactive(
+  script: TerminalScript.build((s) => s.right().enter()),
+);
+
+final publish = tester.run(
+  (t) => t.confirm(message: 'Publish release?'),
+);
+
+expect(publish, isFalse);
+```
+
+`TerminalScript` can queue text, line input, key presses, and control keys. You can also add input later.
+
+```dart
+tester.queue(TerminalScript.lines(['next value']));
+```
+
+### Asserting Output
+
+Every tester exposes `tester.output`, a `TerminalOutputSnapshot`.
+
+Use `plainText` for most user-visible content checks.
+
+```dart
+expect(tester.output.plainText, contains('Project name'));
+```
+
+Use `normalizedText` or `plainLines` for stable exact assertions.
+
+```dart
+expect(tester.output.normalizedText, equals('OK: built'));
+```
+
+Use `raw` or `containsAnsiControls` when terminal control output matters.
+
+```dart
 expect(tester.output.containsAnsiControls, isFalse);
 ```
 
@@ -693,44 +665,38 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 
 ## Custom Components & Extensibility
 
-Wrap project-specific terminal UI in a `TerminiceComponent<T>` when it should be reusable, typed, and configured by the caller. Components receive a `TerminiceComponentContext`, so they inherit the active Terminice instance: theme and display mode, terminal, compatibility settings, fallback policy, and the same `TerminiceTester` harness used by your tests.
+Most CLIs do not need custom components. Start with the built-in prompts,
+selectors, pickers, indicators, tasks, config editors, and flows.
+For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue).
 
-Most projects should start with the built-in Terminice prompts, selectors, pickers, indicators, tasks, config editors, and flows. They cover the common CLI surface without any extra abstraction.
+Reach for `TerminiceComponent<T>` when your CLI has reusable,
+domain-specific terminal UI that should still behave like Terminice. Components
+run inside the caller's configured `Terminice` instance, so they keep the same
+theme, terminal, fallback policy, compatibility settings, and
+`TerminiceTester` behavior.
 
-Custom components are the escape hatch for the cases where the catalogue is almost enough, but your CLI has a domain-specific interaction that deserves a name. Instead of copying Terminice internals, forking a prompt, or dropping to a lower-level TUI package, you can package the custom piece and still keep the Terminice experience around it.
-
-Use custom components when you want:
-
-- A reusable project-specific prompt, picker, or mini-workflow.
-- A custom interaction that still inherits the caller's theme, terminal, fallback mode, and compatibility settings.
-- A component that works in normal calls, flows, and `TerminiceTester` without separate test plumbing.
-- A small extension point without turning your CLI into a full TUI application.
-
-Use a class when the component has a name or options:
+Use a class for a named component:
 
 ```dart
-class ProjectSlugComponent extends TerminiceComponent<String> {
-  const ProjectSlugComponent({this.prompt = 'Project slug'});
-
-  final String prompt;
+class ProjectSlug extends TerminiceComponent<String> {
+  const ProjectSlug();
 
   @override
   String run(TerminiceComponentContext context) {
-    final value = context.terminice.text(
-      prompt,
-      placeholder: 'my_cli',
-    );
-
-    return value == null || value.isEmpty ? 'my_cli' : value;
+    return context.terminice.text('Project slug') ?? 'my_cli';
   }
 }
+```
 
+Run it from any configured Terminice instance:
+
+```dart
 final slug = terminice.ocean.autoFallback.runComponent(
-  const ProjectSlugComponent(),
+  const ProjectSlug(),
 );
 ```
 
-Use a callback for local one-offs:
+Use callback style for local one-offs:
 
 ```dart
 final region = terminice.runWithComponent<String>((context) {
@@ -743,33 +709,21 @@ final region = terminice.runWithComponent<String>((context) {
 });
 ```
 
-Components also drop into flows as typed steps:
+Components can also be flow steps:
 
 ```dart
-final regionComponent = TerminiceComponent<String>.from((context) {
-  final selected = context.terminice.searchSelector(
-    prompt: 'Region',
-    options: ['local', 'staging', 'production'],
-  );
-
-  return selected.isEmpty ? 'local' : selected.first;
-});
-
 final result = terminice.flow('Create project')
     .component<String>(
       'slug',
       'Project slug',
-      component: const ProjectSlugComponent(),
-    )
-    .component<String>(
-      'region',
-      'Region',
-      component: regionComponent,
+      component: const ProjectSlug(),
     )
     .run();
 ```
 
-For lower-level flow wiring, `FlowContext.runComponent(component)` runs through the flow's configured Terminice instance. `FlowContext.promptTitle(title)` gives progress-aware titles when `.progress()` is enabled, while `fallbackPromptTitle(title)` keeps fallback/plain prompts clean.
+Inside custom flow wiring, `FlowContext.runComponent(component)` uses the
+flow's configured Terminice instance. Use `FlowContext.promptTitle(title)` for
+progress-aware titles and `fallbackPromptTitle(title)` for plain fallback text.
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
