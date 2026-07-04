@@ -178,7 +178,9 @@ Advanced tools for settings, documentation, shortcuts, and theme exploration.
 - [`hotkeyGuide` — Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
 - [`themeDemo` — Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
 
-### Quick Start
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+# Quick Start
 
 Get up and running in seconds. No setup required—just import and call.
 
@@ -223,7 +225,59 @@ final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
 
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue).
 
-### Core Concepts & Behavior
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+# ▧ Theming & Display Modes
+
+`terminice` makes styling effortless. Every prompt adapts automatically to the selected theme and display mode. Just chain the theme or mode accessor before calling any prompt.
+
+|                           Dark                            |                          Matrix                           |                             Fire                              |
+| :-------------------------------------------------------: | :-------------------------------------------------------: | :-----------------------------------------------------------: |
+|  <img src="assets/theme_showcase_dark.gif" width="300"/>  | <img src="assets/theme_showcase_matrix.gif" width="300"/> |    <img src="assets/theme_showcase_fire.gif" width="300"/>    |
+|                        **Pastel**                         |                         **Ocean**                         |                        **Monochrome**                         |
+| <img src="assets/theme_showcase_pastel.gif" width="300"/> | <img src="assets/theme_showcase_ocean.gif" width="300"/>  | <img src="assets/theme_showcase_monochrome.gif" width="300"/> |
+|                         **Neon**                          |                        **Arcane**                         |                          **Phantom**                          |
+|  <img src="assets/theme_showcase_neon.gif" width="300"/>  | <img src="assets/theme_showcase_arcane.gif" width="300"/> |  <img src="assets/theme_showcase_phantom.gif" width="300"/>   |
+
+#### ❖ Available Themes
+
+| Theme            | Description                               | Usage                  |
+| :--------------- | :---------------------------------------- | :--------------------- |
+| ◉ **Dark**       | The default. Clean, subtle, professional. | `terminice.dark`       |
+| ▤ **Matrix**     | Hacker green on black.                    | `terminice.matrix`     |
+| ▧ **Fire**       | Warm reds, oranges, and yellows.          | `terminice.fire`       |
+| ▦ **Pastel**     | Soft, muted, and friendly colors.         | `terminice.pastel`     |
+| ▪ **Ocean**      | Deep blues and calming cyans.             | `terminice.ocean`      |
+| ▣ **Monochrome** | Pure black and white. High contrast.      | `terminice.monochrome` |
+| ▱ **Neon**       | Bright, high-energy cyberpunk colors.     | `terminice.neon`       |
+| ▰ **Arcane**     | Mystical purples and magentas.            | `terminice.arcane`     |
+| ◈ **Phantom**    | Ghostly grays and ethereal tones.         | `terminice.phantom`    |
+
+#### ◩ Display Modes
+
+Control the verbosity and framing of your prompts:
+
+- **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
+- **`compact`** — Keeps borders but removes hints for a tighter layout.
+- **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
+
+Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
+
+#### Example
+
+```dart
+// Combine theme and display mode
+final name = terminice.ocean.compact.text('Name');
+
+// Store a themed instance for consistency
+final t = terminice.fire.minimal;
+final age = t.text('Age');
+final role = t.searchSelector(prompt: 'Role', options: ['Admin', 'User']);
+```
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+# Core Concepts & Behavior
 
 This section covers the mechanics that make Terminice predictable across a full CLI app.
 
@@ -392,53 +446,7 @@ Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `sea
 
 Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, manual indicator controller calls such as `show(...)`, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy. Async task helpers use plain task rendering in fallback/plain modes.
 
-### ▧ Theming & Display Modes
-
-`terminice` makes styling effortless. Every prompt adapts automatically to the selected theme and display mode. Just chain the theme or mode accessor before calling any prompt.
-
-|                           Dark                            |                          Matrix                           |                             Fire                              |
-| :-------------------------------------------------------: | :-------------------------------------------------------: | :-----------------------------------------------------------: |
-|  <img src="assets/theme_showcase_dark.gif" width="300"/>  | <img src="assets/theme_showcase_matrix.gif" width="300"/> |    <img src="assets/theme_showcase_fire.gif" width="300"/>    |
-|                        **Pastel**                         |                         **Ocean**                         |                        **Monochrome**                         |
-| <img src="assets/theme_showcase_pastel.gif" width="300"/> | <img src="assets/theme_showcase_ocean.gif" width="300"/>  | <img src="assets/theme_showcase_monochrome.gif" width="300"/> |
-|                         **Neon**                          |                        **Arcane**                         |                          **Phantom**                          |
-|  <img src="assets/theme_showcase_neon.gif" width="300"/>  | <img src="assets/theme_showcase_arcane.gif" width="300"/> |  <img src="assets/theme_showcase_phantom.gif" width="300"/>   |
-
-#### ❖ Available Themes
-
-| Theme            | Description                               | Usage                  |
-| :--------------- | :---------------------------------------- | :--------------------- |
-| ◉ **Dark**       | The default. Clean, subtle, professional. | `terminice.dark`       |
-| ▤ **Matrix**     | Hacker green on black.                    | `terminice.matrix`     |
-| ▧ **Fire**       | Warm reds, oranges, and yellows.          | `terminice.fire`       |
-| ▦ **Pastel**     | Soft, muted, and friendly colors.         | `terminice.pastel`     |
-| ▪ **Ocean**      | Deep blues and calming cyans.             | `terminice.ocean`      |
-| ▣ **Monochrome** | Pure black and white. High contrast.      | `terminice.monochrome` |
-| ▱ **Neon**       | Bright, high-energy cyberpunk colors.     | `terminice.neon`       |
-| ▰ **Arcane**     | Mystical purples and magentas.            | `terminice.arcane`     |
-| ◈ **Phantom**    | Ghostly grays and ethereal tones.         | `terminice.phantom`    |
-
-#### ◩ Display Modes
-
-Control the verbosity and framing of your prompts:
-
-- **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
-- **`compact`** — Keeps borders but removes hints for a tighter layout.
-- **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
-
-Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
-
-#### ⌨ Example
-
-```dart
-// Combine theme and display mode
-final name = terminice.ocean.compact.text('Name');
-
-// Store a themed instance for consistency
-final t = terminice.fire.minimal;
-final age = t.text('Age');
-final role = t.searchSelector(prompt: 'Role', options: ['Admin', 'User']);
-```
+_[▰ Back](#table-of-contents) → Table of Contents_
 
 ## Command App Integration
 
@@ -601,6 +609,8 @@ void main() {
 }
 ```
 
+_[▰ Back](#table-of-contents) → Table of Contents_
+
 ## Testing Terminice CLIs
 
 Serious CLIs need tests that do not depend on a real terminal, real stdin, or timing-sensitive stdout capture. Import the sidecar testing library from tests:
@@ -671,6 +681,8 @@ expect(count, 42);
 expect(tester.output.normalizedText, equals('OK: cache ready'));
 expect(tester.output.containsAnsiControls, isFalse);
 ```
+
+_[▰ Back](#table-of-contents) → Table of Contents_
 
 ## Custom Components & Extensibility
 
@@ -751,6 +763,8 @@ final result = terminice.flow('Create project')
 ```
 
 For lower-level flow wiring, `FlowContext.runComponent(component)` runs through the flow's configured Terminice instance. `FlowContext.promptTitle(title)` gives progress-aware titles when `.progress()` is enabled, while `fallbackPromptTitle(title)` keeps fallback/plain prompts clean.
+
+_[▰ Back](#table-of-contents) → Table of Contents_
 
 ---
 
