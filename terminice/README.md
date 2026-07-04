@@ -29,15 +29,15 @@
 
 ### Features
 
-- **30+ built-in prompts** — Text, password, confirm, multiline editor, slider, range, rating, date, form, and 7 selector variants. Plus pickers for files, paths, colors, and dates.
-- **11 color themes** — Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
-- **Config editor** — A searchable, nested settings editor that composes existing prompts into a unified configuration flow with live theme switching, validation, and JSON serialization.
-- **Progress and task feedback** — Loading spinners, inline spinners, progress bars, progress dots, and async task helpers for long-running `Future` and `Stream` work.
-- **Message primitives** — Small `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline` helpers for polished CLI status lines around prompts, tasks, and flows.
+- **Testable by design** - Script input and assert output without depending on real stdin/stdout.
 - **Zero boilerplate** — One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
+- **30+ terminal components** - Prompts, menus, pickers, indicators, messages, flows, and config tools.
+- **11 color themes** — Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
+- **One style everywhere** - Themes, display modes, glyphs, and compatibility settings travel through one `Terminice` instance.
+- **Progress and task feedback** — Loading spinners, inline spinners, progress bars, progress dots, and async task helpers for long-running `Future` and `Stream` work.
 - **Cross-platform** — Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
-- **Modular architecture** — Built on `terminice_core`, which exposes navigation primitives, prompt scaffolds, and rendering utilities for when you need full control.
-- **Custom components** — Package your own reusable prompts and workflows with the same Terminice theme, terminal, fallback, compatibility, and test harness behavior as built-ins.
+- **No framework lock-in** - Keep your parser, command runner, process tools, and app structure.
+- **Customizable when needed** - Extend with your own components and themes without losing Terminice behavior.
 
 #### Table of Contents
 
