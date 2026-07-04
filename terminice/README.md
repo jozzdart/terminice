@@ -106,7 +106,7 @@ The goal is simple: make beautiful terminal UIs easy for anyone, while still giv
 
 # 📚 The `terminice` Catalogue
 
-Explore the complete collection of tools available in `terminice`.
+Explore the complete collection of tools available in `terminice`.  
 Every tool is fully themeable and ready to use with zero setup.
 
 #### 📝 Prompts
@@ -154,38 +154,23 @@ Visual feedback for long-running tasks.
 - [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
 - [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
 
-#### 💬 Messages
+#### 🧰 Workflow & CLI UX
 
-Small output helpers for status and plain CLI lines.
+Helpers for turning individual components into complete command-line experiences.
 
 - [`message primitives` — `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
-
-#### 🔁 Async Task Helpers
-
-Future and stream wrappers for long-running work.
-
 - [`task` — Run a task with spinner or dots status.](#task---async-status-wrapper)
 - [`progressTask` — Run a task with determinate progress.](#progresstask---async-progress-wrapper)
 - [`trackStream` — Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
 - [`TaskProgress` — Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
 - [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
 - [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
-
-#### 🧩 Extensibility
-
-Build reusable, typed components for project-specific CLI UI.
-
+- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
 - [`custom components` — Reusable class or callback components.](#custom-components--extensibility)
 
-#### 🔄 Flow Composition
+#### ⚙️ Configuration & Guides
 
-Chain several prompts and selectors into one sequential CLI workflow.
-
-- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
-
-#### ⚙️ Configuration & Utilities
-
-Advanced tools for building full CLI applications.
+Advanced tools for settings, documentation, shortcuts, and theme exploration.
 
 - [`configEditor` — A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
 - [`cheatSheet` — Display a quick reference guide.](#cheatsheet---framed-reference-table)
