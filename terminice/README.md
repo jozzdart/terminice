@@ -56,10 +56,10 @@
 Most CLIs start with a question.
 
 ```dart
-final project = terminice.text('Project name');
+final name = terminice.text('Project name');
 ```
 
-Then the questions become choices.
+Then the question becomes a choice.
 
 ```dart
 final template = terminice.searchSelector(
@@ -68,65 +68,46 @@ final template = terminice.searchSelector(
 );
 ```
 
-Then the choices become a real workflow.
+Then input becomes private, searchable, or filesystem-aware.
 
 ```dart
-final result = terminice.flow('Create release')
-    .text('version', 'Version', placeholder: '1.2.0')
-    .checkboxes('targets', 'Targets', options: ['pub.dev', 'GitHub'])
-    .confirm('ship', message: 'Publish now?')
-    .review()
-    .run();
+final token = terminice.password('API token');
+final config = terminice.filePicker('Config file');
 ```
 
-And suddenly your command needs to feel like a product, not a pile of `print()` calls.
+And long work can still feel alive.
 
 ```dart
-final t = terminice.ocean.compact.autoFallback;
-
-t.info('Publishing release');
-await t.task('Uploading package', run: publishPackage);
-t.success('Release is live');
+final bar = terminice.progressBar('Uploading');
+bar.show(current: 42, total: 100);
+bar.clear();
 ```
 
-That is what `terminice` is for: the moments where your CLI talks to a person.
-
-It does not replace your command runner, argument parser, shell utilities, or app architecture. Keep using `package:args`, `CommandRunner`, `dart:io`, Mason-style commands, `dcli`, or whatever already works for your project. Drop Terminice into the user-facing layer and get polished prompts, menus, flows, progress, messages, fallback behavior, themes, and tests from one place.
-
-#### The shape of a Terminice CLI
+Use one styled instance when you want everything to feel like one product.
 
 ```dart
-final t = terminice.neon.autoFallback;
+final t = terminice.neon.compact;
 
-final config = t.flow('New app')
-    .text('name', 'Name')
-    .select('runtime', 'Runtime', options: ['Dart', 'Flutter'])
-    .checkboxes('extras', 'Extras', options: ['Git', 'CI', 'Docker'])
-    .review(title: 'Ready to create?')
-    .run();
-
-if (config.cancelled) return;
-
-await t.task('Creating files', run: createFiles);
-t.detail('Next: cd ${config.string('name')}');
+final name = t.text('Project name');
+final config = t.filePicker('Config file');
+final ok = t.confirm(message: 'Create $name?');
 ```
 
-One configured instance controls the look and behavior everywhere: prompt theme, display mode, fallback policy, compatibility mode, terminal output, and test harness.
+That is where Terminice fits: the human-facing layer of your CLI. It does not replace `package:args`, `CommandRunner`, `dart:io`, process tools, or your app architecture. It gives those commands beautiful prompts, menus, flows, progress, messages, fallback behavior, themes, and tests.
 
 #### Why developers reach for it
 
-- **Immediate polish** - simple calls become keyboard-driven terminal UI.
-- **One visual language** - prompts, menus, tasks, messages, flows, and custom components share the same instance configuration.
-- **Real-world fallback** - rich locally, plain and predictable in CI, scripts, tests, and limited terminals.
-- **Workflow glue included** - flows cover multi-step setup, review screens, conditional steps, and typed results.
-- **Testing is built in** - script input and assert output without touching real stdin/stdout.
-- **No framework tax** - Terminice owns the terminal UX, not your command architecture.
+- **Beautiful by default** - rich terminal UI from small method calls.
+- **Easy to grow** - start with one prompt, then add menus, flows, tasks, config editors, or custom components.
+- **Unified by instance** - theme, display mode, fallback, terminal, and testing move together.
+- **Robust in real environments** - interactive locally, plain and predictable in CI, scripts, tests, and limited terminals.
 
-Start with a single prompt. Add menus when choices grow. Add flows when the command becomes a guided setup. Add fallback and tests when the CLI becomes something people depend on.
+The goal is simple: make beautiful terminal UIs easy for anyone, while still giving serious CLI apps a centralized, consistent, fallback-safe, and testable system.
 
 # 📚 The `terminice` Catalogue
 
-Explore the complete collection of tools available in `terminice`. Every tool is fully themeable and ready to use with zero setup.
+Explore the complete collection of tools available in `terminice`.
+Every tool is fully themeable and ready to use with zero setup.
 
 #### 📝 Prompts
 
