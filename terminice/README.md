@@ -111,12 +111,12 @@ That is where Terminice fits: the human-facing layer of your CLI. It does not re
 
 The goal is simple: make beautiful terminal UIs easy for anyone, while still giving serious CLI apps a centralized, consistent, fallback-safe, and testable system.
 
-# 📚 The `terminice` Catalogue
+# ▣ The `terminice` Catalogue
 
-Explore the complete collection of tools available in `terminice`.  
+Explore the complete collection of tools available in `terminice`.
 Every tool is fully themeable and ready to use with zero setup.
 
-#### 📝 Prompts
+#### ▤ Prompts
 
 Standard input controls for gathering user data.
 
@@ -130,7 +130,7 @@ Standard input controls for gathering user data.
 - [`date` — Date picker.](#date---keyboard-date-prompt)
 - [`form` — Form prompt.](#form---multi-field-input)
 
-#### 🎯 Selectors
+#### ▥ Selectors
 
 Interactive menus for choosing from predefined options.
 
@@ -142,7 +142,7 @@ Interactive menus for choosing from predefined options.
 - [`toggleGroup` — Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
 - [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
 
-#### 🗂️ Pickers
+#### ▦ Pickers
 
 Specialized components for selecting complex data types.
 
@@ -151,7 +151,7 @@ Specialized components for selecting complex data types.
 - [`colorPicker` — Interactive color selection.](#colorpicker---ansi-color-grid)
 - [`datePicker` — Calendar-based date selection.](#datepicker---calendar-date-selection)
 
-#### ⏳ Indicators
+#### ▧ Indicators
 
 Visual feedback for long-running tasks.
 
@@ -161,7 +161,7 @@ Visual feedback for long-running tasks.
 - [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
 - [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
 
-#### 🧰 Workflow & CLI UX
+#### ▨ Workflow & CLI UX
 
 Helpers for turning individual components into complete command-line experiences.
 
@@ -175,7 +175,7 @@ Helpers for turning individual components into complete command-line experiences
 - [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
 - [`custom components` — Reusable class or callback components.](#custom-components--extensibility)
 
-#### ⚙️ Configuration & Guides
+#### ▩ Configuration & Guides
 
 Advanced tools for settings, documentation, shortcuts, and theme exploration.
 
@@ -780,7 +780,7 @@ final email = terminice.text(
 > **Why use this?**
 > Instead of manually wiring stdin reads, trimming, empty checks, and retry loops, `text` gives you a themed prompt with validation and cancellation behavior in one call.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -831,7 +831,7 @@ if (newPassword != null) {
 > **Why use this?**
 > Use `password` when the input should behave like text but render safely. Use `verify: true` when a typo would be expensive and you want the confirmation logic built in.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -885,7 +885,7 @@ final restart = terminice.fire.confirm(
 > **Why use this?**
 > A plain `stdin.readLineSync()` can only guess what users meant. `confirm` makes the choice explicit, themeable, and keyboard driven.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -933,7 +933,7 @@ print('Captured $lineCount lines.');
 > **Why use this?**
 > Use `text` for a short answer. Use `multiline` when Enter should create content instead of submitting the prompt.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -994,7 +994,7 @@ final rollout = terminice.neon.slider(
 > **Why use this?**
 > A slider is faster and safer than asking users to type a number when the valid range is known and small adjustments matter.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1059,7 +1059,7 @@ final price = terminice.ocean.range(
 > **Why use this?**
 > Use `slider` for one value. Use `range` when the user is defining a span, such as min/max price, memory budget, or an allowed operating window.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1104,7 +1104,7 @@ final risk = terminice.fire.rating(
 > **Why use this?**
 > Ratings keep bounded integer input quick. Number keys make exact selection fast, while labels let you turn numbers into meaningful domain language.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1150,7 +1150,7 @@ final reviewDate = terminice.date(
 > **Why use this?**
 > Use `date` when free-form date text would be too error-prone, but a full calendar picker would be more UI than the workflow needs.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1259,7 +1259,7 @@ print('Captured ${values.length} fields.');
 > **Why use this?**
 > Use separate prompts when each answer should feel like its own step. Use `form` when the inputs belong together and should validate as one unit, such as login, signup, or connection settings.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1319,7 +1319,7 @@ print('Region: $selectedRegion');
 > **Why use this?**
 > Use `searchSelector` when the list may be longer than the terminal viewport, or when users know the item name and should be able to filter instead of arrowing through everything.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1389,7 +1389,7 @@ final environment = terminice.fire.choiceSelector(
 > **Why use this?**
 > Use `searchSelector` for fast text filtering. Use `choiceSelector` when the shape of the decision matters and subtitles help users choose confidently.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1448,7 +1448,7 @@ final labels = terminice.matrix.checkboxSelector(
 > **Why use this?**
 > Use `checkboxSelector` when every option is a simple on/off inclusion. Use `choiceSelector` when each option needs a card subtitle, and `tagSelector` when a compact chip layout fits better.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1506,7 +1506,7 @@ final size = terminice.neon.gridSelector(
 > **Why use this?**
 > Use `gridSelector` when options are short and benefit from spatial scanning. Use `searchSelector` when the list is long or users need filtering.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1566,7 +1566,7 @@ final compactTags = terminice.pastel.compact.tagSelector(
 > **Why use this?**
 > Use `tagSelector` when the selected values are labels and a compact chip grid is easier to scan than a tall checklist.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1630,7 +1630,7 @@ final permissions = terminice.monochrome.toggleGroup(
 > **Why use this?**
 > Use `checkboxSelector` when you only need a list of enabled labels. Use `toggleGroup` when both enabled and disabled states matter after the prompt returns.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1708,7 +1708,7 @@ final tool = terminice.arcane.commandPalette(
 > **Why use this?**
 > Use `commandPalette` when the user is choosing an action by name. It returns the whole `CommandEntry`, so display text and dispatch IDs can stay separate.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1767,7 +1767,7 @@ print(picked ?? 'Selection cancelled.');
 > **Why use this?**
 > Use `filePicker` when the user needs to choose an existing file from a folder tree. Use `pathPicker` when confirming the current directory is part of the workflow.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1828,7 +1828,7 @@ print(exportDir == null ? 'No export folder selected.' : exportDir);
 > **Why use this?**
 > Use `pathPicker` for directory-first workflows because it can confirm the current folder directly. Turn on `allowFiles` when a command accepts either a file path or a directory path.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1885,7 +1885,7 @@ print(dangerColor ?? '#EF4444');
 > **Why use this?**
 > Use `colorPicker` when the user should see the color before committing it. It is faster than asking for raw hex, but still lets precise users jump in with `H`.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1949,7 +1949,7 @@ print(normalizedShipDate ?? 'No ship date selected.');
 > **Why use this?**
 > Use `datePicker` when a visual calendar prevents off-by-one mistakes. Use the simpler `date` prompt when users already know the exact date string they want to type.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2005,7 +2005,7 @@ if (publish) {
 > **Why use this?**
 > Use message primitives when you want polished, consistent terminal-facing status lines without bringing in a logging framework. They give command output the same theme, terminal, fallback, compatibility, and test behavior as Terminice prompts and tasks.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2050,7 +2050,7 @@ try {
 > **Why use this?**
 > Use `task` when you want async status and cleanup without manually wiring timers, cursor hiding, final status lines, or error rendering.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2100,7 +2100,7 @@ await terminice.progressTask(
 > **Why use this?**
 > Use `progressTask` when your async work has a known total and the task itself should own progress updates.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2139,7 +2139,7 @@ final records = await terminice.ocean.trackStream(
 > **Why use this?**
 > Use `trackStream` when each stream event maps to one progress unit and you want the collected values back after rendering completes.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2174,7 +2174,7 @@ await terminice.progressTask(
 > **Why use this?**
 > Use `TaskProgress` as the single source of truth for count, total, and per-step detail during async progress rendering.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2200,7 +2200,7 @@ await terminice.task(
 > **Why use this?**
 > Use `TaskDisplay.plain` for logs, CI, tests, or any output stream where control sequences would be noisy.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2225,7 +2225,7 @@ await terminice.task(
 > **Why use this?**
 > Use `persist` when the task result should remain in command history. Use `clear` for transient status that should disappear after completion.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2317,7 +2317,7 @@ try {
 > **Why use this?**
 > Use `loadingSpinner` when the task is indeterminate but important enough to deserve its own framed status area. Use `inlineSpinner` when you want the same idea in a single log-style line.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2394,7 +2394,7 @@ try {
 > **Why use this?**
 > Use `inlineSpinner` for short-lived or repeated status updates where you do not want a full frame. It gives users motion and context without taking over the terminal.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2492,7 +2492,7 @@ try {
 > **Why use this?**
 > Use `progressBar` when you know the total amount of work and want a framed progress readout. Use `loadingSpinner` or `progressDots` when the task has no reliable total.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2558,7 +2558,7 @@ try {
 > **Why use this?**
 > Use `inlineProgressBar` when you want the smallest possible determinate progress signal. Use `progressBar` when the user benefits from a framed bar and raw count display.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2640,7 +2640,7 @@ await terminice.progressDots('Waiting for job').whileRunning(
 > **Why use this?**
 > Use `progressDots` when you want calmer feedback than a spinner and do not have a meaningful total for a progress bar.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2811,7 +2811,7 @@ if (result.cancelled) {
 > **Why use this?**
 > Use `flow` when several prompt results belong to one command, later steps should react to earlier answers, or users should review and edit a full answer set before submission. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -3119,7 +3119,7 @@ void main() {
 > **Why use this?**
 > Use `configEditor` when a CLI needs a durable settings workflow with typed values, nested groups, live theme selection, and JSON-friendly output. Use individual prompts when you only need one or two answers.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -3209,7 +3209,7 @@ terminice.fire.cheatSheet(
 > **Why use this?**
 > Use `cheatSheet` when the information is static and should stay compact. Use `helpCenter` when the user needs search, preview text, and a selected document result.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -3347,7 +3347,7 @@ print(chosen?.title ?? 'No topic selected.');
 > **Why use this?**
 > Use `helpCenter` when documentation needs search and a meaningful return value. Use `cheatSheet` when a simple static table is enough.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -3423,7 +3423,7 @@ void showPromptHelp() {
 > **Why use this?**
 > Use `hotkeyGuide` when shortcuts are part of the workflow and users need an in-terminal reminder. Use `cheatSheet` for broader reference data that is not specifically about keys.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -3507,4 +3507,4 @@ void main() {
 > **Why use this?**
 > Use `themeDemo` to inspect the visual language of Terminice themes quickly. Use `ThemeConfigurable` when your application needs to save the chosen theme.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
