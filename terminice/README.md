@@ -38,7 +38,7 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
 
 #### Table of Contents
 
-- [**The Terminice Catalogue**](#-the-terminice-catalogue)
+- [**The Terminice Catalogue ★**](#-the-terminice-catalogue)
 - [**Quick Start**](#quick-start)
 - [**Theming & Display Modes**](#-theming--display-modes)
 - [**Core Concepts & Behavior**](#core-concepts--behavior)
@@ -108,7 +108,7 @@ That is where Terminice fits: the human-facing layer of your CLI. It does not re
 
 The goal is simple: make beautiful terminal UIs easy for anyone, while still giving serious CLI apps a centralized, consistent, fallback-safe, and testable system.
 
-# ▣ The `terminice` Catalogue
+# ★ The `terminice` Catalogue
 
 Explore the complete collection of tools available in `terminice`.
 
