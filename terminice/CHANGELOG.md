@@ -2,16 +2,9 @@
 
 #### Added
 
-- Added Flow v2 review workflows with a post-run `.review(...)` step that lets users submit, edit, or cancel collected answers.
-- Added review edit loops that rerun from the selected step, refresh downstream answers, and re-evaluate conditional `when` branches.
-- Added `.progress()` metadata for built-in flow prompts, currently rendering step counts in prompt titles.
-- Added reusable flow templates through `include(FlowTemplate)` for composing shared flow chunks.
-- Added per-step review metadata: `reviewLabel`, `summarize`, `includeInReview`, and `editable`.
-- Added password review masking by default, while allowing custom summaries or review exclusion for sensitive values.
-- Added typed flow result/context helpers: `string`, `maybeString`, `flag`, `maybeFlag`, `list<T>`, and `valueOr<T>`.
-- Added `TerminiceComponent<T>`, `TerminiceComponentContext`, `runComponent(...)`, and `runWithComponent(...)` for lightweight custom component extensibility.
-- Added `FlowBuilder.component<T>(...)` and `FlowContext.runComponent(...)` so reusable custom components can participate in flow validation, cancellation, review metadata, and edit reruns.
-- Added `FlowContext.promptTitle(...)` and `fallbackPromptTitle(...)` helpers for progress-aware custom component prompts.
+- Added Flow v2 review workflows with submit/edit/cancel review screens, edit reruns, conditional re-evaluation, progress titles, reusable templates, review metadata, password masking, and typed result helpers.
+- Added lightweight custom component extensibility through `TerminiceComponent<T>`, `TerminiceComponentContext`, `runComponent(...)`, `runWithComponent(...)`, and Flow component steps.
+- Added progress-aware custom component prompt title helpers for rich and fallback flow prompts.
 - Added small CLI message primitives: `log`, `info`, `success`, `warn`, `error`, `err`, `detail`, and `newline`.
 - Added theme-aware message rendering with ANSI-free fallback output for noninteractive, fallback, basic, legacy, no-color, and ASCII-style paths.
 
@@ -19,21 +12,14 @@
 
 - Raised the minimum Dart SDK constraint to `>=3.0.0 <4.0.0`.
 - Flow is now documented as the primary primitive for sequential and flow/wizard-style review workflows without introducing a separate wizard API.
-- Flow component steps now use `validate` naming and default to review-included/editable behavior like prompt steps.
-- Review cancellation preserves collected values without assigning a step-specific cancellation key.
-- Edit cancellation restores the pre-edit snapshot so partial reruns do not corrupt the confirmed review state.
+- Flow review, edit cancellation, and component-step behavior now preserve confirmed state more predictably across review/edit reruns.
 - Task final status rendering now shares the plain status-label helper used by message fallbacks while preserving existing task output.
 
 #### Documentation
 
-- Updated README Flow coverage for review actions, edit reruns, conditional re-evaluation, progress titles, templates, review metadata, password masking, and typed access helpers.
-- Added a Flow v2 example covering templates, review metadata, progress titles, and typed result helpers.
-- Added README coverage and a runnable example for class-based, callback-based, and Flow-integrated custom components.
-- Added README, library docs, and an output-only example for message primitives.
-- Added README guidance for using Terminice inside command apps with plain argument dispatch, `package:args`/`CommandRunner`, Mason-style command classes, CI/fallback output, and `TerminiceTester` command tests.
-- Added command app integration examples at `example/command_app_example.dart` and `example/command_app_testing_example.dart`.
-- Expanded the README with a clearer introduction, vision, package-fit comparisons, robustness guidance, and stronger documentation around the per-tool reference catalogue.
-- Highlighted that every catalogue item has detailed documentation covering API shape, behavior, controls, examples, and usage guidance.
+- Expanded README coverage for Flow v2, custom components, message primitives, command app integration, package-fit comparisons, robustness guidance, and the Terminice vision.
+- Strengthened the README catalogue as a detailed per-tool reference covering API shape, behavior, controls, examples, and usage guidance.
+- Added runnable examples for Flow v2, custom components, message primitives, and command app integration/testing.
 - Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
 
 ## 1.1.0
