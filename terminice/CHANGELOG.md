@@ -17,6 +17,7 @@
 
 #### Changed
 
+- Raised the minimum Dart SDK constraint to `>=3.0.0 <4.0.0`.
 - Flow is now documented as the primary primitive for sequential and flow/wizard-style review workflows without introducing a separate wizard API.
 - Flow component steps now use `validate` naming and default to review-included/editable behavior like prompt steps.
 - Review cancellation preserves collected values without assigning a step-specific cancellation key.
@@ -31,6 +32,8 @@
 - Added README, library docs, and an output-only example for message primitives.
 - Added README guidance for using Terminice inside command apps with plain argument dispatch, `package:args`/`CommandRunner`, Mason-style command classes, CI/fallback output, and `TerminiceTester` command tests.
 - Added command app integration examples at `example/command_app_example.dart` and `example/command_app_testing_example.dart`.
+- Expanded the README with a clearer introduction, vision, package-fit comparisons, robustness guidance, and stronger documentation around the per-tool reference catalogue.
+- Highlighted that every catalogue item has detailed documentation covering API shape, behavior, controls, examples, and usage guidance.
 - Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
 
 ## 1.1.0
