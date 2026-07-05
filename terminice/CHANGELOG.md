@@ -10,7 +10,7 @@
 
 #### Changed
 
-- Raised the minimum Dart SDK constraint to `>=3.0.0 <4.0.0`.
+- Raised the minimum Dart SDK constraint to `>=3.3.0 <4.0.0`.
 - Flow is now documented as the primary primitive for sequential and flow/wizard-style review workflows without introducing a separate wizard API.
 - Flow review, edit cancellation, and component-step behavior now preserve confirmed state more predictably across review/edit reruns.
 - Task final status rendering now shares the plain status-label helper used by message fallbacks while preserving existing task output.
