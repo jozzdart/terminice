@@ -112,6 +112,8 @@ That is where Terminice fits: the human-facing layer of your CLI. It does not re
 
 The goal is simple: make beautiful terminal UIs easy for anyone, while still giving serious CLI apps a centralized, consistent, fallback-safe, and testable system.
 
+For the reason behind those choices, read [**The Terminice Vision**](#the-terminice-vision).
+
 _[▰ Back](#table-of-contents) → to Table of Contents_
 
 # ★ The `terminice` Catalogue
@@ -457,7 +459,7 @@ I wanted to build Dart CLIs that felt good to use without turning every command 
 
 The options around the ecosystem each solved part of that problem. Some packages were simple and pleasant, but stopped at basic prompts. Some were powerful, but too low-level, leaving me to build rendering, keyboard handling, fallback behavior, and testing myself. Some were full TUI frameworks, which are great when the terminal is the whole app, but too much when the CLI only needs a polished setup flow, picker, progress indicator, or config editor.
 
-Terminice is the middle layer I always wanted, a lightweight terminal UI kit that keeps the developer experience simple while still giving real control when the CLI grows.
+Terminice is the middle layer I always wanted, a lightweight terminal UI kit that keeps the developer experience simple while still giving real control when the CLI grows. The goal was to set a high bar for that specific job, not to make another prompt package for its own sake.
 
 #### What matters most
 
