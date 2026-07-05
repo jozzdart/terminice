@@ -2,7 +2,7 @@
 
 #### Added
 
-- Added Flow v2 review workflows with submit/edit/cancel review screens, edit reruns, conditional re-evaluation, progress titles, reusable templates, review metadata, password masking, and typed result helpers.
+- Added Flow review workflows with submit/edit/cancel review screens, edit reruns, conditional re-evaluation, progress titles, reusable templates, review metadata, password masking, and typed result helpers.
 - Added lightweight custom component extensibility through `TerminiceComponent<T>`, `TerminiceComponentContext`, `runComponent(...)`, `runWithComponent(...)`, and Flow component steps.
 - Added progress-aware custom component prompt title helpers for rich and fallback flow prompts.
 - Added small CLI message primitives: `log`, `info`, `success`, `warn`, `error`, `err`, `detail`, and `newline`.
@@ -17,9 +17,9 @@
 
 #### Documentation
 
-- Expanded README coverage for Flow v2, custom components, message primitives, command app integration, package-fit comparisons, robustness guidance, and the Terminice vision.
+- Expanded README coverage for Flow review workflows, custom components, message primitives, command app integration, package-fit comparisons, robustness guidance, and the Terminice vision.
 - Strengthened the README catalogue as a detailed per-tool reference covering API shape, behavior, controls, examples, and usage guidance.
-- Added runnable examples for Flow v2, custom components, message primitives, and command app integration/testing.
+- Added runnable examples for Flow review workflows, custom components, message primitives, and command app integration/testing.
 - Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
 
 ## 1.1.0
