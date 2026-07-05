@@ -17,9 +17,11 @@
 
 > **Polished CLI interactions with tiny Dart calls.**
 
-`Terminice` turns prompts, menus, progress, messages, config, themes, fallback behavior, and testing into one cohesive terminal UI layer. It is quick for small tools, robust for serious CLIs, and flexible enough to grow with your app.
+`terminice` turns prompts, menus, progress, messages, config, themes, fallback behavior, and testing into one cohesive terminal UI layer. It is quick for small tools, robust for serious CLIs, and flexible enough to grow with your app.
 
 Ships with 30+ ready-made components, 11 themes, display modes, fallback policies, test utilities, and custom component hooks. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
+
+[Terminice exists because I needed this package myself.](#the-terminice-vision)
 
 <p align="center">
   <img src="assets/showcase.gif" alt="terminice interactive showcase" width="1000"/>
@@ -51,10 +53,11 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
   - [Centralized Instance Configuration](#centralized-instance-configuration)
   - [Compatibility Modes](#compatibility-modes)
   - [Fallback Policies](#fallback-policies)
-- [**Comparison & Alternatives**](#comparison--alternatives)
-- [**Command App Integration**](#command-app-integration)
-- [**Testing Terminice CLIs**](#testing-terminice-clis)
-- [**Custom Components & Extensibility**](#custom-components--extensibility)
+- [**The Terminice Vision**](#the-terminice-vision)
+- [Comparison & Alternatives](#comparison--alternatives)
+- [Command App Integration](#command-app-integration)
+- [Testing Terminice CLIs](#testing-terminice-clis)
+- [Custom Components & Extensibility](#custom-components--extensibility)
 
 ### Meet Terminice
 
@@ -108,6 +111,8 @@ That is where Terminice fits: the human-facing layer of your CLI. It does not re
 - **Robust in real environments** - interactive locally, plain and predictable in CI, scripts, tests, and limited terminals.
 
 The goal is simple: make beautiful terminal UIs easy for anyone, while still giving serious CLI apps a centralized, consistent, fallback-safe, and testable system.
+
+_[▰ Back](#table-of-contents) → to Table of Contents_
 
 # ★ The `terminice` Catalogue
 
@@ -441,6 +446,34 @@ Line-mode fallback uses simple text and numbered prompts instead of raw-mode key
 Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `searchSelector`, `gridSelector`, `checkboxSelector`, `choiceSelector`, `tagSelector`, `toggleGroup`, `commandPalette`, `slider`, `range`, `rating`, and the focused enum/theme selects used by the config editor.
 
 Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, manual indicator controller calls such as `show(...)`, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy. Async task helpers use plain task rendering in fallback/plain modes.
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+### The Terminice Vision
+
+Terminice exists because I needed this package myself.
+
+I wanted to build Dart CLIs that felt good to use without turning every command into a full terminal application. I needed prompts, menus, progress, configuration screens, and status messages. I wanted them to be beautiful, but not heavy. I wanted them to be easy, but not limiting. I wanted them to be customizable, but not scattered across every call site. And I wanted to test the experience instead of hoping stdin, stdout, and keyboard input would behave during real use.
+
+The options around the ecosystem each solved part of that problem. Some packages were simple and pleasant, but stopped at basic prompts. Some were powerful, but too low-level, leaving me to build rendering, keyboard handling, fallback behavior, and testing myself. Some were full TUI frameworks, which are great when the terminal is the whole app, but too much when the CLI only needs a polished setup flow, picker, progress indicator, or config editor.
+
+Terminice is the middle layer I always wanted, a lightweight terminal UI kit that keeps the developer experience simple while still giving real control when the CLI grows.
+
+#### What matters most
+
+- **Ease of use** - common interactions should be one small method call, not a new architecture.
+- **Beautiful defaults** - prompts and menus should feel intentional before you customize anything.
+- **Flexibility** - start with a text prompt, then add selectors, pickers, tasks, messages, flows, config editors, or custom components without switching tools.
+- **Centralized customization** - theme, display mode, glyphs, fallback, terminal I/O, and tests should move through the `Terminice` instance, not through repeated options everywhere.
+- **Lightweight design** - Terminice should sit inside your existing CLI, not force you into a command framework or full-screen runtime.
+- **Real-world robustness** - local terminals, CI, scripts, limited terminals, non-TTY output, cancellation, and fallback modes should be part of the design.
+- **Testability** - terminal UI should be testable with scripted input and captured output, just like the rest of your command logic.
+
+The most important idea is consistency. A CLI should not feel like ten unrelated helpers glued together. If you use one Terminice instance across your app, every component should feel like it belongs to the same product: same theme, same display mode, same fallback behavior, same terminal abstraction, same testing story.
+
+That is why Terminice is intentionally more than a prompt package and intentionally less than a full TUI framework. It is the human-facing layer of a Dart CLI: the part where users answer questions, make choices, watch work happen, review configuration, and understand what the command is doing.
+
+The long-term goal is simple: make beautiful terminal UIs easy for anyone, while keeping serious CLI apps flexible, lightweight, customizable, fallback-safe, and testable.
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
