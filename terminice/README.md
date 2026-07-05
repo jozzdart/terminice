@@ -19,7 +19,7 @@
 
 `terminice` turns prompts, menus, progress, messages, config, themes, fallback behavior, and testing into one cohesive terminal UI layer. It is quick for small tools, robust for serious CLIs, and flexible enough to grow with your app.
 
-Ships with 30+ ready-made components, 11 themes, display modes, fallback policies, test utilities, and custom component hooks. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
+Ships with 30+ ready-made components, 11 themes, display modes, fallback policies, test utilities, custom component hooks, and detailed documentation for every tool. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
 
 [Terminice exists because I needed this package myself.](#the-terminice-vision)
 
@@ -32,6 +32,7 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
 - **Testable by design** - Script input and assert output without depending on real stdin/stdout.
 - **Zero boilerplate** - One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
 - **30+ terminal components** - Prompts, menus, pickers, indicators, messages, flows, and config tools.
+- **Detailed docs for every tool** - Each catalogue item includes API notes, behavior details, controls, examples, and usage guidance.
 - **11 color themes** - Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
 - **One style everywhere** - Themes, display modes, glyphs, and compatibility settings travel through one `Terminice` instance.
 - **Cross-platform** - Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
@@ -109,6 +110,7 @@ That is where Terminice fits: the human-facing layer of your CLI. It does not re
 - **Easy to grow** - start with one prompt, then add menus, flows, tasks, config editors, or custom components.
 - **Unified by instance** - theme, display mode, fallback, terminal, and testing move together.
 - **Robust in real environments** - interactive locally, plain and predictable in CI, scripts, tests, and limited terminals.
+- **Documented in depth** - every component has a dedicated section with the details you need before using it in a real CLI.
 
 The goal is simple: make beautiful terminal UIs easy for anyone, while still giving serious CLI apps a centralized, consistent, fallback-safe, and testable system.
 
@@ -120,7 +122,7 @@ _[▰ Back](#table-of-contents) → to Table of Contents_
 
 Explore the complete collection of tools available in `terminice`.
 
-Each linked component or tool below has its own in-depth documentation section with API notes, behavior details, controls, examples, and usage guidance.
+Each linked component or tool below has its own in-depth documentation section with API notes, behavior details, controls, examples, and usage guidance. This was a real priority: the catalogue is meant to be usable as a practical reference, not just a feature list.
 
 Every tool is fully themeable and ready to use with zero setup. The catalogue is grouped by how a CLI uses each tool: **Prompts** gather values, **Selectors** choose from known options, **Pickers** browse real-world data such as files or dates, **Indicators** show work in progress, **Workflow & CLI UX** connects components into complete command experiences, and **Configuration & Guides** handles settings, help, shortcuts, and theme exploration.
 
@@ -470,6 +472,7 @@ Terminice is the middle layer I always wanted, a lightweight terminal UI kit tha
 - **Lightweight design** - Terminice should sit inside your existing CLI, not force you into a command framework or full-screen runtime.
 - **Real-world robustness** - local terminals, CI, scripts, limited terminals, non-TTY output, cancellation, and fallback modes should be part of the design.
 - **Testability** - terminal UI should be testable with scripted input and captured output, just like the rest of your command logic.
+- **Complete documentation** - every tool should be explained deeply enough that developers can understand the behavior, controls, examples, and tradeoffs before they adopt it.
 
 The most important idea is consistency. A CLI should not feel like ten unrelated helpers glued together. If you use one Terminice instance across your app, every component should feel like it belongs to the same product: same theme, same display mode, same fallback behavior, same terminal abstraction, same testing story.
 
