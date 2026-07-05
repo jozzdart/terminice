@@ -42,6 +42,6 @@
 ///   final choice = terminice.ocean.compact.confirm(message: 'Save changes?');
 /// }
 /// ```
-library terminice;
+library;
 
 export 'src/src.dart';
