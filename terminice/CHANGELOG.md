@@ -1,30 +1,43 @@
+## 1.2.0
+
+#### Added
+
+- Added Flow review workflows with submit/edit/cancel review screens, edit reruns, conditional re-evaluation, progress titles, reusable templates, review metadata, password masking, and typed result helpers.
+- Added lightweight custom component extensibility through `TerminiceComponent<T>`, `TerminiceComponentContext`, `runComponent(...)`, `runWithComponent(...)`, and Flow component steps.
+- Added progress-aware custom component prompt title helpers for rich and fallback flow prompts.
+- Added small CLI message primitives: `log`, `info`, `success`, `warn`, `error`, `err`, `detail`, and `newline`.
+- Added theme-aware message rendering with ANSI-free fallback output for noninteractive, fallback, basic, legacy, no-color, and ASCII-style paths.
+
+#### Changed
+
+- Raised the minimum Dart SDK constraint to `>=3.3.0 <4.0.0`.
+- Flow is now documented as the primary primitive for sequential and flow/wizard-style review workflows without introducing a separate wizard API.
+- Flow review, edit cancellation, and component-step behavior now preserve confirmed state more predictably across review/edit reruns.
+- Task final status rendering now shares the plain status-label helper used by message fallbacks while preserving existing task output.
+
+#### Documentation
+
+- Expanded README coverage for Flow review workflows, custom components, message primitives, command app integration, package-fit comparisons, robustness guidance, and the Terminice vision.
+- Strengthened the README catalogue as a detailed per-tool reference covering API shape, behavior, controls, examples, and usage guidance.
+- Added runnable examples for Flow review workflows, custom components, message primitives, and command app integration/testing.
+- Expanded Flow tests for review loops, templates, progress titles, metadata summaries, password masking, and helper accessors.
+
 ## 1.1.0
 
 #### Added
 
-- Added centralized `TerminiceConfig` for high-level prompt defaults and configuration editor propagation.
-- Added compatibility and fallback fluent APIs, including effective theme/defaultTheme behavior for compatibility-derived themes.
-- Added high-level line-mode fallback coverage for prompts when raw terminal mode is unavailable or fallback mode is requested.
-- Added `task`, `progressTask`, and `trackStream` async helpers for long-running CLI work.
-- Added `TaskProgress`, `TaskDisplay`, and `TaskFinalBehavior` controls for task progress, display style, and final output behavior.
-- Added `whileRunning` and `trackStream` async sugar on loading/progress indicators, with plain fallback output for compatibility-aware sessions.
-- Added `terminice.flow(...)`, a sequential flow builder that composes built-in `text`, `password`, `select`, `checkboxes`, and `confirm` steps plus custom steps.
-- Added typed flow result/context accessors, context-aware `when` conditions, and `String?` flow validators for dependent CLI workflows.
-- Flow built-in steps run through the configured Terminice instance, so existing component theming and fallback behavior carry through.
-- Added `package:terminice/testing.dart`, a sidecar test library that re-exports Terminice APIs, core testing primitives, and high-level CLI test helpers without expanding the main runtime import.
-- Added `TerminiceTester` helpers for fallback, non-interactive, and rich interactive prompt tests with captured output snapshots.
-- Added testing docs and an example covering fallback flows, scripted interactive input, async task capture, and output assertions.
+- Added centralized `TerminiceConfig` for prompt defaults, configuration editor propagation, compatibility settings, and fallback behavior.
+- Added compatibility and line-mode fallback APIs for prompts when raw terminal mode is unavailable or fallback mode is requested.
+- Added async task helpers and indicator sugar for long-running CLI work, including `task`, `progressTask`, `trackStream`, `whileRunning`, `TaskProgress`, `TaskDisplay`, and `TaskFinalBehavior`.
+- Added `terminice.flow(...)` for sequential CLI workflows with built-in steps, custom steps, typed result/context accessors, validators, and context-aware `when` conditions.
+- Added `package:terminice/testing.dart` and `TerminiceTester` for fallback, non-interactive, and rich interactive prompt tests with captured output snapshots.
 
 #### Changed
 
 - Standardized high-level prompt and config validator semantics on `String?`, with legacy `''` still treated as success.
-- `datePicker` now clamps and blocks `allowPast`/`allowFuture` navigation and initial values while preserving defaults.
-- Clarified `filePicker(foldersOnly:)` behavior: directories navigate in `filePicker`, while `pathPicker` confirms directories.
-- Standardized cancellation results: nullable prompts cancel to `null`, list selectors to `[]`, value prompts keep the exact initial/default, and config fields stay unchanged.
-- High-level fallback prompts and selectors now distinguish EOF from blank lines while preserving blank-line defaults.
-- Propagated editor-launched prompts through the active Terminice configuration.
-- Async task helpers and indicator sugar clean up terminal state before rethrowing errors or completing cancellation/fallback flows.
-- Progress indicators now normalize displayed counts, percentages, and bar fill consistently, including `total <= 0` as zero progress.
+- Standardized cancellation, fallback input, date picker bounds, file/path picker behavior, and configuration-editor prompt propagation.
+- Async task helpers and indicator sugar now clean up terminal state more reliably across success, errors, cancellation, and fallback flows.
+- Progress indicators now normalize displayed counts, percentages, and bar fill consistently.
 
 #### Fixed
 
@@ -32,7 +45,7 @@
 
 #### Documentation
 
-- Updated README coverage and tests for configuration, compatibility, fallback behavior, and display-mode chaining.
+- Updated README coverage, examples, and tests for configuration, compatibility, fallback behavior, async tasks, flow composition, and testing APIs.
 
 ## 1.0.1
 

@@ -32,22 +32,22 @@ abstract class _PlainStatusTaskRenderer extends _TaskRenderer {
 
   @override
   void success(String message) {
-    _writeFinal(_taskSuccessStatus, message);
+    _writeFinal(terminiceSuccessStatusLabel, message);
   }
 
   @override
   void failure(String message) {
-    _writeFinal(_taskFailureStatus, message);
+    _writeFinal(terminiceErrorStatusLabel, message);
   }
 
   @override
   void cancel(String message) {
-    _writeFinal(_taskCancelStatus, message);
+    _writeFinal(terminiceCanceledStatusLabel, message);
   }
 
   void _writeFinal(String status, String message) {
     if (finalBehavior == TaskFinalBehavior.persist) {
-      output.writeln(_statusLine(status, message, _finalSuffix()));
+      output.writeln(terminiceStatusLine(status, message, _finalSuffix()));
     }
   }
 

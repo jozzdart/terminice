@@ -1,4 +1,5 @@
 export 'core/core_exports.dart';
+export 'core/component_runner.dart';
 export 'core/terminice_api.dart';
 export 'flow/flow.dart';
 export 'guides/cheat_sheet.dart';
@@ -8,6 +9,7 @@ export 'guides/theme_demo.dart';
 export 'indicators/inline_progress_bar.dart';
 export 'indicators/inline_spinner.dart';
 export 'indicators/loading_spinner.dart';
+export 'messages/messages.dart';
 export 'indicators/progress_bar.dart';
 export 'indicators/progress_dots.dart';
 export 'pickers/color_picker.dart';

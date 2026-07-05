@@ -3,8 +3,6 @@ import 'dart:math' as math;
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-import '../core/component_runner.dart';
-
 /// Dual-handle range prompt for selecting a numeric or percentage span.
 ///
 /// Controls:

@@ -30,6 +30,189 @@ void main() {
       expect(result.value<int>('age'), 36);
     });
 
+    test('component step stores typed values and result is confirmed', () {
+      final result = terminice
+          .flow('Component')
+          .component<int>(
+            'port',
+            'Port',
+            component: TerminiceComponent<int>.from((_) => 9000),
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.value<int>('port'), 9000);
+      expect(result.toMap(), equals({'port': 9000}));
+    });
+
+    test('component steps inherit validation and cancellation behavior', () {
+      expect(
+        () => terminice
+            .flow('Invalid component')
+            .component<String>(
+              'name',
+              'Name',
+              component: TerminiceComponent<String>.from((_) => 'Ada'),
+              validate: (_, __) => 'Wrong value',
+            )
+            .run(),
+        throwsA(
+          isA<FlowValidationException>()
+              .having((error) => error.key, 'key', 'name')
+              .having((error) => error.label, 'label', 'Name')
+              .having((error) => error.message, 'message', 'Wrong value'),
+        ),
+      );
+
+      var afterStepRan = false;
+
+      final result = terminice
+          .flow('Cancel component')
+          .custom<String>(
+            'before',
+            'Before',
+            run: (_) => 'kept',
+          )
+          .component<String?>(
+            'cancelled',
+            'Cancelled',
+            component: TerminiceComponent<String?>.from((_) => null),
+          )
+          .custom<String>(
+        'after',
+        'After',
+        run: (_) {
+          afterStepRan = true;
+          return 'unexpected';
+        },
+      ).run();
+
+      expect(result.confirmed, isFalse);
+      expect(result.cancelledKey, 'cancelled');
+      expect(result.toMap(), equals({'before': 'kept'}));
+      expect(afterStepRan, isFalse);
+    });
+
+    test('component review metadata participates in review and edits', () {
+      var runs = 0;
+      final terminal = _terminalWithLines(['2', '2', '1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Component review')
+          .component<String>(
+            'generated',
+            'Generated',
+            component: TerminiceComponent<String>.from((_) {
+              runs++;
+              return 'value $runs';
+            }),
+            reviewLabel: 'Friendly',
+            summarize: (value, _) => 'summary $value',
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(result.value<String>('generated'), 'value 2');
+      expect(runs, 2);
+      expect(output, contains('Friendly: summary value 1'));
+      expect(output, contains('Friendly: summary value 2'));
+      expect(output, contains('Edit review item'));
+    });
+
+    test('component review defaults can be opted out', () {
+      final terminal = _terminalWithLines(['1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Hidden component review')
+          .component<String>(
+            'generated',
+            'Generated',
+            component: TerminiceComponent<String>.from((_) => 'value'),
+            includeInReview: false,
+            editable: false,
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'generated': 'value'}));
+      expect(output, contains('Review Hidden component review'));
+      expect(output, contains('(no review items)'));
+      expect(output, isNot(contains('Generated: value')));
+    });
+
+    test('flow context component helpers expose progress-aware titles', () {
+      String? promptTitle;
+      String? fallbackTitle;
+      final terminal = _terminalWithLines(['1']);
+      final component = TerminiceComponent<String>.from((context) {
+        context.output.writeln(promptTitle);
+        context.output.writeln(fallbackTitle);
+        return 'value';
+      });
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Component titles')
+          .progress()
+          .custom<String>(
+            'component',
+            'Component',
+            includeInReview: true,
+            reviewLabel: 'Component label',
+            run: (context) {
+              promptTitle = context.promptTitle('Run component');
+              fallbackTitle = context.fallbackPromptTitle('Fallback title');
+              return context.runComponent(component);
+            },
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+      final reviewStart = output.indexOf('Review Component titles');
+
+      expect(result.confirmed, isTrue);
+      expect(promptTitle, 'Step 1/1 - Run component');
+      expect(fallbackTitle, 'Fallback title');
+      expect(reviewStart, greaterThanOrEqualTo(0));
+
+      final reviewOutput = output.substring(reviewStart);
+
+      expect(reviewOutput, contains('Component label: value'));
+      expect(reviewOutput, isNot(contains('Step 1/1')));
+    });
+
+    test('component steps compose through templates and chaining', () {
+      void template(FlowBuilder flow) {
+        flow.component<int>(
+          'template',
+          'Template',
+          component: TerminiceComponent<int>.from((_) => 1),
+        );
+      }
+
+      final result = terminice
+          .flow('Component template')
+          .include(template)
+          .component<String>(
+            'after',
+            'After',
+            component: TerminiceComponent<String>.from((_) => 'done'),
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'template': 1, 'after': 'done'}));
+    });
+
     test('duplicate step keys are rejected while building', () {
       final builder = terminice.flow('Duplicates').custom<String>(
             'name',
@@ -54,6 +237,57 @@ void main() {
             ),
           ),
         ),
+      );
+    });
+
+    test('include validates duplicate key collisions immediately', () {
+      void template(FlowBuilder flow) {
+        flow.text('name', 'Template name');
+      }
+
+      final builder = terminice.flow('Template').text('name', 'Name');
+
+      expect(
+        () => builder.include(template),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            allOf(
+              contains("Flow 'Template' already contains step key 'name'"),
+              contains("'Name'"),
+              contains("'Template name'"),
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('include composes template steps in declaration order', () {
+      void template(FlowBuilder flow) {
+        flow.text('name', 'Name').confirm('create', message: 'Create project?');
+      }
+
+      final result = _fallbackWithLines(['Ada', 'yes'])
+          .flow('Template')
+          .include(template)
+          .custom<String>(
+        'summary',
+        'Summary',
+        run: (context) {
+          return '${context.string('name')}:${context.flag('create')}';
+        },
+      ).run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap().keys, orderedEquals(['name', 'create', 'summary']));
+      expect(
+        result.toMap(),
+        equals({
+          'name': 'Ada',
+          'create': true,
+          'summary': 'Ada:true',
+        }),
       );
     });
 
@@ -238,6 +472,527 @@ void main() {
       expect(result.value<String>('secret'), 'secret');
     });
 
+    test('review submit confirms collected values', () {
+      final result = _fallbackWithLines(['Ada', '1'])
+          .flow('Profile')
+          .text('name', 'Name')
+          .review()
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.cancelledKey, isNull);
+      expect(result.toMap(), equals({'name': 'Ada'}));
+    });
+
+    test('review submit preserves insertion order and values', () {
+      final result = _fallbackWithLines(['Ada', 'yes', '1, 3', '1'])
+          .flow('Profile')
+          .text('name', 'Name')
+          .confirm('active', prompt: 'Active', message: 'Active?')
+          .checkboxes<int>(
+            'ports',
+            'Ports',
+            options: const [3000, 8080, 9000],
+            labelBuilder: (value) => 'port $value',
+          )
+          .review()
+          .run();
+
+      final values = result.toMap();
+
+      expect(result.confirmed, isTrue);
+      expect(values.keys, orderedEquals(['name', 'active', 'ports']));
+      expect(values['name'], 'Ada');
+      expect(values['active'], isTrue);
+      expect(values['ports'], equals([3000, 9000]));
+    });
+
+    test('review cancel preserves collected values without a cancelled key',
+        () {
+      final result = _fallbackWithLines(['Ada', '3'])
+          .flow('Profile')
+          .text('name', 'Name')
+          .review()
+          .run();
+
+      expect(result.confirmed, isFalse);
+      expect(result.cancelled, isTrue);
+      expect(result.cancelledKey, isNull);
+      expect(result.toMap(), equals({'name': 'Ada'}));
+    });
+
+    test('review edit reruns from the selected step and downstream values', () {
+      var slugRuns = 0;
+
+      final result = _fallbackWithLines(['Ada', '2', '2', 'Grace', '1'])
+          .flow('Profile')
+          .text('name', 'Name')
+          .custom<String>(
+            'slug',
+            'Slug',
+            includeInReview: true,
+            run: (context) {
+              slugRuns++;
+              return context.string('name').toLowerCase();
+            },
+          )
+          .review()
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'name': 'Grace', 'slug': 'grace'}));
+      expect(slugRuns, 2);
+    });
+
+    test('review edit re-evaluates conditions and removes invalidated values',
+        () {
+      final result = _fallbackWithLines(
+        ['yes', 'details', '2', '2', 'no', '1'],
+      )
+          .flow('Conditional review')
+          .confirm(
+            'include',
+            prompt: 'Include',
+            message: 'Include details?',
+          )
+          .text(
+            'details',
+            'Details',
+            when: (context) => context.flag('include'),
+          )
+          .review()
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.flag('include'), isFalse);
+      expect(result.contains('details'), isFalse);
+      expect(result.toMap(), equals({'include': false}));
+    });
+
+    test('review edit re-evaluates downstream validators', () {
+      expect(
+        () => _fallbackWithLines(['dev', 'dev', '2', '2', 'prod', 'dev'])
+            .flow('Validate review edit')
+            .text('target', 'Target')
+            .text(
+              'environment',
+              'Environment',
+              validate: (value, context) {
+                final target = context.string('target');
+                if (target == 'prod' && value != 'prod') {
+                  return 'Production target must use prod environment';
+                }
+                return null;
+              },
+            )
+            .review()
+            .run(),
+        throwsA(
+          isA<FlowValidationException>()
+              .having((error) => error.key, 'key', 'environment')
+              .having((error) => error.label, 'label', 'Environment')
+              .having(
+                (error) => error.message,
+                'message',
+                'Production target must use prod environment',
+              ),
+        ),
+      );
+    });
+
+    test('review edit can add newly enabled conditional values', () {
+      final result = _fallbackWithLines(
+        ['no', '2', '2', 'yes', 'details', '1'],
+      )
+          .flow('Conditional review')
+          .confirm(
+            'include',
+            prompt: 'Include',
+            message: 'Include details?',
+          )
+          .text(
+            'details',
+            'Details',
+            when: (context) => context.flag('include'),
+          )
+          .review()
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.flag('include'), isTrue);
+      expect(result.string('details'), 'details');
+      expect(result.toMap().keys, orderedEquals(['include', 'details']));
+    });
+
+    test('review edit cancellation restores the pre-edit snapshot', () {
+      var nameRuns = 0;
+      var afterRuns = 0;
+      final terminal = _terminalWithLines(['2', '2', '1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Restore edit')
+          .custom<String>(
+            'name',
+            'Name',
+            includeInReview: true,
+            editable: true,
+            run: (_) {
+              nameRuns++;
+              return nameRuns == 1 ? 'Ada' : null;
+            },
+          )
+          .custom<String>(
+            'after',
+            'After',
+            includeInReview: true,
+            run: (_) {
+              afterRuns++;
+              return 'done $afterRuns';
+            },
+          )
+          .review()
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'name': 'Ada', 'after': 'done 1'}));
+      expect(nameRuns, 2);
+      expect(afterRuns, 1);
+      expect(
+        RegExp('Review Restore edit')
+            .allMatches(terminal.outputSnapshot.plainText)
+            .length,
+        greaterThanOrEqualTo(2),
+      );
+    });
+
+    test('review summaries honor metadata and safe defaults', () {
+      final terminal = _terminalWithLines([
+        'secret',
+        '',
+        'token',
+        'hidden',
+        'visible',
+        '1',
+      ]);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Review summaries')
+          .password('secret', 'Secret')
+          .password('optional', 'Optional', required: false)
+          .password(
+            'token',
+            'Token',
+            summarize: (value, _) => 'length ${value.length}',
+          )
+          .text('hidden', 'Hidden', includeInReview: false)
+          .text(
+            'custom',
+            'Custom',
+            reviewLabel: 'Friendly',
+            summarize: (value, _) => 'custom $value',
+          )
+          .custom<List<String>>(
+            'empty_list',
+            'Empty list',
+            includeInReview: true,
+            run: (_) => const <String>[],
+          )
+          .custom<List<String>>(
+            'list',
+            'List',
+            includeInReview: true,
+            run: (_) => const <String>['one', 'two'],
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(output, contains('Secret: ••••••••'));
+      expect(output, contains('Optional: (empty)'));
+      expect(output, contains('Token: length 5'));
+      expect(output, contains('Friendly: custom visible'));
+      expect(output, contains('Empty list: none'));
+      expect(output, contains('List: one, two'));
+      expect(output, isNot(contains('Secret: secret')));
+      expect(output, isNot(contains('Hidden: hidden')));
+    });
+
+    test('review allowEdit false hides edit behavior', () {
+      final terminal = _terminalWithLines(['Ada', '2']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Locked review')
+          .text('name', 'Name')
+          .review(allowEdit: false)
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isFalse);
+      expect(result.cancelled, isTrue);
+      expect(result.cancelledKey, isNull);
+      expect(result.toMap(), equals({'name': 'Ada'}));
+      expect(output, contains('Review Locked review'));
+      expect(output, contains('Name: Ada'));
+      expect(output, contains('Submit'));
+      expect(output, contains('Cancel'));
+      expect(output, isNot(contains('Edit')));
+      expect(output, isNot(contains('Edit review item')));
+    });
+
+    test('custom review items are not editable unless opted in', () {
+      var runs = 0;
+      final terminal = _terminalWithLines(['2', '1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Review defaults')
+          .custom<String>(
+            'generated',
+            'Generated',
+            includeInReview: true,
+            run: (_) {
+              runs++;
+              return 'value';
+            },
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'generated': 'value'}));
+      expect(runs, 1);
+      expect(output, contains('Generated: value'));
+      expect(output, contains('No editable review items.'));
+    });
+
+    test('review direct output uses the configured terminal', () {
+      final configured = _terminalWithLines(['2', '1']);
+      final other = MockTerminal();
+      final client = terminice.fallback.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Routed review')
+          .custom<String>(
+            'name',
+            'Name',
+            includeInReview: true,
+            run: (_) => 'Ada',
+            summarize: (value, _) {
+              TerminalContext.current = other;
+              return 'summary $value';
+            },
+          )
+          .review()
+          .run();
+
+      final configuredOutput = configured.outputSnapshot.plainText;
+      final otherOutput = other.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(configuredOutput, contains('Review Routed review'));
+      expect(configuredOutput, contains('Name: summary Ada'));
+      expect(configuredOutput, contains('No editable review items.'));
+      expect(otherOutput, isNot(contains('Review Routed review')));
+      expect(otherOutput, isNot(contains('Name: summary Ada')));
+      expect(otherOutput, isNot(contains('No editable review items.')));
+    });
+
+    test('review summary restores configured terminal after rendering', () {
+      final configured = _terminalWithLines(['1']);
+      final other = MockTerminal();
+      final client = terminice.fallback.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Review terminal restore')
+          .custom<String>(
+            'name',
+            'Name',
+            includeInReview: true,
+            run: (_) => 'Ada',
+            summarize: (value, _) {
+              TerminalContext.current = other;
+              return 'summary $value';
+            },
+          )
+          .review()
+          .run();
+
+      final configuredOutput = configured.outputSnapshot.plainText;
+      final otherOutput = other.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(configuredOutput, contains('Review Review terminal restore'));
+      expect(configuredOutput, contains('Name: summary Ada'));
+      expect(otherOutput, isNot(contains('Review Review terminal restore')));
+      expect(otherOutput, isNot(contains('Name: summary Ada')));
+      expect(TerminalContext.current, same(configured));
+    });
+
+    test('review summaries re-activate configured terminal between items', () {
+      final configured = _terminalWithLines(['2', '1', '1']);
+      final other = MockTerminal();
+      final client = terminice.fallback.withTerminal(configured);
+      final secondSummaryTerminals = <Terminal>[];
+      var firstSummaryCalls = 0;
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Review item routing')
+          .custom<String>(
+            'first',
+            'First',
+            includeInReview: true,
+            editable: true,
+            run: (_) => 'one',
+            summarize: (value, _) {
+              firstSummaryCalls++;
+              TerminalContext.current = other;
+              return 'first $value';
+            },
+          )
+          .custom<String>(
+            'second',
+            'Second',
+            includeInReview: true,
+            editable: true,
+            run: (_) => 'two',
+            summarize: (value, _) {
+              secondSummaryTerminals.add(TerminalContext.current);
+              TerminalContext.output.writeln('second summary callback');
+              return 'second $value';
+            },
+          )
+          .review()
+          .run();
+
+      final configuredOutput = configured.outputSnapshot.plainText;
+      final otherOutput = other.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(firstSummaryCalls, greaterThanOrEqualTo(2));
+      expect(secondSummaryTerminals, everyElement(same(configured)));
+      expect(configuredOutput, contains('First: first one'));
+      expect(configuredOutput, contains('Second: second two'));
+      expect(configuredOutput, contains('Edit review item'));
+      expect(configuredOutput, contains('second summary callback'));
+      expect(otherOutput, isNot(contains('First: first one')));
+      expect(otherOutput, isNot(contains('Second: second two')));
+      expect(otherOutput, isNot(contains('Edit review item')));
+      expect(otherOutput, isNot(contains('second summary callback')));
+      expect(TerminalContext.current, same(configured));
+    });
+
+    test('throwing review summary restores configured terminal', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.fallback.withTerminal(configured);
+      final thrownError = StateError('Summary failed.');
+      TerminalContext.current = other;
+
+      expect(
+        () => client
+            .flow('Throwing review')
+            .custom<String>(
+              'name',
+              'Name',
+              includeInReview: true,
+              run: (_) => 'Ada',
+              summarize: (_, __) {
+                TerminalContext.current = other;
+                throw thrownError;
+              },
+            )
+            .review()
+            .run(),
+        throwsA(same(thrownError)),
+      );
+      expect(TerminalContext.current, same(configured));
+    });
+
+    test('progress decorates prompt titles but keeps fallback text plain', () {
+      final terminal = _terminalWithLines(['Ada', 'yes']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Progress')
+          .progress()
+          .text('first', 'First')
+          .confirm('ready', prompt: 'Ready', message: 'Ready?')
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(terminal.outputSnapshot.plainText, contains('Step 1/2 - First'));
+      expect(terminal.outputSnapshot.plainText, contains('Ready? [Y/n]: '));
+      expect(
+        terminal.outputSnapshot.plainText,
+        isNot(contains('Step 2/2 - Ready?')),
+      );
+    });
+
+    test('progress labels do not leak into review labels', () {
+      final terminal = _terminalWithLines(['Ada', 'yes', '1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Progress review')
+          .progress()
+          .text('name', 'Name', reviewLabel: 'Display name')
+          .confirm(
+            'ready',
+            prompt: 'Ready',
+            message: 'Ready?',
+            reviewLabel: 'Ready status',
+            summarize: (value, _) => value ? 'yes' : 'no',
+          )
+          .review()
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+      final reviewStart = output.indexOf('Review Progress review');
+
+      expect(result.confirmed, isTrue);
+      expect(reviewStart, greaterThanOrEqualTo(0));
+
+      final reviewOutput = output.substring(reviewStart);
+
+      expect(output, contains('Step 1/2 - Name'));
+      expect(output, contains('Ready? [Y/n]: '));
+      expect(output, isNot(contains('Step 2/2 - Ready?')));
+      expect(reviewOutput, contains('Display name: Ada'));
+      expect(reviewOutput, contains('Ready status: yes'));
+      expect(reviewOutput, isNot(contains('Step 1/2')));
+      expect(reviewOutput, isNot(contains('Step 2/2')));
+    });
+
+    test('fallback prompt titles keep old style without progress', () {
+      final terminal = _terminalWithLines(['Ada', 'yes']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('No progress')
+          .text('first', 'First')
+          .confirm('ready', prompt: 'Ready', message: 'Ready?')
+          .run();
+
+      final output = terminal.outputSnapshot.plainText;
+
+      expect(result.confirmed, isTrue);
+      expect(output, contains('First: '));
+      expect(output, contains('Ready? [Y/n]: '));
+      expect(output, isNot(contains('Step 1/2 - First')));
+      expect(output, isNot(contains('Step 2/2 - Ready?')));
+    });
+
     test('conditions work with built-ins', () {
       final result = _fallbackWithLines(['no', 'done'])
           .flow('Conditional built-ins')
@@ -367,6 +1122,137 @@ void main() {
       expect(nextMap, equals({'name': 'Ada', 'enabled': true}));
     });
 
+    test('helper APIs expose typed values on result and context', () {
+      final result = terminice
+          .flow('Helpers')
+          .custom<String>(
+            'name',
+            'Name',
+            run: (_) => 'Ada',
+          )
+          .custom<bool>(
+            'enabled',
+            'Enabled',
+            run: (_) => true,
+          )
+          .custom<List<int>>(
+            'ports',
+            'Ports',
+            run: (_) => List<int>.unmodifiable([3000, 9000]),
+          )
+          .custom<String>(
+        'summary',
+        'Summary',
+        run: (context) {
+          expect(context.string('name'), 'Ada');
+          expect(context.maybeString('name'), 'Ada');
+          expect(context.maybeString('missing'), isNull);
+          expect(context.flag('enabled'), isTrue);
+          expect(context.maybeFlag('enabled'), isTrue);
+          expect(context.maybeFlag('missing'), isNull);
+          expect(context.list<int>('ports'), [3000, 9000]);
+          expect(context.valueOr<String>('name', 'fallback'), 'Ada');
+          expect(context.valueOr<String>('missing', 'fallback'), 'fallback');
+
+          return context.string('name');
+        },
+      ).run();
+
+      expect(result.string('name'), 'Ada');
+      expect(result.maybeString('name'), 'Ada');
+      expect(result.maybeString('missing'), isNull);
+      expect(result.flag('enabled'), isTrue);
+      expect(result.maybeFlag('enabled'), isTrue);
+      expect(result.maybeFlag('missing'), isNull);
+      expect(result.list<int>('ports'), [3000, 9000]);
+      expect(result.valueOr<String>('summary', 'fallback'), 'Ada');
+      expect(result.valueOr<String>('missing', 'fallback'), 'fallback');
+    });
+
+    test('context helper APIs throw for wrong types', () {
+      final result = terminice
+          .flow('Context helper types')
+          .custom<int>(
+            'count',
+            'Count',
+            run: (_) => 3,
+          )
+          .custom<List<int>>(
+            'ports',
+            'Ports',
+            run: (_) => List<int>.unmodifiable([3000]),
+          )
+          .custom<String>(
+        'after',
+        'After',
+        run: (context) {
+          expect(
+            () => context.string('count'),
+            throwsA(
+              isA<StateError>().having(
+                (error) => error.toString(),
+                'message',
+                allOf(
+                  contains("Flow value 'count'"),
+                  contains('cannot be read as String'),
+                ),
+              ),
+            ),
+          );
+          expect(
+            () => context.maybeString('count'),
+            throwsA(isA<StateError>()),
+          );
+          expect(
+            () => context.flag('count'),
+            throwsA(isA<StateError>()),
+          );
+          expect(
+            () => context.maybeFlag('count'),
+            throwsA(isA<StateError>()),
+          );
+          expect(
+            () => context.list<String>('ports'),
+            throwsA(isA<StateError>()),
+          );
+          expect(
+            () => context.valueOr<String>('count', 'fallback'),
+            throwsA(isA<StateError>()),
+          );
+
+          return 'checked';
+        },
+      ).run();
+
+      expect(result.string('after'), 'checked');
+    });
+
+    test('flow summary item stores public immutable review shape', () {
+      const item = FlowSummaryItem(
+        key: 'name',
+        label: 'Name',
+        value: 'Ada',
+        summary: 'Ada Lovelace',
+        editable: true,
+      );
+
+      expect(item.key, 'name');
+      expect(item.label, 'Name');
+      expect(item.value, 'Ada');
+      expect(item.summary, 'Ada Lovelace');
+      expect(item.editable, isTrue);
+      expect(
+        item,
+        const FlowSummaryItem(
+          key: 'name',
+          label: 'Name',
+          value: 'Ada',
+          summary: 'Ada Lovelace',
+          editable: true,
+        ),
+      );
+    });
+
     test('flow context exposes prior values as a snapshot copy', () {
       FlowContext? capturedContext;
 
@@ -478,6 +1364,30 @@ void main() {
         () => result.maybe<String>('count'),
         throwsA(isA<StateError>()),
       );
+      expect(
+        () => result.string('count'),
+        throwsA(isA<StateError>()),
+      );
+      expect(
+        () => result.maybeString('count'),
+        throwsA(isA<StateError>()),
+      );
+      expect(
+        () => result.flag('count'),
+        throwsA(isA<StateError>()),
+      );
+      expect(
+        () => result.maybeFlag('count'),
+        throwsA(isA<StateError>()),
+      );
+      expect(
+        () => result.list<String>('count'),
+        throwsA(isA<StateError>()),
+      );
+      expect(
+        () => result.valueOr<String>('count', 'fallback'),
+        throwsA(isA<StateError>()),
+      );
     });
 
     test('when skips a step without writing a value', () {
@@ -516,6 +1426,31 @@ void main() {
       expect(result.toMap(), equals({'include': false, 'after': 'done'}));
     });
 
+    test('when restores configured terminal after skipping a step', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Conditional terminal')
+          .custom<String>(
+            'skipped',
+            'Skipped',
+            when: (_) {
+              TerminalContext.current = other;
+              return false;
+            },
+            run: (_) => fail('Skipped step ran.'),
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.contains('skipped'), isFalse);
+      expect(result.toMap(), isEmpty);
+      expect(TerminalContext.current, same(configured));
+    });
+
     test('null custom step cancels by default with partial values preserved',
         () {
       var afterStepRan = false;
@@ -549,6 +1484,28 @@ void main() {
       expect(result.contains('after'), isFalse);
       expect(result.toMap(), equals({'name': 'Ada'}));
       expect(afterStepRan, isFalse);
+    });
+
+    test('null custom step restores configured terminal when cancelling', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client.flow('Cancel terminal').custom<String>(
+        'cancelled',
+        'Cancelled',
+        run: (_) {
+          TerminalContext.current = other;
+          return null;
+        },
+      ).run();
+
+      expect(result.confirmed, isFalse);
+      expect(result.cancelledKey, 'cancelled');
+      expect(result.contains('cancelled'), isFalse);
+      expect(result.toMap(), isEmpty);
+      expect(TerminalContext.current, same(configured));
     });
 
     test('cancelOnNull false stores null and continues', () {
@@ -674,6 +1631,81 @@ void main() {
       );
     });
 
+    test('validator success restores configured terminal', () {
+      final configured = MockTerminal();
+      final other = MockTerminal();
+      final client = terminice.withTerminal(configured);
+      TerminalContext.current = other;
+
+      final result = client
+          .flow('Valid terminal')
+          .custom<String>(
+            'name',
+            'Name',
+            run: (_) => 'Ada',
+            validate: (_, __) {
+              TerminalContext.current = other;
+              return null;
+            },
+          )
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(result.value<String>('name'), 'Ada');
+      expect(TerminalContext.current, same(configured));
+    });
+
+    test('validator failure restores configured terminal', () {
+      final rejectingConfigured = MockTerminal();
+      final rejectingOther = MockTerminal();
+      final rejectingClient = terminice.withTerminal(rejectingConfigured);
+      TerminalContext.current = rejectingOther;
+
+      expect(
+        () => rejectingClient
+            .flow('Invalid terminal')
+            .custom<String>(
+              'name',
+              'Name',
+              run: (_) => 'Ada',
+              validate: (_, __) {
+                TerminalContext.current = rejectingOther;
+                return 'Wrong value';
+              },
+            )
+            .run(),
+        throwsA(
+          isA<FlowValidationException>()
+              .having((error) => error.key, 'key', 'name')
+              .having((error) => error.message, 'message', 'Wrong value'),
+        ),
+      );
+      expect(TerminalContext.current, same(rejectingConfigured));
+
+      final throwingConfigured = MockTerminal();
+      final throwingOther = MockTerminal();
+      final throwingClient = terminice.withTerminal(throwingConfigured);
+      final thrownError = StateError('Validator failed.');
+      TerminalContext.current = throwingOther;
+
+      expect(
+        () => throwingClient
+            .flow('Throwing terminal')
+            .custom<String>(
+              'name',
+              'Name',
+              run: (_) => 'Ada',
+              validate: (_, __) {
+                TerminalContext.current = throwingOther;
+                throw thrownError;
+              },
+            )
+            .run(),
+        throwsA(same(thrownError)),
+      );
+      expect(TerminalContext.current, same(throwingConfigured));
+    });
+
     test('validation exception includes key label message and readable text',
         () {
       try {
@@ -750,7 +1782,11 @@ void main() {
 }
 
 Terminice _fallbackWithLines(List<String> lines) {
+  return terminice.fallback.withTerminal(_terminalWithLines(lines));
+}
+
+MockTerminal _terminalWithLines(List<String> lines) {
   final mock = MockTerminal();
   mock.mockInput.queueLines(lines);
-  return terminice.fallback.withTerminal(mock);
+  return mock;
 }

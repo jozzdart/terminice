@@ -1,8 +1,6 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-import '../core/component_runner.dart';
-
 /// Accessible confirm prompt with themed buttons and sensible default focus.
 extension ConfirmPromptExtensions on Terminice {
   /// Confirmation prompt with yes/no options and keyboard hints.

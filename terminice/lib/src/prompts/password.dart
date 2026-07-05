@@ -1,8 +1,6 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-import '../core/component_runner.dart';
-
 /// Password prompt with masking, optional reveal toggle, and theme-aware
 /// status hints.
 ///

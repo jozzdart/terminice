@@ -80,6 +80,63 @@ void main() {
       expect(terminal.mockOutput.contains('ERROR'), isFalse);
     });
 
+    test('plain final status lines keep legacy shared formatting', () async {
+      final successTerminal = MockTerminal();
+      await terminice.withTerminal(successTerminal).task<void>(
+            'Success work',
+            run: () {},
+            display: TaskDisplay.plain,
+            success: 'finished',
+          );
+      expect(successTerminal.mockOutput.lines, equals(['OK: finished']));
+
+      final failureTerminal = MockTerminal();
+      final failure = StateError('boom');
+      await expectLater(
+        terminice.withTerminal(failureTerminal).task<void>(
+              'Failure work',
+              run: () {
+                throw failure;
+              },
+              display: TaskDisplay.plain,
+              failure: (error, stackTrace) => 'failed',
+            ),
+        throwsA(same(failure)),
+      );
+      expect(failureTerminal.mockOutput.lines, equals(['ERROR: failed']));
+
+      final cancelTerminal = MockTerminal();
+      final cancellation = _TaskCanceled();
+      await expectLater(
+        terminice.withTerminal(cancelTerminal).task<void>(
+              'Cancel work',
+              run: () {
+                throw cancellation;
+              },
+              display: TaskDisplay.plain,
+              isCanceled: (error) => error is _TaskCanceled,
+              cancel: (error, stackTrace) => 'stopped',
+            ),
+        throwsA(same(cancellation)),
+      );
+      expect(cancelTerminal.mockOutput.lines, equals(['CANCELED: stopped']));
+
+      final progressTerminal = MockTerminal();
+      await terminice.withTerminal(progressTerminal).progressTask<void>(
+        'Progress work',
+        total: 2,
+        display: TaskDisplay.plain,
+        success: 'uploaded',
+        run: (progress) {
+          progress.increment(2);
+        },
+      );
+      expect(
+        progressTerminal.mockOutput.lines,
+        equals(['OK: uploaded (2/2, 100%)']),
+      );
+    });
+
     test('final behavior clear leaves no success line', () async {
       final persistTerminal = MockTerminal();
       await terminice.withTerminal(persistTerminal).task<void>(

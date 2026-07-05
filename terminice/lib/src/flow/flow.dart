@@ -1,8 +1,9 @@
 import 'dart:collection';
 
 import 'package:terminice_core/terminice_core.dart'
-    show normalizeValidationError;
+    show TerminalContext, normalizeValidationError;
 
+import '../core/component_runner.dart';
 import '../core/terminice_api.dart';
 import '../prompts/confirm.dart';
 import '../prompts/password.dart';
@@ -11,6 +12,8 @@ import '../selectors/checkbox_selector.dart';
 import '../selectors/search_selector.dart';
 
 part 'flow_result.dart';
+part 'flow_review.dart';
+part 'flow_runner.dart';
 part 'flow_step.dart';
 
 /// Flow helpers for running a sequence of synchronous Terminice steps.
@@ -19,16 +22,103 @@ extension TerminiceFlowExtensions on Terminice {
   FlowBuilder flow(String title) => FlowBuilder._(this, title);
 }
 
+/// Progress display styles supported by flow metadata.
+enum FlowProgressStyle {
+  /// Display progress by updating the flow title.
+  title,
+}
+
+/// Review screen options used by [FlowBuilder.review].
+class FlowReviewOptions {
+  /// Creates review metadata for a flow.
+  const FlowReviewOptions({
+    this.title,
+    this.submitLabel = 'Submit',
+    this.editLabel = 'Edit',
+    this.cancelLabel = 'Cancel',
+    this.allowEdit = true,
+  });
+
+  /// Optional title displayed by the review screen.
+  final String? title;
+
+  /// Label for the review submit action.
+  final String submitLabel;
+
+  /// Label for the review edit action.
+  final String editLabel;
+
+  /// Label for the review cancel action.
+  final String cancelLabel;
+
+  /// Whether the review screen should allow editing collected values.
+  final bool allowEdit;
+}
+
+/// Progress display options used by [FlowBuilder.progress].
+class FlowProgressOptions {
+  /// Creates progress metadata for a flow.
+  const FlowProgressOptions({
+    this.style = FlowProgressStyle.title,
+  });
+
+  /// Progress display style requested for this flow.
+  final FlowProgressStyle style;
+}
+
 /// Builds and runs a synchronous Terminice flow.
 class FlowBuilder {
   final Terminice _terminice;
-  final List<_FlowStep> _steps = <_FlowStep>[];
+  final List<_FlowStep<dynamic>> _steps = <_FlowStep<dynamic>>[];
   final Map<String, String> _stepLabelsByKey = <String, String>{};
+  FlowReviewOptions? _reviewOptions;
+  FlowProgressOptions? _progressOptions;
 
   FlowBuilder._(this._terminice, this.title);
 
   /// Human-readable title for this flow.
   final String title;
+
+  /// Review options configured for this flow.
+  FlowReviewOptions? get reviewOptions => _reviewOptions;
+
+  /// Progress options configured for this flow.
+  FlowProgressOptions? get progressOptions => _progressOptions;
+
+  /// Includes reusable steps declared by [template].
+  ///
+  /// The template runs immediately and uses the same duplicate-key validation
+  /// as steps added directly to this builder.
+  FlowBuilder include(FlowTemplate template) {
+    template(this);
+    return this;
+  }
+
+  /// Enables a review screen after all applicable steps complete.
+  FlowBuilder review({
+    String? title,
+    String submitLabel = 'Submit',
+    String editLabel = 'Edit',
+    String cancelLabel = 'Cancel',
+    bool allowEdit = true,
+  }) {
+    _reviewOptions = FlowReviewOptions(
+      title: title,
+      submitLabel: submitLabel,
+      editLabel: editLabel,
+      cancelLabel: cancelLabel,
+      allowEdit: allowEdit,
+    );
+    return this;
+  }
+
+  /// Enables progress labels for built-in flow prompts.
+  FlowBuilder progress({
+    FlowProgressStyle style = FlowProgressStyle.title,
+  }) {
+    _progressOptions = FlowProgressOptions(style: style);
+    return this;
+  }
 
   /// Adds a custom synchronous step to the flow.
   ///
@@ -41,6 +131,10 @@ class FlowBuilder {
     FlowValidator<T>? validate,
     FlowCondition? when,
     bool cancelOnNull = true,
+    String? reviewLabel,
+    FlowSummary<T>? summarize,
+    bool includeInReview = false,
+    bool editable = false,
   }) {
     _addStep(
       _CustomFlowStep<T>(
@@ -50,12 +144,47 @@ class FlowBuilder {
         validate: validate,
         when: when,
         cancelOnNull: cancelOnNull,
+        reviewLabel: reviewLabel,
+        summarize: summarize,
+        includeInReview: includeInReview,
+        editable: editable,
       ),
     );
     return this;
   }
 
-  void _addStep(_FlowStep step) {
+  /// Adds a reusable Terminice component step to the flow.
+  ///
+  /// The component runs through [FlowContext.runComponent] and delegates to
+  /// [custom] so conditions, validation, cancellation, review metadata, and
+  /// edit reruns behave like other first-class prompt steps.
+  FlowBuilder component<T>(
+    String key,
+    String title, {
+    required TerminiceComponent<T> component,
+    FlowValidator<T>? validate,
+    FlowCondition? when,
+    bool nullable = false,
+    String? reviewLabel,
+    FlowSummary<T>? summarize,
+    bool includeInReview = true,
+    bool editable = true,
+  }) {
+    return custom<T>(
+      key,
+      title,
+      run: (context) => context.runComponent<T>(component),
+      validate: validate,
+      when: when,
+      cancelOnNull: !nullable,
+      reviewLabel: reviewLabel,
+      summarize: summarize,
+      includeInReview: includeInReview,
+      editable: editable,
+    );
+  }
+
+  void _addStep(_FlowStep<dynamic> step) {
     if (step.key.trim().isEmpty) {
       throw ArgumentError.value(
         step.key,
@@ -91,18 +220,26 @@ class FlowBuilder {
     String? Function(String)? validator,
     FlowValidator<String>? validate,
     FlowCondition? when,
+    String? reviewLabel,
+    FlowSummary<String>? summarize,
+    bool includeInReview = true,
+    bool editable = true,
   }) {
     return custom<String>(
       key,
       prompt,
-      run: (_) => _terminice.text(
-        prompt,
+      run: (context) => _terminice.text(
+        context.promptTitle(prompt),
         placeholder: placeholder,
         required: required,
         validator: validator,
       ),
       validate: validate,
       when: when,
+      reviewLabel: reviewLabel,
+      summarize: summarize,
+      includeInReview: includeInReview,
+      editable: editable,
     );
   }
 
@@ -119,12 +256,16 @@ class FlowBuilder {
     bool verify = false,
     FlowValidator<String>? validate,
     FlowCondition? when,
+    String? reviewLabel,
+    FlowSummary<String>? summarize,
+    bool includeInReview = true,
+    bool editable = true,
   }) {
     return custom<String>(
       key,
       prompt,
-      run: (_) => _terminice.password(
-        prompt,
+      run: (context) => _terminice.password(
+        context.promptTitle(prompt),
         required: required,
         maskChar: maskChar,
         allowReveal: allowReveal,
@@ -132,6 +273,11 @@ class FlowBuilder {
       ),
       validate: validate,
       when: when,
+      reviewLabel: reviewLabel,
+      summarize: summarize ??
+          (value, _) => _maskedPasswordSummary(value, maskChar: maskChar),
+      includeInReview: includeInReview,
+      editable: editable,
     );
   }
 
@@ -148,6 +294,10 @@ class FlowBuilder {
     int maxVisible = 10,
     FlowValidator<T?>? validate,
     FlowCondition? when,
+    String? reviewLabel,
+    FlowSummary<T?>? summarize,
+    bool includeInReview = true,
+    bool editable = true,
   }) {
     final optionLabels = _FlowOptionLabels<T>(
       options,
@@ -157,10 +307,10 @@ class FlowBuilder {
     return custom<T?>(
       key,
       prompt,
-      run: (_) {
+      run: (context) {
         final selected = _terminice.searchSelector(
           options: optionLabels.labels,
-          prompt: prompt,
+          prompt: context.promptTitle(prompt),
           showSearch: showSearch,
           maxVisible: maxVisible,
         );
@@ -170,6 +320,10 @@ class FlowBuilder {
       validate: validate,
       when: when,
       cancelOnNull: false,
+      reviewLabel: reviewLabel,
+      summarize: summarize,
+      includeInReview: includeInReview,
+      editable: editable,
     );
   }
 
@@ -186,6 +340,10 @@ class FlowBuilder {
     int maxVisible = 12,
     FlowValidator<List<T>>? validate,
     FlowCondition? when,
+    String? reviewLabel,
+    FlowSummary<List<T>>? summarize,
+    bool includeInReview = true,
+    bool editable = true,
   }) {
     final optionLabels = _FlowOptionLabels<T>(
       options,
@@ -195,9 +353,9 @@ class FlowBuilder {
     return custom<List<T>>(
       key,
       prompt,
-      run: (_) {
+      run: (context) {
         final selected = _terminice.checkboxSelector(
-          prompt,
+          context.promptTitle(prompt),
           options: optionLabels.labels,
           initialSelected: initialSelected,
           maxVisible: maxVisible,
@@ -210,6 +368,10 @@ class FlowBuilder {
       },
       validate: validate,
       when: when,
+      reviewLabel: reviewLabel,
+      summarize: summarize,
+      includeInReview: includeInReview,
+      editable: editable,
     );
   }
 
@@ -223,60 +385,38 @@ class FlowBuilder {
     bool defaultYes = true,
     FlowValidator<bool>? validate,
     FlowCondition? when,
+    String? reviewLabel,
+    FlowSummary<bool>? summarize,
+    bool includeInReview = true,
+    bool editable = true,
   }) {
     return custom<bool>(
       key,
       prompt,
-      run: (_) => _terminice.confirm(
-        prompt: prompt,
-        message: message,
+      run: (context) => _terminice.confirm(
+        prompt: context.promptTitle(prompt),
+        message: context.fallbackPromptTitle(message),
         yesLabel: yesLabel,
         noLabel: noLabel,
         defaultYes: defaultYes,
       ),
       validate: validate,
       when: when,
+      reviewLabel: reviewLabel,
+      summarize: summarize,
+      includeInReview: includeInReview,
+      editable: editable,
     );
   }
 
   /// Runs the flow from the first step to the last.
-  FlowResult run() {
-    final values = <String, Object?>{};
-
-    for (final step in _steps) {
-      final context = FlowContext._(
+  FlowResult run() => _FlowRunner(
         terminice: _terminice,
-        values: values,
-      );
-
-      _terminice.activate();
-      if (!step.shouldRun(context)) continue;
-
-      _terminice.activate();
-      final value = step.run(context);
-
-      if (value == null && step.cancelOnNull) {
-        return FlowResult._cancelled(
-          values,
-          cancelledKey: step.key,
-        );
-      }
-
-      _terminice.activate();
-      final validationError = step.validationErrorFor(value, context);
-      if (validationError != null) {
-        throw FlowValidationException(
-          key: step.key,
-          label: step.label,
-          message: validationError,
-        );
-      }
-
-      values[step.key] = value;
-    }
-
-    return FlowResult._confirmed(values);
-  }
+        steps: _steps,
+        flowTitle: title,
+        reviewOptions: _reviewOptions,
+        progressOptions: _progressOptions,
+      ).run();
 }
 
 class _FlowOptionLabels<T> {

@@ -5,6 +5,7 @@ import 'package:terminice_core/terminice_core.dart';
 import '../core/terminice_api.dart';
 import '../core/terminice_config.dart';
 import '../indicators/inline_spinner.dart';
+import '../messages/message_formatting.dart';
 import '../progress_display.dart';
 
 part '_task_display_policy.dart';

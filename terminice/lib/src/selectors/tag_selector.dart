@@ -1,7 +1,6 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-import '../core/component_runner.dart';
 import '../core/fallback_selection.dart';
 
 /// Extension providing the [tagSelector] prompt for `Terminice`.

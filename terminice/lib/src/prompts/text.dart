@@ -1,8 +1,6 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
-import '../core/component_runner.dart';
-
 /// Text input prompt with placeholder support, inline validation, and clear
 /// control hints that render cleanly on pub.dev.
 ///

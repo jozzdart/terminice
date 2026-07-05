@@ -25,6 +25,42 @@ void main() {
       expect(tester.output.plainText, contains('Create project?'));
     });
 
+    test('runs fallback reviewed flows with scripted review actions', () {
+      final tester = TerminiceTester.fallback(lines: ['Ada', '1']);
+
+      final result = tester.run(
+        (t) => t.flow('Profile').text('name', 'Name').review().run(),
+      );
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'name': 'Ada'}));
+      expect(tester.output.plainText, contains('Review Profile'));
+    });
+
+    test('runs interactive reviewed flows with key scripts', () {
+      final tester = TerminiceTester.interactive(
+        script: TerminalScript.build((script) => script.enter()),
+      );
+
+      final result = tester.run(
+        (t) => t
+            .flow('Profile')
+            .custom<String>(
+              'name',
+              'Name',
+              includeInReview: true,
+              run: (_) => 'Ada',
+            )
+            .review()
+            .run(),
+      );
+
+      expect(result.confirmed, isTrue);
+      expect(result.toMap(), equals({'name': 'Ada'}));
+      expect(tester.output.plainText, contains('Review Profile'));
+      expect(tester.output.plainText, contains('Name: Ada'));
+    });
+
     test('runs interactive scripts against rich prompts', () {
       final tester = TerminiceTester.interactive(
         script: TerminalScript.build((script) => script.right().enter()),
@@ -36,6 +72,25 @@ void main() {
 
       expect(result, isFalse);
       expect(tester.output.plainText, contains('Create project?'));
+    });
+
+    test('runs custom components with scripted terminal and captured output',
+        () {
+      final tester = TerminiceTester.fallback(lines: ['Ada']);
+
+      final result = tester.run(
+        (t) => t.runWithComponent((context) {
+          context.output.writeln('Component started');
+          final name = context.terminice.text('Name');
+          context.output.writeln('Hello $name');
+          return name;
+        }),
+      );
+
+      expect(result, equals('Ada'));
+      expect(tester.output.plainText, contains('Component started'));
+      expect(tester.output.plainText, contains('Name'));
+      expect(tester.output.plainText, contains('Hello Ada'));
     });
 
     test('uses auto fallback for non-interactive terminals', () {

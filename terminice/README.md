@@ -15,13 +15,13 @@
   </a>
 </p>
 
-> **The ultimate UI toolkit for Dart command-line apps.**
+> **Polished CLI interactions with tiny Dart calls.**
 
-**`terminice`** gives you **30+ ready-to-use terminal components**—from simple prompts to complex searchable menus and config editors.
+`terminice` turns prompts, menus, progress, messages, config, themes, fallback behavior, and testing into one cohesive terminal UI layer. It is quick for small tools, robust for serious CLIs, and flexible enough to grow with your app.
 
-**Universal theming out of the box.** Every single prompt, selector, picker, and indicator automatically adapts to your chosen theme. Pick from **11 built-in themes** or customize your own via a fluent API.
+Ships with 30+ ready-made components, 11 themes, display modes, fallback policies, test utilities, custom component hooks, and detailed documentation for every tool. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
 
-**Zero boilerplate.** No widget trees or manual state management. Just call a method and get a polished, keyboard-driven UI instantly.
+[Terminice exists because I needed this package myself.](#the-terminice-vision)
 
 <p align="center">
   <img src="assets/showcase.gif" alt="terminice interactive showcase" width="1000"/>
@@ -29,69 +29,274 @@
 
 ### Features
 
-- **30+ built-in prompts** — Text, password, confirm, multiline editor, slider, range, rating, date, form, and 7 selector variants. Plus pickers for files, paths, colors, and dates.
-- **11 color themes** — Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
-- **Config editor** — A searchable, nested settings editor that composes existing prompts into a unified configuration flow with live theme switching, validation, and JSON serialization.
-- **Progress and task feedback** — Loading spinners, inline spinners, progress bars, progress dots, and async task helpers for long-running `Future` and `Stream` work.
-- **Zero boilerplate** — One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
-- **Cross-platform** — Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
-- **Modular architecture** — Built on `terminice_core`, which exposes navigation primitives, prompt scaffolds, and rendering utilities for when you need full control.
+- **Testable by design** - Script input and assert output without depending on real stdin/stdout.
+- **Zero boilerplate** - One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
+- **30+ terminal components** - Prompts, menus, pickers, indicators, messages, flows, and config tools.
+- **Detailed docs for every tool** - Each catalogue item includes API notes, behavior details, controls, examples, and usage guidance.
+- **11 color themes** - Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
+- **One style everywhere** - Themes, display modes, glyphs, and compatibility settings travel through one `Terminice` instance.
+- **Cross-platform** - Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
+- **No framework lock-in** - Keep your parser, command runner, process tools, and app structure.
+- **Customizable when needed** - Extend with your own components and themes without losing Terminice behavior.
 
 #### Table of Contents
 
-- [**Features**](#features)
-- [**How to use `terminice`**](#-how-to-use-terminice)
-- [**Instance Configuration & Fallback**](#centralized-instance-configuration)
-- [**The Terminice Catalogue**](#-the-terminice-catalogue)
+- [Meet Terminice](#meet-terminice)
+- [**The Terminice Catalogue ★**](#-the-terminice-catalogue)
+- [Quick Start](#quick-start)
 - [**Theming & Display Modes**](#-theming--display-modes)
-- [**Testing Terminice CLIs**](#testing-terminice-clis)
-- [**Quick Start**](#-quick-start)
+- [**Core Concepts & Behavior**](#core-concepts--behavior)
+  - [Prompt Execution & Async Tasks](#prompt-execution--async-tasks)
+  - [Shared API Design](#shared-api-design)
+  - [Cancellation Behavior](#cancellation-behavior)
+  - [Validation](#validation)
+  - [Theming & Chaining](#theming--chaining)
+  - [Centralized Instance Configuration](#centralized-instance-configuration)
+  - [Compatibility Modes](#compatibility-modes)
+  - [Fallback Policies](#fallback-policies)
+- [**The Terminice Vision**](#the-terminice-vision)
+- [Comparison & Alternatives](#comparison--alternatives)
+- [Command App Integration](#command-app-integration)
+- [Testing Terminice CLIs](#testing-terminice-clis)
+- [Custom Components & Extensibility](#custom-components--extensibility)
 
-### 📖 How to use `terminice`
+### Meet Terminice
 
-`terminice` is designed to be as frictionless as possible. There are no widget trees, no state management classes, and no complex setup.
-
-#### The Global Instance
-
-Everything starts with the global `terminice` instance. All prompts, selectors, and indicators are exposed as extension methods on this single object.
+Most CLIs start with a question.
 
 ```dart
-import 'package:terminice/terminice.dart';
-
-void main() {
-  // Use the global instance directly
-  terminice.text('What is your name?');
-}
+final name = terminice.text('Project name');
 ```
+
+Then the question becomes a choice.
+
+```dart
+final template = terminice.searchSelector(
+  prompt: 'Template',
+  options: ['CLI', 'Server', 'Package'],
+);
+```
+
+Then input becomes private, searchable, or filesystem-aware.
+
+```dart
+final token = terminice.password('API token');
+final config = terminice.filePicker('Config file');
+```
+
+And long work can still feel alive.
+
+```dart
+final bar = terminice.progressBar('Uploading');
+bar.show(current: 42, total: 100);
+bar.clear();
+```
+
+Use one styled instance when you want everything to feel like one product.
+
+```dart
+final t = terminice.neon.compact;
+
+final name = t.text('Project name');
+final config = t.filePicker('Config file');
+final ok = t.confirm(message: 'Create $name?');
+```
+
+That is where Terminice fits: the human-facing layer of your CLI. It does not replace `package:args`, `CommandRunner`, `dart:io`, process tools, or your app architecture. It gives those commands beautiful prompts, menus, flows, progress, messages, fallback behavior, themes, and tests.
+
+#### Why developers reach for it
+
+- **Beautiful by default** - rich terminal UI from small method calls.
+- **Easy to grow** - start with one prompt, then add menus, flows, tasks, config editors, or custom components.
+- **Unified by instance** - theme, display mode, fallback, terminal, and testing move together.
+- **Robust in real environments** - interactive locally, plain and predictable in CI, scripts, tests, and limited terminals.
+- **Documented in depth** - every component has a dedicated section with the details you need before using it in a real CLI.
+
+The goal is simple: make beautiful terminal UIs easy for anyone, while still giving serious CLI apps a centralized, consistent, fallback-safe, and testable system.
+
+For the reason behind those choices, read [**The Terminice Vision**](#the-terminice-vision).
+
+_[▰ Back](#table-of-contents) → to Table of Contents_
+
+# ★ The `terminice` Catalogue
+
+Explore the complete collection of tools available in `terminice`.
+
+Each linked component or tool below has its own in-depth documentation section with API notes, behavior details, controls, examples, and usage guidance. This was a real priority: the catalogue is meant to be usable as a practical reference, not just a feature list.
+
+Every tool is fully themeable and ready to use with zero setup. The catalogue is grouped by how a CLI uses each tool: **Prompts** gather values, **Selectors** choose from known options, **Pickers** browse real-world data such as files or dates, **Indicators** show work in progress, **Workflow & CLI UX** connects components into complete command experiences, and **Configuration & Guides** handles settings, help, shortcuts, and theme exploration.
+
+#### ▤ Prompts
+
+- [`text` — Single-line text input.](#text---single-line-text-input)
+- [`password` — Secure, masked text input.](#password---masked-text-input)
+- [`confirm` — Yes/No boolean confirmation.](#confirm---yesno-confirmation)
+- [`multiline` — Multi-line text editor.](#multiline---terminal-text-area)
+- [`slider` — Numeric selection along a single axis.](#slider---numeric-selection)
+- [`range` — Dual-thumb slider for selecting a min/max range.](#range---dual-handle-numeric-range)
+- [`rating` — Star-based rating input.](#rating---star-rating-input)
+- [`date` — Date picker.](#date---keyboard-date-prompt)
+- [`form` — Form prompt.](#form---multi-field-input)
+
+#### ▥ Selectors
+
+- [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
+- [`choiceSelector` — Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
+- [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
+- [`gridSelector` — 2D grid selection.](#gridselector---two-dimensional-selection-grid)
+- [`tagSelector` — Select and manage multiple tags.](#tagselector---chip-style-multi-select)
+- [`toggleGroup` — Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
+- [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
+
+#### ▦ Pickers
+
+- [`filePicker` — Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
+- [`pathPicker` — Browse and select directories.](#pathpicker---directory-and-path-browser)
+- [`colorPicker` — Interactive color selection.](#colorpicker---ansi-color-grid)
+- [`datePicker` — Calendar-based date selection.](#datepicker---calendar-date-selection)
+
+#### ▧ Indicators
+
+- [`loadingSpinner` — Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
+- [`inlineSpinner` — Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
+- [`progressBar` — Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
+- [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
+- [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
+
+#### ▨ Workflow & CLI UX
+
+- [`message primitives` — `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
+- [`task` — Run a task with spinner or dots status.](#task---async-status-wrapper)
+- [`progressTask` — Run a task with determinate progress.](#progresstask---async-progress-wrapper)
+- [`trackStream` — Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
+- [`TaskProgress` — Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
+- [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
+- [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
+- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
+- [`custom components` — Reusable class or callback components.](#custom-components--extensibility)
+
+#### ▩ Configuration & Guides
+
+- [`configEditor` — A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
+- [`cheatSheet` — Display a quick reference guide.](#cheatsheet---framed-reference-table)
+- [`helpCenter` — Interactive help documentation viewer.](#helpcenter---searchable-help-browser)
+- [`hotkeyGuide` — Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
+- [`themeDemo` — Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+# Quick Start
+
+Get up and running in seconds. No setup required—just import and call.
+
+#### 1. Ask for input
+
+Gather text, passwords, or confirmations with a single line of code.
+
+```dart
+final name = terminice.text('Project name');
+final ship = terminice.confirm(prompt: 'Ship to production?', message: 'Are you sure?');
+```
+
+<img src="assets/quick_start_1.gif" alt="terminice text and confirm prompts" width="1000"/>
+
+#### 2. Build interactive menus
+
+Need a searchable list? It's just as easy.
+
+```dart
+final lang = terminice.searchSelector(
+  prompt: 'Language',
+  options: ['Dart', 'Go', 'Rust', 'TypeScript'],
+  showSearch: true,
+);
+```
+
+<img src="assets/quick_start_2.gif" alt="terminice search selector" width="1000"/>
+
+#### 3. Change themes instantly
+
+Want a different vibe? Just chain a theme name before your prompt.
+
+```dart
+// Hacker green
+final secret = terminice.matrix.password('Passphrase');
+
+// High-energy cyberpunk
+final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
+```
+
+<img src="assets/quick_start_3.gif" alt="terminice themes showcase" width="1000"/>
+
+For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue).
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+# ▧ Theming & Display Modes
+
+`terminice` makes styling effortless. Every prompt adapts automatically to the selected theme and display mode. Just chain the theme or mode accessor before calling any prompt.
+
+|                           Dark                            |                          Matrix                           |                             Fire                              |
+| :-------------------------------------------------------: | :-------------------------------------------------------: | :-----------------------------------------------------------: |
+|  <img src="assets/theme_showcase_dark.gif" width="300"/>  | <img src="assets/theme_showcase_matrix.gif" width="300"/> |    <img src="assets/theme_showcase_fire.gif" width="300"/>    |
+|                        **Pastel**                         |                         **Ocean**                         |                        **Monochrome**                         |
+| <img src="assets/theme_showcase_pastel.gif" width="300"/> | <img src="assets/theme_showcase_ocean.gif" width="300"/>  | <img src="assets/theme_showcase_monochrome.gif" width="300"/> |
+|                         **Neon**                          |                        **Arcane**                         |                          **Phantom**                          |
+|  <img src="assets/theme_showcase_neon.gif" width="300"/>  | <img src="assets/theme_showcase_arcane.gif" width="300"/> |  <img src="assets/theme_showcase_phantom.gif" width="300"/>   |
+
+#### ❖ Available Themes
+
+| Theme            | Description                               | Usage                  |
+| :--------------- | :---------------------------------------- | :--------------------- |
+| ◉ **Dark**       | The default. Clean, subtle, professional. | `terminice.dark`       |
+| ▤ **Matrix**     | Hacker green on black.                    | `terminice.matrix`     |
+| ▧ **Fire**       | Warm reds, oranges, and yellows.          | `terminice.fire`       |
+| ▦ **Pastel**     | Soft, muted, and friendly colors.         | `terminice.pastel`     |
+| ▪ **Ocean**      | Deep blues and calming cyans.             | `terminice.ocean`      |
+| ▣ **Monochrome** | Pure black and white. High contrast.      | `terminice.monochrome` |
+| ▱ **Neon**       | Bright, high-energy cyberpunk colors.     | `terminice.neon`       |
+| ▰ **Arcane**     | Mystical purples and magentas.            | `terminice.arcane`     |
+| ◈ **Phantom**    | Ghostly grays and ethereal tones.         | `terminice.phantom`    |
+
+#### ◩ Display Modes
+
+Control the verbosity and framing of your prompts:
+
+- **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
+- **`compact`** — Keeps borders but removes hints for a tighter layout.
+- **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
+
+Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
+
+#### Example
+
+```dart
+// Combine theme and display mode
+final name = terminice.ocean.compact.text('Name');
+
+// Store a themed instance for consistency
+final t = terminice.fire.minimal;
+final age = t.text('Age');
+final role = t.searchSelector(prompt: 'Role', options: ['Admin', 'User']);
+```
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+# Core Concepts & Behavior
+
+This section covers the mechanics that make Terminice predictable across a full CLI app.
 
 #### Prompt Execution & Async Tasks
 
 Prompts, selectors, pickers, and config editors are synchronous. You do not need to `await` user-input prompts; each call blocks until the user provides input or cancels, then returns the result directly.
 
+Async task helpers are the exception because they wrap your `Future` or `Stream`. They render status while work is active, return the typed result on success, and rethrow errors after rendering the final failure or cancel status.
+
 ```dart
-// No async/await required!
 final name = terminice.text('Name');
 final age = terminice.slider('Age', min: 0, max: 100);
 
-print('Hello $name, you are $age years old.');
-```
-
-For long-running work, `terminice` also includes async task helpers. They render status while your `Future` or `Stream` is active, return the typed result on success, and rethrow errors after rendering the final failure or cancel status.
-
-```dart
 final result = await terminice.task('Publishing', run: publish);
-
-await terminice.progressTask(
-  'Uploading',
-  total: files.length,
-  run: (progress) async { ... },
-);
-
-final items = await terminice.trackStream(
-  'Downloading',
-  stream,
-  total: count,
-);
 ```
 
 #### Shared API Design
@@ -246,245 +451,403 @@ Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `sea
 
 Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, manual indicator controller calls such as `show(...)`, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy. Async task helpers use plain task rendering in fallback/plain modes.
 
-# 📚 The `terminice` Catalogue
+_[▰ Back](#table-of-contents) → Table of Contents_
 
-Explore the complete collection of tools available in `terminice`. Every tool is fully themeable and ready to use with zero setup.
+### The Terminice Vision
 
-#### 📝 Prompts
+Terminice exists because I needed this package myself.
 
-Standard input controls for gathering user data.
+I wanted to build Dart CLIs that felt good to use without turning every command into a full terminal application. I needed prompts, menus, progress, configuration screens, and status messages. I wanted them to be beautiful, but not heavy. I wanted them to be easy, but not limiting. I wanted them to be customizable, but not scattered across every call site. And I wanted to test the experience instead of hoping stdin, stdout, and keyboard input would behave during real use.
 
-- [`text` — Single-line text input.](#text---single-line-text-input)
-- [`password` — Secure, masked text input.](#password---masked-text-input)
-- [`confirm` — Yes/No boolean confirmation.](#confirm---yesno-confirmation)
-- [`multiline` — Multi-line text editor.](#multiline---terminal-text-area)
-- [`slider` — Numeric selection along a single axis.](#slider---numeric-selection)
-- [`range` — Dual-thumb slider for selecting a min/max range.](#range---dual-handle-numeric-range)
-- [`rating` — Star-based rating input.](#rating---star-rating-input)
-- [`date` — Date picker.](#date---keyboard-date-prompt)
-- [`form` — Form prompt.](#form---multi-field-input)
+The options around the ecosystem each solved part of that problem. Some packages were simple and pleasant, but stopped at basic prompts. Some were powerful, but too low-level, leaving me to build rendering, keyboard handling, fallback behavior, and testing myself. Some were full TUI frameworks, which are great when the terminal is the whole app, but too much when the CLI only needs a polished setup flow, picker, progress indicator, or config editor.
 
-#### 🎯 Selectors
+Terminice is the middle layer I always wanted, a lightweight terminal UI kit that keeps the developer experience simple while still giving real control when the CLI grows. The goal was to set a high bar for that specific job, not to make another prompt package for its own sake.
 
-Interactive menus for choosing from predefined options.
+#### What matters most
 
-- [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
-- [`choiceSelector` — Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
-- [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
-- [`gridSelector` — 2D grid selection.](#gridselector---two-dimensional-selection-grid)
-- [`tagSelector` — Select and manage multiple tags.](#tagselector---chip-style-multi-select)
-- [`toggleGroup` — Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
-- [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
+- **Ease of use** - common interactions should be one small method call, not a new architecture.
+- **Beautiful defaults** - prompts and menus should feel intentional before you customize anything.
+- **Flexibility** - start with a text prompt, then add selectors, pickers, tasks, messages, flows, config editors, or custom components without switching tools.
+- **Centralized customization** - theme, display mode, glyphs, fallback, terminal I/O, and tests should move through the `Terminice` instance, not through repeated options everywhere.
+- **Lightweight design** - Terminice should sit inside your existing CLI, not force you into a command framework or full-screen runtime.
+- **Real-world robustness** - local terminals, CI, scripts, limited terminals, non-TTY output, cancellation, and fallback modes should be part of the design.
+- **Testability** - terminal UI should be testable with scripted input and captured output, just like the rest of your command logic.
+- **Complete documentation** - every tool should be explained deeply enough that developers can understand the behavior, controls, examples, and tradeoffs before they adopt it.
 
-#### 🗂️ Pickers
+The most important idea is consistency. A CLI should not feel like ten unrelated helpers glued together. If you use one Terminice instance across your app, every component should feel like it belongs to the same product: same theme, same display mode, same fallback behavior, same terminal abstraction, same testing story.
 
-Specialized components for selecting complex data types.
+That is why Terminice is intentionally more than a prompt package and intentionally less than a full TUI framework. It is the human-facing layer of a Dart CLI: the part where users answer questions, make choices, watch work happen, review configuration, and understand what the command is doing.
 
-- [`filePicker` — Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
-- [`pathPicker` — Browse and select directories.](#pathpicker---directory-and-path-browser)
-- [`colorPicker` — Interactive color selection.](#colorpicker---ansi-color-grid)
-- [`datePicker` — Calendar-based date selection.](#datepicker---calendar-date-selection)
+The long-term goal is simple: make beautiful terminal UIs easy for anyone, while keeping serious CLI apps flexible, lightweight, customizable, fallback-safe, and testable.
 
-#### ⏳ Indicators
+_[▰ Back](#table-of-contents) → Table of Contents_
 
-Visual feedback for long-running tasks.
+# Comparison & Alternatives
 
-- [`loadingSpinner` — Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
-- [`inlineSpinner` — Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
-- [`progressBar` — Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
-- [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
-- [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
+Terminice is best when you want rich, branded terminal interactions inside a normal Dart CLI without adopting a full command framework or full-screen TUI architecture.
 
-#### 🔁 Async Task Helpers
+It is not trying to replace every CLI package:
 
-Future and stream wrappers for long-running work.
+- Use `package:args`, `CommandRunner`, or your own router for argument parsing and command dispatch.
+- Use `dart:io`, process helpers, or `dcli` for system scripting and filesystem work.
+- Use a TUI framework when your app should own the whole terminal screen.
+- Use Terminice for the human-facing layer: prompts, selectors, pickers, flows, tasks, messages, config editors, themes, fallbacks, tests, and reusable custom components.
 
-- [`task` — Run a task with spinner or dots status.](#task---async-status-wrapper)
-- [`progressTask` — Run a task with determinate progress.](#progresstask---async-progress-wrapper)
-- [`trackStream` — Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
-- [`TaskProgress` — Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
-- [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
-- [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
+### Prompt Libraries At A Glance
 
-#### 🔄 Flow Composition
+- `✓` = built in
+- `Limited` = partial or adjacent
+- `No` = not the package's focus
+- `Build` = possible if you design it yourself.
 
-Chain several prompts and selectors into one sequential CLI workflow.
+| Capability                                               | `terminice` | promptly | promptr | prompts | interact | prompt  |
+| -------------------------------------------------------- | ----------- | -------- | ------- | ------- | -------- | ------- |
+| Basic prompts                                            | ✓           | ✓        | ✓       | ✓       | ✓        | ✓       |
+| Password / masked input                                  | ✓           | ✓        | Limited | No      | ✓        | Limited |
+| Searchable selectors                                     | ✓           | Limited  | No      | No      | No       | No      |
+| Multi-select checklists                                  | ✓           | ✓        | ✓       | No      | ✓        | No      |
+| Grid / card / tag selectors                              | ✓           | No       | No      | No      | No       | No      |
+| File / path pickers                                      | ✓           | No       | No      | No      | No       | No      |
+| Date / color pickers                                     | ✓           | No       | No      | No      | No       | No      |
+| Async tasks / progress helpers                           | ✓           | Limited  | No      | No      | Limited  | No      |
+| Message primitives                                       | ✓           | Limited  | No      | No      | No       | No      |
+| Flow builder with review/back/progress                   | ✓           | Limited  | No      | No      | No       | No      |
+| Config editor / help browsers / theme demo               | ✓           | No       | No      | No      | No       | No      |
+| One instance controls theme + mode + fallback + terminal | ✓           | Limited  | No      | No      | Limited  | No      |
+| CI / non-TTY fallback behavior                           | ✓           | No       | No      | No      | No       | No      |
+| Scripted terminal testing harness                        | ✓           | No       | No      | No      | No       | Limited |
+| Custom components that inherit Terminice behavior        | ✓           | No       | No      | No      | No       | No      |
 
-- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
+### CLI Utilities And TUI Frameworks At A Glance
 
-#### ⚙️ Configuration & Utilities
+| Capability                        | `terminice`        | mason_logger    | dcli              | dart_console                  | TUI frameworks         |
+| --------------------------------- | ------------------ | --------------- | ----------------- | ----------------------------- | ---------------------- |
+| Message primitives                | ✓                  | ✓               | Limited           | Build                         | Build                  |
+| Async task wrappers               | ✓                  | Limited         | No                | Build                         | Build                  |
+| Rich prompt catalogue             | ✓                  | Limited         | Limited           | Build                         | Limited                |
+| Searchable menus                  | ✓                  | No              | No                | Build                         | Limited                |
+| Pickers and config editors        | ✓                  | No              | No                | Build                         | Build                  |
+| Central theme system              | ✓                  | Limited         | No                | Build                         | ✓                      |
+| Fallback / CI compatibility modes | ✓                  | Limited         | Script-level      | Build                         | Framework-specific     |
+| First-class testing utilities     | ✓                  | No              | Normal Dart tests | Build                         | Limited                |
+| Custom UI extension point         | ✓                  | No              | No                | Build                         | ✓                      |
+| Architecture cost                 | Small method calls | Logger instance | Scripting SDK     | Low-level terminal primitives | Full app/runtime model |
 
-Advanced tools for building full CLI applications.
+### When Each Package Fits
 
-- [`configEditor` — A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
-- [`cheatSheet` — Display a quick reference guide.](#cheatsheet---framed-reference-table)
-- [`helpCenter` — Interactive help documentation viewer.](#helpcenter---searchable-help-browser)
-- [`hotkeyGuide` — Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
-- [`themeDemo` — Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
+- `promptly` - promising and broad, but pre-production. Choose Terminice for a mature-feeling UI layer that does not own command architecture.
+- `promptr` - clean for simple prompts. Choose Terminice when you need menus, pickers, progress, flows, fallback, testing, and themes.
+- `prompts` - tiny and synchronous, but last published in 2021. Choose Terminice for modern CLI UX.
+- `interact` - closest older component prompt package, but last published in 2023 and SDK metadata is below Dart 3. Choose Terminice for current Dart and broader UX.
+- `prompt` - historical package from 2015. Choose Terminice for real modern CLI work.
+- `mason_logger` - great logger. Choose Terminice when logging is only one part of a bigger interactive CLI.
+- `dcli` - great scripting SDK. Choose Terminice for the human-facing UI on top.
+- `dart_console` - great low-level terminal control. Choose Terminice when you want finished components.
+- `dart_tui`, `commander_ui`, `termui`, `pixel_prompt` - great for terminal apps. Choose Terminice for command interactions without full TUI architecture.
 
-### ▧ Theming & Display Modes
+### Why `terminice` Feels More Robust
 
-`terminice` makes styling effortless. Every prompt adapts automatically to the selected theme and display mode. Just chain the theme or mode accessor before calling any prompt.
+A terminal UI package should not only look good in a perfect local shell. It should stay predictable when the app grows, runs in CI, gets tested, changes theme, or needs one custom interaction.
 
-|                           Dark                            |                          Matrix                           |                             Fire                              |
-| :-------------------------------------------------------: | :-------------------------------------------------------: | :-----------------------------------------------------------: |
-|  <img src="assets/theme_showcase_dark.gif" width="300"/>  | <img src="assets/theme_showcase_matrix.gif" width="300"/> |    <img src="assets/theme_showcase_fire.gif" width="300"/>    |
-|                        **Pastel**                         |                         **Ocean**                         |                        **Monochrome**                         |
-| <img src="assets/theme_showcase_pastel.gif" width="300"/> | <img src="assets/theme_showcase_ocean.gif" width="300"/>  | <img src="assets/theme_showcase_monochrome.gif" width="300"/> |
-|                         **Neon**                          |                        **Arcane**                         |                          **Phantom**                          |
-|  <img src="assets/theme_showcase_neon.gif" width="300"/>  | <img src="assets/theme_showcase_arcane.gif" width="300"/> |  <img src="assets/theme_showcase_phantom.gif" width="300"/>   |
+#### Can I start with one line?
 
-#### ❖ Available Themes
+Yes. Use `terminice.text('Name')`, `terminice.confirm(...)`, or `terminice.success(...)` directly. No widget tree, no app runtime, no command framework migration.
 
-| Theme            | Description                               | Usage                  |
-| :--------------- | :---------------------------------------- | :--------------------- |
-| ◉ **Dark**       | The default. Clean, subtle, professional. | `terminice.dark`       |
-| ▤ **Matrix**     | Hacker green on black.                    | `terminice.matrix`     |
-| ▧ **Fire**       | Warm reds, oranges, and yellows.          | `terminice.fire`       |
-| ▦ **Pastel**     | Soft, muted, and friendly colors.         | `terminice.pastel`     |
-| ▪ **Ocean**      | Deep blues and calming cyans.             | `terminice.ocean`      |
-| ▣ **Monochrome** | Pure black and white. High contrast.      | `terminice.monochrome` |
-| ▱ **Neon**       | Bright, high-energy cyberpunk colors.     | `terminice.neon`       |
-| ▰ **Arcane**     | Mystical purples and magentas.            | `terminice.arcane`     |
-| ◈ **Phantom**    | Ghostly grays and ethereal tones.         | `terminice.phantom`    |
+#### Will everything keep the same style?
 
-#### ◩ Display Modes
+Yes. Theme, display mode, glyphs, compatibility settings, fallback policy, terminal I/O, and test behavior travel through the `Terminice` instance you use. Change the instance, and the components follow.
 
-Control the verbosity and framing of your prompts:
+#### What happens outside a rich terminal?
 
-- **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
-- **`compact`** — Keeps borders but removes hints for a tighter layout.
-- **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
+Terminice is designed for real environments: local shells, CI, scripts, non-TTY output, limited terminals, and legacy/plain modes. `autoFallback`, `legacy`, and plain task rendering let the same CLI stay usable without pretending every terminal can do everything.
 
-Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
+#### Can I test the interactions?
 
-#### ⌨ Example
+Yes. `TerminiceTester` gives you scripted input, mock terminals, captured output snapshots, async handler support, and deterministic fallback-mode tests. Your prompts can be covered like the rest of your CLI logic.
+
+#### Can it grow past simple prompts?
+
+Yes. The same package gives you selectors, pickers, messages, async tasks, progress tracking, flows, review steps, config editors, and custom components. You can start small and add depth without switching tools or rebuilding the UI layer.
+
+#### Does it replace my CLI architecture?
+
+No. Keep `package:args`, `CommandRunner`, Mason-style commands, `dart:io`, `dcli`, process tools, or your own app structure. Terminice stays focused on the human-facing layer: the questions, choices, progress, feedback, fallback behavior, and tests.
+
+That is the core difference: many alternatives solve one slice well. Terminice connects the slices so your CLI keeps one look, one behavior model, and one testing story as it becomes more serious.
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+## Command App Integration
+
+Terminice is the human-facing terminal UX layer for command apps.
+
+It does not parse arguments, dispatch commands, replace `package:args`, replace `CommandRunner`, or replace Mason-style command classes. Keep your existing command structure. Use Terminice inside the handler when that handler needs prompts, menus, progress, status messages, fallback output, or testable terminal I/O.
+
+Full examples:
+
+- [example/command_app_example.dart](example/command_app_example.dart)
+- [example/command_app_testing_example.dart](example/command_app_testing_example.dart)
+
+### 1. Parse and route elsewhere
+
+Use plain `main(List<String> args)`, `package:args`, `CommandRunner`, Mason-style commands, or your own router.
 
 ```dart
-// Combine theme and display mode
-final name = terminice.ocean.compact.text('Name');
+Future<void> main(List<String> args) async {
+  final options = CommandOptions.parse(args);
 
-// Store a themed instance for consistency
-final t = terminice.fire.minimal;
-final age = t.text('Age');
-final role = t.searchSelector(prompt: 'Role', options: ['Admin', 'User']);
+  exitCode = await runCommand(options, terminice.autoFallback);
+}
 ```
 
-### Quick Start
-
-Get up and running in seconds. No setup required—just import and call.
-
-#### 1. Ask for input
-
-Gather text, passwords, or confirmations with a single line of code.
+Terminice comes in after routing:
 
 ```dart
-final name = terminice.text('Project name');
-final ship = terminice.confirm(prompt: 'Ship to production?', message: 'Are you sure?');
+Future<int> runCommand(CommandOptions options, Terminice t) async {
+  switch (options.command) {
+    case 'init':
+      return runInit(options, t);
+    default:
+      t.info('Commands: init');
+      return 64;
+  }
+}
 ```
 
-<img src="assets/quick_start_1.gif" alt="terminice text and confirm prompts" width="1000"/>
+### 2. Pass Terminice into handlers
 
-#### 2. Build interactive menus
-
-Need a searchable list? It's just as easy.
+Treat `Terminice` like a logger, file system, or project service. Pass it in or inject it.
 
 ```dart
-final lang = terminice.searchSelector(
-  prompt: 'Language',
-  options: ['Dart', 'Go', 'Rust', 'TypeScript'],
-  showSearch: true,
+Future<int> runInit(InitOptions options, Terminice t) async {
+  final name = options.name ?? t.text('Project name');
+  final ok = options.yes || t.confirm(message: 'Create $name?');
+
+  if (!ok) return 1;
+
+  await t.task('Creating $name', run: createFiles);
+  t.success('Created $name');
+  return 0;
+}
+```
+
+The same shape works in `CommandRunner` and Mason-style command classes:
+
+```dart
+class InitCommand extends Command<int> {
+  InitCommand(this.t);
+
+  final Terminice t;
+
+  @override
+  Future<int> run() {
+    final options = InitOptions.from(argResults!);
+    return runInit(options, t);
+  }
+}
+```
+
+### 3. Keep command options in charge
+
+Prefer flags and parsed options for automation. Use prompts only when the command actually needs a human answer.
+
+```dart
+final name = options.name ?? t.text('Project name');
+final confirmed = options.yes || t.confirm(message: 'Continue?');
+```
+
+That keeps scripts predictable and still gives local users a friendly flow.
+
+### 4. Switch output for CI
+
+Use a fallback/plain instance for CI, noninteractive scripts, or limited terminals.
+
+```dart
+final t = options.ci ? terminice.legacy.fallback : terminice.autoFallback;
+
+if (options.ci && options.name == null) {
+  t.error('CI requires --name.');
+  return 64;
+}
+```
+
+Task output can switch too:
+
+```dart
+await t.task(
+  'Publish package',
+  display: options.ci ? TaskDisplay.plain : TaskDisplay.auto,
+  run: publishPackage,
 );
 ```
 
-<img src="assets/quick_start_2.gif" alt="terminice search selector" width="1000"/>
+### 5. Test handlers directly
 
-#### 3. Change themes instantly
-
-Want a different vibe? Just chain a theme name before your prompt.
+Handlers that accept `Terminice` are easy to test. Script fallback input, run the handler, and assert captured output.
 
 ```dart
-// Hacker green
-final secret = terminice.matrix.password('Passphrase');
+final tester = TerminiceTester.fallback(lines: const ['demo', 'yes']);
 
-// High-energy cyberpunk
-final memory = terminice.neon.slider('Memory', min: 128, max: 2048);
+final code = await tester.runAsync(
+  (t) => runCommandApp(const ['init'], t),
+);
+
+expect(code, 0);
+expect(tester.output.plainText, contains('Created demo'));
 ```
 
-<img src="assets/quick_start_3.gif" alt="terminice themes showcase" width="1000"/>
-
-For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue) below.
+_[▰ Back](#table-of-contents) → Table of Contents_
 
 ## Testing Terminice CLIs
 
-Serious CLIs need tests that do not depend on a real terminal, real stdin, or timing-sensitive stdout capture. Import the sidecar testing library from tests:
+Import the test sidecar from your test files:
 
 ```dart
 import 'package:test/test.dart';
 import 'package:terminice/testing.dart';
 ```
 
-`package:terminice/testing.dart` re-exports the public Terminice API, core mock-terminal testing primitives, and `TerminiceTester`. It is intentionally a test sidecar; these utilities are not exported from `package:terminice/terminice.dart`.
-
-### Fallback and Line-Mode Flows
-
-Use `TerminiceTester.fallback` for deterministic line-mode coverage. This is ideal for testing flow logic, validators, cancellation behavior, and CI-safe prompt paths.
+Start with a fallback tester. It scripts line input, runs your code with a fake terminal, and lets you assert the result.
 
 ```dart
-test('creates a project from fallback input', () {
-  final tester = TerminiceTester.fallback(lines: ['demo', 'yes']);
+final tester = TerminiceTester.fallback(lines: ['demo']);
 
-  final result = tester.run(
-    (t) => t
-        .flow('Create project')
-        .text('name', 'Project name')
-        .confirm('create', message: 'Create project?')
-        .run(),
-  );
+final name = tester.run((t) => t.text('Project name'));
 
-  expect(result.toMap(), equals({'name': 'demo', 'create': true}));
-  expect(tester.output.plainText, contains('Create project?'));
-});
+expect(name, equals('demo'));
 ```
 
-### Interactive Key Scripts
-
-Use `TerminiceTester.interactive` with `TerminalScript` when you want to exercise the rich raw-mode prompt path. Scripts are reusable and can queue text, key presses, arrows, Enter, Escape, Tab, Space, and Ctrl keys.
+Use `runAsync` for async command handlers or tasks.
 
 ```dart
-test('chooses No in the interactive confirm prompt', () {
-  final tester = TerminiceTester.interactive(
-    script: TerminalScript.build((script) => script.right().enter()),
-  );
-
-  final result = tester.run(
-    (t) => t.confirm(message: 'Publish release?'),
-  );
-
-  expect(result, isFalse);
-  expect(tester.output.containsAnsiControls, isTrue);
-});
-```
-
-### Output Assertions
-
-Every tester exposes `tester.output`, a `TerminalOutputSnapshot` with `raw`, `plainText`, `normalizedText`, `plainLines`, and `containsAnsiControls`. Prefer `plainText` when ANSI styling is irrelevant, `normalizedText` for stable line assertions, and `containsAnsiControls` when you need to prove a path rendered with or without terminal control output.
-
-```dart
-final tester = TerminiceTester.nonInteractive();
-
-final count = await tester.runAsync(
-  (t) => t.task<int>(
-    'Warm cache',
-    run: () async => 42,
-    success: 'cache ready',
-  ),
+final code = await tester.runAsync(
+  (t) => runCommandApp(['init'], t),
 );
 
-expect(count, 42);
-expect(tester.output.normalizedText, equals('OK: cache ready'));
+expect(code, equals(0));
+```
+
+`TerminiceTester` is the high-level harness around `MockTerminal`. It creates a `Terminice` instance for the fake terminal, feeds scripted input, captures output, and restores the previous `TerminalContext` after `run` or `runAsync`.
+
+`package:terminice/testing.dart` re-exports the public Terminice API, core terminal testing tools, and `TerminiceTester`. Keep production code on `package:terminice/terminice.dart`.
+
+### Choosing a Test Mode
+
+Use `TerminiceTester.fallback` for most prompt tests. It forces deterministic line mode, which is ideal for flows, validators, cancellation, command handlers, and CI.
+
+Use `TerminiceTester.nonInteractive` when you want to simulate a process with no TTY and verify the normal `autoFallback` decision.
+
+```dart
+final tester = TerminiceTester.nonInteractive(lines: ['Ada']);
+```
+
+Use `TerminiceTester.interactive` when behavior depends on rich raw-mode input: arrows, focus movement, Escape, Tab, Space, Ctrl shortcuts, or ANSI control output.
+
+```dart
+final tester = TerminiceTester.interactive(
+  script: TerminalScript.build((s) => s.right().enter()),
+);
+
+final publish = tester.run(
+  (t) => t.confirm(message: 'Publish release?'),
+);
+
+expect(publish, isFalse);
+```
+
+`TerminalScript` can queue text, line input, key presses, and control keys. You can also add input later.
+
+```dart
+tester.queue(TerminalScript.lines(['next value']));
+```
+
+### Asserting Output
+
+Every tester exposes `tester.output`, a `TerminalOutputSnapshot`.
+
+Use `plainText` for most user-visible content checks.
+
+```dart
+expect(tester.output.plainText, contains('Project name'));
+```
+
+Use `normalizedText` or `plainLines` for stable exact assertions.
+
+```dart
+expect(tester.output.normalizedText, equals('OK: built'));
+```
+
+Use `raw` or `containsAnsiControls` when terminal control output matters.
+
+```dart
 expect(tester.output.containsAnsiControls, isFalse);
 ```
+
+_[▰ Back](#table-of-contents) → Table of Contents_
+
+## Custom Components & Extensibility
+
+Most CLIs do not need custom components. Start with the built-in prompts,
+selectors, pickers, indicators, tasks, config editors, and flows.
+For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue).
+
+Reach for `TerminiceComponent<T>` when your CLI has reusable,
+domain-specific terminal UI that should still behave like Terminice. Components
+run inside the caller's configured `Terminice` instance, so they keep the same
+theme, terminal, fallback policy, compatibility settings, and
+`TerminiceTester` behavior.
+
+Use a class for a named component:
+
+```dart
+class ProjectSlug extends TerminiceComponent<String> {
+  const ProjectSlug();
+
+  @override
+  String run(TerminiceComponentContext context) {
+    return context.terminice.text('Project slug') ?? 'my_cli';
+  }
+}
+```
+
+Run it from any configured Terminice instance:
+
+```dart
+final slug = terminice.ocean.autoFallback.runComponent(
+  const ProjectSlug(),
+);
+```
+
+Use callback style for local one-offs:
+
+```dart
+final region = terminice.runWithComponent<String>((context) {
+  final selected = context.terminice.searchSelector(
+    prompt: 'Region',
+    options: ['local', 'staging', 'production'],
+  );
+
+  return selected.isEmpty ? 'local' : selected.first;
+});
+```
+
+Components can also be flow steps:
+
+```dart
+final result = terminice.flow('Create project')
+    .component<String>(
+      'slug',
+      'Project slug',
+      component: const ProjectSlug(),
+    )
+    .run();
+```
+
+Inside custom flow wiring, `FlowContext.runComponent(component)` uses the
+flow's configured Terminice instance. Use `FlowContext.promptTitle(title)` for
+progress-aware titles and `fallbackPromptTitle(title)` for plain fallback text.
+
+_[▰ Back](#table-of-contents) → Table of Contents_
 
 ---
 
@@ -539,7 +902,7 @@ final email = terminice.text(
 > **Why use this?**
 > Instead of manually wiring stdin reads, trimming, empty checks, and retry loops, `text` gives you a themed prompt with validation and cancellation behavior in one call.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -590,7 +953,7 @@ if (newPassword != null) {
 > **Why use this?**
 > Use `password` when the input should behave like text but render safely. Use `verify: true` when a typo would be expensive and you want the confirmation logic built in.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -644,7 +1007,7 @@ final restart = terminice.fire.confirm(
 > **Why use this?**
 > A plain `stdin.readLineSync()` can only guess what users meant. `confirm` makes the choice explicit, themeable, and keyboard driven.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -692,7 +1055,7 @@ print('Captured $lineCount lines.');
 > **Why use this?**
 > Use `text` for a short answer. Use `multiline` when Enter should create content instead of submitting the prompt.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -753,7 +1116,7 @@ final rollout = terminice.neon.slider(
 > **Why use this?**
 > A slider is faster and safer than asking users to type a number when the valid range is known and small adjustments matter.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -818,7 +1181,7 @@ final price = terminice.ocean.range(
 > **Why use this?**
 > Use `slider` for one value. Use `range` when the user is defining a span, such as min/max price, memory budget, or an allowed operating window.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -863,7 +1226,7 @@ final risk = terminice.fire.rating(
 > **Why use this?**
 > Ratings keep bounded integer input quick. Number keys make exact selection fast, while labels let you turn numbers into meaningful domain language.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -909,7 +1272,7 @@ final reviewDate = terminice.date(
 > **Why use this?**
 > Use `date` when free-form date text would be too error-prone, but a full calendar picker would be more UI than the workflow needs.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1018,7 +1381,7 @@ print('Captured ${values.length} fields.');
 > **Why use this?**
 > Use separate prompts when each answer should feel like its own step. Use `form` when the inputs belong together and should validate as one unit, such as login, signup, or connection settings.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1078,7 +1441,7 @@ print('Region: $selectedRegion');
 > **Why use this?**
 > Use `searchSelector` when the list may be longer than the terminal viewport, or when users know the item name and should be able to filter instead of arrowing through everything.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1148,7 +1511,7 @@ final environment = terminice.fire.choiceSelector(
 > **Why use this?**
 > Use `searchSelector` for fast text filtering. Use `choiceSelector` when the shape of the decision matters and subtitles help users choose confidently.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1207,7 +1570,7 @@ final labels = terminice.matrix.checkboxSelector(
 > **Why use this?**
 > Use `checkboxSelector` when every option is a simple on/off inclusion. Use `choiceSelector` when each option needs a card subtitle, and `tagSelector` when a compact chip layout fits better.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1265,7 +1628,7 @@ final size = terminice.neon.gridSelector(
 > **Why use this?**
 > Use `gridSelector` when options are short and benefit from spatial scanning. Use `searchSelector` when the list is long or users need filtering.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1325,7 +1688,7 @@ final compactTags = terminice.pastel.compact.tagSelector(
 > **Why use this?**
 > Use `tagSelector` when the selected values are labels and a compact chip grid is easier to scan than a tall checklist.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1389,7 +1752,7 @@ final permissions = terminice.monochrome.toggleGroup(
 > **Why use this?**
 > Use `checkboxSelector` when you only need a list of enabled labels. Use `toggleGroup` when both enabled and disabled states matter after the prompt returns.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1467,7 +1830,7 @@ final tool = terminice.arcane.commandPalette(
 > **Why use this?**
 > Use `commandPalette` when the user is choosing an action by name. It returns the whole `CommandEntry`, so display text and dispatch IDs can stay separate.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1526,7 +1889,7 @@ print(picked ?? 'Selection cancelled.');
 > **Why use this?**
 > Use `filePicker` when the user needs to choose an existing file from a folder tree. Use `pathPicker` when confirming the current directory is part of the workflow.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1587,7 +1950,7 @@ print(exportDir == null ? 'No export folder selected.' : exportDir);
 > **Why use this?**
 > Use `pathPicker` for directory-first workflows because it can confirm the current folder directly. Turn on `allowFiles` when a command accepts either a file path or a directory path.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1644,7 +2007,7 @@ print(dangerColor ?? '#EF4444');
 > **Why use this?**
 > Use `colorPicker` when the user should see the color before committing it. It is faster than asking for raw hex, but still lets precise users jump in with `H`.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1708,7 +2071,63 @@ print(normalizedShipDate ?? 'No ship date selected.');
 > **Why use this?**
 > Use `datePicker` when a visual calendar prevents off-by-one mistakes. Use the simpler `date` prompt when users already know the exact date string they want to type.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+
+---
+
+### Message Primitives - Small Status Lines
+
+Write small, synchronous terminal messages through the configured `Terminice` instance. These helpers are useful for the connective tissue around richer UI: setup notes before a prompt, final status after a task, warnings inside a flow, or quiet detail text after a command completes.
+
+- `log(Object? message)` - Writes `message.toString()` as a plain line with no status decoration.
+- `info(Object? message)` - Writes an informational status line.
+- `success(Object? message)` - Writes a success status line.
+- `warn(Object? message)` - Writes a warning status line.
+- `error(Object? message)` - Writes an error status line.
+- `err(Object? message)` - Alias for `error`.
+- `detail(Object? message)` - Writes a modest detail line for secondary context.
+- `newline([int count = 1])` - Writes one or more blank lines.
+- Plain rendering - Fallback, noninteractive terminals, basic/legacy compatibility, no-color themes, and ASCII glyph themes render ANSI-free plain lines.
+- Scope - These are CLI message primitives, not logging infrastructure. They do not manage levels, sinks, timestamps, structured records, or filtering.
+
+#### Examples
+
+```dart
+terminice.info('Installing dependencies');
+terminice.success('Project ready');
+terminice.warn('Using cached config');
+terminice.error('Publish failed');
+terminice.err('Retry failed');
+terminice.detail('Run with --verbose for more output');
+terminice.log('Next: dart run');
+terminice.newline();
+```
+
+```dart
+final t = terminice.autoFallback;
+
+t.info('Installing dependencies');
+
+await t.task(
+  'Resolving packages',
+  run: runPubGet,
+  success: 'Dependencies installed',
+);
+
+final publish = t.confirm(message: 'Publish release?');
+
+if (publish) {
+  t.success('Project ready');
+} else {
+  t.warn('Publish skipped');
+  t.detail('Run with --verbose for more output');
+}
+```
+
+> **Why use this?**
+> Use message primitives when you want polished, consistent terminal-facing status lines without bringing in a logging framework. They give command output the same theme, terminal, fallback, compatibility, and test behavior as Terminice prompts and tasks.
+
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1753,7 +2172,7 @@ try {
 > **Why use this?**
 > Use `task` when you want async status and cleanup without manually wiring timers, cursor hiding, final status lines, or error rendering.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1803,7 +2222,7 @@ await terminice.progressTask(
 > **Why use this?**
 > Use `progressTask` when your async work has a known total and the task itself should own progress updates.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1842,7 +2261,7 @@ final records = await terminice.ocean.trackStream(
 > **Why use this?**
 > Use `trackStream` when each stream event maps to one progress unit and you want the collected values back after rendering completes.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1877,7 +2296,7 @@ await terminice.progressTask(
 > **Why use this?**
 > Use `TaskProgress` as the single source of truth for count, total, and per-step detail during async progress rendering.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1903,7 +2322,7 @@ await terminice.task(
 > **Why use this?**
 > Use `TaskDisplay.plain` for logs, CI, tests, or any output stream where control sequences would be noisy.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -1928,7 +2347,7 @@ await terminice.task(
 > **Why use this?**
 > Use `persist` when the task result should remain in command history. Use `clear` for transient status that should disappear after completion.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2020,7 +2439,7 @@ try {
 > **Why use this?**
 > Use `loadingSpinner` when the task is indeterminate but important enough to deserve its own framed status area. Use `inlineSpinner` when you want the same idea in a single log-style line.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2097,7 +2516,7 @@ try {
 > **Why use this?**
 > Use `inlineSpinner` for short-lived or repeated status updates where you do not want a full frame. It gives users motion and context without taking over the terminal.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2195,7 +2614,7 @@ try {
 > **Why use this?**
 > Use `progressBar` when you know the total amount of work and want a framed progress readout. Use `loadingSpinner` or `progressDots` when the task has no reliable total.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2261,7 +2680,7 @@ try {
 > **Why use this?**
 > Use `inlineProgressBar` when you want the smallest possible determinate progress signal. Use `progressBar` when the user benefits from a framed bar and raw count display.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2343,7 +2762,7 @@ await terminice.progressDots('Waiting for job').whileRunning(
 > **Why use this?**
 > Use `progressDots` when you want calmer feedback than a spinner and do not have a meaningful total for a progress bar.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2351,23 +2770,48 @@ _[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Compose several prompts and selectors into one synchronous, sequential flow. Use it when a CLI command needs a handful of related answers, conditional follow-up questions, or a typed result map without manually wiring each prompt together.
 
-Flow is sequential composition: steps run from top to bottom and can be skipped with `when`. It is not a back-navigation wizard yet.
+Flow is the primary primitive for multi-step Terminice workflows. Steps run from top to bottom, can be skipped with `when`, and can end in a review/edit loop for flow/wizard-style confirmation without introducing a separate `wizard()` API.
+
+For one prompt, call the prompt directly. Flow starts paying for itself when a command needs several related answers, a final review screen, edit-before-submit behavior, reusable step groups, or tests that exercise the whole workflow. It keeps that glue code inside Terminice instead of spreading state, validation, cancellation, and review logic through your command handler.
 
 - `flow`
   `(String title)`
   Creates a `FlowBuilder`.
 - `run()` - Runs applicable steps in order and returns a `FlowResult`.
-- Built-in steps - `text`, `password`, `select`, `checkboxes`, `confirm`, and `custom`.
-- Theming and fallback - Built-in steps call the existing Terminice prompts/selectors through the configured instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
+- Step APIs - `text`, `password`, `select`, `checkboxes`, `confirm`, `component`, and `custom`.
+- Theming and fallback - Prompt and component steps run through the configured Terminice instance, so themes, compatibility modes, and line-mode fallback behavior carry through.
+- Templates - `include(FlowTemplate)` lets you reuse a chunk of steps. Duplicate keys are rejected immediately, just like steps added directly to the builder.
+- Review - `.review(...)` adds a final review screen after all applicable steps complete.
+- Progress titles - `.progress()` decorates built-in prompt titles as `Step 1/N - Prompt`.
 
-#### Built-In Steps
+#### Step APIs
 
-- `text(key, prompt, {placeholder, required, validator, validate, when})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
-- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when})` - Stores `String`; cancel also cancels the flow by default.
-- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
-- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when})` - Stores an immutable `List<T>`.
-- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
-- `custom<T>(key, label, {run, validate, when, cancelOnNull})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+- `text(key, prompt, {placeholder, required, validator, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `String`; cancel returns `null` from the prompt and cancels the flow by default.
+- `password(key, prompt, {required, maskChar, allowReveal, verify, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `String`; cancel also cancels the flow by default. Review summaries mask password values by default using eight mask characters.
+- `select<T>(key, prompt, {options, labelBuilder, showSearch, maxVisible, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores the selected `T?`. No selection stores `null` and continues, so use `validate` when one option is required.
+- `checkboxes<T>(key, prompt, {options, initialSelected, labelBuilder, maxVisible, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores an immutable `List<T>`.
+- `confirm(key, {prompt, message, yesLabel, noLabel, defaultYes, validate, when, reviewLabel, summarize, includeInReview, editable})` - Stores `bool` and preserves the existing confirm semantics, including cancellation resolving to the default boolean.
+- `custom<T>(key, label, {run, validate, when, cancelOnNull, reviewLabel, summarize, includeInReview, editable})` - Runs your own synchronous step. Returning `null` cancels by default; set `cancelOnNull: false` to store `null` and continue.
+- `component<T>(key, title, {component, validate, when, nullable, reviewLabel, summarize, includeInReview, editable})` - Runs a reusable `TerminiceComponent<T>` through the flow's configured Terminice instance. `nullable: true` stores `null` and continues; otherwise `null` cancels the flow.
+
+Prompt and component steps are included in review and editable by default. Custom steps default to hidden from review and non-editable unless you opt in with `includeInReview: true` and `editable: true`.
+
+#### Review Workflows
+
+`.review(...)` displays collected review items and then asks the user to choose Submit, Edit, or Cancel.
+
+- Submit - Returns a confirmed `FlowResult` with the current values.
+- Edit - Opens a searchable list of editable review items. Choosing an item reruns the flow from that step.
+- Cancel - Returns a cancelled `FlowResult`, keeps the collected values, and leaves `cancelledKey` as `null`.
+
+When an edit reruns, values from the edited step onward are removed and collected again. Conditions are evaluated again too: newly enabled conditional steps run, and values from skipped conditional steps disappear. If the user cancels during the edit rerun, the pre-edit snapshot is restored and the review screen is shown again.
+
+Review metadata lets each step control how it appears:
+
+- `reviewLabel` - Replaces the prompt label in the summary.
+- `summarize` - Converts the raw value into display text.
+- `includeInReview` - Shows or hides the value in review.
+- `editable` - Controls whether the value can be selected from the Edit list.
 
 #### Result Access
 
@@ -2378,12 +2822,16 @@ Flow is sequential composition: steps run from top to bottom and can be skipped 
 - `cancelledKey` - Key of the step that cancelled, or `null`.
 - `value<T>(key)` - Reads a required typed value and throws if the key is missing or has a different type.
 - `maybe<T>(key)` - Reads a typed value, returning `null` when the key is absent or stored as `null`; wrong non-null types still throw.
+- `string(key)` / `maybeString(key)` - Convenience helpers for string values.
+- `flag(key)` / `maybeFlag(key)` - Convenience helpers for boolean values.
+- `list<T>(key)` - Reads a typed `List<T>`.
+- `valueOr<T>(key, fallback)` - Reads a typed value or returns `fallback` when the key is absent or stored as `null`.
 - `contains(key)` - Checks whether a step wrote that key.
 - `toMap()` - Returns an insertion-ordered copy of the collected values.
 
 #### Context, Conditions, and Validation
 
-`FlowContext` is passed to `when`, `validate`, and `custom` runners. It exposes the configured `terminice` instance plus the same typed `value<T>`, `maybe<T>`, `contains`, and `toMap` accessors for values collected by earlier steps.
+`FlowContext` is passed to `when`, `validate`, `summarize`, and `custom` runners. It exposes the configured `terminice` instance, `runComponent(component)`, progress-aware `promptTitle(title)`, plain `fallbackPromptTitle(title)`, and the same typed result helpers for values collected by earlier steps.
 
 Flow validators use `String? Function(value, context)`: return `null` for success, return `''` for legacy-compatible success, or return a non-empty error string to reject the step with a `FlowValidationException`.
 
@@ -2392,17 +2840,51 @@ For `text`, `validator` and `validate` are different layers. `validator` runs in
 #### Examples
 
 ```dart
-final result = terminice.flow('Create project')
-  .text('name', 'Project name', required: true)
-  .select('template', 'Template', options: ['CLI', 'Server', 'Package'])
-  .checkboxes('features', 'Features', options: ['Git', 'CI', 'Docker'])
-  .confirm('create', message: 'Create project?')
-  .run();
+void projectDetails(FlowBuilder flow) {
+  flow
+      .text(
+        'name',
+        'Project name',
+        required: true,
+        reviewLabel: 'Project',
+      )
+      .select<String>(
+        'template',
+        'Template',
+        options: ['CLI', 'Server', 'Package'],
+        summarize: (value, _) => value ?? 'CLI',
+      );
+}
 
-if (result.confirmed && result.value<bool>('create')) {
-  final name = result.value<String>('name');
-  final template = result.maybe<String>('template') ?? 'CLI';
-  final features = result.value<List<String>>('features');
+final result = terminice.flow('Create project')
+    .progress()
+    .include(projectDetails)
+    .checkboxes<String>(
+      'features',
+      'Features',
+      options: ['Git', 'CI', 'Docker'],
+      summarize: (values, _) => values.isEmpty ? 'none' : values.join(', '),
+    )
+    .password(
+      'token',
+      'API token',
+      includeInReview: false,
+      allowReveal: false,
+    )
+    .confirm(
+      'create',
+      prompt: 'Create',
+      message: 'Create project?',
+      reviewLabel: 'Ready',
+      summarize: (value, _) => value ? 'yes' : 'no',
+    )
+    .review(title: 'Review project')
+    .run();
+
+if (result.confirmed && result.flag('create')) {
+  final name = result.string('name');
+  final template = result.valueOr<String>('template', 'CLI');
+  final features = result.list<String>('features');
 
   print('Creating $name from $template with ${features.join(', ')}');
 }
@@ -2430,19 +2912,28 @@ final result = terminice.flow('Deployment')
   .custom<DateTime>(
     'startedAt',
     'Start time',
+    includeInReview: true,
+    editable: false,
+    summarize: (value, _) => value.toIso8601String(),
     run: (_) => DateTime.now(),
   )
+  .review()
   .run();
 
 if (result.cancelled) {
-  print('Stopped at ${result.cancelledKey}.');
+  final stoppedAt = result.cancelledKey;
+  if (stoppedAt == null) {
+    print('Review cancelled.');
+  } else {
+    print('Stopped at $stoppedAt.');
+  }
 }
 ```
 
 > **Why use this?**
-> Use `flow` when several prompt results belong to one command and later steps should react to earlier answers. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
+> Use `flow` when several prompt results belong to one command, later steps should react to earlier answers, or users should review and edit a full answer set before submission. Use individual prompts when each question stands alone, and use `form` when multiple text/password fields should render together in one frame.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2750,7 +3241,7 @@ void main() {
 > **Why use this?**
 > Use `configEditor` when a CLI needs a durable settings workflow with typed values, nested groups, live theme selection, and JSON-friendly output. Use individual prompts when you only need one or two answers.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2840,7 +3331,7 @@ terminice.fire.cheatSheet(
 > **Why use this?**
 > Use `cheatSheet` when the information is static and should stay compact. Use `helpCenter` when the user needs search, preview text, and a selected document result.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -2978,7 +3469,7 @@ print(chosen?.title ?? 'No topic selected.');
 > **Why use this?**
 > Use `helpCenter` when documentation needs search and a meaningful return value. Use `cheatSheet` when a simple static table is enough.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -3054,7 +3545,7 @@ void showPromptHelp() {
 > **Why use this?**
 > Use `hotkeyGuide` when shortcuts are part of the workflow and users need an in-terminal reminder. Use `cheatSheet` for broader reference data that is not specifically about keys.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 ---
 
@@ -3138,4 +3629,4 @@ void main() {
 > **Why use this?**
 > Use `themeDemo` to inspect the visual language of Terminice themes quickly. Use `ThemeConfigurable` when your application needs to save the chosen theme.
 
-_[⤴️ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
+_[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
