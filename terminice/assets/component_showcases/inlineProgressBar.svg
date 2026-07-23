@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="900" height="46.5" viewBox="0 0 900 46.5"
+  role="img" aria-labelledby="title desc">
+  <title id="title">inlineProgressBar in fire, matrix, and arcane themes</title>
+  <desc id="desc">Compact progress line.</desc>
+  <rect width="900" height="46.5" fill="#05070c"/>
+  <rect x="0" y="0" width="300" height="46.5" fill="#080d16"/>
+  <g font-family="SFMono-Regular, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, 'Cascadia Mono', 'DejaVu Sans Mono', Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="11.5" font-variant-ligatures="none" xml:space="preserve">
+    <text x="16" y="27.5" fill="#ef4444" font-weight="400">B</text>
+    <text x="23.3" y="27.5" fill="#ef4444" font-weight="400">u</text>
+    <text x="30.5" y="27.5" fill="#ef4444" font-weight="400">i</text>
+    <text x="37.8" y="27.5" fill="#ef4444" font-weight="400">l</text>
+    <text x="45" y="27.5" fill="#ef4444" font-weight="400">d</text>
+    <text x="59.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">6</text>
+    <text x="66.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">8</text>
+    <text x="74" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">%</text>
+  </g>
+  <rect x="300" y="0" width="300" height="46.5" fill="#0b111d"/>
+  <line x1="300" y1="0" x2="300" y2="46.5" stroke="#ffffff" stroke-opacity="0.14"/>
+  <g font-family="SFMono-Regular, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, 'Cascadia Mono', 'DejaVu Sans Mono', Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="11.5" font-variant-ligatures="none" xml:space="preserve">
+    <text x="316" y="27.5" fill="#22c55e" font-weight="400">B</text>
+    <text x="323.3" y="27.5" fill="#22c55e" font-weight="400">u</text>
+    <text x="330.5" y="27.5" fill="#22c55e" font-weight="400">i</text>
+    <text x="337.8" y="27.5" fill="#22c55e" font-weight="400">l</text>
+    <text x="345" y="27.5" fill="#22c55e" font-weight="400">d</text>
+    <text x="359.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">6</text>
+    <text x="366.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">8</text>
+    <text x="374" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">%</text>
+  </g>
+  <rect x="600" y="0" width="300" height="46.5" fill="#080d16"/>
+  <line x1="600" y1="0" x2="600" y2="46.5" stroke="#ffffff" stroke-opacity="0.14"/>
+  <g font-family="SFMono-Regular, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, 'Cascadia Mono', 'DejaVu Sans Mono', Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="11.5" font-variant-ligatures="none" xml:space="preserve">
+    <text x="616" y="27.5" fill="#af87ff" font-weight="400">B</text>
+    <text x="623.3" y="27.5" fill="#af87ff" font-weight="400">u</text>
+    <text x="630.5" y="27.5" fill="#af87ff" font-weight="400">i</text>
+    <text x="637.8" y="27.5" fill="#af87ff" font-weight="400">l</text>
+    <text x="645" y="27.5" fill="#af87ff" font-weight="400">d</text>
+    <text x="659.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">6</text>
+    <text x="666.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">8</text>
+    <text x="674" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">%</text>
+  </g>
+</svg>

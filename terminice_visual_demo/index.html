@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Terminice Visual Demo</title>
+    <style>
+      :root {
+        --bg: #080c14;
+        --code-bg: #0d1320;
+        --terminal-bg: #070b12;
+        --line: rgba(255, 255, 255, 0.12);
+        --text: #eef4ff;
+        --muted: #8793a7;
+        --accent: #39d98a;
+        --accent-rgb: 57, 217, 138;
+        --code-text: #d7deea;
+        --code-muted: #6b778d;
+        --code-keyword: #c792ea;
+        --code-variable: #d7deea;
+        --code-receiver: #89ddff;
+        --code-method: #82aaff;
+        --code-param: #f78c6c;
+        --code-type: #ffcb6b;
+        --code-string: #c3e88d;
+        --code-number: #f78c6c;
+        --code-comment: #637777;
+        --code-punctuation: #89a4c2;
+        --code-size: 16px;
+        --terminal-size: 16px;
+        --code-split: 42%;
+        --terminal-font:
+          SFMono-Regular, "SF Mono", "JetBrains Mono", Menlo, Monaco,
+          "Cascadia Mono", "DejaVu Sans Mono", Consolas, "Liberation Mono",
+          "Courier New", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      .demo {
+        width: 100vw;
+        height: 100vh;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: var(--code-split) 1px minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) 1px auto;
+        gap: 0;
+      }
+
+      .code-pane,
+      .terminal {
+        min-height: 0;
+        min-width: 0;
+        overflow: auto;
+      }
+
+      .code-pane {
+        grid-column: 1;
+        grid-row: 1;
+        background: var(--code-bg);
+        overflow: hidden;
+        padding: 18px;
+      }
+
+      .terminal {
+        grid-column: 3;
+        grid-row: 1;
+        background: var(--terminal-bg);
+      }
+
+      pre,
+      code,
+      .mono {
+        font-family: var(--terminal-font);
+        font-variant-ligatures: none;
+        font-feature-settings:
+          "liga" 0,
+          "calt" 0;
+      }
+
+      .code {
+        margin: 0;
+        color: var(--code-text);
+        font-size: var(--code-size);
+        line-height: 1.45;
+        letter-spacing: 0;
+        white-space: pre;
+      }
+
+      .code .keyword {
+        color: var(--code-keyword);
+      }
+
+      .code .variable {
+        color: var(--code-variable);
+      }
+
+      .code .receiver {
+        color: var(--code-receiver);
+      }
+
+      .code .method {
+        color: var(--code-method);
+      }
+
+      .code .param {
+        color: var(--code-param);
+      }
+
+      .code .type {
+        color: var(--code-type);
+      }
+
+      .code .string {
+        color: var(--code-string);
+      }
+
+      .code .number {
+        color: var(--code-number);
+      }
+
+      .code .comment {
+        color: var(--code-comment);
+      }
+
+      .code .punctuation {
+        color: var(--code-punctuation);
+      }
+
+      .terminal-body {
+        min-height: 0;
+        padding: 18px;
+        overflow: auto;
+      }
+
+      .separator {
+        background: var(--line);
+      }
+
+      .separator.vertical {
+        grid-column: 2;
+        grid-row: 1;
+        width: 1px;
+        height: 100%;
+      }
+
+      .separator.horizontal {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+        height: 1px;
+      }
+
+      .terminal-pre {
+        margin: 0;
+        color: var(--text);
+        font-family: var(--terminal-font);
+        font-variant-ligatures: none;
+        font-feature-settings:
+          "liga" 0,
+          "calt" 0;
+        font-size: var(--terminal-size);
+        line-height: 1.34;
+        white-space: pre;
+        tab-size: 2;
+      }
+
+      .terminal-pre span {
+        white-space: pre;
+      }
+
+      .controls {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 50px;
+        padding: 8px 12px;
+        overflow-x: auto;
+        background: #0a0f18;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .control-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+
+      .control-group label {
+        color: var(--muted);
+      }
+
+      .control-group output {
+        min-width: 44px;
+        color: var(--text);
+      }
+
+      .controls button {
+        height: 34px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.055);
+        color: var(--text);
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .controls button.active {
+        border-color: rgba(var(--accent-rgb), 0.52);
+        background: rgba(var(--accent-rgb), 0.14);
+      }
+
+      .controls input[type="range"] {
+        width: 150px;
+        accent-color: var(--accent);
+      }
+
+      .controls .status {
+        margin-left: auto;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      @media (max-width: 760px) {
+        .demo {
+          width: 100vw;
+          height: 100vh;
+          min-height: 0;
+          grid-template-columns: var(--code-split) 1px minmax(0, 1fr);
+          grid-template-rows: minmax(0, 1fr) 1px auto;
+        }
+
+        .code-pane {
+          padding: 14px;
+        }
+
+        .controls {
+          flex-wrap: wrap;
+          overflow-x: hidden;
+        }
+
+        .controls input[type="range"] {
+          width: 100%;
+        }
+
+        .control-group {
+          width: 100%;
+          display: grid;
+          grid-template-columns: 86px minmax(0, 1fr) 52px;
+        }
+
+        .controls .status {
+          width: 100%;
+          margin-left: 0;
+          order: 3;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="demo">
+      <section class="code-pane" aria-label="Current Terminice code">
+        <pre class="code" id="codeBlock"></pre>
+      </section>
+
+      <div class="separator vertical" aria-hidden="true"></div>
+
+      <section class="terminal" aria-label="Captured Terminice terminal output">
+        <div class="terminal-body" id="terminalBody"></div>
+      </section>
+
+      <div class="separator horizontal" aria-hidden="true"></div>
+
+      <div class="controls" aria-label="Demo controls">
+        <button type="button" data-speed="3000">slow</button>
+        <button type="button" data-speed="1800" class="active">normal</button>
+        <button type="button" data-speed="500">fast</button>
+        <div class="control-group">
+          <label for="speedRange">speed</label>
+          <input
+            id="speedRange"
+            type="range"
+            min="200"
+            max="5000"
+            step="100"
+            value="1800"
+            aria-label="Rotation speed" />
+          <output id="speedValue" for="speedRange">1800ms</output>
+        </div>
+        <div class="control-group">
+          <label for="codeSizeRange">code</label>
+          <input
+            id="codeSizeRange"
+            type="range"
+            min="11"
+            max="24"
+            step="1"
+            value="16"
+            aria-label="Code text size" />
+          <output id="codeSizeValue" for="codeSizeRange">16px</output>
+        </div>
+        <div class="control-group">
+          <label for="terminalSizeRange">terminal</label>
+          <input
+            id="terminalSizeRange"
+            type="range"
+            min="11"
+            max="24"
+            step="1"
+            value="16"
+            aria-label="Terminal text size" />
+          <output id="terminalSizeValue" for="terminalSizeRange">16px</output>
+        </div>
+        <div class="control-group">
+          <label for="splitRange">split</label>
+          <input
+            id="splitRange"
+            type="range"
+            min="20"
+            max="70"
+            step="1"
+            value="42"
+            aria-label="Code area percentage" />
+          <output id="splitValue" for="splitRange">42%</output>
+        </div>
+        <button type="button" id="pauseButton">pause</button>
+        <span class="status mono" id="statusText"></span>
+      </div>
+    </main>
+
+    <script src="frames.js"></script>
+    <script>
+      const themeAccents = {
+        dark: ["#39d98a", "57, 217, 138"],
+        matrix: ["#49f27b", "73, 242, 123"],
+        fire: ["#ffb347", "255, 179, 71"],
+        pastel: ["#f3a6d6", "243, 166, 214"],
+        ocean: ["#49d3ff", "73, 211, 255"],
+        monochrome: ["#f4f4f5", "244, 244, 245"],
+        neon: ["#00f5ff", "0, 245, 255"],
+        arcane: ["#c084fc", "192, 132, 252"],
+        phantom: ["#cbd5e1", "203, 213, 225"],
+      };
+
+      const frames = Array.isArray(globalThis.TERMINICE_REAL_FRAMES)
+        ? globalThis.TERMINICE_REAL_FRAMES
+        : [];
+
+      const componentText = "text";
+      const componentPassword = "password";
+      const componentConfirm = "confirm";
+      const componentMultiline = "multiline";
+      const componentSlider = "slider";
+      const componentRange = "range";
+      const componentRating = "rating";
+      const componentDate = "date";
+      const componentForm = "form";
+      const componentSearchSelector = "searchSelector";
+      const componentChoiceSelector = "choiceSelector";
+      const componentCheckboxSelector = "checkboxSelector";
+      const componentGridSelector = "gridSelector";
+      const componentTagSelector = "tagSelector";
+      const componentToggleGroup = "toggleGroup";
+      const componentCommandPalette = "commandPalette";
+      const componentFilePicker = "filePicker";
+      const componentPathPicker = "pathPicker";
+      const componentColorPicker = "colorPicker";
+      const componentDatePicker = "datePicker";
+      const componentLoadingSpinner = "loadingSpinner";
+      const componentInlineSpinner = "inlineSpinner";
+      const componentProgressBar = "progressBar";
+      const componentInlineProgressBar = "inlineProgressBar";
+      const componentProgressDots = "progressDots";
+      const componentMessagePrimitives = "messagePrimitives";
+      const componentTask = "task";
+      const componentProgressTask = "progressTask";
+      const componentTrackStream = "trackStream";
+      const componentTaskProgress = "TaskProgress";
+      const componentTaskDisplay = "TaskDisplay";
+      const componentTaskFinalBehavior = "TaskFinalBehavior";
+      const componentFlow = "flow";
+      const componentCustomComponents = "customComponents";
+      const componentConfigEditor = "configEditor";
+      const componentCheatSheet = "cheatSheet";
+      const componentHelpCenter = "helpCenter";
+      const componentHotkeyGuide = "hotkeyGuide";
+      const componentThemeDemo = "themeDemo";
+
+      // Comment out any line below to remove it from the rotation.
+      const demoComponentIds = [
+        componentProgressBar,
+        componentConfirm,
+        componentDate,
+        componentThemeDemo,
+        componentConfigEditor,
+        componentCheatSheet,
+        componentSearchSelector,
+        componentHelpCenter,
+        componentCheckboxSelector,
+        componentHotkeyGuide,
+        componentProgressDots,
+        componentText,
+        componentPassword,
+        componentMultiline,
+        // componentSlider,
+        componentRange,
+        componentRating,
+        componentForm,
+        componentChoiceSelector,
+        componentGridSelector,
+        // componentTagSelector,
+        componentToggleGroup,
+        componentCommandPalette,
+        componentFilePicker,
+        componentPathPicker,
+        // componentColorPicker,
+        componentDatePicker,
+        // componentLoadingSpinner,
+        // componentInlineSpinner,
+        // componentInlineProgressBar,
+        componentMessagePrimitives,
+        // componentTask,
+        // componentProgressTask,
+        // componentTrackStream,
+        // componentTaskProgress,
+        // componentTaskDisplay,
+        // componentTaskFinalBehavior,
+        // componentFlow,
+        // componentCustomComponents,
+      ];
+
+      const params = new URLSearchParams(window.location.search);
+      const requestedComponent = params.get("component") || params.get("c");
+      const startSpeed = Number(params.get("speed")) || 1800;
+      const still = params.has("still") || params.get("motion") === "off";
+      const codeBlock = document.getElementById("codeBlock");
+      const terminalBody = document.getElementById("terminalBody");
+      const statusText = document.getElementById("statusText");
+      const speedRange = document.getElementById("speedRange");
+      const speedValue = document.getElementById("speedValue");
+      const codeSizeRange = document.getElementById("codeSizeRange");
+      const codeSizeValue = document.getElementById("codeSizeValue");
+      const terminalSizeRange = document.getElementById("terminalSizeRange");
+      const terminalSizeValue = document.getElementById("terminalSizeValue");
+      const splitRange = document.getElementById("splitRange");
+      const splitValue = document.getElementById("splitValue");
+      const pauseButton = document.getElementById("pauseButton");
+      const speedButtons = [...document.querySelectorAll("[data-speed]")];
+
+      const availableComponentIds = [
+        ...new Set(frames.map((frame) => frame.id)),
+      ];
+      const configuredComponentIds = demoComponentIds.filter((id) =>
+        availableComponentIds.includes(id),
+      );
+      const componentIds =
+        configuredComponentIds.length > 0
+          ? configuredComponentIds
+          : availableComponentIds;
+      const themeIds = [...new Set(frames.map((frame) => frame.theme))];
+      const framesByKey = new Map(
+        frames.map((frame) => [`${frame.id}|${frame.theme}`, frame]),
+      );
+
+      let step = 0;
+      let speed = clampSpeed(startSpeed);
+      let timer = null;
+      let paused = still;
+
+      speedRange.value = String(speed);
+      speedValue.textContent = `${speed}ms`;
+      setCodeSize(Number(params.get("codeSize")) || 16);
+      setTerminalSize(Number(params.get("terminalSize")) || 16);
+      setSplit(Number(params.get("split")) || 42);
+      setActiveSpeedButton(speed);
+
+      function clampSpeed(value) {
+        if (!Number.isFinite(value)) return 1800;
+        return Math.max(200, Math.min(5000, value));
+      }
+
+      function frameForStep(index) {
+        if (frames.length === 0) return null;
+
+        const componentPool =
+          requestedComponent &&
+          availableComponentIds.includes(requestedComponent)
+            ? [requestedComponent]
+            : componentIds;
+        const componentId = componentPool[index % componentPool.length];
+        const themeId = themeIds[Math.floor(index / 5) % themeIds.length];
+
+        return (
+          framesByKey.get(`${componentId}|${themeId}`) ||
+          frames.find((frame) => frame.id === componentId) ||
+          frames[0]
+        );
+      }
+
+      function render() {
+        const frame = frameForStep(step);
+        if (!frame) {
+          codeBlock.textContent =
+            "final t = terminice;\n\n// Run dart run visual_demo/generate.dart";
+          terminalBody.innerHTML =
+            '<pre class="terminal-pre">No generated terminal frames found.</pre>';
+          statusText.textContent = "missing frames.js";
+          return;
+        }
+
+        const accent = themeAccents[frame.theme] || themeAccents.dark;
+        document.documentElement.style.setProperty("--accent", accent[0]);
+        document.documentElement.style.setProperty("--accent-rgb", accent[1]);
+
+        codeBlock.innerHTML = highlightCode(
+          `${instanceLine(frame.theme)}\n\n${resultCode(frame.code)}`,
+        );
+        terminalBody.innerHTML = frame.html;
+        statusText.textContent = `${frame.id} / ${frame.theme} / ${speed}ms`;
+      }
+
+      function instanceLine(theme) {
+        const instance = theme === "dark" ? "terminice" : `terminice.${theme}`;
+        return `final t = ${instance};`;
+      }
+
+      function resultCode(source) {
+        const code = String(source).trim();
+        return code
+          .replace(/^final\s+[a-zA-Z_$][\w$]*\s*=\s*t\./, "final result = t.")
+          .replace(
+            /^final\s+[a-zA-Z_$][\w$]*\s*=\s*await\s+t\./,
+            "final result = await t.",
+          )
+          .replace(/^await\s+t\./, "final result = await t.")
+          .replace(/^t\./, "final result = t.");
+      }
+
+      function highlightCode(source) {
+        return String(source)
+          .split("\n")
+          .map(highlightCodeLine)
+          .join("\n");
+      }
+
+      function highlightCodeLine(line) {
+        const tokens = tokenizeCodeLine(line);
+        let html = "";
+
+        for (let index = 0; index < tokens.length; index += 1) {
+          const token = tokens[index];
+          if (token.type !== "identifier") {
+            html += tokenToHtml(token);
+            continue;
+          }
+
+          const previous = previousMeaningfulToken(tokens, index);
+          const next = nextMeaningfulToken(tokens, index);
+          const className = identifierClass(token.value, previous, next);
+          html += span(className, token.value);
+        }
+
+        return html;
+      }
+
+      function tokenizeCodeLine(line) {
+        const tokens = [];
+        let index = 0;
+
+        while (index < line.length) {
+          const char = line[index];
+          const next = line[index + 1];
+
+          if (char === "/" && next === "/") {
+            tokens.push({ type: "comment", value: line.slice(index) });
+            break;
+          }
+
+          if (char === "'" || char === '"') {
+            const quote = char;
+            let end = index + 1;
+            while (end < line.length) {
+              if (line[end] === "\\" && end + 1 < line.length) {
+                end += 2;
+                continue;
+              }
+              if (line[end] === quote) {
+                end += 1;
+                break;
+              }
+              end += 1;
+            }
+            tokens.push({ type: "string", value: line.slice(index, end) });
+            index = end;
+            continue;
+          }
+
+          if (/\s/.test(char)) {
+            let end = index + 1;
+            while (end < line.length && /\s/.test(line[end])) end += 1;
+            tokens.push({ type: "space", value: line.slice(index, end) });
+            index = end;
+            continue;
+          }
+
+          if (/\d/.test(char)) {
+            let end = index + 1;
+            while (end < line.length && /[\d.]/.test(line[end])) end += 1;
+            tokens.push({ type: "number", value: line.slice(index, end) });
+            index = end;
+            continue;
+          }
+
+          if (/[A-Za-z_$]/.test(char)) {
+            let end = index + 1;
+            while (end < line.length && /[\w$]/.test(line[end])) end += 1;
+            tokens.push({ type: "identifier", value: line.slice(index, end) });
+            index = end;
+            continue;
+          }
+
+          tokens.push({ type: "punctuation", value: char });
+          index += 1;
+        }
+
+        return tokens;
+      }
+
+      function tokenToHtml(token) {
+        if (token.type === "space") return escapeHtml(token.value);
+        if (token.type === "string") return span("string", token.value);
+        if (token.type === "number") return span("number", token.value);
+        if (token.type === "comment") return span("comment", token.value);
+        if (token.type === "punctuation") {
+          return span("punctuation", token.value);
+        }
+        return escapeHtml(token.value);
+      }
+
+      function identifierClass(value, previous, next) {
+        const keywords = new Set([
+          "await",
+          "const",
+          "false",
+          "final",
+          "null",
+          "required",
+          "return",
+          "true",
+        ]);
+
+        if (keywords.has(value)) return "keyword";
+        if (next?.value === ":") return "param";
+        if (previous?.value === "." && next?.value === "(") return "method";
+        if (previous?.value === ".") return "variable";
+        if (value === "t" || value === "terminice") return "receiver";
+        if (/^[A-Z]/.test(value)) return "type";
+        return "variable";
+      }
+
+      function previousMeaningfulToken(tokens, index) {
+        for (let i = index - 1; i >= 0; i -= 1) {
+          if (tokens[i].type !== "space") return tokens[i];
+        }
+        return null;
+      }
+
+      function nextMeaningfulToken(tokens, index) {
+        for (let i = index + 1; i < tokens.length; i += 1) {
+          if (tokens[i].type !== "space") return tokens[i];
+        }
+        return null;
+      }
+
+      function span(className, value) {
+        return `<span class="${className}">${escapeHtml(value)}</span>`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function advance() {
+        step += 1;
+        render();
+      }
+
+      function startTimer() {
+        window.clearInterval(timer);
+        timer = null;
+        if (!paused) {
+          timer = window.setInterval(advance, speed);
+        }
+      }
+
+      function setSpeed(nextSpeed) {
+        speed = clampSpeed(nextSpeed);
+        speedRange.value = String(speed);
+        speedValue.textContent = `${speed}ms`;
+        setActiveSpeedButton(speed);
+        render();
+        startTimer();
+      }
+
+      function setCodeSize(value) {
+        const size = clampTextSize(value);
+        codeSizeRange.value = String(size);
+        codeSizeValue.textContent = `${size}px`;
+        document.documentElement.style.setProperty("--code-size", `${size}px`);
+      }
+
+      function setTerminalSize(value) {
+        const size = clampTextSize(value);
+        terminalSizeRange.value = String(size);
+        terminalSizeValue.textContent = `${size}px`;
+        document.documentElement.style.setProperty(
+          "--terminal-size",
+          `${size}px`,
+        );
+      }
+
+      function setSplit(value) {
+        const split = clampSplit(value);
+        splitRange.value = String(split);
+        splitValue.textContent = `${split}%`;
+        document.documentElement.style.setProperty("--code-split", `${split}%`);
+      }
+
+      function clampTextSize(value) {
+        if (!Number.isFinite(value)) return 16;
+        return Math.max(11, Math.min(24, Math.round(value)));
+      }
+
+      function clampSplit(value) {
+        if (!Number.isFinite(value)) return 42;
+        return Math.max(20, Math.min(70, Math.round(value)));
+      }
+
+      function setActiveSpeedButton(currentSpeed) {
+        for (const button of speedButtons) {
+          button.classList.toggle(
+            "active",
+            Number(button.dataset.speed) === currentSpeed,
+          );
+        }
+      }
+
+      for (const button of speedButtons) {
+        button.addEventListener("click", () =>
+          setSpeed(Number(button.dataset.speed)),
+        );
+      }
+
+      speedRange.addEventListener("input", () =>
+        setSpeed(Number(speedRange.value)),
+      );
+      codeSizeRange.addEventListener("input", () =>
+        setCodeSize(Number(codeSizeRange.value)),
+      );
+      terminalSizeRange.addEventListener("input", () =>
+        setTerminalSize(Number(terminalSizeRange.value)),
+      );
+      splitRange.addEventListener("input", () =>
+        setSplit(Number(splitRange.value)),
+      );
+
+      pauseButton.addEventListener("click", () => {
+        paused = !paused;
+        pauseButton.textContent = paused ? "play" : "pause";
+        startTimer();
+      });
+
+      pauseButton.textContent = paused ? "play" : "pause";
+      render();
+      startTimer();
+    </script>
+  </body>
+</html>

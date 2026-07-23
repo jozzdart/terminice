@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Terminice Theme Gallery</title>
+    <style>
+      :root {
+        --bg: #05070c;
+        --panel: #080d16;
+        --panel-alt: #0b111d;
+        --line: rgba(255, 255, 255, 0.12);
+        --text: #eef4ff;
+        --muted: #8b96aa;
+        --fire: #ff8748;
+        --matrix: #49f27b;
+        --arcane: #c084fc;
+        --cell-w: 7.25px;
+        --cell-h: 14.5px;
+        --terminal-font:
+          SFMono-Regular, "SF Mono", "JetBrains Mono", Menlo, Monaco,
+          "Cascadia Mono", "DejaVu Sans Mono", Consolas, "Liberation Mono",
+          "Courier New", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 1080px;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      .page {
+        width: 100%;
+      }
+
+      .component {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .component:last-child {
+        border-bottom: 0;
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .cell {
+        min-width: 0;
+        padding: 16px;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+        overflow: hidden;
+      }
+
+      .cell:nth-child(2) {
+        background: var(--panel-alt);
+      }
+
+      .cell:last-child {
+        border-right: 0;
+      }
+
+      .terminal-grid {
+        margin: 0;
+        color: var(--text);
+        display: grid;
+        grid-template-columns: repeat(var(--cols), var(--cell-w));
+        grid-auto-rows: var(--cell-h);
+        align-items: start;
+        justify-items: start;
+        width: max-content;
+        font-family: var(--terminal-font);
+        font-variant-ligatures: none;
+        font-feature-settings:
+          "liga" 0,
+          "calt" 0;
+        font-size: 11.5px;
+        line-height: var(--cell-h);
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      .terminal-cell {
+        width: var(--cell-w);
+        height: var(--cell-h);
+        overflow: visible;
+        line-height: var(--cell-h);
+        white-space: pre;
+      }
+
+      .missing {
+        margin: 0;
+        color: var(--muted);
+        font-family: var(--terminal-font);
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div id="gallery"></div>
+    </main>
+
+    <script src="frames.js"></script>
+    <script>
+      const themes = ["fire", "matrix", "arcane"];
+      const frames = Array.isArray(globalThis.TERMINICE_REAL_FRAMES)
+        ? globalThis.TERMINICE_REAL_FRAMES
+        : [];
+      const gallery = document.getElementById("gallery");
+
+      renderGallery();
+
+      function renderGallery() {
+        if (frames.length === 0) {
+          gallery.innerHTML =
+            '<p class="missing">No generated terminal frames found.</p>';
+          return;
+        }
+
+        const framesByKey = new Map(
+          frames.map((frame) => [`${frame.id}|${frame.theme}`, frame]),
+        );
+        const components = uniqueComponents(frames);
+
+        gallery.innerHTML = components
+          .map((component) => renderComponent(component, framesByKey))
+          .join("");
+      }
+
+      function uniqueComponents(sourceFrames) {
+        const seen = new Set();
+        const components = [];
+
+        for (const frame of sourceFrames) {
+          if (seen.has(frame.id)) continue;
+          seen.add(frame.id);
+          components.push({
+            id: frame.id,
+            group: frame.group,
+            summary: frame.summary,
+          });
+        }
+
+        return components;
+      }
+
+      function renderComponent(component, framesByKey) {
+        return `
+          <article class="component" aria-label="${escapeHtml(
+            `${component.id}: ${component.summary}`,
+          )}">
+            <div class="comparison">
+              ${themes
+                .map((theme) => renderCell(component.id, theme, framesByKey))
+                .join("")}
+            </div>
+          </article>
+        `;
+      }
+
+      function renderCell(componentId, theme, framesByKey) {
+        const frame = framesByKey.get(`${componentId}|${theme}`);
+        return `
+          <section class="cell" aria-label="${escapeHtml(
+            `${componentId} in ${theme}`,
+          )}">
+            ${frame ? terminalGrid(frame.html) : '<pre class="missing">Missing frame</pre>'}
+          </section>
+        `;
+      }
+
+      function terminalGrid(html) {
+        const lines = parseTerminalHtml(html);
+        const cols = Math.max(1, ...lines.map((line) => line.length));
+        const cells = [];
+
+        for (const line of lines) {
+          for (let index = 0; index < cols; index += 1) {
+            const cell = line[index] || defaultTerminalCell(" ");
+            cells.push(renderTerminalCell(cell));
+          }
+        }
+
+        return `<pre class="terminal-grid" style="--cols:${cols}">${cells.join(
+          "",
+        )}</pre>`;
+      }
+
+      function parseTerminalHtml(html) {
+        const template = document.createElement("template");
+        template.innerHTML = html;
+        const lines = [[]];
+        walkTerminalNode(template.content, defaultTerminalStyle(), lines);
+        return lines;
+      }
+
+      function walkTerminalNode(node, style, lines) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          appendTerminalText(lines, node.textContent, style);
+          return;
+        }
+
+        if (
+          node.nodeType !== Node.ELEMENT_NODE &&
+          node.nodeType !== Node.DOCUMENT_FRAGMENT_NODE
+        ) {
+          return;
+        }
+
+        const nextStyle = { ...style };
+        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "SPAN") {
+          const spanStyle = node.getAttribute("style") || "";
+          nextStyle.color =
+            spanStyle.match(/color:\s*([^;]+)/)?.[1] || nextStyle.color;
+          nextStyle.background =
+            spanStyle.match(/background-color:\s*([^;]+)/)?.[1] ||
+            nextStyle.background;
+          nextStyle.opacity =
+            spanStyle.match(/opacity:\s*([^;]+)/)?.[1] || nextStyle.opacity;
+          nextStyle.weight =
+            spanStyle.match(/font-weight:\s*([^;]+)/)?.[1] ||
+            nextStyle.weight;
+        }
+
+        for (const child of node.childNodes) {
+          walkTerminalNode(child, nextStyle, lines);
+        }
+      }
+
+      function appendTerminalText(lines, text, style) {
+        for (const char of Array.from(text || "")) {
+          if (char === "\n") {
+            lines.push([]);
+          } else {
+            lines[lines.length - 1].push({ char, ...style });
+          }
+        }
+      }
+
+      function renderTerminalCell(cell) {
+        const char = cell.char === " " ? "\u00a0" : cell.char;
+        const background = cell.background
+          ? `background-color:${escapeHtml(cell.background)};`
+          : "";
+        const opacity =
+          cell.opacity && cell.opacity !== "1"
+            ? `opacity:${escapeHtml(cell.opacity)};`
+            : "";
+        return `<span class="terminal-cell" style="color:${escapeHtml(
+          cell.color,
+        )};${background}${opacity}font-weight:${escapeHtml(
+          cell.weight,
+        )}">${escapeHtml(char)}</span>`;
+      }
+
+      function defaultTerminalCell(char) {
+        return { char, ...defaultTerminalStyle() };
+      }
+
+      function defaultTerminalStyle() {
+        return {
+          color: "#eef4ff",
+          background: null,
+          opacity: "1",
+          weight: "400",
+        };
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+    </script>
+  </body>
+</html>
