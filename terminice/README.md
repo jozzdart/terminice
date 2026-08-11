@@ -797,16 +797,6 @@ For a complete list of available tools, check out [**The Terminice Catalogue**](
 </p>
 <!-- terminice-visual:end:customComponents -->
 
-
-
-
-
-
-
-
-
-
-
 Reach for `TerminiceComponent<T>` when your CLI has reusable,
 domain-specific terminal UI that should still behave like Terminice. Components
 run inside the caller's configured `Terminice` instance, so they keep the same
@@ -877,16 +867,6 @@ Collect a single trimmed string with optional placeholder text and inline valida
 </p>
 <!-- terminice-visual:end:text -->
 
-
-
-
-
-
-
-
-
-
-
 - `text`
   `(String prompt, {placeholder, validator, required})`
   Opens a themed text input frame.
@@ -948,16 +928,6 @@ Collect secrets without echoing the raw value. The password prompt uses the same
 </p>
 <!-- terminice-visual:end:password -->
 
-
-
-
-
-
-
-
-
-
-
 - `password`
   `(String prompt, {required, maskChar, allowReveal, verify})`
   Opens a masked text prompt.
@@ -1014,16 +984,6 @@ Ask for a boolean decision with two labeled choices and a configurable default f
   <img src="assets/component_showcases/confirm.svg" alt="confirm in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:confirm -->
-
-
-
-
-
-
-
-
-
-
 
 - `confirm`
   `({prompt, required message, yesLabel, noLabel, defaultYes})`
@@ -1085,16 +1045,6 @@ Capture multi-line text with cursor movement, scrolling, and a dedicated confirm
 </p>
 <!-- terminice-visual:end:multiline -->
 
-
-
-
-
-
-
-
-
-
-
 - `multiline`
   `(String prompt, {maxLines, visibleLines, allowEmpty})`
   Opens an editable multi-line area.
@@ -1148,16 +1098,6 @@ Select a single numeric value within a bounded range using left/right keyboard c
   <img src="assets/component_showcases/slider.svg" alt="slider in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:slider -->
-
-
-
-
-
-
-
-
-
-
 
 - `slider`
   `(String prompt, {min, max, initial, step, width, unit, showPercent})`
@@ -1225,16 +1165,6 @@ Select a start and end value inside the same bounded numeric scale. The active h
   <img src="assets/component_showcases/range.svg" alt="range in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:range -->
-
-
-
-
-
-
-
-
-
-
 
 - `range`
   `(String prompt, {min, max, startInitial, endInitial, step, width, unit})`
@@ -1307,16 +1237,6 @@ Collect a small integer rating with stars, number-key shortcuts, and optional la
 </p>
 <!-- terminice-visual:end:rating -->
 
-
-
-
-
-
-
-
-
-
-
 - `rating`
   `(String prompt, {maxStars, initial, labels})`
   Opens a discrete star rating prompt.
@@ -1367,16 +1287,6 @@ Collect a calendar date by editing day, month, and year fields directly. It rend
   <img src="assets/component_showcases/date.svg" alt="date in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:date -->
-
-
-
-
-
-
-
-
-
-
 
 - `date`
   `(String prompt, {initial})`
@@ -1429,16 +1339,6 @@ Group several text/password-style fields inside one themed frame. Forms support 
   <img src="assets/component_showcases/form.svg" alt="form in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:form -->
-
-
-
-
-
-
-
-
-
-
 
 Form field and result types come from `terminice_core`, so full form examples use:
 
@@ -1555,16 +1455,6 @@ Pick from a vertical list that can be filtered in place. It works as a quick sin
 </p>
 <!-- terminice-visual:end:searchSelector -->
 
-
-
-
-
-
-
-
-
-
-
 - `searchSelector`
   `({required options, prompt, multiSelect, showSearch, maxVisible})`
   Opens a searchable list prompt.
@@ -1630,16 +1520,6 @@ Render choices as two-line cards with a label and optional subtitle. It is usefu
   <img src="assets/component_showcases/choiceSelector.svg" alt="choiceSelector in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:choiceSelector -->
-
-
-
-
-
-
-
-
-
-
 
 - `choiceSelector`
   `(String prompt, {required items, multiSelect, columns, cardWidth, maxColumns})`
@@ -1717,16 +1597,6 @@ Display a vertical checklist with a live summary line and a select-all shortcut.
 </p>
 <!-- terminice-visual:end:checkboxSelector -->
 
-
-
-
-
-
-
-
-
-
-
 - `checkboxSelector`
   `(String prompt, {required options, initialSelected, maxVisible})`
   Opens a multi-select checklist.
@@ -1792,16 +1662,6 @@ Arrange string options into a responsive grid with wrapping arrow-key navigation
 </p>
 <!-- terminice-visual:end:gridSelector -->
 
-
-
-
-
-
-
-
-
-
-
 - `gridSelector`
   `({required options, prompt, columns, multiSelect, cellWidth, maxColumns, initialSelection})`
   Opens a grid selector.
@@ -1865,16 +1725,6 @@ Render tags as compact `[ tag ]` chips in a responsive grid. The selector is alw
   <img src="assets/component_showcases/tagSelector.svg" alt="tagSelector in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:tagSelector -->
-
-
-
-
-
-
-
-
-
-
 
 - `tagSelector`
   `({required tags, prompt, maxContentWidth, minContentWidth, minColumnWidth, maxColumnWidth, useTerminalWidth})`
@@ -1941,16 +1791,6 @@ Edit several independent on/off states in one prompt. Unlike a radio group, `tog
   <img src="assets/component_showcases/toggleGroup.svg" alt="toggleGroup in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:toggleGroup -->
-
-
-
-
-
-
-
-
-
-
 
 - `toggleGroup (String prompt, {required items, alignContent})`
   Opens a vertical group of switches.
@@ -2021,16 +1861,6 @@ Open a command palette that searches command titles and optional subtitles, rank
   <img src="assets/component_showcases/commandPalette.svg" alt="commandPalette in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:commandPalette -->
-
-
-
-
-
-
-
-
-
-
 
 - `commandPalette (String prompt, {required commands, maxVisible})`
   Opens a ranked command list with an always-visible search input.
@@ -2116,16 +1946,6 @@ Browse the filesystem from a starting directory and return the selected file pat
 </p>
 <!-- terminice-visual:end:filePicker -->
 
-
-
-
-
-
-
-
-
-
-
 - `filePicker(String prompt, {startDirectory, showHidden, foldersOnly})`
   Opens a searchable filesystem browser.
 - `prompt` - Base title for the frame. The current path is appended in parentheses and shortened when it is longer than 60 visible characters.
@@ -2190,16 +2010,6 @@ Choose a directory, or optionally a file, from a dynamic filesystem list. Unlike
   <img src="assets/component_showcases/pathPicker.svg" alt="pathPicker in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:pathPicker -->
-
-
-
-
-
-
-
-
-
-
 
 - `pathPicker (String prompt, {startDirectory, showHidden, allowFiles, maxVisible})`
   Opens a dynamic path browser.
@@ -2268,16 +2078,6 @@ Pick a terminal-friendly color from a live ANSI swatch grid. The picker maps hor
 </p>
 <!-- terminice-visual:end:colorPicker -->
 
-
-
-
-
-
-
-
-
-
-
 - `colorPicker (String prompt, {initialHex, cols, rows})`
   Opens an interactive color grid.
 - `prompt` - Frame title displayed above the grid.
@@ -2340,16 +2140,6 @@ Pick a single calendar date from a framed month view. The selected day stays hig
   <img src="assets/component_showcases/datePicker.svg" alt="datePicker in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:datePicker -->
-
-
-
-
-
-
-
-
-
-
 
 - `datePicker (String prompt, {initialDate, startWeekOnMonday, allowPast, allowFuture})`
   Opens an interactive calendar.
@@ -2421,16 +2211,6 @@ Write small, synchronous terminal messages through the configured `Terminice` in
 </p>
 <!-- terminice-visual:end:messagePrimitives -->
 
-
-
-
-
-
-
-
-
-
-
 - `log(Object? message)` - Writes `message.toString()` as a plain line with no status decoration.
 - `info(Object? message)` - Writes an informational status line.
 - `success(Object? message)` - Writes a success status line.
@@ -2493,16 +2273,6 @@ Run a synchronous or asynchronous operation while `terminice` renders a small st
 </p>
 <!-- terminice-visual:end:task -->
 
-
-
-
-
-
-
-
-
-
-
 - `task<T>(String prompt, {required run, message, success, failure, cancel, isCanceled, interval, style, indicator, maxDots, display, finalBehavior})`
   Runs `run` and completes with its typed result.
 - `prompt` - Main status label. It is also the default success message.
@@ -2553,16 +2323,6 @@ Run work with a determinate progress bar. `progressTask` passes a mutable `TaskP
   <img src="assets/component_showcases/progressTask.svg" alt="progressTask in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:progressTask -->
-
-
-
-
-
-
-
-
-
-
 
 - `progressTask<T>(String prompt, {required total, required run, message, success, failure, cancel, isCanceled, display, finalBehavior, interval, progressWidth})`
   Runs `run` while rendering progress.
@@ -2620,16 +2380,6 @@ Collect every event from a stream while advancing determinate progress once per 
 </p>
 <!-- terminice-visual:end:trackStream -->
 
-
-
-
-
-
-
-
-
-
-
 - `trackStream<T>(String prompt, Stream<T> source, {required total, message, success, failure, cancel, isCanceled, display, finalBehavior, interval, progressWidth})`
   Tracks and collects `source`.
 - `prompt` - Main status label.
@@ -2675,16 +2425,6 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 </p>
 <!-- terminice-visual:end:TaskProgress -->
 
-
-
-
-
-
-
-
-
-
-
 - `current` - Completed units, clamped to the inclusive `0..total` range.
 - `total` - Total units expected for the task. Must be greater than `0`.
 - `message` - Optional detail shown beside the prompt.
@@ -2726,16 +2466,6 @@ Choose how async task helpers render while work is running.
 </p>
 <!-- terminice-visual:end:TaskDisplay -->
 
-
-
-
-
-
-
-
-
-
-
 - `TaskDisplay.auto` - Default. Uses animated inline rendering when the current terminal and `Terminice` configuration support it; otherwise uses plain line output.
 - `TaskDisplay.inline` - Requests animated inline rendering when available; falls back to plain output when animation is unavailable.
 - `TaskDisplay.plain` - Uses simple final lines without ANSI cursor control, raw mode, or animation.
@@ -2768,16 +2498,6 @@ Control what remains on screen after an async task finishes.
 </p>
 <!-- terminice-visual:end:TaskFinalBehavior -->
 
-
-
-
-
-
-
-
-
-
-
 - `TaskFinalBehavior.persist` - Default. Leaves one final success, failure, or cancel status line.
 - `TaskFinalBehavior.clear` - Clears the animated task display when it finishes. In plain mode, it suppresses the final status line.
 - Applies to success, failure, and cancellation rendering.
@@ -2808,16 +2528,6 @@ Show a framed, theme-aware spinner for an ongoing task. This is the most express
   <img src="assets/component_showcases/loadingSpinner.svg" alt="loadingSpinner in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:loadingSpinner -->
-
-
-
-
-
-
-
-
-
-
 
 - `loadingSpinner (String prompt, {message, style})`
   Creates a `LoadingSpinner` controller.
@@ -2917,16 +2627,6 @@ Render a compact spinner beside a status label. It is designed for log-style CLI
 </p>
 <!-- terminice-visual:end:inlineSpinner -->
 
-
-
-
-
-
-
-
-
-
-
 - `inlineSpinner (String prompt, {style})`
   Creates an `InlineSpinner` controller.
 - `prompt` - Text displayed next to the spinner glyph.
@@ -3009,16 +2709,6 @@ Display bounded progress in a framed widget with a themed bar, percentage, and r
   <img src="assets/component_showcases/progressBar.svg" alt="progressBar in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:progressBar -->
-
-
-
-
-
-
-
-
-
-
 
 - `progressBar (String prompt)`
   Creates a themed `ProgressBar` controller with the default width.
@@ -3124,16 +2814,6 @@ Show a compact percentage beside a label. Despite the name, the current implemen
 </p>
 <!-- terminice-visual:end:inlineProgressBar -->
 
-
-
-
-
-
-
-
-
-
-
 - `inlineProgressBar(String prompt)` - Creates an `InlineProgressBar` controller.
 - `prompt` - Text displayed before the percentage.
 - Returns `InlineProgressBar` - The line is not displayed until `show(...)` is called.
@@ -3205,16 +2885,6 @@ Show ambient progress with a title, message, and cycling dots. It is useful for 
   <img src="assets/component_showcases/progressDots.svg" alt="progressDots in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:progressDots -->
-
-
-
-
-
-
-
-
-
-
 
 - `progressDots(String prompt)` - Creates a themed `ProgressDots` controller.
 - `prompt` - Frame title displayed above the dots.
@@ -3303,16 +2973,6 @@ Compose several prompts and selectors into one synchronous, sequential flow. Use
   <img src="assets/component_showcases/flow.svg" alt="flow in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:flow -->
-
-
-
-
-
-
-
-
-
-
 
 Flow is the primary primitive for multi-step Terminice workflows. Steps run from top to bottom, can be skipped with `when`, and can end in a review/edit loop for flow/wizard-style confirmation without introducing a separate `wizard()` API.
 
@@ -3490,16 +3150,6 @@ Build a full terminal settings screen from typed `Configurable` fields. The edit
   <img src="assets/component_showcases/configEditor.svg" alt="configEditor in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:configEditor -->
-
-
-
-
-
-
-
-
-
-
 
 ```dart
 ConfigResult? configEditor(
@@ -3815,16 +3465,6 @@ Render a themed, non-interactive reference table inside a `FrameView`. It is des
 </p>
 <!-- terminice-visual:end:cheatSheet -->
 
-
-
-
-
-
-
-
-
-
-
 ```dart
 void cheatSheet(
   String prompt, {
@@ -3920,16 +3560,6 @@ Launch an interactive help viewer with live search, a result list, and a preview
   <img src="assets/component_showcases/helpCenter.svg" alt="helpCenter in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:helpCenter -->
-
-
-
-
-
-
-
-
-
-
 
 ```dart
 HelpDoc? helpCenter({
@@ -4075,16 +3705,6 @@ Show keyboard shortcuts in a compact framed grid and wait until the user closes 
 </p>
 <!-- terminice-visual:end:hotkeyGuide -->
 
-
-
-
-
-
-
-
-
-
-
 ```dart
 void hotkeyGuide({
   required List<List<String>> shortcuts,
@@ -4166,16 +3786,6 @@ Preview curated `PromptTheme` presets in the terminal, then optionally open a sa
   <img src="assets/component_showcases/themeDemo.svg" alt="themeDemo in fire, matrix, and arcane Terminice themes" width="1000"/>
 </p>
 <!-- terminice-visual:end:themeDemo -->
-
-
-
-
-
-
-
-
-
-
 
 ```dart
 void themeDemo();

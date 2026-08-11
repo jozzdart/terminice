@@ -12,13 +12,29 @@ typedef DemoRunner = FutureOr<void> Function(
 
 void main(List<String> args) async {
   final scriptDir = File.fromUri(Platform.script).parent;
-  final outputFile =
-      args.isNotEmpty ? File(args.first) : File('${scriptDir.path}/frames.js');
-  final relativeSampleProject =
-      Directory('terminice_visual_demo/sample_project');
-  final sampleProject = relativeSampleProject.existsSync()
-      ? relativeSampleProject
-      : Directory('${scriptDir.path}/sample_project');
+  final outputFile = args.isNotEmpty
+      ? File(args.first).absolute
+      : File('${scriptDir.path}/frames.js');
+  final originalWorkingDirectory = Directory.current;
+
+  // Keep filesystem previews compact and reproducible regardless of where the
+  // generator is invoked from.
+  Directory.current = scriptDir.path;
+
+  try {
+    await _generateFrames(
+      outputFile: outputFile,
+      sampleProject: Directory('sample_project'),
+    );
+  } finally {
+    Directory.current = originalWorkingDirectory.path;
+  }
+}
+
+Future<void> _generateFrames({
+  required File outputFile,
+  required Directory sampleProject,
+}) async {
   final frames = <Map<String, Object?>>[];
 
   for (var componentIndex = 0;
@@ -78,7 +94,10 @@ Future<Map<String, Object?>> _captureFrame({
   });
 
   final raw = tester.output.raw;
-  final screen = TerminalScreenCapture.fromAnsi(raw);
+  final screen = TerminalScreenCapture.fromAnsi(
+    raw,
+    mode: component.captureMode,
+  );
 
   return <String, Object?>{
     'id': component.id,
@@ -178,6 +197,7 @@ class DemoComponent {
   final String summary;
   final String code;
   final TerminalScript? script;
+  final TerminalCaptureMode captureMode;
   final DemoRunner run;
 
   const DemoComponent({
@@ -187,7 +207,13 @@ class DemoComponent {
     required this.code,
     required this.run,
     this.script,
+    this.captureMode = TerminalCaptureMode.latest,
   });
+}
+
+enum TerminalCaptureMode {
+  latest,
+  richest,
 }
 
 const _themes = <DemoTheme>[
@@ -522,8 +548,14 @@ final _components = <DemoComponent>[
     id: 'inlineSpinner',
     group: 'Indicators',
     summary: 'One-line loading status.',
-    code: "t.inlineSpinner('Syncing').show(1);",
-    run: (t, _) => t.inlineSpinner('Syncing workspace').show(1),
+    code:
+        "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
+    run: (t, _) => t
+        .inlineSpinner(
+          'Resolving packages for workspace',
+          style: SpinnerStyle.bars,
+        )
+        .show(7),
   ),
   DemoComponent(
     id: 'progressBar',
@@ -536,8 +568,10 @@ final _components = <DemoComponent>[
     id: 'inlineProgressBar',
     group: 'Indicators',
     summary: 'Compact progress line.',
-    code: "t.inlineProgressBar('Build').show(current: 68, total: 100);",
-    run: (t, _) => t.inlineProgressBar('Build').show(current: 68, total: 100),
+    code:
+        "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
+    run: (t, _) =>
+        t.inlineProgressBar('Uploading assets').show(current: 68, total: 100),
   ),
   DemoComponent(
     id: 'progressDots',
@@ -555,12 +589,13 @@ final _components = <DemoComponent>[
     group: 'Workflow & CLI UX',
     summary: 'Small polished status lines.',
     code:
-        "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+        "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
     run: (t, _) {
-      t.info('Reading config');
-      t.success('Published');
-      t.warn('Using cache');
-      t.detail('terminice/visual_demo');
+      t.info('Reading project config');
+      t.success('Build completed in 1.8s');
+      t.warn('Using cached dependencies');
+      t.detail('Output: build/terminice_app');
+      t.error('Preview server is offline');
     },
   ),
   DemoComponent(
@@ -568,11 +603,15 @@ final _components = <DemoComponent>[
     group: 'Workflow & CLI UX',
     summary: 'Async status wrapper.',
     code: "await t.task('Publishing', run: publish);",
+    captureMode: TerminalCaptureMode.richest,
     run: (t, _) async => t.task<void>(
       'Publishing',
-      message: 'running checks',
+      message: 'validating package',
       success: 'Published',
-      run: () async => Future<void>.delayed(const Duration(milliseconds: 6)),
+      indicator: TaskRunningIndicator.dots,
+      maxDots: 5,
+      interval: const Duration(milliseconds: 8),
+      run: () async => Future<void>.delayed(const Duration(milliseconds: 50)),
     ),
   ),
   DemoComponent(
@@ -580,6 +619,7 @@ final _components = <DemoComponent>[
     group: 'Workflow & CLI UX',
     summary: 'Async progress wrapper.',
     code: "await t.progressTask('Uploading', total: 4, run: upload);",
+    captureMode: TerminalCaptureMode.richest,
     run: (t, _) async => t.progressTask<void>(
       'Uploading',
       total: 4,
@@ -597,6 +637,7 @@ final _components = <DemoComponent>[
     group: 'Workflow & CLI UX',
     summary: 'Stream collection with progress.',
     code: "final files = await t.trackStream('Scanning', stream, total: 4);",
+    captureMode: TerminalCaptureMode.richest,
     run: (t, _) async => t.trackStream<int>(
       'Scanning',
       Stream<int>.fromIterable([1, 2, 3, 4]),
@@ -643,6 +684,7 @@ final _components = <DemoComponent>[
     summary: 'Sequential setup composition.',
     code:
         "final result = t.flow('New project')\n  .text('name', 'Name')\n  .select('template', 'Template', options: templates)\n  .review()\n  .run();",
+    captureMode: TerminalCaptureMode.richest,
     script: TerminalScript([
       TerminalScriptStep.text('terminice_app'),
       TerminalScriptStep.key(KeyEventType.enter),
@@ -799,8 +841,11 @@ class TerminalScreenCapture {
     required this.plainText,
   });
 
-  factory TerminalScreenCapture.fromAnsi(String raw) {
-    final emulator = _TerminalEmulator();
+  factory TerminalScreenCapture.fromAnsi(
+    String raw, {
+    TerminalCaptureMode mode = TerminalCaptureMode.latest,
+  }) {
+    final emulator = _TerminalEmulator(mode);
     emulator.write(raw);
     return TerminalScreenCapture(
       html: emulator.bestHtml,
@@ -810,6 +855,7 @@ class TerminalScreenCapture {
 }
 
 class _TerminalEmulator {
+  final TerminalCaptureMode captureMode;
   final List<List<_StyledRun>> _lines = <List<_StyledRun>>[<_StyledRun>[]];
   final _htmlEscape = const HtmlEscape(HtmlEscapeMode.element);
 
@@ -817,6 +863,9 @@ class _TerminalEmulator {
   int _row = 0;
   String _bestHtml = '<pre class="terminal-pre"></pre>';
   String _bestPlainText = '';
+  int _bestScore = -1;
+
+  _TerminalEmulator(this.captureMode);
 
   String get bestHtml => _bestHtml;
 
@@ -990,8 +1039,22 @@ class _TerminalEmulator {
   void _rememberVisibleScreen() {
     final plain = _plainText().trimRight();
     if (plain.trim().isEmpty) return;
+
+    final score = _screenScore(plain);
+    if (captureMode == TerminalCaptureMode.richest && score <= _bestScore) {
+      return;
+    }
+
+    _bestScore = score;
     _bestPlainText = plain;
     _bestHtml = '<pre class="terminal-pre">${_toHtml()}</pre>';
+  }
+
+  int _screenScore(String plain) {
+    final visibleCharacters = plain.replaceAll(RegExp(r'\s'), '').length;
+    final populatedLines =
+        plain.split('\n').where((line) => line.trim().isNotEmpty).length;
+    return visibleCharacters + (populatedLines * 8);
   }
 
   String _plainText() {

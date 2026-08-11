@@ -54,7 +54,7 @@
     <text x="103" y="71" fill="#eef4ff" font-weight="400">2</text>
     <text x="124.8" y="71" fill="#eef4ff" font-weight="400">3</text>
     <text x="146.5" y="71" fill="#eef4ff" font-weight="400">4</text>
-    <text x="168.3" y="71" fill="#ef4444" font-weight="400">5</text>
+    <text x="168.3" y="71" fill="#eef4ff" font-weight="400" opacity=".62">5</text>
     <text x="16" y="85.5" fill="#6b7280" font-weight="400">║</text>
     <text x="37.8" y="85.5" fill="#eef4ff" font-weight="400">6</text>
     <text x="59.5" y="85.5" fill="#eef4ff" font-weight="400">7</text>
@@ -183,7 +183,7 @@
     <text x="403" y="71" fill="#eef4ff" font-weight="400">2</text>
     <text x="424.8" y="71" fill="#eef4ff" font-weight="400">3</text>
     <text x="446.5" y="71" fill="#eef4ff" font-weight="400">4</text>
-    <text x="468.3" y="71" fill="#22c55e" font-weight="400">5</text>
+    <text x="468.3" y="71" fill="#eef4ff" font-weight="400" opacity=".62">5</text>
     <text x="316" y="85.5" fill="#6b7280" font-weight="400">│</text>
     <text x="337.8" y="85.5" fill="#eef4ff" font-weight="400">6</text>
     <text x="359.5" y="85.5" fill="#eef4ff" font-weight="400">7</text>
@@ -312,7 +312,7 @@
     <text x="703" y="71" fill="#eef4ff" font-weight="400">2</text>
     <text x="724.8" y="71" fill="#eef4ff" font-weight="400">3</text>
     <text x="746.5" y="71" fill="#eef4ff" font-weight="400">4</text>
-    <text x="768.3" y="71" fill="#af87ff" font-weight="400">5</text>
+    <text x="768.3" y="71" fill="#eef4ff" font-weight="400" opacity=".62">5</text>
     <text x="616" y="85.5" fill="#6b7280" font-weight="400">⁞</text>
     <text x="637.8" y="85.5" fill="#eef4ff" font-weight="400">6</text>
     <text x="659.5" y="85.5" fill="#eef4ff" font-weight="400">7</text>

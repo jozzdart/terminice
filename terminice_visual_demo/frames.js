@@ -1750,8 +1750,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#d946ef;font-weight:800\">┌─ Choose file (terminice_visual_demo/sample_project) ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#06b6d4\">Search:</span> cli\n<span style=\"color:#6b7280\">├────────────────────────────────────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#06b6d4;border-radius:3px;padding:0 1px\">▶</span>   · <span style=\"color:#eab308\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#eab308\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#eab308\">cli</span>_theme.md\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#eab308\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">└───────────────────────────────────────────────────────</span></pre>",
-      "plainText": "┌─ Choose file (terminice_visual_demo/sample_project) ─┐\n│ Search: cli\n├────────────────────────────────────────────────────────\n│ ▶   · cli_commands.dart\n│     · cli_config.yaml\n│     · cli_theme.md\n│     · cli_workflow.json\n└───────────────────────────────────────────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#d946ef;font-weight:800\">┌─ Choose file (sample_project) ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#06b6d4\">Search:</span> cli\n<span style=\"color:#6b7280\">├──────────────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#06b6d4;border-radius:3px;padding:0 1px\">▶</span>   · <span style=\"color:#eab308\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#eab308\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#eab308\">cli</span>_theme.md\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#eab308\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">└─────────────────────────────────</span></pre>",
+      "plainText": "┌─ Choose file (sample_project) ─┐\n│ Search: cli\n├──────────────────────────────────\n│ ▶   · cli_commands.dart\n│     · cli_config.yaml\n│     · cli_theme.md\n│     · cli_workflow.json\n└─────────────────────────────────",
       "containsAnsi": true
     },
     {
@@ -1762,8 +1762,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e;font-weight:800\">╭─ Choose file (terminice_visual_demo/sample_project) ─╮</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#22c55e\">Search:</span> cli\n<span style=\"color:#6b7280\">├────────────────────────────────────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#22c55e;border-radius:3px;padding:0 1px\">❯</span>   · <span style=\"color:#4ade80\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#4ade80\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#4ade80\">cli</span>_theme.md\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#4ade80\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">╰───────────────────────────────────────────────────────</span></pre>",
-      "plainText": "╭─ Choose file (terminice_visual_demo/sample_project) ─╮\n│ Search: cli\n├────────────────────────────────────────────────────────\n│ ❯   · cli_commands.dart\n│     · cli_config.yaml\n│     · cli_theme.md\n│     · cli_workflow.json\n╰───────────────────────────────────────────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e;font-weight:800\">╭─ Choose file (sample_project) ─╮</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#22c55e\">Search:</span> cli\n<span style=\"color:#6b7280\">├──────────────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#22c55e;border-radius:3px;padding:0 1px\">❯</span>   · <span style=\"color:#4ade80\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#4ade80\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#4ade80\">cli</span>_theme.md\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#4ade80\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">╰─────────────────────────────────</span></pre>",
+      "plainText": "╭─ Choose file (sample_project) ─╮\n│ Search: cli\n├──────────────────────────────────\n│ ❯   · cli_commands.dart\n│     · cli_config.yaml\n│     · cli_theme.md\n│     · cli_workflow.json\n╰─────────────────────────────────",
       "containsAnsi": true
     },
     {
@@ -1774,8 +1774,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444;font-weight:800\">╔═ Choose file (terminice_visual_demo/sample_project) ═╗</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#ef4444\">Search:</span> cli\n<span style=\"color:#6b7280\">╟════════════════════════════════════════════════════════</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#08111f;background-color:#ef4444;border-radius:3px;padding:0 1px\">➤</span>   · <span style=\"color:#eab308\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">║</span>     · <span style=\"color:#eab308\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">║</span>     · <span style=\"color:#eab308\">cli</span>_theme.md\n<span style=\"color:#6b7280\">║</span>     · <span style=\"color:#eab308\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">╚═══════════════════════════════════════════════════════</span></pre>",
-      "plainText": "╔═ Choose file (terminice_visual_demo/sample_project) ═╗\n║ Search: cli\n╟════════════════════════════════════════════════════════\n║ ➤   · cli_commands.dart\n║     · cli_config.yaml\n║     · cli_theme.md\n║     · cli_workflow.json\n╚═══════════════════════════════════════════════════════",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444;font-weight:800\">╔═ Choose file (sample_project) ═╗</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#ef4444\">Search:</span> cli\n<span style=\"color:#6b7280\">╟══════════════════════════════════</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#08111f;background-color:#ef4444;border-radius:3px;padding:0 1px\">➤</span>   · <span style=\"color:#eab308\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">║</span>     · <span style=\"color:#eab308\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">║</span>     · <span style=\"color:#eab308\">cli</span>_theme.md\n<span style=\"color:#6b7280\">║</span>     · <span style=\"color:#eab308\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">╚═════════════════════════════════</span></pre>",
+      "plainText": "╔═ Choose file (sample_project) ═╗\n║ Search: cli\n╟══════════════════════════════════\n║ ➤   · cli_commands.dart\n║     · cli_config.yaml\n║     · cli_theme.md\n║     · cli_workflow.json\n╚═════════════════════════════════",
       "containsAnsi": true
     },
     {
@@ -1786,8 +1786,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa;font-weight:800\">┌─ Choose file (terminice_visual_demo/sample_project) ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#e879f9\">Search:</span> cli\n<span style=\"color:#6b7280\">├────────────────────────────────────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">▶</span>   · <span style=\"color:#facc15\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#facc15\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#facc15\">cli</span>_theme.md\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#facc15\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">└───────────────────────────────────────────────────────</span></pre>",
-      "plainText": "┌─ Choose file (terminice_visual_demo/sample_project) ─┐\n│ Search: cli\n├────────────────────────────────────────────────────────\n│ ▶   · cli_commands.dart\n│     · cli_config.yaml\n│     · cli_theme.md\n│     · cli_workflow.json\n└───────────────────────────────────────────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa;font-weight:800\">┌─ Choose file (sample_project) ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#e879f9\">Search:</span> cli\n<span style=\"color:#6b7280\">├──────────────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">▶</span>   · <span style=\"color:#facc15\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#facc15\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#facc15\">cli</span>_theme.md\n<span style=\"color:#6b7280\">│</span>     · <span style=\"color:#facc15\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">└─────────────────────────────────</span></pre>",
+      "plainText": "┌─ Choose file (sample_project) ─┐\n│ Search: cli\n├──────────────────────────────────\n│ ▶   · cli_commands.dart\n│     · cli_config.yaml\n│     · cli_theme.md\n│     · cli_workflow.json\n└─────────────────────────────────",
       "containsAnsi": true
     },
     {
@@ -1798,8 +1798,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#3b82f6;font-weight:800\">╭─ Choose file (terminice_visual_demo/sample_project) ─╮</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#60a5fa\">Search:</span> cli\n<span style=\"color:#6b7280\">├────────────────────────────────────────────────────────</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#08111f;background-color:#60a5fa;border-radius:3px;padding:0 1px\">▸</span>   · <span style=\"color:#22d3ee\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">┊</span>     · <span style=\"color:#22d3ee\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">┊</span>     · <span style=\"color:#22d3ee\">cli</span>_theme.md\n<span style=\"color:#6b7280\">┊</span>     · <span style=\"color:#22d3ee\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">╰───────────────────────────────────────────────────────</span></pre>",
-      "plainText": "╭─ Choose file (terminice_visual_demo/sample_project) ─╮\n┊ Search: cli\n├────────────────────────────────────────────────────────\n┊ ▸   · cli_commands.dart\n┊     · cli_config.yaml\n┊     · cli_theme.md\n┊     · cli_workflow.json\n╰───────────────────────────────────────────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#3b82f6;font-weight:800\">╭─ Choose file (sample_project) ─╮</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#60a5fa\">Search:</span> cli\n<span style=\"color:#6b7280\">├──────────────────────────────────</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#08111f;background-color:#60a5fa;border-radius:3px;padding:0 1px\">▸</span>   · <span style=\"color:#22d3ee\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">┊</span>     · <span style=\"color:#22d3ee\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">┊</span>     · <span style=\"color:#22d3ee\">cli</span>_theme.md\n<span style=\"color:#6b7280\">┊</span>     · <span style=\"color:#22d3ee\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">╰─────────────────────────────────</span></pre>",
+      "plainText": "╭─ Choose file (sample_project) ─╮\n┊ Search: cli\n├──────────────────────────────────\n┊ ▸   · cli_commands.dart\n┊     · cli_config.yaml\n┊     · cli_theme.md\n┊     · cli_workflow.json\n╰─────────────────────────────────",
       "containsAnsi": true
     },
     {
@@ -1810,8 +1810,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e5e7eb;font-weight:800\">+- Choose file (terminice_visual_demo/sample_project) -+</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#f9fafb\">Search:</span> cli\n<span style=\"color:#6b7280\">+--------------------------------------------------------</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#08111f;background-color:#f9fafb;border-radius:3px;padding:0 1px\">&gt;</span>   · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">|</span>     · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">|</span>     · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_theme.md\n<span style=\"color:#6b7280\">|</span>     · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">+-------------------------------------------------------</span></pre>",
-      "plainText": "+- Choose file (terminice_visual_demo/sample_project) -+\n| Search: cli\n+--------------------------------------------------------\n| >   · cli_commands.dart\n|     · cli_config.yaml\n|     · cli_theme.md\n|     · cli_workflow.json\n+-------------------------------------------------------",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e5e7eb;font-weight:800\">+- Choose file (sample_project) -+</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#f9fafb\">Search:</span> cli\n<span style=\"color:#6b7280\">+----------------------------------</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#08111f;background-color:#f9fafb;border-radius:3px;padding:0 1px\">&gt;</span>   · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">|</span>     · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">|</span>     · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_theme.md\n<span style=\"color:#6b7280\">|</span>     · <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">+---------------------------------</span></pre>",
+      "plainText": "+- Choose file (sample_project) -+\n| Search: cli\n+----------------------------------\n| >   · cli_commands.dart\n|     · cli_config.yaml\n|     · cli_theme.md\n|     · cli_workflow.json\n+---------------------------------",
       "containsAnsi": true
     },
     {
@@ -1822,8 +1822,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#facc15;font-weight:800\">┏━ Choose file (terminice_visual_demo/sample_project) ━┓</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#e879f9\">Search:</span> cli\n<span style=\"color:#6b7280\">┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">&gt;</span>   · <span style=\"color:#22d3ee\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">┃</span>     · <span style=\"color:#22d3ee\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">┃</span>     · <span style=\"color:#22d3ee\">cli</span>_theme.md\n<span style=\"color:#6b7280\">┃</span>     · <span style=\"color:#22d3ee\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span></pre>",
-      "plainText": "┏━ Choose file (terminice_visual_demo/sample_project) ━┓\n┃ Search: cli\n┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n┃ >   · cli_commands.dart\n┃     · cli_config.yaml\n┃     · cli_theme.md\n┃     · cli_workflow.json\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#facc15;font-weight:800\">┏━ Choose file (sample_project) ━┓</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#e879f9\">Search:</span> cli\n<span style=\"color:#6b7280\">┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">&gt;</span>   · <span style=\"color:#22d3ee\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">┃</span>     · <span style=\"color:#22d3ee\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">┃</span>     · <span style=\"color:#22d3ee\">cli</span>_theme.md\n<span style=\"color:#6b7280\">┃</span>     · <span style=\"color:#22d3ee\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span></pre>",
+      "plainText": "┏━ Choose file (sample_project) ━┓\n┃ Search: cli\n┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n┃ >   · cli_commands.dart\n┃     · cli_config.yaml\n┃     · cli_theme.md\n┃     · cli_workflow.json\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "containsAnsi": true
     },
     {
@@ -1834,8 +1834,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#875fff;font-weight:800\">⸢─ Choose file (terminice_visual_demo/sample_project) ─⸣</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#af87ff\">Search:</span> cli\n<span style=\"color:#6b7280\">⊢────────────────────────────────────────────────────────</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#08111f;background-color:#af87ff;border-radius:3px;padding:0 1px\">⊳</span>   · <span style=\"color:#ffd700\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">⁞</span>     · <span style=\"color:#ffd700\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">⁞</span>     · <span style=\"color:#ffd700\">cli</span>_theme.md\n<span style=\"color:#6b7280\">⁞</span>     · <span style=\"color:#ffd700\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">⸤───────────────────────────────────────────────────────</span></pre>",
-      "plainText": "⸢─ Choose file (terminice_visual_demo/sample_project) ─⸣\n⁞ Search: cli\n⊢────────────────────────────────────────────────────────\n⁞ ⊳   · cli_commands.dart\n⁞     · cli_config.yaml\n⁞     · cli_theme.md\n⁞     · cli_workflow.json\n⸤───────────────────────────────────────────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#875fff;font-weight:800\">⸢─ Choose file (sample_project) ─⸣</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#af87ff\">Search:</span> cli\n<span style=\"color:#6b7280\">⊢──────────────────────────────────</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#08111f;background-color:#af87ff;border-radius:3px;padding:0 1px\">⊳</span>   · <span style=\"color:#ffd700\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">⁞</span>     · <span style=\"color:#ffd700\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">⁞</span>     · <span style=\"color:#ffd700\">cli</span>_theme.md\n<span style=\"color:#6b7280\">⁞</span>     · <span style=\"color:#ffd700\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">⸤─────────────────────────────────</span></pre>",
+      "plainText": "⸢─ Choose file (sample_project) ─⸣\n⁞ Search: cli\n⊢──────────────────────────────────\n⁞ ⊳   · cli_commands.dart\n⁞     · cli_config.yaml\n⁞     · cli_theme.md\n⁞     · cli_workflow.json\n⸤─────────────────────────────────",
       "containsAnsi": true
     },
     {
@@ -1846,8 +1846,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#5f5f87;font-weight:800\">⌜─ Choose file (terminice_visual_demo/sample_project) ─⌝</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#8787af\">Search:</span> cli\n<span style=\"color:#6b7280\">·────────────────────────────────────────────────────────</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#08111f;background-color:#8787af;border-radius:3px;padding:0 1px\">›</span>   · <span style=\"color:#eeeeee\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">¦</span>     · <span style=\"color:#eeeeee\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">¦</span>     · <span style=\"color:#eeeeee\">cli</span>_theme.md\n<span style=\"color:#6b7280\">¦</span>     · <span style=\"color:#eeeeee\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">⌞───────────────────────────────────────────────────────</span></pre>",
-      "plainText": "⌜─ Choose file (terminice_visual_demo/sample_project) ─⌝\n¦ Search: cli\n·────────────────────────────────────────────────────────\n¦ ›   · cli_commands.dart\n¦     · cli_config.yaml\n¦     · cli_theme.md\n¦     · cli_workflow.json\n⌞───────────────────────────────────────────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#5f5f87;font-weight:800\">⌜─ Choose file (sample_project) ─⌝</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#8787af\">Search:</span> cli\n<span style=\"color:#6b7280\">·──────────────────────────────────</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#08111f;background-color:#8787af;border-radius:3px;padding:0 1px\">›</span>   · <span style=\"color:#eeeeee\">cli</span>_commands.dart\n<span style=\"color:#6b7280\">¦</span>     · <span style=\"color:#eeeeee\">cli</span>_config.yaml\n<span style=\"color:#6b7280\">¦</span>     · <span style=\"color:#eeeeee\">cli</span>_theme.md\n<span style=\"color:#6b7280\">¦</span>     · <span style=\"color:#eeeeee\">cli</span>_workflow.json\n<span style=\"color:#6b7280\">⌞─────────────────────────────────</span></pre>",
+      "plainText": "⌜─ Choose file (sample_project) ─⌝\n¦ Search: cli\n·──────────────────────────────────\n¦ ›   · cli_commands.dart\n¦     · cli_config.yaml\n¦     · cli_theme.md\n¦     · cli_workflow.json\n⌞─────────────────────────────────",
       "containsAnsi": true
     },
     {
@@ -1858,8 +1858,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#d946ef;font-weight:800\">┌─ Output folder ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#06b6d4\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">│</span>   ↩ ..\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#06b6d4;border-radius:3px;padding:0 1px\">▶</span> ✓ Select this directory\n<span style=\"color:#6b7280\">│</span>   ▸ docs\n<span style=\"color:#6b7280\">│</span>   ▸ lib\n<span style=\"color:#6b7280\">│</span>   ▸ test\n<span style=\"color:#6b7280\">└──────────────────</span></pre>",
-      "plainText": "┌─ Output folder ─┐\n│ Path: terminice_visual_demo/sample_project\n├───────────────────\n│   ↩ ..\n│ ▶ ✓ Select this directory\n│   ▸ docs\n│   ▸ lib\n│   ▸ test\n└──────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#d946ef;font-weight:800\">┌─ Output folder ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#06b6d4\">Path:</span> sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">│</span>   ↩ ..\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#06b6d4;border-radius:3px;padding:0 1px\">▶</span> ✓ Select this directory\n<span style=\"color:#6b7280\">│</span>   ▸ docs\n<span style=\"color:#6b7280\">│</span>   ▸ lib\n<span style=\"color:#6b7280\">│</span>   ▸ test\n<span style=\"color:#6b7280\">└──────────────────</span></pre>",
+      "plainText": "┌─ Output folder ─┐\n│ Path: sample_project\n├───────────────────\n│   ↩ ..\n│ ▶ ✓ Select this directory\n│   ▸ docs\n│   ▸ lib\n│   ▸ test\n└──────────────────",
       "containsAnsi": true
     },
     {
@@ -1870,8 +1870,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e;font-weight:800\">╭─ Output folder ─╮</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#22c55e\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">│</span>   ↩ ..\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#22c55e;border-radius:3px;padding:0 1px\">❯</span> ✓ Select this directory\n<span style=\"color:#6b7280\">│</span>   ▸ docs\n<span style=\"color:#6b7280\">│</span>   ▸ lib\n<span style=\"color:#6b7280\">│</span>   ▸ test\n<span style=\"color:#6b7280\">╰──────────────────</span></pre>",
-      "plainText": "╭─ Output folder ─╮\n│ Path: terminice_visual_demo/sample_project\n├───────────────────\n│   ↩ ..\n│ ❯ ✓ Select this directory\n│   ▸ docs\n│   ▸ lib\n│   ▸ test\n╰──────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e;font-weight:800\">╭─ Output folder ─╮</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#22c55e\">Path:</span> sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">│</span>   ↩ ..\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#22c55e;border-radius:3px;padding:0 1px\">❯</span> ✓ Select this directory\n<span style=\"color:#6b7280\">│</span>   ▸ docs\n<span style=\"color:#6b7280\">│</span>   ▸ lib\n<span style=\"color:#6b7280\">│</span>   ▸ test\n<span style=\"color:#6b7280\">╰──────────────────</span></pre>",
+      "plainText": "╭─ Output folder ─╮\n│ Path: sample_project\n├───────────────────\n│   ↩ ..\n│ ❯ ✓ Select this directory\n│   ▸ docs\n│   ▸ lib\n│   ▸ test\n╰──────────────────",
       "containsAnsi": true
     },
     {
@@ -1882,8 +1882,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444;font-weight:800\">╔═ Output folder ═╗</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#ef4444\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">╟═══════════════════</span>\n<span style=\"color:#6b7280\">║</span>   ↩ ..\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#08111f;background-color:#ef4444;border-radius:3px;padding:0 1px\">➤</span> ✓ Select this directory\n<span style=\"color:#6b7280\">║</span>   ▸ docs\n<span style=\"color:#6b7280\">║</span>   ▸ lib\n<span style=\"color:#6b7280\">║</span>   ▸ test\n<span style=\"color:#6b7280\">╚══════════════════</span></pre>",
-      "plainText": "╔═ Output folder ═╗\n║ Path: terminice_visual_demo/sample_project\n╟═══════════════════\n║   ↩ ..\n║ ➤ ✓ Select this directory\n║   ▸ docs\n║   ▸ lib\n║   ▸ test\n╚══════════════════",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444;font-weight:800\">╔═ Output folder ═╗</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#ef4444\">Path:</span> sample_project\n<span style=\"color:#6b7280\">╟═══════════════════</span>\n<span style=\"color:#6b7280\">║</span>   ↩ ..\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#08111f;background-color:#ef4444;border-radius:3px;padding:0 1px\">➤</span> ✓ Select this directory\n<span style=\"color:#6b7280\">║</span>   ▸ docs\n<span style=\"color:#6b7280\">║</span>   ▸ lib\n<span style=\"color:#6b7280\">║</span>   ▸ test\n<span style=\"color:#6b7280\">╚══════════════════</span></pre>",
+      "plainText": "╔═ Output folder ═╗\n║ Path: sample_project\n╟═══════════════════\n║   ↩ ..\n║ ➤ ✓ Select this directory\n║   ▸ docs\n║   ▸ lib\n║   ▸ test\n╚══════════════════",
       "containsAnsi": true
     },
     {
@@ -1894,8 +1894,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa;font-weight:800\">┌─ Output folder ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#e879f9\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">│</span>   ↩ ..\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">▶</span> ✓ Select this directory\n<span style=\"color:#6b7280\">│</span>   ▸ docs\n<span style=\"color:#6b7280\">│</span>   ▸ lib\n<span style=\"color:#6b7280\">│</span>   ▸ test\n<span style=\"color:#6b7280\">└──────────────────</span></pre>",
-      "plainText": "┌─ Output folder ─┐\n│ Path: terminice_visual_demo/sample_project\n├───────────────────\n│   ↩ ..\n│ ▶ ✓ Select this directory\n│   ▸ docs\n│   ▸ lib\n│   ▸ test\n└──────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa;font-weight:800\">┌─ Output folder ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#e879f9\">Path:</span> sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">│</span>   ↩ ..\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">▶</span> ✓ Select this directory\n<span style=\"color:#6b7280\">│</span>   ▸ docs\n<span style=\"color:#6b7280\">│</span>   ▸ lib\n<span style=\"color:#6b7280\">│</span>   ▸ test\n<span style=\"color:#6b7280\">└──────────────────</span></pre>",
+      "plainText": "┌─ Output folder ─┐\n│ Path: sample_project\n├───────────────────\n│   ↩ ..\n│ ▶ ✓ Select this directory\n│   ▸ docs\n│   ▸ lib\n│   ▸ test\n└──────────────────",
       "containsAnsi": true
     },
     {
@@ -1906,8 +1906,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#3b82f6;font-weight:800\">╭─ Output folder ─╮</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#60a5fa\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">┊</span>   ↩ ..\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#08111f;background-color:#60a5fa;border-radius:3px;padding:0 1px\">▸</span> ✓ Select this directory\n<span style=\"color:#6b7280\">┊</span>   ▸ docs\n<span style=\"color:#6b7280\">┊</span>   ▸ lib\n<span style=\"color:#6b7280\">┊</span>   ▸ test\n<span style=\"color:#6b7280\">╰──────────────────</span></pre>",
-      "plainText": "╭─ Output folder ─╮\n┊ Path: terminice_visual_demo/sample_project\n├───────────────────\n┊   ↩ ..\n┊ ▸ ✓ Select this directory\n┊   ▸ docs\n┊   ▸ lib\n┊   ▸ test\n╰──────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#3b82f6;font-weight:800\">╭─ Output folder ─╮</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#60a5fa\">Path:</span> sample_project\n<span style=\"color:#6b7280\">├───────────────────</span>\n<span style=\"color:#6b7280\">┊</span>   ↩ ..\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#08111f;background-color:#60a5fa;border-radius:3px;padding:0 1px\">▸</span> ✓ Select this directory\n<span style=\"color:#6b7280\">┊</span>   ▸ docs\n<span style=\"color:#6b7280\">┊</span>   ▸ lib\n<span style=\"color:#6b7280\">┊</span>   ▸ test\n<span style=\"color:#6b7280\">╰──────────────────</span></pre>",
+      "plainText": "╭─ Output folder ─╮\n┊ Path: sample_project\n├───────────────────\n┊   ↩ ..\n┊ ▸ ✓ Select this directory\n┊   ▸ docs\n┊   ▸ lib\n┊   ▸ test\n╰──────────────────",
       "containsAnsi": true
     },
     {
@@ -1918,8 +1918,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e5e7eb;font-weight:800\">+- Output folder -+</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#f9fafb\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">+-------------------</span>\n<span style=\"color:#6b7280\">|</span>   ↩ ..\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#08111f;background-color:#f9fafb;border-radius:3px;padding:0 1px\">&gt;</span> ✓ Select this directory\n<span style=\"color:#6b7280\">|</span>   ▸ docs\n<span style=\"color:#6b7280\">|</span>   ▸ lib\n<span style=\"color:#6b7280\">|</span>   ▸ test\n<span style=\"color:#6b7280\">+------------------</span></pre>",
-      "plainText": "+- Output folder -+\n| Path: terminice_visual_demo/sample_project\n+-------------------\n|   ↩ ..\n| > ✓ Select this directory\n|   ▸ docs\n|   ▸ lib\n|   ▸ test\n+------------------",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e5e7eb;font-weight:800\">+- Output folder -+</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#f9fafb\">Path:</span> sample_project\n<span style=\"color:#6b7280\">+-------------------</span>\n<span style=\"color:#6b7280\">|</span>   ↩ ..\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#08111f;background-color:#f9fafb;border-radius:3px;padding:0 1px\">&gt;</span> ✓ Select this directory\n<span style=\"color:#6b7280\">|</span>   ▸ docs\n<span style=\"color:#6b7280\">|</span>   ▸ lib\n<span style=\"color:#6b7280\">|</span>   ▸ test\n<span style=\"color:#6b7280\">+------------------</span></pre>",
+      "plainText": "+- Output folder -+\n| Path: sample_project\n+-------------------\n|   ↩ ..\n| > ✓ Select this directory\n|   ▸ docs\n|   ▸ lib\n|   ▸ test\n+------------------",
       "containsAnsi": true
     },
     {
@@ -1930,8 +1930,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#facc15;font-weight:800\">┏━ Output folder ━┓</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#e879f9\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">┣━━━━━━━━━━━━━━━━━━━</span>\n<span style=\"color:#6b7280\">┃</span>   ↩ ..\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">&gt;</span> ✓ Select this directory\n<span style=\"color:#6b7280\">┃</span>   ▸ docs\n<span style=\"color:#6b7280\">┃</span>   ▸ lib\n<span style=\"color:#6b7280\">┃</span>   ▸ test\n<span style=\"color:#6b7280\">┗━━━━━━━━━━━━━━━━━━</span></pre>",
-      "plainText": "┏━ Output folder ━┓\n┃ Path: terminice_visual_demo/sample_project\n┣━━━━━━━━━━━━━━━━━━━\n┃   ↩ ..\n┃ > ✓ Select this directory\n┃   ▸ docs\n┃   ▸ lib\n┃   ▸ test\n┗━━━━━━━━━━━━━━━━━━",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#facc15;font-weight:800\">┏━ Output folder ━┓</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#e879f9\">Path:</span> sample_project\n<span style=\"color:#6b7280\">┣━━━━━━━━━━━━━━━━━━━</span>\n<span style=\"color:#6b7280\">┃</span>   ↩ ..\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">&gt;</span> ✓ Select this directory\n<span style=\"color:#6b7280\">┃</span>   ▸ docs\n<span style=\"color:#6b7280\">┃</span>   ▸ lib\n<span style=\"color:#6b7280\">┃</span>   ▸ test\n<span style=\"color:#6b7280\">┗━━━━━━━━━━━━━━━━━━</span></pre>",
+      "plainText": "┏━ Output folder ━┓\n┃ Path: sample_project\n┣━━━━━━━━━━━━━━━━━━━\n┃   ↩ ..\n┃ > ✓ Select this directory\n┃   ▸ docs\n┃   ▸ lib\n┃   ▸ test\n┗━━━━━━━━━━━━━━━━━━",
       "containsAnsi": true
     },
     {
@@ -1942,8 +1942,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#875fff;font-weight:800\">⸢─ Output folder ─⸣</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#af87ff\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">⊢───────────────────</span>\n<span style=\"color:#6b7280\">⁞</span>   ↩ ..\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#08111f;background-color:#af87ff;border-radius:3px;padding:0 1px\">⊳</span> ✓ Select this directory\n<span style=\"color:#6b7280\">⁞</span>   ▸ docs\n<span style=\"color:#6b7280\">⁞</span>   ▸ lib\n<span style=\"color:#6b7280\">⁞</span>   ▸ test\n<span style=\"color:#6b7280\">⸤──────────────────</span></pre>",
-      "plainText": "⸢─ Output folder ─⸣\n⁞ Path: terminice_visual_demo/sample_project\n⊢───────────────────\n⁞   ↩ ..\n⁞ ⊳ ✓ Select this directory\n⁞   ▸ docs\n⁞   ▸ lib\n⁞   ▸ test\n⸤──────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#875fff;font-weight:800\">⸢─ Output folder ─⸣</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#af87ff\">Path:</span> sample_project\n<span style=\"color:#6b7280\">⊢───────────────────</span>\n<span style=\"color:#6b7280\">⁞</span>   ↩ ..\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#08111f;background-color:#af87ff;border-radius:3px;padding:0 1px\">⊳</span> ✓ Select this directory\n<span style=\"color:#6b7280\">⁞</span>   ▸ docs\n<span style=\"color:#6b7280\">⁞</span>   ▸ lib\n<span style=\"color:#6b7280\">⁞</span>   ▸ test\n<span style=\"color:#6b7280\">⸤──────────────────</span></pre>",
+      "plainText": "⸢─ Output folder ─⸣\n⁞ Path: sample_project\n⊢───────────────────\n⁞   ↩ ..\n⁞ ⊳ ✓ Select this directory\n⁞   ▸ docs\n⁞   ▸ lib\n⁞   ▸ test\n⸤──────────────────",
       "containsAnsi": true
     },
     {
@@ -1954,8 +1954,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#5f5f87;font-weight:800\">⌜─ Output folder ─⌝</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#8787af\">Path:</span> terminice_visual_demo/sample_project\n<span style=\"color:#6b7280\">·───────────────────</span>\n<span style=\"color:#6b7280\">¦</span>   ↩ ..\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#08111f;background-color:#8787af;border-radius:3px;padding:0 1px\">›</span> ✓ Select this directory\n<span style=\"color:#6b7280\">¦</span>   ▸ docs\n<span style=\"color:#6b7280\">¦</span>   ▸ lib\n<span style=\"color:#6b7280\">¦</span>   ▸ test\n<span style=\"color:#6b7280\">⌞──────────────────</span></pre>",
-      "plainText": "⌜─ Output folder ─⌝\n¦ Path: terminice_visual_demo/sample_project\n·───────────────────\n¦   ↩ ..\n¦ › ✓ Select this directory\n¦   ▸ docs\n¦   ▸ lib\n¦   ▸ test\n⌞──────────────────",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#5f5f87;font-weight:800\">⌜─ Output folder ─⌝</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#8787af\">Path:</span> sample_project\n<span style=\"color:#6b7280\">·───────────────────</span>\n<span style=\"color:#6b7280\">¦</span>   ↩ ..\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#08111f;background-color:#8787af;border-radius:3px;padding:0 1px\">›</span> ✓ Select this directory\n<span style=\"color:#6b7280\">¦</span>   ▸ docs\n<span style=\"color:#6b7280\">¦</span>   ▸ lib\n<span style=\"color:#6b7280\">¦</span>   ▸ test\n<span style=\"color:#6b7280\">⌞──────────────────</span></pre>",
+      "plainText": "⌜─ Output folder ─⌝\n¦ Path: sample_project\n·───────────────────\n¦   ↩ ..\n¦ › ✓ Select this directory\n¦   ▸ docs\n¦   ▸ lib\n¦   ▸ test\n⌞──────────────────",
       "containsAnsi": true
     },
     {
@@ -2074,7 +2074,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#d946ef;font-weight:800\">┌─   Launch day   ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#06b6d4\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#06b6d4\">›</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#06b6d4\"> 5</span> \n<span style=\"color:#6b7280\">│</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">│</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">│</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">└───────────────────</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#d946ef;font-weight:800\">┌─   Launch day   ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#06b6d4\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#06b6d4\">›</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">│</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">│</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">│</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">└───────────────────</span></pre>",
       "plainText": "┌─   Launch day   ─┐\n│ ‹  July 2026  ›\n│ Mo Tu We Th Fr Sa Su\n│ 29 30  1  2  3  4  5 \n│  6  7  8  9 10 11 12 \n│ 13 14 15 16 17 18 19 \n│ 20 21 22 23 24 25 26 \n│ 27 28 29 30 31  1  2 \n└───────────────────",
       "containsAnsi": true
     },
@@ -2086,7 +2086,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e;font-weight:800\">╭─   Launch day   ─╮</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#22c55e\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#22c55e\">›</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#22c55e\"> 5</span> \n<span style=\"color:#6b7280\">│</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">│</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">│</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">╰───────────────────</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e;font-weight:800\">╭─   Launch day   ─╮</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#22c55e\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#22c55e\">›</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">│</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">│</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">│</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">╰───────────────────</span></pre>",
       "plainText": "╭─   Launch day   ─╮\n│ ‹  July 2026  ›\n│ Mo Tu We Th Fr Sa Su\n│ 29 30  1  2  3  4  5 \n│  6  7  8  9 10 11 12 \n│ 13 14 15 16 17 18 19 \n│ 20 21 22 23 24 25 26 \n│ 27 28 29 30 31  1  2 \n╰───────────────────",
       "containsAnsi": true
     },
@@ -2098,7 +2098,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444;font-weight:800\">╔═   Launch day   ═╗</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#ef4444\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#ef4444\">›</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#ef4444\"> 5</span> \n<span style=\"color:#6b7280\">║</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">║</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">║</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">║</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">╚═══════════════════</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444;font-weight:800\">╔═   Launch day   ═╗</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#ef4444\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#ef4444\">›</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">║</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">║</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">║</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">║</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">╚═══════════════════</span></pre>",
       "plainText": "╔═   Launch day   ═╗\n║ ‹  July 2026  ›\n║ Mo Tu We Th Fr Sa Su\n║ 29 30  1  2  3  4  5 \n║  6  7  8  9 10 11 12 \n║ 13 14 15 16 17 18 19 \n║ 20 21 22 23 24 25 26 \n║ 27 28 29 30 31  1  2 \n╚═══════════════════",
       "containsAnsi": true
     },
@@ -2110,7 +2110,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa;font-weight:800\">┌─   Launch day   ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#e879f9\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#e879f9\">›</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#e879f9\"> 5</span> \n<span style=\"color:#6b7280\">│</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">│</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">│</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">└───────────────────</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa;font-weight:800\">┌─   Launch day   ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#e879f9\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#e879f9\">›</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">│</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">│</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">│</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">└───────────────────</span></pre>",
       "plainText": "┌─   Launch day   ─┐\n│ ‹  July 2026  ›\n│ Mo Tu We Th Fr Sa Su\n│ 29 30  1  2  3  4  5 \n│  6  7  8  9 10 11 12 \n│ 13 14 15 16 17 18 19 \n│ 20 21 22 23 24 25 26 \n│ 27 28 29 30 31  1  2 \n└───────────────────",
       "containsAnsi": true
     },
@@ -2122,7 +2122,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#3b82f6;font-weight:800\">╭─   Launch day   ─╮</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#60a5fa\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#60a5fa\">›</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#60a5fa\"> 5</span> \n<span style=\"color:#6b7280\">┊</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">┊</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">┊</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">╰───────────────────</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#3b82f6;font-weight:800\">╭─   Launch day   ─╮</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#60a5fa\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#60a5fa\">›</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">┊</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">┊</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">┊</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">╰───────────────────</span></pre>",
       "plainText": "╭─   Launch day   ─╮\n┊ ‹  July 2026  ›\n┊ Mo Tu We Th Fr Sa Su\n┊ 29 30  1  2  3  4  5 \n┊  6  7  8  9 10 11 12 \n┊ 13 14 15 16 17 18 19 \n┊ 20 21 22 23 24 25 26 \n┊ 27 28 29 30 31  1  2 \n╰───────────────────",
       "containsAnsi": true
     },
@@ -2134,7 +2134,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e5e7eb;font-weight:800\">+-   Launch day   -+</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#f9fafb\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#f9fafb\">›</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#f9fafb\"> 5</span> \n<span style=\"color:#6b7280\">|</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">|</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">|</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">|</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">+-------------------</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e5e7eb;font-weight:800\">+-   Launch day   -+</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#f9fafb\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#f9fafb\">›</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">|</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">|</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">|</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">|</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">+-------------------</span></pre>",
       "plainText": "+-   Launch day   -+\n| ‹  July 2026  ›\n| Mo Tu We Th Fr Sa Su\n| 29 30  1  2  3  4  5 \n|  6  7  8  9 10 11 12 \n| 13 14 15 16 17 18 19 \n| 20 21 22 23 24 25 26 \n| 27 28 29 30 31  1  2 \n+-------------------",
       "containsAnsi": true
     },
@@ -2146,7 +2146,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#facc15;font-weight:800\">┏━   Launch day   ━┓</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#e879f9\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#e879f9\">›</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#e879f9\"> 5</span> \n<span style=\"color:#6b7280\">┃</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">┃</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">┃</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">┗━━━━━━━━━━━━━━━━━━━</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#facc15;font-weight:800\">┏━   Launch day   ━┓</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#e879f9\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#e879f9\">›</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">┃</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">┃</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">┃</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">┗━━━━━━━━━━━━━━━━━━━</span></pre>",
       "plainText": "┏━   Launch day   ━┓\n┃ ‹  July 2026  ›\n┃ Mo Tu We Th Fr Sa Su\n┃ 29 30  1  2  3  4  5 \n┃  6  7  8  9 10 11 12 \n┃ 13 14 15 16 17 18 19 \n┃ 20 21 22 23 24 25 26 \n┃ 27 28 29 30 31  1  2 \n┗━━━━━━━━━━━━━━━━━━━",
       "containsAnsi": true
     },
@@ -2158,7 +2158,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#875fff;font-weight:800\">⸢─   Launch day   ─⸣</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#af87ff\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#af87ff\">›</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#af87ff\"> 5</span> \n<span style=\"color:#6b7280\">⁞</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">⁞</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">⁞</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">⸤───────────────────</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#875fff;font-weight:800\">⸢─   Launch day   ─⸣</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#af87ff\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#af87ff\">›</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">⁞</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">⁞</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">⁞</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">⸤───────────────────</span></pre>",
       "plainText": "⸢─   Launch day   ─⸣\n⁞ ‹  July 2026  ›\n⁞ Mo Tu We Th Fr Sa Su\n⁞ 29 30  1  2  3  4  5 \n⁞  6  7  8  9 10 11 12 \n⁞ 13 14 15 16 17 18 19 \n⁞ 20 21 22 23 24 25 26 \n⁞ 27 28 29 30 31  1  2 \n⸤───────────────────",
       "containsAnsi": true
     },
@@ -2170,7 +2170,7 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#5f5f87;font-weight:800\">⌜─   Launch day   ─⌝</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#8787af\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#8787af\">›</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"color:#8787af\"> 5</span> \n<span style=\"color:#6b7280\">¦</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">¦</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">¦</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">⌞───────────────────</span></pre>",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#5f5f87;font-weight:800\">⌜─   Launch day   ─⌝</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#8787af\">‹</span>  <span style=\"font-weight:800\">July 2026</span>  <span style=\"color:#8787af\">›</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"opacity:.62\">Mo</span> <span style=\"opacity:.62\">Tu</span> <span style=\"opacity:.62\">We</span> <span style=\"opacity:.62\">Th</span> <span style=\"opacity:.62\">Fr</span> <span style=\"opacity:.62\">Sa</span> <span style=\"opacity:.62\">Su</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"opacity:.62\">29</span> <span style=\"opacity:.62\">30</span>  1  2  3  4 <span style=\"opacity:.62\"> 5</span> \n<span style=\"color:#6b7280\">¦</span>  6  7  8  9 10 11 <span style=\"opacity:.62\">12</span> \n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#08111f;background-color:rgba(245,247,251,0.9);border-radius:3px;padding:0 1px\">13</span> 14 15 16 17 18 <span style=\"opacity:.62\">19</span> \n<span style=\"color:#6b7280\">¦</span> 20 21 22 23 24 25 <span style=\"opacity:.62\">26</span> \n<span style=\"color:#6b7280\">¦</span> 27 28 29 30 31 <span style=\"opacity:.62\"> 1</span> <span style=\"opacity:.62\"> 2</span> \n<span style=\"color:#6b7280\">⌞───────────────────</span></pre>",
       "plainText": "⌜─   Launch day   ─⌝\n¦ ‹  July 2026  ›\n¦ Mo Tu We Th Fr Sa Su\n¦ 29 30  1  2  3  4  5 \n¦  6  7  8  9 10 11 12 \n¦ 13 14 15 16 17 18 19 \n¦ 20 21 22 23 24 25 26 \n¦ 27 28 29 30 31  1  2 \n⌞───────────────────",
       "containsAnsi": true
     },
@@ -2286,108 +2286,108 @@ globalThis.TERMINICE_REAL_DEMO = {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
       "id": "inlineSpinner",
       "group": "Indicators",
       "summary": "One-line loading status.",
-      "code": "t.inlineSpinner('Syncing').show(1);",
+      "code": "t.inlineSpinner('Resolving packages', style: SpinnerStyle.bars).show(7);",
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">⠙</span> <span style=\"opacity:.62\">Syncing workspace</span></pre>",
-      "plainText": "⠙ Syncing workspace",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">█</span> <span style=\"opacity:.62\">Resolving packages for workspace</span></pre>",
+      "plainText": "█ Resolving packages for workspace",
       "containsAnsi": true
     },
     {
@@ -2502,108 +2502,108 @@ globalThis.TERMINICE_REAL_DEMO = {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
       "id": "inlineProgressBar",
       "group": "Indicators",
       "summary": "Compact progress line.",
-      "code": "t.inlineProgressBar('Build').show(current: 68, total: 100);",
+      "code": "t.inlineProgressBar('Uploading assets').show(current: 68, total: 100);",
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">Build</span> <span style=\"opacity:.62\">68%</span></pre>",
-      "plainText": "Build 68%",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">Uploading assets</span> <span style=\"opacity:.62\">68%</span></pre>",
+      "plainText": "Uploading assets 68%",
       "containsAnsi": true
     },
     {
@@ -2718,108 +2718,108 @@ globalThis.TERMINICE_REAL_DEMO = {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">ℹ</span> Reading config\n<span style=\"color:#22c55e\">✓</span> Published\n<span style=\"color:#eab308\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">ℹ</span> Reading project config\n<span style=\"color:#22c55e\">✓</span> Build completed in 1.8s\n<span style=\"color:#eab308\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#ef4444\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">ℹ</span> Reading config\n<span style=\"color:#22c55e\">✓</span> Published\n<span style=\"color:#facc15\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">ℹ</span> Reading project config\n<span style=\"color:#22c55e\">✓</span> Build completed in 1.8s\n<span style=\"color:#facc15\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#ef4444\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">ℹ</span> Reading config\n<span style=\"color:#ef4444\">✓</span> Published\n<span style=\"color:#eab308\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">ℹ</span> Reading project config\n<span style=\"color:#ef4444\">✓</span> Build completed in 1.8s\n<span style=\"color:#eab308\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#ef4444\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22d3ee\">ℹ</span> Reading config\n<span style=\"color:#22d3ee\">✓</span> Published\n<span style=\"color:#facc15\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22d3ee\">ℹ</span> Reading project config\n<span style=\"color:#22d3ee\">✓</span> Build completed in 1.8s\n<span style=\"color:#facc15\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#f87171\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22d3ee\">ℹ</span> Reading config\n<span style=\"color:#60a5fa\">✓</span> Published\n<span style=\"color:#facc15\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22d3ee\">ℹ</span> Reading project config\n<span style=\"color:#60a5fa\">✓</span> Build completed in 1.8s\n<span style=\"color:#facc15\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#f87171\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\">INFO: Reading config\nOK: Published\nWARN: Using cache\n  terminice/visual_demo</pre>",
-      "plainText": "INFO: Reading config\nOK: Published\nWARN: Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\">INFO: Reading project config\nOK: Build completed in 1.8s\nWARN: Using cached dependencies\n  Output: build/terminice_app\nERROR: Preview server is offline</pre>",
+      "plainText": "INFO: Reading project config\nOK: Build completed in 1.8s\nWARN: Using cached dependencies\n  Output: build/terminice_app\nERROR: Preview server is offline",
       "containsAnsi": false
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">ℹ</span> Reading config\n<span style=\"color:#22d3ee\">✓</span> Published\n<span style=\"color:#facc15\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">ℹ</span> Reading project config\n<span style=\"color:#22d3ee\">✓</span> Build completed in 1.8s\n<span style=\"color:#facc15\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#f87171\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#afafff\">ℹ</span> Reading config\n<span style=\"color:#ffd700\">✓</span> Published\n<span style=\"color:#ffaf00\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#afafff\">ℹ</span> Reading project config\n<span style=\"color:#ffd700\">✓</span> Build completed in 1.8s\n<span style=\"color:#ffaf00\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#d70000\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
       "id": "messagePrimitives",
       "group": "Workflow & CLI UX",
       "summary": "Small polished status lines.",
-      "code": "t.info('Reading config');\nt.success('Published');\nt.warn('Using cache');",
+      "code": "t.info('Reading project config');\nt.success('Build completed');\nt.warn('Using cached dependencies');",
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">ℹ</span> Reading config\n<span style=\"color:#d7d7ff\">✓</span> Published\n<span style=\"color:#d7af87\">⚠</span> Using cache\n<span style=\"opacity:.62\">  terminice/visual_demo</span></pre>",
-      "plainText": "ℹ Reading config\n✓ Published\n⚠ Using cache\n  terminice/visual_demo",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">ℹ</span> Reading project config\n<span style=\"color:#d7d7ff\">✓</span> Build completed in 1.8s\n<span style=\"color:#d7af87\">⚠</span> Using cached dependencies\n<span style=\"opacity:.62\">  Output: build/terminice_app</span>\n<span style=\"color:#af5f5f\">✗</span> Preview server is offline</pre>",
+      "plainText": "ℹ Reading project config\n✓ Build completed in 1.8s\n⚠ Using cached dependencies\n  Output: build/terminice_app\n✗ Preview server is offline",
       "containsAnsi": true
     },
     {
@@ -2830,8 +2830,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#06b6d4\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2842,8 +2842,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#22c55e\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2854,8 +2854,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#ef4444\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2866,8 +2866,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#e879f9\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2878,8 +2878,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#60a5fa\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2890,8 +2890,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#f9fafb\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2902,8 +2902,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#e879f9\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2914,8 +2914,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#af87ff\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2926,8 +2926,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">✓</span> Published</pre>",
-      "plainText": "✓ Published",
+      "html": "<pre class=\"terminal-pre\"><span style=\"opacity:.62\">Publishing - validating package</span> <span style=\"color:#8787af\">.....</span></pre>",
+      "plainText": "Publishing - validating package .....",
       "containsAnsi": true
     },
     {
@@ -2938,8 +2938,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#06b6d4\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -2950,8 +2950,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#22c55e\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -2962,8 +2962,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#ef4444\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -2974,8 +2974,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#e879f9\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -2986,8 +2986,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#60a5fa\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -2998,8 +2998,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#f9fafb\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3010,8 +3010,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#e879f9\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3022,8 +3022,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#af87ff\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3034,8 +3034,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">✓</span> Uploaded</pre>",
-      "plainText": "✓ Uploaded",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">⠹</span> <span style=\"opacity:.62\">Uploading - 4 / 4 files</span> <span style=\"color:#8787af\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠹ Uploading - 4 / 4 files [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3046,8 +3046,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#06b6d4\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#06b6d4\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3058,8 +3058,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#22c55e\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#22c55e\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3070,8 +3070,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#ef4444\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#ef4444\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3082,8 +3082,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#e879f9\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3094,8 +3094,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#60a5fa\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#60a5fa\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3106,8 +3106,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#f9fafb\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#f9fafb\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3118,8 +3118,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#e879f9\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#e879f9\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3130,8 +3130,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#af87ff\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#af87ff\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3142,8 +3142,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">✓</span> Scan complete</pre>",
-      "plainText": "✓ Scan complete",
+      "html": "<pre class=\"terminal-pre\"><span style=\"color:#8787af\">⠼</span> <span style=\"opacity:.62\">Scanning</span> <span style=\"color:#8787af\">[████████████]</span> <span style=\"opacity:.62\">4/4, 100%</span></pre>",
+      "plainText": "⠼ Scanning [████████████] 4/4, 100%",
       "containsAnsi": true
     },
     {
@@ -3478,8 +3478,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "dark",
       "display": "compact",
       "chain": "t.dark.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#d946ef;font-weight:800\">┌─ Review New project ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">├────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#06b6d4;border-radius:3px;padding:0 1px\">▶</span>   Submit\n<span style=\"color:#6b7280\">│</span>     Edit\n<span style=\"color:#6b7280\">│</span>     Cancel\n<span style=\"color:#6b7280\">└───────────────────────</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n┌─ Review New project ─┐\n│ (Search disabled — press / to enable)\n├────────────────────────\n│ ▶   Submit\n│     Edit\n│     Cancel\n└───────────────────────",
       "containsAnsi": true
     },
     {
@@ -3490,8 +3490,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "matrix",
       "display": "compact",
       "chain": "t.matrix.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#22c55e;font-weight:800\">╭─ Review New project ─╮</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">├────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#22c55e;border-radius:3px;padding:0 1px\">❯</span>   Submit\n<span style=\"color:#6b7280\">│</span>     Edit\n<span style=\"color:#6b7280\">│</span>     Cancel\n<span style=\"color:#6b7280\">╰───────────────────────</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n╭─ Review New project ─╮\n│ (Search disabled — press / to enable)\n├────────────────────────\n│ ❯   Submit\n│     Edit\n│     Cancel\n╰───────────────────────",
       "containsAnsi": true
     },
     {
@@ -3502,8 +3502,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "fire",
       "display": "compact",
       "chain": "t.fire.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#ef4444;font-weight:800\">╔═ Review New project ═╗</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">╟════════════════════════</span>\n<span style=\"color:#6b7280\">║</span> <span style=\"color:#08111f;background-color:#ef4444;border-radius:3px;padding:0 1px\">➤</span>   Submit\n<span style=\"color:#6b7280\">║</span>     Edit\n<span style=\"color:#6b7280\">║</span>     Cancel\n<span style=\"color:#6b7280\">╚═══════════════════════</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n╔═ Review New project ═╗\n║ (Search disabled — press / to enable)\n╟════════════════════════\n║ ➤   Submit\n║     Edit\n║     Cancel\n╚═══════════════════════",
       "containsAnsi": true
     },
     {
@@ -3514,8 +3514,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "pastel",
       "display": "compact",
       "chain": "t.pastel.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#60a5fa;font-weight:800\">┌─ Review New project ─┐</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">├────────────────────────</span>\n<span style=\"color:#6b7280\">│</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">▶</span>   Submit\n<span style=\"color:#6b7280\">│</span>     Edit\n<span style=\"color:#6b7280\">│</span>     Cancel\n<span style=\"color:#6b7280\">└───────────────────────</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n┌─ Review New project ─┐\n│ (Search disabled — press / to enable)\n├────────────────────────\n│ ▶   Submit\n│     Edit\n│     Cancel\n└───────────────────────",
       "containsAnsi": true
     },
     {
@@ -3526,8 +3526,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "ocean",
       "display": "compact",
       "chain": "t.ocean.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#3b82f6;font-weight:800\">╭─ Review New project ─╮</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">├────────────────────────</span>\n<span style=\"color:#6b7280\">┊</span> <span style=\"color:#08111f;background-color:#60a5fa;border-radius:3px;padding:0 1px\">▸</span>   Submit\n<span style=\"color:#6b7280\">┊</span>     Edit\n<span style=\"color:#6b7280\">┊</span>     Cancel\n<span style=\"color:#6b7280\">╰───────────────────────</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n╭─ Review New project ─╮\n┊ (Search disabled — press / to enable)\n├────────────────────────\n┊ ▸   Submit\n┊     Edit\n┊     Cancel\n╰───────────────────────",
       "containsAnsi": true
     },
     {
@@ -3538,8 +3538,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "monochrome",
       "display": "compact",
       "chain": "t.monochrome.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#e5e7eb;font-weight:800\">+- Review New project -+</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">+------------------------</span>\n<span style=\"color:#6b7280\">|</span> <span style=\"color:#08111f;background-color:#f9fafb;border-radius:3px;padding:0 1px\">&gt;</span>   Submit\n<span style=\"color:#6b7280\">|</span>     Edit\n<span style=\"color:#6b7280\">|</span>     Cancel\n<span style=\"color:#6b7280\">+-----------------------</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n+- Review New project -+\n| (Search disabled — press / to enable)\n+------------------------\n| >   Submit\n|     Edit\n|     Cancel\n+-----------------------",
       "containsAnsi": true
     },
     {
@@ -3550,8 +3550,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "neon",
       "display": "compact",
       "chain": "t.neon.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#facc15;font-weight:800\">┏━ Review New project ━┓</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">┣━━━━━━━━━━━━━━━━━━━━━━━━</span>\n<span style=\"color:#6b7280\">┃</span> <span style=\"color:#08111f;background-color:#e879f9;border-radius:3px;padding:0 1px\">&gt;</span>   Submit\n<span style=\"color:#6b7280\">┃</span>     Edit\n<span style=\"color:#6b7280\">┃</span>     Cancel\n<span style=\"color:#6b7280\">┗━━━━━━━━━━━━━━━━━━━━━━━</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n┏━ Review New project ━┓\n┃ (Search disabled — press / to enable)\n┣━━━━━━━━━━━━━━━━━━━━━━━━\n┃ >   Submit\n┃     Edit\n┃     Cancel\n┗━━━━━━━━━━━━━━━━━━━━━━━",
       "containsAnsi": true
     },
     {
@@ -3562,8 +3562,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "arcane",
       "display": "compact",
       "chain": "t.arcane.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#875fff;font-weight:800\">⸢─ Review New project ─⸣</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">⊢────────────────────────</span>\n<span style=\"color:#6b7280\">⁞</span> <span style=\"color:#08111f;background-color:#af87ff;border-radius:3px;padding:0 1px\">⊳</span>   Submit\n<span style=\"color:#6b7280\">⁞</span>     Edit\n<span style=\"color:#6b7280\">⁞</span>     Cancel\n<span style=\"color:#6b7280\">⸤───────────────────────</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n⸢─ Review New project ─⸣\n⁞ (Search disabled — press / to enable)\n⊢────────────────────────\n⁞ ⊳   Submit\n⁞     Edit\n⁞     Cancel\n⸤───────────────────────",
       "containsAnsi": true
     },
     {
@@ -3574,8 +3574,8 @@ globalThis.TERMINICE_REAL_DEMO = {
       "theme": "phantom",
       "display": "compact",
       "chain": "t.phantom.compact",
-      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI</pre>",
-      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI",
+      "html": "<pre class=\"terminal-pre\">Review New project\nName: terminice_app\nTemplate: CLI\n<span style=\"color:#5f5f87;font-weight:800\">⌜─ Review New project ─⌝</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"opacity:.62\">(Search disabled — press / to enable)</span>\n<span style=\"color:#6b7280\">·────────────────────────</span>\n<span style=\"color:#6b7280\">¦</span> <span style=\"color:#08111f;background-color:#8787af;border-radius:3px;padding:0 1px\">›</span>   Submit\n<span style=\"color:#6b7280\">¦</span>     Edit\n<span style=\"color:#6b7280\">¦</span>     Cancel\n<span style=\"color:#6b7280\">⌞───────────────────────</span></pre>",
+      "plainText": "Review New project\nName: terminice_app\nTemplate: CLI\n⌜─ Review New project ─⌝\n¦ (Search disabled — press / to enable)\n·────────────────────────\n¦ ›   Submit\n¦     Edit\n¦     Cancel\n⌞───────────────────────",
       "containsAnsi": true
     },
     {

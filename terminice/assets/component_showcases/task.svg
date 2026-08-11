@@ -1,48 +1,117 @@
 <svg xmlns="http://www.w3.org/2000/svg"
-  width="900" height="46.5" viewBox="0 0 900 46.5"
+  width="903" height="46.5" viewBox="0 0 903 46.5"
   role="img" aria-labelledby="title desc">
   <title id="title">task in fire, matrix, and arcane themes</title>
   <desc id="desc">Async status wrapper.</desc>
-  <rect width="900" height="46.5" fill="#05070c"/>
-  <rect x="0" y="0" width="300" height="46.5" fill="#080d16"/>
+  <rect width="903" height="46.5" fill="#05070c"/>
+  <rect x="0" y="0" width="301" height="46.5" fill="#080d16"/>
   <g font-family="SFMono-Regular, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, 'Cascadia Mono', 'DejaVu Sans Mono', Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="11.5" font-variant-ligatures="none" xml:space="preserve">
-    <text x="16" y="27.5" fill="#ef4444" font-weight="400">✓</text>
-    <text x="30.5" y="27.5" fill="#eef4ff" font-weight="400">P</text>
-    <text x="37.8" y="27.5" fill="#eef4ff" font-weight="400">u</text>
-    <text x="45" y="27.5" fill="#eef4ff" font-weight="400">b</text>
-    <text x="52.3" y="27.5" fill="#eef4ff" font-weight="400">l</text>
-    <text x="59.5" y="27.5" fill="#eef4ff" font-weight="400">i</text>
-    <text x="66.8" y="27.5" fill="#eef4ff" font-weight="400">s</text>
-    <text x="74" y="27.5" fill="#eef4ff" font-weight="400">h</text>
-    <text x="81.3" y="27.5" fill="#eef4ff" font-weight="400">e</text>
-    <text x="88.5" y="27.5" fill="#eef4ff" font-weight="400">d</text>
+    <text x="16" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">P</text>
+    <text x="23.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">u</text>
+    <text x="30.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">b</text>
+    <text x="37.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">l</text>
+    <text x="45" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="52.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">s</text>
+    <text x="59.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">h</text>
+    <text x="66.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="74" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">n</text>
+    <text x="81.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="95.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">-</text>
+    <text x="110.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">v</text>
+    <text x="117.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="124.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">l</text>
+    <text x="132" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="139.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">d</text>
+    <text x="146.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="153.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">t</text>
+    <text x="161" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="168.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">n</text>
+    <text x="175.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="190" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">p</text>
+    <text x="197.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="204.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">c</text>
+    <text x="211.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">k</text>
+    <text x="219" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="226.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="233.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">e</text>
+    <text x="248" y="27.5" fill="#ef4444" font-weight="400">.</text>
+    <text x="255.3" y="27.5" fill="#ef4444" font-weight="400">.</text>
+    <text x="262.5" y="27.5" fill="#ef4444" font-weight="400">.</text>
+    <text x="269.8" y="27.5" fill="#ef4444" font-weight="400">.</text>
+    <text x="277" y="27.5" fill="#ef4444" font-weight="400">.</text>
   </g>
-  <rect x="300" y="0" width="300" height="46.5" fill="#0b111d"/>
-  <line x1="300" y1="0" x2="300" y2="46.5" stroke="#ffffff" stroke-opacity="0.14"/>
+  <rect x="301" y="0" width="301" height="46.5" fill="#0b111d"/>
+  <line x1="301" y1="0" x2="301" y2="46.5" stroke="#ffffff" stroke-opacity="0.14"/>
   <g font-family="SFMono-Regular, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, 'Cascadia Mono', 'DejaVu Sans Mono', Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="11.5" font-variant-ligatures="none" xml:space="preserve">
-    <text x="316" y="27.5" fill="#22c55e" font-weight="400">✓</text>
-    <text x="330.5" y="27.5" fill="#eef4ff" font-weight="400">P</text>
-    <text x="337.8" y="27.5" fill="#eef4ff" font-weight="400">u</text>
-    <text x="345" y="27.5" fill="#eef4ff" font-weight="400">b</text>
-    <text x="352.3" y="27.5" fill="#eef4ff" font-weight="400">l</text>
-    <text x="359.5" y="27.5" fill="#eef4ff" font-weight="400">i</text>
-    <text x="366.8" y="27.5" fill="#eef4ff" font-weight="400">s</text>
-    <text x="374" y="27.5" fill="#eef4ff" font-weight="400">h</text>
-    <text x="381.3" y="27.5" fill="#eef4ff" font-weight="400">e</text>
-    <text x="388.5" y="27.5" fill="#eef4ff" font-weight="400">d</text>
+    <text x="317" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">P</text>
+    <text x="324.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">u</text>
+    <text x="331.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">b</text>
+    <text x="338.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">l</text>
+    <text x="346" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="353.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">s</text>
+    <text x="360.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">h</text>
+    <text x="367.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="375" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">n</text>
+    <text x="382.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="396.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">-</text>
+    <text x="411.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">v</text>
+    <text x="418.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="425.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">l</text>
+    <text x="433" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="440.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">d</text>
+    <text x="447.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="454.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">t</text>
+    <text x="462" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="469.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">n</text>
+    <text x="476.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="491" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">p</text>
+    <text x="498.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="505.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">c</text>
+    <text x="512.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">k</text>
+    <text x="520" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="527.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="534.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">e</text>
+    <text x="549" y="27.5" fill="#22c55e" font-weight="400">.</text>
+    <text x="556.3" y="27.5" fill="#22c55e" font-weight="400">.</text>
+    <text x="563.5" y="27.5" fill="#22c55e" font-weight="400">.</text>
+    <text x="570.8" y="27.5" fill="#22c55e" font-weight="400">.</text>
+    <text x="578" y="27.5" fill="#22c55e" font-weight="400">.</text>
   </g>
-  <rect x="600" y="0" width="300" height="46.5" fill="#080d16"/>
-  <line x1="600" y1="0" x2="600" y2="46.5" stroke="#ffffff" stroke-opacity="0.14"/>
+  <rect x="602" y="0" width="301" height="46.5" fill="#080d16"/>
+  <line x1="602" y1="0" x2="602" y2="46.5" stroke="#ffffff" stroke-opacity="0.14"/>
   <g font-family="SFMono-Regular, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, 'Cascadia Mono', 'DejaVu Sans Mono', Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="11.5" font-variant-ligatures="none" xml:space="preserve">
-    <text x="616" y="27.5" fill="#af87ff" font-weight="400">✓</text>
-    <text x="630.5" y="27.5" fill="#eef4ff" font-weight="400">P</text>
-    <text x="637.8" y="27.5" fill="#eef4ff" font-weight="400">u</text>
-    <text x="645" y="27.5" fill="#eef4ff" font-weight="400">b</text>
-    <text x="652.3" y="27.5" fill="#eef4ff" font-weight="400">l</text>
-    <text x="659.5" y="27.5" fill="#eef4ff" font-weight="400">i</text>
-    <text x="666.8" y="27.5" fill="#eef4ff" font-weight="400">s</text>
-    <text x="674" y="27.5" fill="#eef4ff" font-weight="400">h</text>
-    <text x="681.3" y="27.5" fill="#eef4ff" font-weight="400">e</text>
-    <text x="688.5" y="27.5" fill="#eef4ff" font-weight="400">d</text>
+    <text x="618" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">P</text>
+    <text x="625.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">u</text>
+    <text x="632.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">b</text>
+    <text x="639.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">l</text>
+    <text x="647" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="654.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">s</text>
+    <text x="661.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">h</text>
+    <text x="668.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="676" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">n</text>
+    <text x="683.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="697.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">-</text>
+    <text x="712.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">v</text>
+    <text x="719.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="726.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">l</text>
+    <text x="734" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="741.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">d</text>
+    <text x="748.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="755.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">t</text>
+    <text x="763" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">i</text>
+    <text x="770.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">n</text>
+    <text x="777.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="792" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">p</text>
+    <text x="799.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="806.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">c</text>
+    <text x="813.8" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">k</text>
+    <text x="821" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">a</text>
+    <text x="828.3" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">g</text>
+    <text x="835.5" y="27.5" fill="#eef4ff" font-weight="400" opacity=".62">e</text>
+    <text x="850" y="27.5" fill="#af87ff" font-weight="400">.</text>
+    <text x="857.3" y="27.5" fill="#af87ff" font-weight="400">.</text>
+    <text x="864.5" y="27.5" fill="#af87ff" font-weight="400">.</text>
+    <text x="871.8" y="27.5" fill="#af87ff" font-weight="400">.</text>
+    <text x="879" y="27.5" fill="#af87ff" font-weight="400">.</text>
   </g>
 </svg>

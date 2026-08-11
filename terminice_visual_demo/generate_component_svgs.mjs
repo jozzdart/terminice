@@ -89,11 +89,15 @@ function uniqueComponents(sourceFrames) {
 function renderComponentSvg(component, framesByKey) {
   const cells = themes.map((theme) => {
     const frame = framesByKey.get(`${component.id}|${theme}`);
+    if (!frame) {
+      throw new Error(`Missing ${theme} frame for ${component.id}`);
+    }
+
     return {
       theme,
       frame,
-      lines: frame ? parseTerminalHtml(frame.html) : [[]],
-      plainLines: frame ? frame.plainText.split("\n") : ["Missing frame"],
+      lines: parseTerminalHtml(frame.html),
+      plainLines: frame.plainText.split("\n"),
     };
   });
 
@@ -260,6 +264,12 @@ async function updateReadmeVisuals(componentIds) {
     inserted.push(componentId);
   }
 
+  if (missing.length > 0) {
+    throw new Error(
+      `README headings missing for generated visuals: ${missing.join(", ")}`,
+    );
+  }
+
   await writeFile(readmePath, lines.join("\n"));
   return { inserted: inserted.length, missing };
 }
@@ -275,8 +285,21 @@ function replaceExistingBlock(lines, componentId) {
     throw new Error(`Broken visual marker block for ${componentId}`);
   }
 
+  let removalStart = startIndex;
+  let removalEnd = endIndex;
+
+  while (removalStart > 0 && lines[removalStart - 1].trim() === "") {
+    removalStart -= 1;
+  }
+  while (
+    removalEnd + 1 < lines.length &&
+    lines[removalEnd + 1].trim() === ""
+  ) {
+    removalEnd += 1;
+  }
+
   const nextLines = [...lines];
-  nextLines.splice(startIndex, endIndex - startIndex + 1);
+  nextLines.splice(removalStart, removalEnd - removalStart + 1, "");
   return nextLines;
 }
 
@@ -294,14 +317,13 @@ function insertBlockAfterIntro(lines, headingIndex, componentId) {
 
   while (index < lines.length && lines[index].trim() === "") index += 1;
   while (index < lines.length && lines[index].trim() !== "") index += 1;
+  while (index < lines.length && lines[index].trim() === "") {
+    lines.splice(index, 1);
+  }
 
   const nextLines = [...lines];
   const insertion = ["", ...visualBlock(componentId), ""];
-  if (nextLines[index]?.trim() === "") {
-    nextLines.splice(index, 1, ...insertion);
-  } else {
-    nextLines.splice(index, 0, ...insertion);
-  }
+  nextLines.splice(index, 0, ...insertion);
   return nextLines;
 }
 
