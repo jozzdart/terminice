@@ -362,7 +362,7 @@ class FrameContext {
     if (enabled) {
       gutterLine('${theme.accent}Search:${theme.reset} $query');
     } else {
-      dimMessage('(Search disabled - press / to enable)');
+      dimMessage('(Search disabled — press / to enable)');
     }
   }
 

@@ -206,7 +206,7 @@ void main() {
       expect(t.widths[0], equals(5)); // 2 + 3
     });
 
-    test('is ANSI-aware - ignores escape codes in width computation', () {
+    test('is ANSI-aware — ignores escape codes in width computation', () {
       final t = TableRenderer.fromHeaders(['Name']);
       t.computeWidths([
         ['\x1B[32mAlice\x1B[0m'],
