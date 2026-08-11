@@ -1,3 +1,10 @@
+## 1.2.1
+
+#### Documentation
+
+- Generated fire, matrix, and arcane previews for every Terminice catalogue entry, with reproducible visual generation tooling.
+- Sharpened the optimized opening showcase and synchronized the root and package README presentation.
+
 ## 1.2.0
 
 #### Added

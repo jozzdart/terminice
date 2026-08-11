@@ -87,17 +87,45 @@ theme-gallery.html
 
 This page is useful when you want one tall visual that compares the most expressive themes across the full catalogue without extra titles, labels, or UI chrome.
 
-## Generate SVGs For Component Docs
+## Regenerate Visuals
 
-Run the SVG generator whenever `frames.js` changes:
+From a clean checkout, use the wrapper as the recommended one-command workflow:
+
+```text
+./terminice_visual_demo/generate_visuals.sh
+```
+
+It runs `dart pub get` in the `terminice` package, regenerates `frames.js` from real Terminice output, writes one pure SVG triptych per component to `terminice/assets/component_showcases/`, and updates the guarded visual blocks in `terminice/README.md`.
+
+Arguments are forwarded to the Node SVG generator, so `--assets-only` remains available when you want to refresh frames and SVG assets without updating the README visual blocks:
+
+```text
+./terminice_visual_demo/generate_visuals.sh --assets-only
+```
+
+## Advanced Stage Commands
+
+Use the lower-level commands when you need to run an individual stage.
+
+Prepare Dart dependencies and create the package config:
+
+```text
+(cd terminice && dart pub get)
+```
+
+Regenerate captured terminal frames:
+
+```text
+dart --packages=terminice/.dart_tool/package_config.json terminice_visual_demo/generate.dart
+```
+
+Regenerate component SVGs and update the README visual blocks:
 
 ```text
 node terminice_visual_demo/generate_component_svgs.mjs
 ```
 
-It reads the real captured frames, writes one pure SVG triptych per component to `terminice/assets/component_showcases/`, and updates the matching dedicated README sections with guarded image blocks.
-
-Use `--assets-only` when you only want to refresh the SVG files without touching the README:
+Refresh only the SVG assets:
 
 ```text
 node terminice_visual_demo/generate_component_svgs.mjs --assets-only
@@ -112,13 +140,3 @@ The page uses a terminal-first font stack: Menlo, Monaco, Cascadia Mono, DejaVu 
 VHS is great for real terminal demos, but rich interactive redraws can flicker in GIFs because the terminal is constantly clearing and repainting. This page uses Terminice's testing terminal to capture the actual ANSI output, emulates the visible terminal frame before cleanup, and displays that frame in the browser.
 
 For real behavior demos, keep using VHS or screen recording. For README polish, package pages, and component docs, this visual demo gives cleaner screenshots and smoother short videos while still staying grounded in actual Terminice rendering.
-
-## Regenerate Frames
-
-Run this from the repo root after changing component rendering:
-
-```text
-dart --packages=terminice/.dart_tool/package_config.json terminice_visual_demo/generate.dart
-```
-
-The generator scripts input for every catalogue component, captures the raw terminal output, and rewrites `frames.js`.
