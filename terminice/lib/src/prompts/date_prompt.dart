@@ -121,7 +121,7 @@ extension DatePromptExtensions on Terminice {
         KeyBindings.cancel(onCancel: () => cancelled = true);
 
     void render(RenderOutput out) {
-      final title = '$prompt — Choose Date';
+      final title = '$prompt - Choose Date';
       final widgetFrame = FrameView(
         title: '  $title  ',
         theme: theme,

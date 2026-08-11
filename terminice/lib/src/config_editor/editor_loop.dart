@@ -8,7 +8,7 @@ import 'package:terminice_core/terminice_core.dart';
 ///
 /// When [isRoot] is `true`, shows a "✓ Save & confirm" action and treats
 /// Esc as a cancellation (returns `false`). When `false` (nested group),
-/// shows "← Back" and both Esc and the back action return `true` — edits
+/// shows "← Back" and both Esc and the back action return `true` - edits
 /// are preserved in-place and only the root save decides confirmation.
 ///
 /// Returns `true` if the user confirmed (or went back from a group),
@@ -179,7 +179,7 @@ bool runEditorLoop({
     output.clear();
   }
 
-  // Non-root editors always preserve edits — Esc just means "go back"
+  // Non-root editors always preserve edits - Esc just means "go back"
   if (!isRoot) return true;
   return !cancelled;
 }
@@ -213,7 +213,7 @@ void renderEditorAction(
 
 /// Renders a single configurable field as a list row.
 ///
-/// Groups and leaf fields are handled uniformly — visual distinction
+/// Groups and leaf fields are handled uniformly - visual distinction
 /// comes from each field's [Configurable.typeIcon] and [Configurable.displayValue].
 void renderFieldItem(
   FrameContext ctx,

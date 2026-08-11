@@ -31,7 +31,7 @@ enum KeyEventType {
 
 /// Normalized key event captured from terminal input.
 ///
-/// The representation intentionally stays tiny—just an event [type] plus an
+/// The representation intentionally stays tiny-just an event [type] plus an
 /// optional [char] payload for printable or generic control keys. This keeps
 /// serialization trivial and ergonomic when piping events between isolates.
 class KeyEvent {

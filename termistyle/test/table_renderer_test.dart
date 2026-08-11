@@ -206,7 +206,7 @@ void main() {
       expect(t.widths[0], equals(5)); // 2 + 3
     });
 
-    test('is ANSI-aware — ignores escape codes in width computation', () {
+    test('is ANSI-aware - ignores escape codes in width computation', () {
       final t = TableRenderer.fromHeaders(['Name']);
       t.computeWidths([
         ['\x1B[32mAlice\x1B[0m'],
@@ -478,7 +478,7 @@ void main() {
       t.setWidths([8]);
       final stripped = _strip(t.rowLine(['AB']));
       final cellContent = stripped.replaceAll('│', '').trim();
-      // 'AB' centered in 8: '   AB   ' — trim gives 'AB'
+      // 'AB' centered in 8: '   AB   ' - trim gives 'AB'
       expect(cellContent, equals('AB'));
     });
 

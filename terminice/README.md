@@ -128,66 +128,66 @@ Every tool is fully themeable and ready to use with zero setup. The catalogue is
 
 #### ▤ Prompts
 
-- [`text` — Single-line text input.](#text---single-line-text-input)
-- [`password` — Secure, masked text input.](#password---masked-text-input)
-- [`confirm` — Yes/No boolean confirmation.](#confirm---yesno-confirmation)
-- [`multiline` — Multi-line text editor.](#multiline---terminal-text-area)
-- [`slider` — Numeric selection along a single axis.](#slider---numeric-selection)
-- [`range` — Dual-thumb slider for selecting a min/max range.](#range---dual-handle-numeric-range)
-- [`rating` — Star-based rating input.](#rating---star-rating-input)
-- [`date` — Date picker.](#date---keyboard-date-prompt)
-- [`form` — Form prompt.](#form---multi-field-input)
+- [`text` - Single-line text input.](#text---single-line-text-input)
+- [`password` - Secure, masked text input.](#password---masked-text-input)
+- [`confirm` - Yes/No boolean confirmation.](#confirm---yesno-confirmation)
+- [`multiline` - Multi-line text editor.](#multiline---terminal-text-area)
+- [`slider` - Numeric selection along a single axis.](#slider---numeric-selection)
+- [`range` - Dual-thumb slider for selecting a min/max range.](#range---dual-handle-numeric-range)
+- [`rating` - Star-based rating input.](#rating---star-rating-input)
+- [`date` - Date picker.](#date---keyboard-date-prompt)
+- [`form` - Form prompt.](#form---multi-field-input)
 
 #### ▥ Selectors
 
-- [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
-- [`choiceSelector` — Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
-- [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
-- [`gridSelector` — 2D grid selection.](#gridselector---two-dimensional-selection-grid)
-- [`tagSelector` — Select and manage multiple tags.](#tagselector---chip-style-multi-select)
-- [`toggleGroup` — Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
-- [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
+- [`searchSelector` - Filterable list of options.](#searchselector---filterable-list-selection)
+- [`choiceSelector` - Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
+- [`checkboxSelector` - Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
+- [`gridSelector` - 2D grid selection.](#gridselector---two-dimensional-selection-grid)
+- [`tagSelector` - Select and manage multiple tags.](#tagselector---chip-style-multi-select)
+- [`toggleGroup` - Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
+- [`commandPalette` - Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
 
 #### ▦ Pickers
 
-- [`filePicker` — Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
-- [`pathPicker` — Browse and select directories.](#pathpicker---directory-and-path-browser)
-- [`colorPicker` — Interactive color selection.](#colorpicker---ansi-color-grid)
-- [`datePicker` — Calendar-based date selection.](#datepicker---calendar-date-selection)
+- [`filePicker` - Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
+- [`pathPicker` - Browse and select directories.](#pathpicker---directory-and-path-browser)
+- [`colorPicker` - Interactive color selection.](#colorpicker---ansi-color-grid)
+- [`datePicker` - Calendar-based date selection.](#datepicker---calendar-date-selection)
 
 #### ▧ Indicators
 
-- [`loadingSpinner` — Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
-- [`inlineSpinner` — Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
-- [`progressBar` — Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
-- [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
-- [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
+- [`loadingSpinner` - Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
+- [`inlineSpinner` - Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
+- [`progressBar` - Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
+- [`inlineProgressBar` - Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
+- [`progressDots` - Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
 
 #### ▨ Workflow & CLI UX
 
-- [`message primitives` — `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
-- [`task` — Run a task with spinner or dots status.](#task---async-status-wrapper)
-- [`progressTask` — Run a task with determinate progress.](#progresstask---async-progress-wrapper)
-- [`trackStream` — Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
-- [`TaskProgress` — Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
-- [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
-- [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
-- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
-- [`custom components` — Reusable class or callback components.](#custom-components--extensibility)
+- [`message primitives` - `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
+- [`task` - Run a task with spinner or dots status.](#task---async-status-wrapper)
+- [`progressTask` - Run a task with determinate progress.](#progresstask---async-progress-wrapper)
+- [`trackStream` - Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
+- [`TaskProgress` - Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
+- [`TaskDisplay` - Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
+- [`TaskFinalBehavior` - Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
+- [`flow` - Sequential flow builder.](#flow---sequential-flow-composition)
+- [`custom components` - Reusable class or callback components.](#custom-components--extensibility)
 
 #### ▩ Configuration & Guides
 
-- [`configEditor` — A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
-- [`cheatSheet` — Display a quick reference guide.](#cheatsheet---framed-reference-table)
-- [`helpCenter` — Interactive help documentation viewer.](#helpcenter---searchable-help-browser)
-- [`hotkeyGuide` — Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
-- [`themeDemo` — Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
+- [`configEditor` - A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
+- [`cheatSheet` - Display a quick reference guide.](#cheatsheet---framed-reference-table)
+- [`helpCenter` - Interactive help documentation viewer.](#helpcenter---searchable-help-browser)
+- [`hotkeyGuide` - Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
+- [`themeDemo` - Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
 # Quick Start
 
-Get up and running in seconds. No setup required—just import and call.
+Get up and running in seconds. No setup required-just import and call.
 
 #### 1. Ask for input
 
@@ -262,9 +262,9 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 
 Control the verbosity and framing of your prompts:
 
-- **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
-- **`compact`** — Keeps borders but removes hints for a tighter layout.
-- **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
+- **`verbose`** (Default) - Full borders, contextual hints, and clear separation.
+- **`compact`** - Keeps borders but removes hints for a tighter layout.
+- **`minimal`** - Strips away borders and frames for a classic, inline CLI feel.
 
 Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
 

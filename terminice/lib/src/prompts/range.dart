@@ -96,7 +96,7 @@ extension RangePromptExtensions on Terminice {
 
           // Range text
           final rangeTxt =
-              '${theme.bold}${theme.accent}$sRaw—$eRaw${theme.reset}';
+              '${theme.bold}${theme.accent}$sRaw-$eRaw${theme.reset}';
 
           final gutter = ctx.lb.gutter();
           final activeIdx = editingStart ? startIdx : endIdx;

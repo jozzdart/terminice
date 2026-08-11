@@ -75,7 +75,7 @@ final result = await SimplePrompt<String>(
 
 ### How it powers `terminice`
 
-When you use a high-level component from the main `terminice` package—such as a `DatePicker`—it is secretly orchestrating these core modules. The `DatePicker` uses the **IO** module to listen for arrow keys, feeds those keys into a **Navigation** grid to move between days, uses the **Rendering** module (powered by the sibling `termistyle` package) to draw the calendar layout with the correct theme, and wraps it all in a **Prompt** to return a `DateTime` object back to your application.
+When you use a high-level component from the main `terminice` package-such as a `DatePicker`-it is secretly orchestrating these core modules. The `DatePicker` uses the **IO** module to listen for arrow keys, feeds those keys into a **Navigation** grid to move between days, uses the **Rendering** module (powered by the sibling `termistyle` package) to draw the calendar layout with the correct theme, and wraps it all in a **Prompt** to return a `DateTime` object back to your application.
 
 ---
 
@@ -207,7 +207,7 @@ The **Navigation** module is responsible for managing the "where am I?" and "wha
 
 ### Focus Navigation
 
-`FocusNavigator` is the simplest state machine, designed for views where every item is already visible on the screen—such as forms, multi-step wizards, or settings pages. It handles wrapping navigation and includes built-in helpers for tracking per-item validation errors.
+`FocusNavigator` is the simplest state machine, designed for views where every item is already visible on the screen-such as forms, multi-step wizards, or settings pages. It handles wrapping navigation and includes built-in helpers for tracking per-item validation errors.
 
 ```dart
 final focus = FocusNavigator(itemCount: fields.length);

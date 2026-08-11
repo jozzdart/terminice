@@ -1,4 +1,4 @@
-/// **terminice** gives you **30+ ready-to-use terminal components**—from simple
+/// **terminice** gives you **30+ ready-to-use terminal components**-from simple
 /// prompts to complex searchable menus and config editors.
 ///
 /// **Universal theming out of the box.** Every single prompt, selector, picker,

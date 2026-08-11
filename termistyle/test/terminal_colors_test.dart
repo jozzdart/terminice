@@ -314,7 +314,7 @@ void main() {
   });
 
   // ══════════════════════════════════════════════════════════════════════════
-  // Built-in presets — existence, type, and ANSI validity
+  // Built-in presets - existence, type, and ANSI validity
   // ══════════════════════════════════════════════════════════════════════════
 
   group('built-in presets', () {
