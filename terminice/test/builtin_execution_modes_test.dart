@@ -15,7 +15,8 @@ void main() {
       final directory =
           Directory.systemTemp.createTempSync('terminice-matrix-');
       addTearDown(() => directory.deleteSync(recursive: true));
-      final file = File('${directory.path}/sample.txt')..writeAsStringSync('x');
+      final file = File.fromUri(directory.uri.resolve('sample.txt'))
+        ..writeAsStringSync('x');
       final terminal = MockTerminal();
       final t = terminice.fallback.withTerminal(terminal);
 
@@ -234,7 +235,8 @@ void main() {
     test('path line mode resolves relative paths against start directory', () {
       final directory = Directory.systemTemp.createTempSync('terminice-path-');
       addTearDown(() => directory.deleteSync(recursive: true));
-      final file = File('${directory.path}/sample.txt')..writeAsStringSync('x');
+      final file = File.fromUri(directory.uri.resolve('sample.txt'))
+        ..writeAsStringSync('x');
       final terminal = MockTerminal();
       terminal.mockInput.queueLine('sample.txt');
 
@@ -250,7 +252,8 @@ void main() {
     test('file picker foldersOnly line mode accepts existing directories', () {
       final directory = Directory.systemTemp.createTempSync('terminice-dir-');
       addTearDown(() => directory.deleteSync(recursive: true));
-      final child = Directory('${directory.path}/child')..createSync();
+      final child = Directory.fromUri(directory.uri.resolve('child'))
+        ..createSync();
       final terminal = MockTerminal();
       terminal.mockInput.queueLine('child');
 
