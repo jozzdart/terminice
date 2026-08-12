@@ -205,18 +205,18 @@ extension DatePickerExtensions on Terminice {
               // Previous month trailing days
               final prevDay = prevMonthDays - (startOffset - wd) + 1;
               buffer.write(
-                  '${theme.dim}${prevDay.toString().padLeft(2)}${theme.reset} ');
+                  '${theme.dim}${padLeft(prevDay.toString(), 2)}${theme.reset} ');
             } else if (day > daysInMonth) {
               // Next month leading days
               final nextDay = day - daysInMonth;
               buffer.write(
-                  '${theme.dim}${nextDay.toString().padLeft(2)}${theme.reset} ');
+                  '${theme.dim}${padLeft(nextDay.toString(), 2)}${theme.reset} ');
               day++;
             } else {
               final current = DateTime(viewMonth.year, viewMonth.month, day);
               final isSelected = current.isSameDay(selected);
               final isToday = current.isSameDay(today);
-              final text = day.toString().padLeft(2);
+              final text = padLeft(day.toString(), 2);
 
               if (isSelected) {
                 buffer.write('${theme.inverse}$text${theme.reset} ');

@@ -44,14 +44,16 @@ extension ToggleGroupExtensions on Terminice {
         // Use centralized focus navigation
         final focus = FocusNavigator(itemCount: items.length);
         bool cancelled = false;
-        final states =
-            List<bool>.generate(items.length, (i) => items[i].initialOn);
+        final states = List<bool>.generate(
+          items.length,
+          (i) => items[i].initialOn,
+        );
         final initialStates = List<bool>.from(states);
 
         int maxLabelWidth() {
           var w = 0;
           for (final it in items) {
-            final len = it.label.length;
+            final len = visibleLength(it.label);
             if (len > w) w = len;
           }
           if (w < 8) w = 8;
@@ -90,16 +92,14 @@ extension ToggleGroupExtensions on Terminice {
               final isFocused = focus.isFocused(i);
               final item = items[i];
 
-              var label = item.label;
-              if (label.length > labelWidth) {
-                label = '${label.substring(0, labelWidth - 1)}…';
-              }
-              final paddedLabel = label.padRight(labelWidth);
+              final paddedLabel = truncatePad(item.label, labelWidth);
 
               // Use LineBuilder for arrow and switch
               final arrow = ctx.lb.arrow(isFocused);
-              final switchTxt = ctx.lb
-                  .switchControlHighlighted(states[i], highlight: isFocused);
+              final switchTxt = ctx.lb.switchControlHighlighted(
+                states[i],
+                highlight: isFocused,
+              );
 
               final lineCore = '$arrow $paddedLabel${' ' * gap}$switchTxt';
               ctx.gutterLine(lineCore);
@@ -134,9 +134,7 @@ extension ToggleGroupExtensions on Terminice {
           returnDefaultOnEndOfInput: true,
         ).toSet();
 
-        return {
-          for (final item in items) item.label: selected.contains(item),
-        };
+        return {for (final item in items) item.label: selected.contains(item)};
       },
       unattended: () => {
         for (final item in items) item.label: item.initialOn,

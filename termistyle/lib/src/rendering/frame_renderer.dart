@@ -1,4 +1,5 @@
 import '../style/prompt_theme.dart';
+import '../utils/text_utils.dart' as text;
 
 /// Helpers to render titles and horizontal border lines consistently.
 class FrameRenderer {
@@ -28,21 +29,21 @@ class FrameRenderer {
 
   static String connectorLine(String title, PromptTheme theme) {
     final g = theme.glyphs;
-    return '${theme.gray}${g.borderConnector}${g.borderHorizontal * (title.length + 6)}${theme.reset}';
+    return '${theme.gray}${g.borderConnector}${g.borderHorizontal * (text.visibleLength(title) + 6)}${theme.reset}';
   }
 
   static String bottomLine(String title, PromptTheme theme) {
     final g = theme.glyphs;
     // Match the visual width of the top line, but without a closing corner.
-    // Top width = title.length + 6 (includes both corners and spacing/dashes).
-    // Bottom: left corner + dashes => 1 + (title.length + 5) = title.length + 6
-    return '${theme.gray}${g.borderBottom}${g.borderHorizontal * (title.length + 5)}${theme.reset}';
+    // Top width = title cell width + 6 (corners, spacing, and dashes).
+    // Bottom has one corner plus title cell width + 5 dashes.
+    return '${theme.gray}${g.borderBottom}${g.borderHorizontal * (text.visibleLength(title) + 5)}${theme.reset}';
   }
 
   /// Bottom line with a custom color.
   static String bottomLineColored(
       String title, PromptTheme theme, String color) {
     final g = theme.glyphs;
-    return '$color${g.borderBottom}${g.borderHorizontal * (title.length + 5)}${theme.reset}';
+    return '$color${g.borderBottom}${g.borderHorizontal * (text.visibleLength(title) + 5)}${theme.reset}';
   }
 }

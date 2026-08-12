@@ -485,6 +485,17 @@ void main() {
         expect(connectorStripped.length, equals(title.length + 7));
       });
     }
+
+    test('uses visible title width through the layout facade', () {
+      for (final title in ['界界', 'e\u0301', '👩‍💻', '\x1B[32m界\x1B[0m']) {
+        final frame = FramedLayout(title, theme: dark);
+
+        expect(
+            visibleLength(frame.bottom()), equals(visibleLength(frame.top())));
+        expect(visibleLength(frame.connector()),
+            equals(visibleLength(frame.top()) + 1));
+      }
+    });
   });
 
   // ══════════════════════════════════════════════════════════════════════════

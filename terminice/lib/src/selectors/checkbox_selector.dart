@@ -2,6 +2,7 @@ import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
 import '../core/fallback_selection.dart';
+import '../core/layout_text.dart';
 
 /// Extension providing the [checkboxSelector] prompt for `Terminice`.
 extension CheckboxSelectorExtensions on Terminice {
@@ -96,11 +97,9 @@ extension CheckboxSelectorExtensions on Terminice {
             final cols = TerminalInfo.columns;
             var core = '$arrow $check $item';
             final reserve = 0; // no trailing widget for now
-            final gutterLen = ctx.lb.gutter().length;
+            final gutterLen = visibleLength(ctx.lb.gutter());
             final maxLabel = (cols - gutterLen - 1 - reserve).clamp(8, cols);
-            if (core.length > maxLabel) {
-              core = '${core.substring(0, maxLabel - 3)}...';
-            }
+            core = truncateWithDots(core, maxLabel);
 
             ctx.highlightedLine(core, highlighted: isFocused);
           },

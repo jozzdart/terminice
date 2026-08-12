@@ -8,11 +8,13 @@
 /// Import and use these instead of duplicating private helpers in views.
 library text_utils;
 
+import 'terminal_text.dart';
+
 // ============================================================================
 // STRING MANIPULATION
 // ============================================================================
 
-/// Pads [text] to [width] with trailing spaces.
+/// Pads [text] to [width] terminal cells with trailing spaces.
 ///
 /// If [text] is already at or longer than [width], returns [text] unchanged.
 ///
@@ -22,11 +24,12 @@ library text_utils;
 /// padRight('Hello', 3); // 'Hello'
 /// ```
 String padRight(String text, int width) {
-  if (text.length >= width) return text;
-  return text + ' ' * (width - text.length);
+  final visible = TerminalText(text).width;
+  if (visible >= width) return text;
+  return text + ' ' * (width - visible);
 }
 
-/// Pads [text] to [width] with leading spaces.
+/// Pads [text] to [width] terminal cells with leading spaces.
 ///
 /// If [text] is already at or longer than [width], returns [text] unchanged.
 ///
@@ -35,11 +38,12 @@ String padRight(String text, int width) {
 /// padLeft('42', 5); // '   42'
 /// ```
 String padLeft(String text, int width) {
-  if (text.length >= width) return text;
-  return ' ' * (width - text.length) + text;
+  final visible = TerminalText(text).width;
+  if (visible >= width) return text;
+  return ' ' * (width - visible) + text;
 }
 
-/// Truncates [text] to [width] characters, adding an ellipsis if clipped.
+/// Truncates [text] to [width] terminal cells, adding an ellipsis if clipped.
 ///
 /// If [text] fits within [width], it's returned unchanged.
 /// If truncation is needed, the last character becomes '…'.
@@ -50,9 +54,7 @@ String padLeft(String text, int width) {
 /// truncate('Hi', 10); // 'Hi'
 /// ```
 String truncate(String text, int width) {
-  if (text.length <= width) return text;
-  if (width <= 1) return text.substring(0, width);
-  return '${text.substring(0, width - 1)}…';
+  return TerminalText(text).truncate(width);
 }
 
 /// Truncates [text] to [width] and pads to fill remaining space.
@@ -65,17 +67,12 @@ String truncate(String text, int width) {
 /// truncatePad('Hi', 8); // 'Hi      '
 /// ```
 String truncatePad(String text, int width) {
-  if (text.length <= width) return padRight(text, width);
-  if (width <= 1) return text.substring(0, width);
-  return '${text.substring(0, width - 1)}…';
+  return padRight(truncate(text, width), width);
 }
 
 // ============================================================================
 // ANSI ESCAPE CODE HANDLING
 // ============================================================================
-
-/// Regular expression matching ANSI escape sequences.
-final _ansiPattern = RegExp(r'\x1B\[[0-9;]*m');
 
 /// Removes ANSI escape codes from [input].
 ///
@@ -86,10 +83,10 @@ final _ansiPattern = RegExp(r'\x1B\[[0-9;]*m');
 /// stripAnsi('\x1B[32mGreen\x1B[0m'); // 'Green'
 /// ```
 String stripAnsi(String input) {
-  return input.replaceAll(_ansiPattern, '');
+  return TerminalText(input).plainText;
 }
 
-/// Returns the visible (printable) character count of [text] after stripping ANSI.
+/// Returns the visible terminal-cell width of [text].
 ///
 /// Use this when calculating column widths for styled text.
 ///
@@ -98,10 +95,10 @@ String stripAnsi(String input) {
 /// visibleLength('\x1B[32mHi\x1B[0m'); // 2
 /// ```
 int visibleLength(String text) {
-  return stripAnsi(text).runes.length;
+  return TerminalText(text).width;
 }
 
-/// Pads styled [text] to [width] based on visible character length.
+/// Pads styled [text] to [width] based on visible terminal-cell width.
 ///
 /// Unlike [padRight], this accounts for ANSI escape codes when calculating
 /// how much padding is needed.
@@ -194,7 +191,7 @@ int minOf(Iterable<int> values) {
 /// columnWidth(['VeryLongName'], min: 4, max: 8); // 8
 /// ```
 int columnWidth(Iterable<String> values, {int min = 0, int max = 999}) {
-  final maxLen = maxOf(values.map((s) => s.length));
+  final maxLen = maxOf(values.map((s) => TerminalText(s).width));
   return clampInt(maxLen, min, max);
 }
 

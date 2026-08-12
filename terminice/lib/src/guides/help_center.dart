@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
+import '../core/layout_text.dart';
+
 /// Provides the [helpCenter] method for interactive documentation.
 extension HelpCenterExtensions on Terminice {
   /// Launches an interactive help center with search, filtering, and preview.
@@ -82,10 +84,12 @@ extension HelpCenterExtensions on Terminice {
       } else {
         final q = queryInput.text.toLowerCase();
         filtered = docs
-            .where((d) =>
-                d.title.toLowerCase().contains(q) ||
-                (d.category?.toLowerCase().contains(q) ?? false) ||
-                d.content.toLowerCase().contains(q))
+            .where(
+              (d) =>
+                  d.title.toLowerCase().contains(q) ||
+                  (d.category?.toLowerCase().contains(q) ?? false) ||
+                  d.content.toLowerCase().contains(q),
+            )
             .toList();
         // Light ranking: title hits before content hits
         filtered.sort((a, b) {
@@ -98,12 +102,6 @@ extension HelpCenterExtensions on Terminice {
       nav.itemCount = filtered.length;
       nav.reset();
       previewScroll = 0;
-    }
-
-    String truncate(String text, int max) {
-      if (text.length <= max) return text;
-      if (max <= 3) return text.substring(0, max);
-      return '${text.substring(0, max - 3)}...';
     }
 
     String labelFor(HelpDoc d) {
@@ -134,23 +132,21 @@ extension HelpCenterExtensions on Terminice {
             hintLabel: '←/→',
             hintDescription: 'scroll preview',
           ),
-          KeyBinding.single(
-            KeyEventType.arrowRight,
-            (event) {
-              if (filtered.isNotEmpty) {
-                final lines = filtered[nav.selectedIndex].content.split('\n');
-                previewScroll =
-                    min(previewScroll + 1, max(0, lines.length - 1));
-              }
-              return KeyActionResult.handled;
-            },
-          ),
+          KeyBinding.single(KeyEventType.arrowRight, (event) {
+            if (filtered.isNotEmpty) {
+              final lines = filtered[nav.selectedIndex].content.split('\n');
+              previewScroll = min(previewScroll + 1, max(0, lines.length - 1));
+            }
+            return KeyActionResult.handled;
+          }),
         ]) +
         queryInput.toTextInputBindings(onInput: updateFilter) +
-        KeyBindings.confirm(onConfirm: () {
-          if (filtered.isNotEmpty) result = filtered[nav.selectedIndex];
-          return KeyActionResult.confirmed;
-        }) +
+        KeyBindings.confirm(
+          onConfirm: () {
+            if (filtered.isNotEmpty) result = filtered[nav.selectedIndex];
+            return KeyActionResult.confirmed;
+          },
+        ) +
         KeyBindings.cancel(onCancel: () => cancelled = true);
 
     void render(RenderOutput out) {
@@ -168,7 +164,8 @@ extension HelpCenterExtensions on Terminice {
 
         // Results header
         ctx.gutterLine(
-            '${theme.dim}Results (${filtered.length})${theme.reset}');
+          '${theme.dim}Results (${filtered.length})${theme.reset}',
+        );
 
         // Results window using ListNavigation
         if (filtered.isEmpty) {
@@ -209,14 +206,19 @@ extension HelpCenterExtensions on Terminice {
         if (selected != null) {
           final rawLines = selected.content.split('\n');
           final viewportStart = min(previewScroll, max(0, rawLines.length - 1));
-          final viewportEnd =
-              min(viewportStart + maxPreviewLines, rawLines.length);
+          final viewportEnd = min(
+            viewportStart + maxPreviewLines,
+            rawLines.length,
+          );
           final contentWidth = max(10, cols - 4);
 
           for (var i = viewportStart; i < viewportEnd; i++) {
             final ln = rawLines[i];
             final highlighted = highlightSubstring(
-                truncate(ln, contentWidth), queryInput.text, theme);
+              truncateWithDots(ln, contentWidth),
+              queryInput.text,
+              theme,
+            );
             ctx.gutterLine(highlighted);
           }
         }
@@ -226,10 +228,7 @@ extension HelpCenterExtensions on Terminice {
     updateFilter();
 
     final runner = PromptRunner(hideCursor: true);
-    runner.runWithBindings(
-      render: render,
-      bindings: bindings,
-    );
+    runner.runWithBindings(render: render, bindings: bindings);
 
     return cancelled ? null : result;
   }

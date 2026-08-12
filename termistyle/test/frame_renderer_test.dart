@@ -419,6 +419,25 @@ void main() {
             FrameRenderer.bottomLineColored(title, PromptTheme.dark, custom);
         expect(visibleLength(botColored), equals(visibleLength(botPlain)));
       });
+
+      test('matches borders to terminal-cell width for complex titles', () {
+        for (final title in [
+          '部署',
+          'Cafe\u0301',
+          '👩‍💻 tools',
+          '\x1B[36m部署\x1B[0m',
+        ]) {
+          final top = FrameRenderer.titleWithBorders(title, PromptTheme.dark);
+          final connector =
+              FrameRenderer.connectorLine(title, PromptTheme.dark);
+          final bottom = FrameRenderer.bottomLine(title, PromptTheme.dark);
+
+          expect(visibleLength(bottom), equals(visibleLength(top)),
+              reason: 'bottom mismatch for $title');
+          expect(visibleLength(connector), equals(visibleLength(top) + 1),
+              reason: 'connector mismatch for $title');
+        }
+      });
     });
 
     // ────────────────────────────────────────────────────────────────────────

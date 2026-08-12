@@ -194,8 +194,9 @@ class FormPrompt {
           s.setError('Required');
           valid = false;
         } else if (s.config.validator != null) {
-          final err =
-              normalizeValidationError(s.config.validator!(s.text.trim()));
+          final err = normalizeValidationError(
+            s.config.validator!(s.text.trim()),
+          );
           if (err != null) {
             s.setError(err);
             valid = false;
@@ -257,29 +258,28 @@ class FormPrompt {
         ]) +
         // ↑: previous field
         KeyBindings([
-          KeyBinding.single(
-            KeyEventType.arrowUp,
-            (event) {
-              if (focusIndex > 0) {
-                moveFocus(-1);
-                return KeyActionResult.handled;
-              }
-              return KeyActionResult.ignored;
-            },
-          ),
+          KeyBinding.single(KeyEventType.arrowUp, (event) {
+            if (focusIndex > 0) {
+              moveFocus(-1);
+              return KeyActionResult.handled;
+            }
+            return KeyActionResult.ignored;
+          }),
         ]) +
         // Enter: next field or submit
-        KeyBindings.confirm(onConfirm: () {
-          if (focusIndex < states.length - 1) {
-            moveFocus(1);
+        KeyBindings.confirm(
+          onConfirm: () {
+            if (focusIndex < states.length - 1) {
+              moveFocus(1);
+              return KeyActionResult.handled;
+            }
+            if (validateAll()) {
+              confirmed = true;
+              return KeyActionResult.confirmed;
+            }
             return KeyActionResult.handled;
-          }
-          if (validateAll()) {
-            confirmed = true;
-            return KeyActionResult.confirmed;
-          }
-          return KeyActionResult.handled;
-        }) +
+          },
+        ) +
         // Ctrl+R: toggle reveal on focused field
         KeyBindings([
           KeyBinding.single(
@@ -302,11 +302,7 @@ class FormPrompt {
     final labelWidth = _maxLabelWidth(fields);
 
     void render(RenderOutput out) {
-      final frame = FrameView(
-        title: title,
-        theme: theme,
-        bindings: bindings,
-      );
+      final frame = FrameView(title: title, theme: theme, bindings: bindings);
 
       frame.render(out, (ctx) {
         for (var i = 0; i < states.length; i++) {
@@ -347,7 +343,7 @@ void _renderField(
   PromptTheme theme,
 ) {
   final arrow = ctx.lb.arrow(focused);
-  final label = state.config.label.padRight(labelWidth);
+  final label = padRight(state.config.label, labelWidth);
 
   final display = state.displayText(focused: focused);
   final bool showPlaceholder =
@@ -374,7 +370,8 @@ void _renderField(
 int _maxLabelWidth(List<FormFieldConfig> fields) {
   var w = 0;
   for (final f in fields) {
-    if (f.label.length > w) w = f.label.length;
+    final width = visibleLength(f.label);
+    if (width > w) w = width;
   }
   return w;
 }

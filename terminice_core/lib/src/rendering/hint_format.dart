@@ -33,14 +33,18 @@ class HintFormat {
 
     // Compute column widths for alignment
     final col1Width = rows.fold<int>(
-        0, (w, row) => max(w, (row.isNotEmpty ? row[0].length : 0)));
+      0,
+      (w, row) => max(w, row.isNotEmpty ? visibleLength(row[0]) : 0),
+    );
     final col2Width = rows.fold<int>(
-        0, (w, row) => max(w, row.length > 1 ? row[1].length : 0));
+      0,
+      (w, row) => max(w, row.length > 1 ? visibleLength(row[1]) : 0),
+    );
 
     buffer.writeln('${theme.dim}Controls:${theme.reset}');
     for (final row in rows) {
-      final key = row.isNotEmpty ? row[0].padRight(col1Width + 2) : '';
-      final action = row.length > 1 ? row[1].padRight(col2Width + 2) : '';
+      final key = row.isNotEmpty ? padRight(row[0], col1Width + 2) : '';
+      final action = row.length > 1 ? padRight(row[1], col2Width + 2) : '';
       buffer.writeln('  $color$key${theme.reset}$action');
     }
     return buffer.toString().trimRight();
@@ -59,7 +63,8 @@ class HintFormat {
     buffer.writeln('${theme.dim}────────────────────${theme.reset}');
     for (final entry in groups.entries) {
       buffer.writeln(
-          ' ${theme.bold}${entry.key}:${theme.reset}  $color${entry.value.join('   ')}${theme.reset}');
+        ' ${theme.bold}${entry.key}:${theme.reset}  $color${entry.value.join('   ')}${theme.reset}',
+      );
     }
     return buffer.toString();
   }
@@ -106,8 +111,10 @@ extension HintKeybindingsExtensions on KeyBindings {
         final entries = toHintEntries();
         if (bulletsPerLine != null && bulletsPerLine > 0) {
           for (var i = 0; i < entries.length; i += bulletsPerLine) {
-            final chunk =
-                entries.sublist(i, min(i + bulletsPerLine, entries.length));
+            final chunk = entries.sublist(
+              i,
+              min(i + bulletsPerLine, entries.length),
+            );
             final segments =
                 chunk.map((e) => HintFormat.hint(e[0], e[1], theme)).toList();
             out.writeln(HintFormat.bullets(segments, theme));

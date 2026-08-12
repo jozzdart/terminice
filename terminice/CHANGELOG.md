@@ -1,3 +1,10 @@
+## Unreleased
+
+#### Fixed
+
+- Corrected selector, configuration editor, help, and prompt layouts, including safe legacy three-dot truncation.
+- Release impact: patch-level (`0.0.x`); no version selected.
+
 ## 1.3.0
 
 #### Changed

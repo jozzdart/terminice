@@ -60,16 +60,11 @@ extension ChoiceSelectorExtensions on Terminice {
           final check = multiSelect ? (checked ? '[x] ' : '[ ] ') : '';
           final titleMax = boxWidth - (multiSelect ? 4 : 0);
 
-          String pad(String text, int width) {
-            if (text.length > width) {
-              if (width <= 1) return text.substring(0, 1);
-              return '${text.substring(0, width - 1)}…';
-            }
-            return text.padRight(width);
-          }
-
-          final title = pad(check + item.label, titleMax);
-          final subtitle = pad((item.subtitle ?? ''), boxWidth).trimRight();
+          final title = truncatePad(check + item.label, titleMax);
+          final subtitle = truncatePad(
+            item.subtitle ?? '',
+            boxWidth,
+          ).trimRight();
 
           String paint(String s) {
             if (highlighted) {
@@ -81,17 +76,22 @@ extension ChoiceSelectorExtensions on Terminice {
             return s;
           }
 
-          final top = paint(title.padRight(boxWidth));
-          final bottom =
-              paint('${theme.dim}${subtitle.padRight(boxWidth)}${theme.reset}');
+          final top = paint(padRight(title, boxWidth));
+          final bottom = paint(
+            '${theme.dim}${padRight(subtitle, boxWidth)}${theme.reset}',
+          );
           return CardRender(top: top, bottom: bottom);
         }
 
         // Compute card layout
-        final longestLabel =
-            items.fold<int>(0, (m, e) => max(m, e.label.length));
-        final longestSubtitle =
-            items.fold<int>(0, (m, e) => max(m, (e.subtitle ?? '').length));
+        final longestLabel = items.fold<int>(
+          0,
+          (m, e) => max(m, visibleLength(e.label)),
+        );
+        final longestSubtitle = items.fold<int>(
+          0,
+          (m, e) => max(m, visibleLength(e.subtitle ?? '')),
+        );
         final natural = max(longestLabel + 4, min(36, longestSubtitle + 4));
         final computedCardWidth = (cardWidth ?? natural).clamp(16, 44);
 
@@ -101,8 +101,10 @@ extension ChoiceSelectorExtensions on Terminice {
           const leftPrefix = 2;
           const sepWidth = 1;
           final unit = computedCardWidth + sepWidth;
-          final colsByWidth =
-              max(1, ((termWidth - leftPrefix) + sepWidth) ~/ unit);
+          final colsByWidth = max(
+            1,
+            ((termWidth - leftPrefix) + sepWidth) ~/ unit,
+          );
           final desired = max(2, min(items.length, sqrt(items.length).ceil()));
           final cap =
               (maxColumns != null && maxColumns > 0) ? maxColumns : desired;
@@ -137,8 +139,8 @@ extension ChoiceSelectorExtensions on Terminice {
               for (int c = 0; c < cols; c++) {
                 final idx = r * cols + c;
                 if (idx >= items.length) {
-                  line1.write(''.padRight(computedCardWidth));
-                  line2.write(''.padRight(computedCardWidth));
+                  line1.write(padRight('', computedCardWidth));
+                  line2.write(padRight('', computedCardWidth));
                 } else {
                   final card = renderCard(
                     items[idx],

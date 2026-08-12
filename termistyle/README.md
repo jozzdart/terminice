@@ -216,11 +216,11 @@ print(s.spinner(tick, frames: SpinnerFrames.arcs));
 | Export                                     | Description                                    |
 | ------------------------------------------ | ---------------------------------------------- |
 | `stripAnsi`                                | Remove ANSI escape codes from a string         |
-| `visibleLength`                            | Printable character count after stripping ANSI |
+| `visibleLength`                            | Printable terminal-cell width (ANSI-aware)      |
 | `padVisibleRight` / `Left` / `Center`      | ANSI-aware padding to a target width           |
-| `padRight` / `padLeft`                     | Plain-text padding                             |
-| `truncate`                                 | Truncate with ellipsis                         |
-| `truncatePad`                              | Truncate and pad to fixed width                |
+| `padRight` / `padLeft`                     | Terminal-cell-aware padding                    |
+| `truncate`                                 | Grapheme-safe cell-width truncation            |
+| `truncatePad`                              | Truncate and pad to fixed cell width           |
 | `clampInt` / `maxOf` / `minOf`             | Integer helpers                                |
 | `columnWidth` / `columnWidthVisible`       | Column sizing from content                     |
 | `spinnerFramesList`                        | Frame data for a `SpinnerFrames` value         |

@@ -46,17 +46,22 @@ extension TagSelectorExtensions on Terminice {
       rich: () {
         final theme = defaultTheme;
         String renderChip(
-            String tag, bool isFocused, bool isSelected, int colWidth) {
+          String tag,
+          bool isFocused,
+          bool isSelected,
+          int colWidth,
+        ) {
           final raw = '[ $tag ]';
-          final padding = (colWidth - raw.length).clamp(0, 1000);
-          final padded = raw + ' ' * padding;
+          final padded = truncatePad(raw, colWidth);
 
           if (isFocused) {
             return '${theme.inverse}${theme.selection}$padded${theme.reset}';
           }
           if (isSelected) {
-            return padded.replaceFirst(
-                tag, '${theme.accent}$tag${theme.reset}');
+            return truncatePad(
+              '[ ${theme.accent}$tag${theme.reset} ]',
+              colWidth,
+            );
           }
           return '${theme.dim}$padded${theme.reset}';
         }
@@ -69,8 +74,10 @@ extension TagSelectorExtensions on Terminice {
               ? maxContentWidth.clamp(minContentWidth, termCols - 4)
               : (termCols - 4).clamp(minContentWidth, termCols);
 
-          final longest =
-              tags.fold<int>(0, (m, t) => t.length > m ? t.length : m);
+          final longest = tags.fold<int>(0, (m, tag) {
+            final width = visibleLength(tag);
+            return width > m ? width : m;
+          });
           final naturalChip = longest + 4; // [ tag ]
           final colWidth = naturalChip.clamp(minColumnWidth, maxColumnWidth);
 
@@ -80,7 +87,10 @@ extension TagSelectorExtensions on Terminice {
               : (available + 1) ~/ (colWidth + 1).clamp(1, 99);
 
           return _TagSelectorLayout(
-              contentWidth: targetContent, colWidth: colWidth, cols: cols);
+            contentWidth: targetContent,
+            colWidth: colWidth,
+            cols: cols,
+          );
         }
 
         final initialLayout = computeLayout();
@@ -110,11 +120,13 @@ extension TagSelectorExtensions on Terminice {
 
             // Only show inline hints if the theme's hint style is inline
             if (theme.features.hintStyle == HintStyle.inline) {
-              ctx.gutterLine('${HintFormat.comma([
-                    'Space to toggle',
-                    'Enter to confirm',
-                    'Esc to cancel'
-                  ], theme)}  $summary');
+              ctx.gutterLine(
+                '${HintFormat.comma([
+                      'Space to toggle',
+                      'Enter to confirm',
+                      'Esc to cancel'
+                    ], theme)}  $summary',
+              );
             } else {
               ctx.gutterLine(summary);
             }
@@ -127,12 +139,14 @@ extension TagSelectorExtensions on Terminice {
               for (var c = 0; c < l.cols; c++) {
                 final idx = r * l.cols + c;
                 if (idx >= tags.length) break;
-                pieces.add(renderChip(
-                  tags[idx],
-                  gridPrompt.grid.isFocused(idx),
-                  gridPrompt.selection.isSelected(idx),
-                  l.colWidth,
-                ));
+                pieces.add(
+                  renderChip(
+                    tags[idx],
+                    gridPrompt.grid.isFocused(idx),
+                    gridPrompt.selection.isSelected(idx),
+                    l.colWidth,
+                  ),
+                );
               }
               ctx.gutterLine(pieces.join(' '));
             }

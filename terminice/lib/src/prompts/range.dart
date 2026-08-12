@@ -74,8 +74,10 @@ extension RangePromptExtensions on Terminice {
           bool editingStart,
         ) {
           // Effective width (responsive to terminal columns)
-          final effWidth =
-              math.max(10, math.min(width, TerminalInfo.columns - 8));
+          final effWidth = math.max(
+            10,
+            math.min(width, TerminalInfo.columns - 8),
+          );
 
           int valueToIndex(num v, int w) {
             final ratio = (v - min) / (max - min);
@@ -97,7 +99,7 @@ extension RangePromptExtensions on Terminice {
               unit;
 
           // Layout
-          final displayLen = sRaw.length + 1 + eRaw.length;
+          final displayLen = visibleLength(sRaw) + 1 + visibleLength(eRaw);
           final centerIdx = ((startIdx + endIdx) / 2).round();
           final leftPad = math.max(0, centerIdx - (displayLen ~/ 2));
 
@@ -110,7 +112,8 @@ extension RangePromptExtensions on Terminice {
 
           // Caret pointer
           ctx.line(
-              '$gutter${' ' * (1 + activeIdx)}${theme.accent}^${theme.reset}');
+            '$gutter${' ' * (1 + activeIdx)}${theme.accent}^${theme.reset}',
+          );
           ctx.line('$gutter${' ' * (1 + leftPad)}$rangeTxt');
 
           // Bar with handles
@@ -150,12 +153,7 @@ extension RangePromptExtensions on Terminice {
 
         return rangePrompt.run(
           render: (ctx, start, end, editingStart) {
-            renderBar(
-              ctx,
-              start,
-              end,
-              editingStart,
-            );
+            renderBar(ctx, start, end, editingStart);
           },
         );
       },
@@ -177,10 +175,7 @@ extension RangePromptExtensions on Terminice {
             end: normalizedInitial.end,
           );
         }
-        return RangeResult(
-          start: result.start,
-          end: result.end,
-        );
+        return RangeResult(start: result.start, end: result.end);
       },
       unattended: () => RangeResult(
         start: normalizedInitial.start,

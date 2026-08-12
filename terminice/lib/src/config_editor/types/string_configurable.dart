@@ -1,4 +1,5 @@
 import 'package:terminice/terminice.dart';
+import 'package:terminice_core/terminice_core.dart' show truncate;
 
 /// A configurable string field using a text or multiline prompt.
 ///
@@ -56,11 +57,10 @@ class StringConfigurable extends Configurable<String> {
     if (multiline && value.contains('\n')) {
       final lineCount = value.split('\n').length;
       final firstLine = value.split('\n').first;
-      final preview =
-          firstLine.length > 30 ? '${firstLine.substring(0, 30)}…' : firstLine;
+      final preview = truncate(firstLine, 31);
       return '$preview (+${lineCount - 1} lines)';
     }
-    return value.length > 40 ? '${value.substring(0, 40)}…' : value;
+    return truncate(value, 41);
   }
 
   @override

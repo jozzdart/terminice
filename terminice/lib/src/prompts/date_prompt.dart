@@ -158,7 +158,7 @@ extension DatePromptExtensions on Terminice {
 
         // Fields
         final fields = [
-          fmt('Day', selected.day.toString().padLeft(2), fieldIndex == 0),
+          fmt('Day', padLeft(selected.day.toString(), 2), fieldIndex == 0),
           fmt('Month', monthName, fieldIndex == 1),
           fmt('Year', selected.year.toString(), fieldIndex == 2),
         ];
@@ -168,7 +168,7 @@ extension DatePromptExtensions on Terminice {
 
         // Preview
         final formatted =
-            DateFormat('EEE, d MMM yyyy').format(selected).padLeft(10);
+            padLeft(DateFormat('EEE, d MMM yyyy').format(selected), 10);
         ctx.gutterLine(
             '${theme.gray}Preview:${theme.reset} ${theme.accent}$formatted${theme.reset}');
       });

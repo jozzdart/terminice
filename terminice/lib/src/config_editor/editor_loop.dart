@@ -110,7 +110,8 @@ bool runRichEditorLoop({
   int maxLabelLen() {
     var w = 0;
     for (final f in fields) {
-      if (f.label.length > w) w = f.label.length;
+      final width = visibleLength(f.label);
+      if (width > w) w = width;
     }
     return w.clamp(8, 40);
   }
@@ -123,16 +124,11 @@ bool runRichEditorLoop({
     final theme = currentTheme();
     final frame = FrameView(title: title, theme: theme, bindings: bindings);
     frame.render(out, (ctx) {
-      ctx.searchLine(
-        searchBuffer.textWithCursor(),
-        enabled: searchActive,
-      );
+      ctx.searchLine(searchBuffer.textWithCursor(), enabled: searchActive);
       ctx.writeConnector();
 
       final itemCount = filteredIndices.length + 1;
-      final window = nav.visibleWindow(
-        List.generate(itemCount, (i) => i),
-      );
+      final window = nav.visibleWindow(List.generate(itemCount, (i) => i));
 
       final labelWidth = maxLabelLen();
 
@@ -317,8 +313,10 @@ void renderEditorAction(
   final styledLabel = isFocused
       ? '${theme.bold}${theme.accent}$text${theme.reset}'
       : '${theme.accent}$text${theme.reset}';
-  ctx.highlightedLine('$arrow $styledIcon $styledLabel',
-      highlighted: isFocused);
+  ctx.highlightedLine(
+    '$arrow $styledIcon $styledLabel',
+    highlighted: isFocused,
+  );
 }
 
 /// Renders a single configurable field as a list row.
@@ -338,11 +336,7 @@ void renderFieldItem(
 
   final icon = '${theme.accent}${field.typeIcon}${theme.reset}';
 
-  var labelStr = field.label;
-  if (labelStr.length > labelWidth) {
-    labelStr = '${labelStr.substring(0, labelWidth - 1)}…';
-  }
-  final paddedLabel = labelStr.padRight(labelWidth);
+  final paddedLabel = truncatePad(field.label, labelWidth);
 
   final String displayLabel;
   if (isGroup) {
@@ -374,12 +368,7 @@ void renderFieldItem(
 
   if (isFocused && field.description != null && field.description!.isNotEmpty) {
     final maxDescLen = math.max(20, TerminalInfo.columns - 10);
-    var desc = field.description!;
-    if (desc.length > maxDescLen) {
-      desc = '${desc.substring(0, maxDescLen - 1)}…';
-    }
-    ctx.gutterLine(
-      '    ${theme.dim}$desc${theme.reset}',
-    );
+    final desc = truncate(field.description!, maxDescLen);
+    ctx.gutterLine('    ${theme.dim}$desc${theme.reset}');
   }
 }

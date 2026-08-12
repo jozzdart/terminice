@@ -1,3 +1,8 @@
+## Unreleased
+
+- **Fixed**: Corrected grid, chip, card, form, and hint layout for wide, combining, emoji, and styled text.
+- **Release impact**: Patch-level (`0.0.x`); no version selected.
+
 ## 1.2.0
 
 - **New**: Added `TerminalEnvironment` so terminal implementations can expose terminal-type capabilities; `DartTerminal` and `MockTerminal` now support it.

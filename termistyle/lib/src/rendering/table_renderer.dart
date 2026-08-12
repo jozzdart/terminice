@@ -350,12 +350,7 @@ class TableRenderer {
     final width = _widths[columnIndex];
     final align = columns[columnIndex].align;
 
-    // Truncate if needed
-    final visible = text.stripAnsi(content);
-    String displayContent = content;
-    if (visible.length > width) {
-      displayContent = '${visible.substring(0, max(0, width - 1))}…';
-    }
+    final displayContent = text.truncate(content, width);
 
     switch (align) {
       case ColumnAlign.left:
@@ -373,12 +368,9 @@ class TableRenderer {
     final width = _widths[columnIndex];
     final features = theme.features;
 
-    // Truncate visible content
-    final visible = text.stripAnsi(content);
-    String displayText = visible;
-    if (visible.length > width - 1) {
-      displayText = '${visible.substring(0, max(0, width - 2))}…';
-    }
+    // Reserve one cell for the editing cursor. Keep the same allowance when
+    // merely selected so toggling editing does not reflow the cell contents.
+    final displayText = text.truncate(content, max(0, width - 1));
 
     if (isEditing) {
       // Show cursor indicator

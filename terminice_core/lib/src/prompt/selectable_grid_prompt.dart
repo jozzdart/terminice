@@ -167,11 +167,7 @@ class SelectableGridPrompt<T> {
       _bindings = _bindings + extraBindings;
     }
 
-    final frame = FrameView(
-      title: title,
-      theme: theme,
-      bindings: _bindings,
-    );
+    final frame = FrameView(title: title, theme: theme, bindings: _bindings);
 
     final colSep = showCellSeparators ? '${theme.gray}│${theme.reset}' : '';
 
@@ -193,7 +189,7 @@ class SelectableGridPrompt<T> {
 
             if (idx >= items.length) {
               // Empty slot for alignment
-              buffer.write(''.padRight(_computedCellWidth));
+              buffer.write(padRight('', _computedCellWidth));
             } else {
               final isFocused = _grid.isFocused(idx);
               final isSelected = _selection.isSelected(idx);
@@ -212,11 +208,9 @@ class SelectableGridPrompt<T> {
                 // Default rendering
                 final label =
                     itemLabel?.call(items[idx]) ?? items[idx].toString();
-                buffer.write(_defaultCellRenderer(
-                  label,
-                  isFocused,
-                  isSelected,
-                ));
+                buffer.write(
+                  _defaultCellRenderer(label, isFocused, isSelected),
+                );
               }
             }
 
@@ -240,19 +234,13 @@ class SelectableGridPrompt<T> {
     }
 
     final runner = PromptRunner(hideCursor: true);
-    final result = runner.runWithBindings(
-      render: render,
-      bindings: _bindings,
-    );
+    final result = runner.runWithBindings(render: render, bindings: _bindings);
 
     if (_cancelled || result == PromptResult.cancelled) {
       return [];
     }
 
-    return _selection.getSelectedMany(
-      items,
-      fallbackIndex: _grid.focusedIndex,
-    );
+    return _selection.getSelectedMany(items, fallbackIndex: _grid.focusedIndex);
   }
 
   /// Runs with custom full-render control (for complex grids like ChoiceMap).
@@ -270,11 +258,7 @@ class SelectableGridPrompt<T> {
       _bindings = _bindings + extraBindings;
     }
 
-    final frame = FrameView(
-      title: title,
-      theme: theme,
-      bindings: _bindings,
-    );
+    final frame = FrameView(title: title, theme: theme, bindings: _bindings);
 
     void render(RenderOutput out) {
       if (columns <= 0) {
@@ -286,19 +270,13 @@ class SelectableGridPrompt<T> {
     }
 
     final runner = PromptRunner(hideCursor: true);
-    final result = runner.runWithBindings(
-      render: render,
-      bindings: _bindings,
-    );
+    final result = runner.runWithBindings(render: render, bindings: _bindings);
 
     if (_cancelled || result == PromptResult.cancelled) {
       return [];
     }
 
-    return _selection.getSelectedMany(
-      items,
-      fallbackIndex: _grid.focusedIndex,
-    );
+    return _selection.getSelectedMany(items, fallbackIndex: _grid.focusedIndex);
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -310,15 +288,14 @@ class SelectableGridPrompt<T> {
 
     _computeLayout();
 
-    _grid = GridNavigator(
-      itemCount: items.length,
-      columns: _computedColumns,
-    );
+    _grid = GridNavigator(itemCount: items.length, columns: _computedColumns);
 
     _selection = SelectionController(
       multiSelect: multiSelect,
-      initialSelection:
-          SelectionController.validatedIndices(initialSelection, items.length),
+      initialSelection: SelectionController.validatedIndices(
+        initialSelection,
+        items.length,
+      ),
     );
 
     _bindings = _createDefaultBindings();
@@ -326,7 +303,11 @@ class SelectableGridPrompt<T> {
 
   void _computeLayout() {
     _computedCellWidth = cellWidth ??
-        (items.fold<int>(0, (m, item) => max(m, item.toString().length)) + 4)
+        (items.fold<int>(
+                  0,
+                  (m, item) => max(m, visibleLength(item.toString())),
+                ) +
+                4)
             .clamp(10, 40);
 
     if (columns > 0) {
@@ -364,9 +345,8 @@ class SelectableGridPrompt<T> {
   String _defaultCellRenderer(String label, bool isFocused, bool isSelected) {
     final check = multiSelect ? (isSelected ? '[x] ' : '[ ] ') : '';
     final maxText = _computedCellWidth - (multiSelect ? 4 : 2);
-    final visible =
-        label.length > maxText ? '${label.substring(0, maxText - 1)}…' : label;
-    final padded = (check + visible).padRight(_computedCellWidth);
+    final visible = truncate(label, maxText);
+    final padded = padRight(check + visible, _computedCellWidth);
 
     if (isFocused) {
       if (theme.useInverseHighlight) {
@@ -456,15 +436,16 @@ extension SelectableGridPromptTags<T> on SelectableGridPrompt<T> {
     String Function(T)? labelBuilder,
   }) {
     final label = labelBuilder?.call(item) ?? item.toString();
-    final raw = '[ $label ]';
-    final padding = (computedCellWidth - raw.length).clamp(0, 1000);
-    final padded = raw + ' ' * padding;
+    final raw = isSelected && !isFocused
+        ? '[ ${theme.accent}$label${theme.reset} ]'
+        : '[ $label ]';
+    final padded = truncatePad(raw, computedCellWidth);
 
     if (isFocused) {
       return '${theme.inverse}${theme.selection}$padded${theme.reset}';
     }
     if (isSelected) {
-      return padded.replaceFirst(label, '${theme.accent}$label${theme.reset}');
+      return padded;
     }
     return '${theme.dim}$padded${theme.reset}';
   }
@@ -490,16 +471,8 @@ extension SelectableGridPromptCards<T> on SelectableGridPrompt<T> {
     final check = multiSelect ? (isSelected ? '[x] ' : '[ ] ') : '';
     final titleMax = boxWidth - (multiSelect ? 4 : 0);
 
-    String pad(String text, int width) {
-      if (text.length > width) {
-        if (width <= 1) return text.substring(0, 1);
-        return '${text.substring(0, width - 1)}…';
-      }
-      return text.padRight(width);
-    }
-
-    final titleStr = pad(check + title, titleMax);
-    final subtitleStr = pad(subtitle ?? '', boxWidth).trimRight();
+    final titleStr = truncatePad(check + title, titleMax);
+    final subtitleStr = truncate(subtitle ?? '', boxWidth);
 
     String paint(String s) {
       if (isFocused) {
@@ -511,9 +484,10 @@ extension SelectableGridPromptCards<T> on SelectableGridPrompt<T> {
       return s;
     }
 
-    final top = paint(titleStr.padRight(boxWidth));
-    final bottom =
-        paint('${theme.dim}${subtitleStr.padRight(boxWidth)}${theme.reset}');
+    final top = paint(padRight(titleStr, boxWidth));
+    final bottom = paint(
+      '${theme.dim}${padRight(subtitleStr, boxWidth)}${theme.reset}',
+    );
     return CardRender(top: top, bottom: bottom);
   }
 }

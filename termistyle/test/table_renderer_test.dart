@@ -213,6 +213,15 @@ void main() {
       ]);
       expect(t.widths[0], equals(5)); // visible 'Alice' = 5 > 'Name' = 4
     });
+
+    test('uses terminal cells for international text and emoji', () {
+      final t = TableRenderer.fromHeaders(['A', 'B', 'C']);
+      t.computeWidths([
+        ['界界', 'e\u0301', '👩‍💻'],
+      ]);
+
+      expect(t.widths, equals([4, 1, 2]));
+    });
   });
 
   group('setWidths', () {
@@ -831,6 +840,33 @@ void main() {
       final stripped = _strip(t.rowLine(['Short']));
       expect(stripped, isNot(contains('…')));
       expect(stripped, contains('Short'));
+    });
+
+    test('truncates ANSI-styled wide text without losing styling', () {
+      final t = TableRenderer.fromHeaders(['A']);
+      t.setWidths([5]);
+
+      final line = t.rowLine(['\x1B[31m界界界\x1B[0m']);
+
+      expect(line, contains('\x1B[31m界界…\x1B[0m'));
+      expect(visibleLength(line), equals(7)); // gutter (2) + cell (5)
+    });
+
+    test('aligns grapheme clusters by terminal-cell width', () {
+      final t = TableRenderer(
+        columns: const [
+          ColumnConfig.left('A'),
+          ColumnConfig.center('B'),
+          ColumnConfig.right('C'),
+        ],
+        theme: PromptTheme.minimal,
+      );
+      t.setWidths([4, 4, 4]);
+
+      final row = t.rowLine(['界', 'e\u0301', '👩‍💻']);
+
+      expect(visibleLength(row), equals(t.contentWidth));
+      expect(stripAnsi(row), equals('界   │  e\u0301   │   👩‍💻'));
     });
   });
 

@@ -1,3 +1,8 @@
+## Unreleased
+
+- **Fixed**: Centralized terminal-cell measurement and padding, with grapheme-safe, ANSI/OSC-safe truncation and corrected frame and table layout.
+- **Release impact**: Patch-level (`0.0.x`); no version selected.
+
 ## 1.1.0
 
 - **New**: Added `TerminalCompatibility` for selecting terminal-safe style behavior.
