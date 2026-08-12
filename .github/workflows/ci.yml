@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: Verify on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Verify termistyle
+        working-directory: termistyle
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+
+      - name: Verify terminice_core
+        working-directory: terminice_core
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+
+      - name: Verify terminice
+        working-directory: terminice
+        run: |
+          dart pub get
+          dart analyze
+          dart test
