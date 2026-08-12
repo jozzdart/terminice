@@ -72,6 +72,8 @@ Use `legacy` for plain-text output. It uses `TerminalColors.none`, ASCII glyphs,
 
 `TerminalColors.none` and `TerminalColors.plain` are no-op palettes for disabling ANSI output directly. Every color and effect field is an empty string, including reset, bold, dim, and inverse; `plain` exposes the same values for call sites where "plain text" reads more clearly than "none".
 
+Use `colors.withoutColors()` when you want to remove only ANSI foreground and background colors. It preserves non-color SGR styling such as reset, bold, dim, underline, and inverse, including styles combined with a color in one sequence. In contrast, `TerminalColors.none` and `TerminalColors.plain` remove all ANSI colors and effects.
+
 ## Inline styling
 
 `InlineStyle` wraps a theme and provides shorthand methods that return styled strings without writing to stdout:
@@ -189,7 +191,7 @@ print(s.spinner(tick, frames: SpinnerFrames.arcs));
 | ----------------------- | ---------------------------------------------------------------------------- |
 | `PromptTheme`           | Composable theme bundle (colors + glyphs + features)                         |
 | `TerminalCompatibility` | Enum: `modern`, `basic`, `legacy`; adapts a theme for terminal capability    |
-| `TerminalColors`        | ANSI color palette with `copyWith`, visual presets, and no-op `none`/`plain` |
+| `TerminalColors`        | ANSI palette with `copyWith`, color stripping, presets, and no-op palettes   |
 | `TerminalGlyphs`        | Box-drawing symbols with `copyWith` and 9 presets                            |
 | `DisplayFeatures`       | Behavioral flags with `copyWith` and 6 presets                               |
 | `HintStyle`             | Enum: `bullets`, `grid`, `inline`, `none`                                    |

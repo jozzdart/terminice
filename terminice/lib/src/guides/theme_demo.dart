@@ -15,7 +15,7 @@ extension ThemeDemoExtensions on Terminice {
   /// - `Enter`: Accept and open the preview prompt.
   /// - `Esc`: Exit the demo without launching the prompt.
   void themeDemo() {
-    final themes = {
+    final sourceThemes = {
       'Dark': PromptTheme.dark,
       'Matrix': PromptTheme.matrix,
       'Fire': PromptTheme.fire,
@@ -26,16 +26,20 @@ extension ThemeDemoExtensions on Terminice {
       'Arcane': PromptTheme.arcane,
       'Phantom': PromptTheme.phantom,
     };
+    final themes = sourceThemes.map(
+      (name, theme) => MapEntry(name, configuration.applyTo(theme)),
+    );
     final themeNames = themes.keys.toList();
 
     runWithExecutionMode<void>(
-      rich: () => _richThemeDemo(themes, themeNames),
+      rich: () => _richThemeDemo(sourceThemes, themes, themeNames),
       line: () => _plainThemeDemo(themeNames),
       unattended: () => _plainThemeDemo(themeNames),
     );
   }
 
   void _richThemeDemo(
+    Map<String, PromptTheme> sourceThemes,
     Map<String, PromptTheme> themes,
     List<String> themeNames,
   ) {
@@ -47,31 +51,35 @@ extension ThemeDemoExtensions on Terminice {
     void renderThemePreview(RenderOutput out, String name, PromptTheme theme) {
       final glyphs = theme.glyphs;
 
-      final widgetFrame = FrameView(
-        title: 'Theme Preview',
-        theme: theme,
-      );
+      final widgetFrame = FrameView(title: 'Theme Preview', theme: theme);
 
       widgetFrame.render(out, (ctx) {
         ctx.labeledAccent('Theme', name);
         ctx.gutterLine('Arrow: ${theme.accent}${glyphs.arrow}${theme.reset}');
         ctx.gutterLine(
-            'Checkbox: ${theme.checkboxOn}${glyphs.checkboxOnSymbol}${theme.reset} / ${theme.checkboxOff}${glyphs.checkboxOffSymbol}${theme.reset}');
+          'Checkbox: ${theme.checkboxOn}${glyphs.checkboxOnSymbol}${theme.reset} / ${theme.checkboxOff}${glyphs.checkboxOffSymbol}${theme.reset}',
+        );
         ctx.gutterLine(
-            'Border: ${theme.selection}${glyphs.borderTop}${glyphs.borderConnector}${glyphs.borderBottom}${theme.reset}');
+          'Border: ${theme.selection}${glyphs.borderTop}${glyphs.borderConnector}${glyphs.borderBottom}${theme.reset}',
+        );
         ctx.gutterLine(
-            'Highlight: ${theme.highlight}Highlight text${theme.reset}');
+          'Highlight: ${theme.highlight}Highlight text${theme.reset}',
+        );
         ctx.gutterLine(
-            'Inverse: ${theme.inverse} Inverted line ${theme.reset}');
+          'Inverse: ${theme.inverse} Inverted line ${theme.reset}',
+        );
       });
 
       out.writeln(
-          '${theme.gray}${glyphs.borderBottom}${glyphs.borderHorizontal * 25}${theme.reset}');
-      out.writeln(HintFormat.bullets([
-        '↑↓ to browse',
-        'Enter to preview prompt',
-        'Esc to exit',
-      ], theme, dim: true));
+        '${theme.gray}${glyphs.borderBottom}${glyphs.borderHorizontal * 25}${theme.reset}',
+      );
+      out.writeln(
+        HintFormat.bullets(
+          ['↑↓ to browse', 'Enter to preview prompt', 'Esc to exit'],
+          theme,
+          dim: true,
+        ),
+      );
     }
 
     // Use KeyBindings for declarative key handling
@@ -85,10 +93,12 @@ extension ThemeDemoExtensions on Terminice {
             selected = themeNames[focus.focusedIndex];
           },
         ) +
-        KeyBindings.confirm(onConfirm: () {
-          showPromptPreview = true;
-          return KeyActionResult.confirmed;
-        }) +
+        KeyBindings.confirm(
+          onConfirm: () {
+            showPromptPreview = true;
+            return KeyActionResult.confirmed;
+          },
+        ) +
         KeyBindings.cancel();
 
     final runner = PromptRunner(hideCursor: true);
@@ -110,7 +120,7 @@ extension ThemeDemoExtensions on Terminice {
         'pear',
         'plum',
       ];
-      themed(themes[selected]!).searchSelector(
+      themed(sourceThemes[selected]!).searchSelector(
         prompt: 'Previewing theme: $selected',
         options: fruits,
         multiSelect: true,

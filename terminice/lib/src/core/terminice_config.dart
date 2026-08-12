@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:terminice_core/terminice_core.dart';
 
 /// The effective way a built-in Terminice component should execute.
@@ -10,6 +12,18 @@ enum TerminiceExecutionMode {
 
   /// Non-interactive execution that must not read from standard input.
   unattended,
+}
+
+/// Policy controlling color output from a high-level [Terminice] client.
+enum TerminiceColorMode {
+  /// Use colors unless the process has a non-empty `NO_COLOR` variable.
+  auto,
+
+  /// Use the configured colors regardless of `NO_COLOR`.
+  always,
+
+  /// Suppress foreground and background colors.
+  never,
 }
 
 /// Policy for choosing built-in rich, line-oriented, or unattended execution.
@@ -87,7 +101,7 @@ bool _isDumbTerminal(String? term) => term?.trim().toLowerCase() == 'dumb';
 /// Immutable configuration shared by a Terminice instance.
 ///
 /// The effective theme is resolved in this order:
-/// [baseTheme], then [featureOverride], then [compatibility].
+/// [baseTheme], then [featureOverride], [compatibility], and [colorMode].
 class TerminiceConfig {
   /// Unmodified theme chosen by the caller.
   final PromptTheme baseTheme;
@@ -101,24 +115,46 @@ class TerminiceConfig {
   /// Execution policy shared by built-in components.
   final TerminiceFallbackMode fallbackMode;
 
+  /// Policy controlling whether the effective theme uses colors.
+  final TerminiceColorMode colorMode;
+
   /// Creates an immutable Terminice configuration.
   const TerminiceConfig({
     this.baseTheme = PromptTheme.dark,
     this.featureOverride,
     this.compatibility = TerminalCompatibility.modern,
     this.fallbackMode = TerminiceFallbackMode.auto,
+    this.colorMode = TerminiceColorMode.auto,
   });
 
-  /// Theme produced by applying display and compatibility settings.
+  /// Theme produced by applying display, compatibility, and color settings.
   PromptTheme get effectiveTheme => applyTo(baseTheme);
 
-  /// Applies this configuration's display and compatibility settings to
-  /// [theme].
+  /// Applies this configuration's display, compatibility, and color settings
+  /// to [theme].
+  ///
   PromptTheme applyTo(PromptTheme theme) {
     final featuredTheme = featureOverride == null
         ? theme
         : theme.copyWith(features: featureOverride);
-    return compatibility.applyTo(featuredTheme);
+    final compatibleTheme = compatibility.applyTo(featuredTheme);
+    if (!_shouldSuppressColors(Platform.environment)) {
+      return compatibleTheme;
+    }
+    return compatibleTheme.copyWith(
+      colors: compatibleTheme.colors.withoutColors(),
+    );
+  }
+
+  bool _shouldSuppressColors(Map<String, String> environment) {
+    switch (colorMode) {
+      case TerminiceColorMode.auto:
+        return environment['NO_COLOR']?.isNotEmpty ?? false;
+      case TerminiceColorMode.always:
+        return false;
+      case TerminiceColorMode.never:
+        return true;
+    }
   }
 
   /// Returns a copy with selected settings replaced.
@@ -128,6 +164,7 @@ class TerminiceConfig {
     bool clearFeatureOverride = false,
     TerminalCompatibility? compatibility,
     TerminiceFallbackMode? fallbackMode,
+    TerminiceColorMode? colorMode,
   }) {
     return TerminiceConfig(
       baseTheme: baseTheme ?? this.baseTheme,
@@ -135,6 +172,7 @@ class TerminiceConfig {
           clearFeatureOverride ? null : featureOverride ?? this.featureOverride,
       compatibility: compatibility ?? this.compatibility,
       fallbackMode: fallbackMode ?? this.fallbackMode,
+      colorMode: colorMode ?? this.colorMode,
     );
   }
 

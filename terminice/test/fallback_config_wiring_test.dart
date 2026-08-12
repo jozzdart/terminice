@@ -174,7 +174,12 @@ void main() {
     mock.mockInput.queueLines(['2', 's']);
 
     final capture = _CapturingConfigurable();
-    final configured = terminice.compact.legacy.fallback.withTerminal(mock);
+    final configured = terminice
+        .withColorMode(TerminiceColorMode.always)
+        .compact
+        .legacy
+        .fallback
+        .withTerminal(mock);
 
     final result = configured.configEditor(
       'Settings',

@@ -94,6 +94,9 @@ class Terminice {
     return fallbackMode.executionModeFor(terminal ?? TerminalContext.current);
   }
 
+  /// Color policy for this instance.
+  TerminiceColorMode get colorMode => configuration.colorMode;
+
   /// Whether built-ins avoid rich terminal interaction for this instance's
   /// current terminal.
   bool get shouldUseFallback {
@@ -149,8 +152,8 @@ class Terminice {
 
   /// Returns a new client using [theme] as the base theme.
   ///
-  /// Display feature overrides, compatibility, fallback mode, and terminal are
-  /// preserved.
+  /// Display feature overrides, compatibility, color mode, fallback mode, and
+  /// terminal are preserved.
   Terminice withTheme(PromptTheme theme) {
     return withConfig(configuration.copyWith(baseTheme: theme));
   }
@@ -173,6 +176,11 @@ class Terminice {
   /// Returns a new client with [compatibility] applied to its effective theme.
   Terminice withCompatibility(TerminalCompatibility compatibility) {
     return withConfig(configuration.copyWith(compatibility: compatibility));
+  }
+
+  /// Returns a new client using [colorMode].
+  Terminice withColorMode(TerminiceColorMode colorMode) {
+    return withConfig(configuration.copyWith(colorMode: colorMode));
   }
 
   /// Rich terminal compatibility with no theme transform.

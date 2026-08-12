@@ -1,7 +1,24 @@
+import 'dart:io';
+
 import 'package:test/test.dart';
 import 'package:terminice/terminice.dart';
 
 import 'mock_terminal.dart';
+
+final _colorfulTerminice = terminice.withColorMode(TerminiceColorMode.always);
+
+Terminice _colorful({
+  PromptTheme theme = PromptTheme.dark,
+  Terminal? terminal,
+}) {
+  return Terminice(
+    terminal: terminal,
+    config: TerminiceConfig(
+      baseTheme: theme,
+      colorMode: TerminiceColorMode.always,
+    ),
+  );
+}
 
 void main() {
   group('Terminice API', () {
@@ -17,13 +34,13 @@ void main() {
 
     group('Constructor', () {
       test('creates with default theme', () {
-        final t = Terminice();
+        final t = _colorful();
         expect(t.defaultTheme, equals(PromptTheme.dark));
         expect(t.baseTheme, equals(PromptTheme.dark));
       });
 
       test('creates with custom theme', () {
-        final t = Terminice(defaultTheme: PromptTheme.fire);
+        final t = _colorful(theme: PromptTheme.fire);
         expect(t.defaultTheme, equals(PromptTheme.fire));
         expect(t.baseTheme, equals(PromptTheme.fire));
       });
@@ -36,10 +53,7 @@ void main() {
           fallbackMode: TerminiceFallbackMode.auto,
         );
 
-        final t = Terminice(
-          defaultTheme: PromptTheme.ocean,
-          config: config,
-        );
+        final t = Terminice(defaultTheme: PromptTheme.ocean, config: config);
 
         expect(t.configuration, same(config));
         expect(t.baseTheme, equals(PromptTheme.fire));
@@ -78,7 +92,7 @@ void main() {
 
       test('preserves theme', () {
         final mock = MockTerminal();
-        final original = Terminice(defaultTheme: PromptTheme.neon);
+        final original = _colorful(theme: PromptTheme.neon);
         final withTerm = original.withTerminal(mock);
 
         expect(withTerm.defaultTheme, equals(PromptTheme.neon));
@@ -117,7 +131,7 @@ void main() {
 
     group('themed', () {
       test('returns new instance with theme', () {
-        final original = Terminice();
+        final original = _colorful();
         final themed = original.themed(PromptTheme.matrix);
 
         expect(themed.defaultTheme, equals(PromptTheme.matrix));
@@ -134,7 +148,7 @@ void main() {
 
       test('themed and withTerminal can be chained', () {
         final mock = MockTerminal();
-        final result = terminice.withTerminal(mock).fire;
+        final result = _colorfulTerminice.withTerminal(mock).fire;
 
         expect(result.terminal, same(mock));
         expect(result.defaultTheme, equals(PromptTheme.fire));
@@ -142,7 +156,11 @@ void main() {
 
       test('preserves compatibility, fallback mode, and display override', () {
         final mock = MockTerminal();
-        final original = Terminice(terminal: mock).compact.legacy.autoFallback;
+        final original = Terminice(terminal: mock)
+            .withColorMode(TerminiceColorMode.always)
+            .compact
+            .legacy
+            .autoFallback;
         final result = original.themed(PromptTheme.ocean);
 
         expect(result.terminal, same(mock));
@@ -164,7 +182,43 @@ void main() {
         expect(config.featureOverride, isNull);
         expect(config.compatibility, equals(TerminalCompatibility.modern));
         expect(config.fallbackMode, equals(TerminiceFallbackMode.auto));
-        expect(config.effectiveTheme, equals(PromptTheme.dark));
+        expect(config.colorMode, equals(TerminiceColorMode.auto));
+      });
+
+      test('auto only suppresses color for a non-empty NO_COLOR value',
+          () async {
+        expect(await _probeNoColor(null), equals('color'));
+        expect(await _probeNoColor(''), equals('color'));
+        expect(await _probeNoColor('0'), equals('plain'));
+      });
+
+      test('always ignores NO_COLOR and never suppresses without it', () {
+        const always = TerminiceConfig(
+          baseTheme: PromptTheme.fire,
+          colorMode: TerminiceColorMode.always,
+        );
+        const never = TerminiceConfig(
+          baseTheme: PromptTheme.fire,
+          colorMode: TerminiceColorMode.never,
+        );
+
+        expect(always.effectiveTheme.colors, equals(TerminalColors.fire));
+        expect(never.effectiveTheme.colors.accent, isEmpty);
+      });
+
+      test('legacy and explicitly colorless themes remain colorless', () {
+        const forcedLegacy = TerminiceConfig(
+          baseTheme: PromptTheme.fire,
+          compatibility: TerminalCompatibility.legacy,
+          colorMode: TerminiceColorMode.always,
+        );
+        const forcedPlain = TerminiceConfig(
+          baseTheme: PromptTheme(colors: TerminalColors.none),
+          colorMode: TerminiceColorMode.always,
+        );
+
+        expect(forcedLegacy.effectiveTheme.colors, equals(TerminalColors.none));
+        expect(forcedPlain.effectiveTheme.colors, equals(TerminalColors.none));
       });
 
       test('effective theme applies feature override before compatibility', () {
@@ -174,7 +228,9 @@ void main() {
           compatibility: TerminalCompatibility.basic,
         );
 
-        final theme = config.effectiveTheme;
+        final theme = config
+            .copyWith(colorMode: TerminiceColorMode.always)
+            .effectiveTheme;
 
         expect(theme.colors, equals(TerminalColors.ocean));
         expect(theme.glyphs, equals(TerminalGlyphs.ascii));
@@ -190,6 +246,7 @@ void main() {
           baseTheme: PromptTheme.fire,
           featureOverride: DisplayFeatures.verbose,
           compatibility: TerminalCompatibility.legacy,
+          colorMode: TerminiceColorMode.always,
         );
 
         final theme = config.effectiveTheme;
@@ -213,7 +270,20 @@ void main() {
 
         expect(cleared.baseTheme, equals(PromptTheme.fire));
         expect(cleared.featureOverride, isNull);
-        expect(cleared.effectiveTheme, equals(PromptTheme.fire));
+        expect(
+          cleared.copyWith(colorMode: TerminiceColorMode.always).effectiveTheme,
+          equals(PromptTheme.fire),
+        );
+      });
+
+      test('copyWith preserves and replaces color mode', () {
+        const config = TerminiceConfig(colorMode: TerminiceColorMode.never);
+
+        expect(config.copyWith().colorMode, equals(TerminiceColorMode.never));
+        expect(
+          config.copyWith(colorMode: TerminiceColorMode.always).colorMode,
+          equals(TerminiceColorMode.always),
+        );
       });
     });
 
@@ -230,10 +300,7 @@ void main() {
       test('fallback always requests fallback', () {
         final mock = MockTerminal();
 
-        expect(
-          TerminiceFallbackMode.fallback.shouldUseFallback(mock),
-          isTrue,
-        );
+        expect(TerminiceFallbackMode.fallback.shouldUseFallback(mock), isTrue);
       });
 
       test('auto requests fallback when input is not a terminal', () {
@@ -317,40 +384,57 @@ void main() {
 
     group('Theme presets', () {
       test('dark preset', () {
-        expect(terminice.dark.defaultTheme, equals(PromptTheme.dark));
+        expect(_colorfulTerminice.dark.defaultTheme, equals(PromptTheme.dark));
       });
 
       test('matrix preset', () {
-        expect(terminice.matrix.defaultTheme, equals(PromptTheme.matrix));
+        expect(
+          _colorfulTerminice.matrix.defaultTheme,
+          equals(PromptTheme.matrix),
+        );
       });
 
       test('fire preset', () {
-        expect(terminice.fire.defaultTheme, equals(PromptTheme.fire));
+        expect(_colorfulTerminice.fire.defaultTheme, equals(PromptTheme.fire));
       });
 
       test('pastel preset', () {
-        expect(terminice.pastel.defaultTheme, equals(PromptTheme.pastel));
+        expect(
+          _colorfulTerminice.pastel.defaultTheme,
+          equals(PromptTheme.pastel),
+        );
       });
 
       test('ocean preset', () {
-        expect(terminice.ocean.defaultTheme, equals(PromptTheme.ocean));
+        expect(
+          _colorfulTerminice.ocean.defaultTheme,
+          equals(PromptTheme.ocean),
+        );
       });
 
       test('monochrome preset', () {
         expect(
-            terminice.monochrome.defaultTheme, equals(PromptTheme.monochrome));
+          _colorfulTerminice.monochrome.defaultTheme,
+          equals(PromptTheme.monochrome),
+        );
       });
 
       test('neon preset', () {
-        expect(terminice.neon.defaultTheme, equals(PromptTheme.neon));
+        expect(_colorfulTerminice.neon.defaultTheme, equals(PromptTheme.neon));
       });
 
       test('arcane preset', () {
-        expect(terminice.arcane.defaultTheme, equals(PromptTheme.arcane));
+        expect(
+          _colorfulTerminice.arcane.defaultTheme,
+          equals(PromptTheme.arcane),
+        );
       });
 
       test('phantom preset', () {
-        expect(terminice.phantom.defaultTheme, equals(PromptTheme.phantom));
+        expect(
+          _colorfulTerminice.phantom.defaultTheme,
+          equals(PromptTheme.phantom),
+        );
       });
 
       test('theme presets preserve terminal', () {
@@ -369,9 +453,9 @@ void main() {
       });
 
       test('display modes preserve active colors and glyphs', () {
-        final compactOcean = terminice.ocean.compact;
-        final minimalFire = terminice.fire.minimal;
-        final verbosePhantom = terminice.phantom.verbose;
+        final compactOcean = _colorfulTerminice.ocean.compact;
+        final minimalFire = _colorfulTerminice.fire.minimal;
+        final verbosePhantom = _colorfulTerminice.phantom.verbose;
 
         expect(compactOcean.defaultTheme.colors, equals(TerminalColors.ocean));
         expect(compactOcean.defaultTheme.glyphs, equals(TerminalGlyphs.dotted));
@@ -402,19 +486,13 @@ void main() {
       });
 
       test('color and display chaining is order-insensitive', () {
-        final oceanCompact = terminice.ocean.compact;
-        final compactOcean = terminice.compact.ocean;
+        final oceanCompact = _colorfulTerminice.ocean.compact;
+        final compactOcean = _colorfulTerminice.compact.ocean;
 
         expect(oceanCompact.baseTheme, equals(PromptTheme.ocean));
         expect(compactOcean.baseTheme, equals(PromptTheme.ocean));
-        expect(
-          oceanCompact.featureOverride,
-          equals(DisplayFeatures.compact),
-        );
-        expect(
-          compactOcean.featureOverride,
-          equals(DisplayFeatures.compact),
-        );
+        expect(oceanCompact.featureOverride, equals(DisplayFeatures.compact));
+        expect(compactOcean.featureOverride, equals(DisplayFeatures.compact));
         expect(
           oceanCompact.defaultTheme.colors,
           equals(compactOcean.defaultTheme.colors),
@@ -429,8 +507,42 @@ void main() {
         );
       });
 
+      test('color policy is preserved across theme and display chaining', () {
+        final oceanCompact =
+            terminice.withColorMode(TerminiceColorMode.never).ocean.compact;
+        final compactOcean = terminice.compact.ocean.withColorMode(
+          TerminiceColorMode.never,
+        );
+
+        expect(oceanCompact.colorMode, equals(TerminiceColorMode.never));
+        expect(compactOcean.colorMode, equals(TerminiceColorMode.never));
+        expect(oceanCompact.baseTheme, equals(PromptTheme.ocean));
+        expect(compactOcean.baseTheme, equals(PromptTheme.ocean));
+        expect(oceanCompact.defaultTheme.colors.accent, isEmpty);
+        expect(compactOcean.defaultTheme.colors.accent, isEmpty);
+        expect(
+          oceanCompact.defaultTheme.features,
+          equals(DisplayFeatures.compact),
+        );
+      });
+
+      test('client-created indicators inherit the resolved theme', () {
+        final client = terminice.ocean.withColorMode(TerminiceColorMode.never);
+
+        final bar = client.progressBar('Download');
+
+        expect(bar.theme, same(client.defaultTheme));
+        expect(bar.theme.colors.accent, isEmpty);
+        expect(bar.theme.glyphs, equals(PromptTheme.ocean.glyphs));
+      });
+
       test('color presets preserve compatibility and fallback settings', () {
-        final configured = terminice.compact.legacy.autoFallback.ocean;
+        final configured = terminice
+            .withColorMode(TerminiceColorMode.always)
+            .compact
+            .legacy
+            .autoFallback
+            .ocean;
 
         expect(configured.baseTheme, equals(PromptTheme.ocean));
         expect(configured.featureOverride, equals(DisplayFeatures.compact));
@@ -439,11 +551,15 @@ void main() {
         expect(configured.defaultTheme.colors, equals(TerminalColors.none));
         expect(configured.defaultTheme.glyphs, equals(TerminalGlyphs.ascii));
         expect(
-            configured.defaultTheme.features.hintStyle, equals(HintStyle.none));
+          configured.defaultTheme.features.hintStyle,
+          equals(HintStyle.none),
+        );
       });
 
       test('custom colors preserve display override', () {
-        final themed = terminice.compact.withColors(TerminalColors.neon);
+        final themed = _colorfulTerminice.compact.withColors(
+          TerminalColors.neon,
+        );
 
         expect(themed.baseTheme.colors, equals(TerminalColors.neon));
         expect(themed.featureOverride, equals(DisplayFeatures.compact));
@@ -527,7 +643,8 @@ void main() {
 
     group('Global terminice instance', () {
       test('exists and uses default theme', () {
-        expect(terminice.defaultTheme, equals(PromptTheme.dark));
+        expect(terminice.baseTheme, equals(PromptTheme.dark));
+        expect(terminice.colorMode, equals(TerminiceColorMode.auto));
       });
 
       test('has null terminal (uses default)', () {
@@ -641,6 +758,10 @@ void main() {
     test('TerminiceFallbackMode is exported', () {
       expect(TerminiceFallbackMode.interactive, isNotNull);
     });
+
+    test('TerminiceColorMode is exported', () {
+      expect(TerminiceColorMode.auto, isNotNull);
+    });
   });
 
   group('Complex Workflows', () {
@@ -656,7 +777,7 @@ void main() {
       final testTerminal = MockTerminal();
 
       // Create themed instance with custom terminal
-      final fireTerminice = terminice.fire.withTerminal(testTerminal);
+      final fireTerminice = _colorfulTerminice.fire.withTerminal(testTerminal);
 
       expect(fireTerminice.defaultTheme, equals(PromptTheme.fire));
       expect(fireTerminice.terminal, same(testTerminal));
@@ -682,9 +803,9 @@ void main() {
       final term2 = MockTerminal();
       final term3 = MockTerminal();
 
-      final t1 = Terminice(defaultTheme: PromptTheme.dark, terminal: term1);
-      final t2 = Terminice(defaultTheme: PromptTheme.fire, terminal: term2);
-      final t3 = Terminice(defaultTheme: PromptTheme.neon, terminal: term3);
+      final t1 = _colorful(theme: PromptTheme.dark, terminal: term1);
+      final t2 = _colorful(theme: PromptTheme.fire, terminal: term2);
+      final t3 = _colorful(theme: PromptTheme.neon, terminal: term3);
 
       // Last one should be active
       expect(TerminalContext.current, same(term3));
@@ -727,4 +848,21 @@ class _ThrowingOutputProbeTerminal implements Terminal {
 
   @override
   TerminalOutput get output => ErrorTerminalOutput();
+}
+
+Future<String> _probeNoColor(String? value) async {
+  final environment = Map<String, String>.of(Platform.environment);
+  if (value == null) {
+    environment.remove('NO_COLOR');
+  } else {
+    environment['NO_COLOR'] = value;
+  }
+  final result = await Process.run(
+    Platform.resolvedExecutable,
+    ['run', 'test/fixtures/no_color_probe.dart'],
+    environment: environment,
+    includeParentEnvironment: false,
+  );
+  expect(result.exitCode, equals(0), reason: result.stderr.toString());
+  return result.stdout.toString().trim();
 }

@@ -643,4 +643,83 @@ void main() {
       expect(visibleLength(styled), equals(4));
     });
   });
+
+  group('color suppression', () {
+    test('removes standard and bright foreground and background colors', () {
+      expect(
+        const TerminalColors(accent: '\x1B[1;31;4;104;7m')
+            .withoutColors()
+            .accent,
+        equals('\x1B[1;4;7m'),
+      );
+      expect(
+        const TerminalColors(accent: '\x1B[39;49m').withoutColors().accent,
+        isEmpty,
+      );
+    });
+
+    test('removes 256-color and RGB parameters from combined sequences', () {
+      expect(
+        const TerminalColors(accent: '\x1B[2;38;5;141;48;2;1;2;3;4m')
+            .withoutColors()
+            .accent,
+        equals('\x1B[2;4m'),
+      );
+      expect(
+        const TerminalColors(accent: '\x1B[38:2::10:20:30;1;48:5:200m')
+            .withoutColors()
+            .accent,
+        equals('\x1B[1m'),
+      );
+    });
+
+    test('preserves reset, non-color SGR styling, and surrounding content', () {
+      const value = 'before\x1B[0m\x1B[1;2;4;7m after';
+      expect(
+        const TerminalColors(accent: value).withoutColors().accent,
+        equals(value),
+      );
+    });
+
+    test('palette transform preserves styles while filtering every color', () {
+      const colors = TerminalColors(
+        reset: '\x1B[0m',
+        bold: '\x1B[1m',
+        dim: '\x1B[2m',
+        gray: '\x1B[90m',
+        accent: '\x1B[1;38;5;141m',
+        keyAccent: '\x1B[4;94m',
+        highlight: '\x1B[48;2;1;2;3;7m',
+        selection: '\x1B[35m',
+        checkboxOn: '\x1B[32m',
+        checkboxOff: '\x1B[90m',
+        inverse: '\x1B[7m',
+        info: '\x1B[36m',
+        warn: '\x1B[33m',
+        error: '\x1B[4m\x1B[97m',
+      );
+
+      final filtered = colors.withoutColors();
+
+      expect(filtered.reset, equals('\x1B[0m'));
+      expect(filtered.bold, equals('\x1B[1m'));
+      expect(filtered.dim, equals('\x1B[2m'));
+      expect(filtered.inverse, equals('\x1B[7m'));
+      expect(filtered.accent, equals('\x1B[1m'));
+      expect(filtered.keyAccent, equals('\x1B[4m'));
+      expect(filtered.highlight, equals('\x1B[7m'));
+      expect(filtered.error, equals('\x1B[4m'));
+      expect(
+        [
+          filtered.gray,
+          filtered.selection,
+          filtered.checkboxOn,
+          filtered.checkboxOff,
+          filtered.info,
+          filtered.warn,
+        ],
+        everyElement(isEmpty),
+      );
+    });
+  });
 }

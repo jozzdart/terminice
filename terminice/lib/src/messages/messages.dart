@@ -8,6 +8,7 @@ import 'package:terminice_core/terminice_core.dart'
 
 import '../core/component_runner.dart';
 import '../core/terminice_api.dart';
+import '../core/terminice_config.dart';
 import 'message_formatting.dart';
 
 /// Adds small synchronous message primitives to [Terminice].
@@ -59,20 +60,9 @@ extension TerminiceMessageExtensions on Terminice {
   }
 }
 
-enum _MessageKind {
-  log,
-  info,
-  success,
-  warn,
-  error,
-  detail,
-}
+enum _MessageKind { log, info, success, warn, error, detail }
 
-void _writeMessage(
-  Terminice terminice,
-  _MessageKind kind,
-  Object? message,
-) {
+void _writeMessage(Terminice terminice, _MessageKind kind, Object? message) {
   final text = message.toString();
   terminice.runWithComponent<void>((context) {
     final line = _formatMessage(
@@ -117,11 +107,7 @@ String _plainMessage(_MessageKind kind, String message) {
   }
 }
 
-String _modernMessage(
-  _MessageKind kind,
-  String message,
-  PromptTheme theme,
-) {
+String _modernMessage(_MessageKind kind, String message, PromptTheme theme) {
   switch (kind) {
     case _MessageKind.log:
       return message;
@@ -152,8 +138,15 @@ bool _shouldUsePlainMessages(TerminiceComponentContext context) {
   if (context.configuration.compatibility != TerminalCompatibility.modern) {
     return true;
   }
-  if (_themeRequestsPlainMessages(context.theme)) return true;
+  if (_configurationRequestsPlainMessages(context)) return true;
   return false;
+}
+
+bool _configurationRequestsPlainMessages(TerminiceComponentContext context) {
+  final explicitlyConfiguredTheme = context.configuration
+      .copyWith(colorMode: TerminiceColorMode.always)
+      .effectiveTheme;
+  return _themeRequestsPlainMessages(explicitlyConfiguredTheme);
 }
 
 bool _themeRequestsPlainMessages(PromptTheme theme) {

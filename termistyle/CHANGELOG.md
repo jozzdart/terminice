@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Added color-only ANSI filtering and `TerminalColors.withoutColors()`, preserving non-color SGR styles such as bold, dim, underline, inverse, and reset.
+
 ## 1.1.0
 
 - **New**: Added `TerminalCompatibility` for selecting terminal-safe style behavior.

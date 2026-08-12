@@ -111,6 +111,29 @@ class TerminalColors {
     );
   }
 
+  /// Returns this palette with ANSI foreground and background colors removed.
+  ///
+  /// Non-color SGR styling such as reset, bold, dim, underline, and inverse is
+  /// preserved, including when it shares an escape sequence with a color.
+  TerminalColors withoutColors() {
+    return TerminalColors(
+      reset: _removeAnsiColors(reset),
+      bold: _removeAnsiColors(bold),
+      dim: _removeAnsiColors(dim),
+      gray: _removeAnsiColors(gray),
+      accent: _removeAnsiColors(accent),
+      keyAccent: _removeAnsiColors(keyAccent),
+      highlight: _removeAnsiColors(highlight),
+      selection: _removeAnsiColors(selection),
+      checkboxOn: _removeAnsiColors(checkboxOn),
+      checkboxOff: _removeAnsiColors(checkboxOff),
+      inverse: _removeAnsiColors(inverse),
+      info: _removeAnsiColors(info),
+      warn: _removeAnsiColors(warn),
+      error: _removeAnsiColors(error),
+    );
+  }
+
   // ════════════════════════════════════════════════════════════════════════════
   // BUILT-IN PRESETS
   // ════════════════════════════════════════════════════════════════════════════
@@ -244,4 +267,62 @@ class TerminalColors {
     warn: '\x1B[38;5;180m',
     error: '\x1B[38;5;131m',
   );
+}
+
+final RegExp _sgrSequence = RegExp('\x1B\\[([0-9:;]*)m');
+
+/// Removes ANSI SGR foreground and background color parameters from [value].
+///
+/// Standard, bright, 256-color, and RGB foreground/background forms are
+/// removed. Other SGR parameters and non-SGR content are preserved.
+String _removeAnsiColors(String value) {
+  return value.replaceAllMapped(_sgrSequence, (match) {
+    final parameters = match.group(1)!;
+    if (parameters.isEmpty) return match.group(0)!;
+
+    final input = parameters.split(';');
+    final output = <String>[];
+
+    for (var index = 0; index < input.length; index++) {
+      final parameter = input[index];
+      final colonCode = parameter.contains(':')
+          ? int.tryParse(parameter.substring(0, parameter.indexOf(':')))
+          : null;
+      if (colonCode == 38 || colonCode == 48) continue;
+
+      final code = int.tryParse(parameter);
+      if (_isSimpleColorParameter(code)) continue;
+
+      if (code == 38 || code == 48) {
+        if (index + 1 < input.length) {
+          final mode = int.tryParse(input[index + 1]);
+          if (mode == 5) {
+            index += _remainingParameterCount(input, index, 2);
+          } else if (mode == 2) {
+            index += _remainingParameterCount(input, index, 4);
+          }
+        }
+        continue;
+      }
+
+      output.add(parameter);
+    }
+
+    return output.isEmpty ? '' : '\x1B[${output.join(';')}m';
+  });
+}
+
+bool _isSimpleColorParameter(int? code) {
+  if (code == null) return false;
+  return (code >= 30 && code <= 37) ||
+      code == 39 ||
+      (code >= 40 && code <= 47) ||
+      code == 49 ||
+      (code >= 90 && code <= 97) ||
+      (code >= 100 && code <= 107);
+}
+
+int _remainingParameterCount(List<String> parameters, int index, int count) {
+  final remaining = parameters.length - index - 1;
+  return remaining < count ? remaining : count;
 }

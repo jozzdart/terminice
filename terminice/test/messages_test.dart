@@ -22,19 +22,21 @@ void main() {
       expect(terminal.mockOutput.lines, equals(_plainMessageLines()));
     });
 
-    test('writes to the configured terminal instead of a stale global terminal',
-        () {
-      final target = MockTerminal();
-      final stale = MockTerminal();
-      final t = terminice.fallback.withTerminal(target);
-      terminice.fallback.withTerminal(stale).activate();
+    test(
+      'writes to the configured terminal instead of a stale global terminal',
+      () {
+        final target = MockTerminal();
+        final stale = MockTerminal();
+        final t = terminice.fallback.withTerminal(target);
+        terminice.fallback.withTerminal(stale).activate();
 
-      _writeAllMessageKinds(t);
-      t.newline();
+        _writeAllMessageKinds(t);
+        t.newline();
 
-      expect(target.mockOutput.lines, equals([..._plainMessageLines(), '']));
-      expect(stale.mockOutput.allOutput, isEmpty);
-    });
+        expect(target.mockOutput.lines, equals([..._plainMessageLines(), '']));
+        expect(stale.mockOutput.allOutput, isEmpty);
+      },
+    );
 
     test('TerminiceTester captures message output cleanly', () {
       final tester = TerminiceTester.fallback();
@@ -127,9 +129,12 @@ void main() {
     test('modern interactive output uses theme colors and semantic glyphs', () {
       final terminal = MockTerminal();
       final theme = PromptTheme.fire;
-      final t = Terminice(defaultTheme: theme).interactive.withTerminal(
-            terminal,
-          );
+      final t = Terminice(
+        config: TerminiceConfig(
+          baseTheme: theme,
+          colorMode: TerminiceColorMode.always,
+        ),
+      ).interactive.withTerminal(terminal);
 
       t.info('network');
       t.success('saved');
@@ -160,6 +165,33 @@ void main() {
       expect(terminal.outputSnapshot.containsAnsiControls, isTrue);
     });
 
+    test('color suppression keeps modern message glyphs and layout', () {
+      final terminal = MockTerminal();
+      final t = terminice
+          .withColorMode(TerminiceColorMode.never)
+          .interactive
+          .withTerminal(terminal);
+
+      t.info('network');
+      t.success('saved');
+      t.detail('quiet');
+
+      expect(
+        terminal.outputSnapshot.plainLines,
+        equals(['ℹ network', '✓ saved', '  quiet']),
+      );
+      expect(terminal.mockOutput.allOutput, isNot(contains('INFO:')));
+      expect(terminal.mockOutput.allOutput, isNot(contains('OK:')));
+      expect(
+        terminal.mockOutput.lines,
+        equals([
+          'ℹ${TerminalColors.dark.reset} network',
+          '✓${TerminalColors.dark.reset} saved',
+          '${TerminalColors.dark.dim}  quiet${TerminalColors.dark.reset}',
+        ]),
+      );
+    });
+
     test('err matches error behavior', () {
       final errorTerminal = MockTerminal();
       final errTerminal = MockTerminal();
@@ -168,7 +200,9 @@ void main() {
       terminice.fallback.withTerminal(errTerminal).err('same');
 
       expect(
-          errTerminal.mockOutput.lines, equals(errorTerminal.mockOutput.lines));
+        errTerminal.mockOutput.lines,
+        equals(errorTerminal.mockOutput.lines),
+      );
       expect(errTerminal.mockOutput.lines, equals(['ERROR: same']));
     });
 
@@ -209,11 +243,7 @@ void main() {
 
       expect(
         terminal.mockOutput.lines,
-        equals([
-          'null',
-          'INFO: 42',
-          '  custom',
-        ]),
+        equals(['null', 'INFO: 42', '  custom']),
       );
     });
 

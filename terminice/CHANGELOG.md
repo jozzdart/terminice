@@ -1,3 +1,9 @@
+## 1.3.1
+
+#### Added
+
+- Added `NO_COLOR` support with configurable `auto`, `always`, and `never` color policies on `Terminice` instances. Color suppression preserves non-color ANSI styling, glyphs, and layout.
+
 ## 1.3.0
 
 #### Changed

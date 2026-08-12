@@ -193,11 +193,11 @@ Terminice indicatorTaskClient(
 }) {
   return origin ??
       Terminice(
-        defaultTheme: theme,
         terminal: terminal,
         config: TerminiceConfig(
           baseTheme: theme,
           fallbackMode: directFallbackMode,
+          colorMode: TerminiceColorMode.always,
         ),
       );
 }
