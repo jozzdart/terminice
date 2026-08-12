@@ -1,4 +1,5 @@
 import 'package:termistyle/termistyle.dart';
+import 'package:termistyle/src/utils/terminal_text_unicode_data.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -28,6 +29,17 @@ void main() {
       const accent = 'e\u0301';
       expect(visibleLength(accent), 1);
       expect(truncate('${accent}x', 1), accent);
+    });
+
+    test('generated combining and default-ignorable data is zero-width', () {
+      expect(visibleLength('\u1AB0'), 0);
+      expect(visibleLength('\u1DC0'), 0);
+      expect(visibleLength('\u00AD'), 0);
+      expect(visibleLength('\u{1F3FD}'), 0); // Standalone emoji modifier.
+      expect(visibleLength('a\u1AB0'), 1);
+      expect(visibleLength('a\u1DC0'), 1);
+      expect(visibleLength('a\u00AD'), 1);
+      expect(visibleLength('A\u{1F3FD}'), 1);
     });
 
     test('measures common emoji clusters as two cells', () {
@@ -74,6 +86,14 @@ void main() {
       expect(visibleLength('\u{1F004}'), 2); // Mahjong red dragon
       expect(visibleLength('\u{1F600}'), 2); // Grinning face
       expect(visibleLength('\u{1FAE0}'), 2); // Melting face
+    });
+
+    test('generated Unicode tables are complete and ordered', () {
+      expect(terminalTextUnicodeVersion, '15.1.0');
+      _expectRangeTable(terminalTextWideRanges, 120);
+      _expectRangeTable(terminalTextEmojiPresentationRanges, 81);
+      _expectRangeTable(terminalTextEmojiVariationBaseRanges, 183);
+      _expectRangeTable(terminalTextZeroWidthRanges, 353);
     });
   });
 
@@ -165,4 +185,12 @@ void main() {
       expect(columnWidthVisible(['界'], min: 5), 5);
     });
   });
+}
+
+void _expectRangeTable(List<int> ranges, int expectedRangeCount) {
+  expect(ranges.length, expectedRangeCount * 2);
+  for (var i = 0; i < ranges.length; i += 2) {
+    expect(ranges[i], lessThanOrEqualTo(ranges[i + 1]));
+    if (i > 0) expect(ranges[i], greaterThan(ranges[i - 1] + 1));
+  }
 }
