@@ -19,7 +19,7 @@
 
 `terminice` turns prompts, menus, progress, messages, config, themes, fallback behavior, and testing into one cohesive terminal UI layer. It is quick for small tools, robust for serious CLIs, and flexible enough to grow with your app.
 
-Ships with 30+ ready-made components, 11 themes, display modes, fallback policies, test utilities, custom component hooks, and detailed documentation for every tool. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
+Ships with 30+ ready-made components, 11 built-in style presets, independently chainable display modes, fallback policies, test utilities, custom component hooks, and detailed documentation for every tool. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
 
 [Terminice exists because I needed this package myself.](#the-terminice-vision)
 
@@ -33,7 +33,7 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
 - **Zero boilerplate** - One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
 - **30+ terminal components** - Prompts, menus, pickers, indicators, messages, flows, and config tools.
 - **Detailed docs for every tool** - Each catalogue item includes API notes, behavior details, controls, examples, and usage guidance.
-- **11 color themes** - Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
+- **11 built-in style presets** - Ready-made color themes and display presets, with colors, glyphs, and features you can mix and match freely.
 - **One style everywhere** - Themes, display modes, glyphs, and compatibility settings travel through one `Terminice` instance.
 - **Cross-platform** - Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
 - **No framework lock-in** - Keep your parser, command runner, process tools, and app structure.
@@ -188,6 +188,18 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 # Quick Start
 
 Get up and running in seconds. No setup required-just import and call.
+
+Install the package:
+
+```bash
+dart pub add terminice
+```
+
+Then import it:
+
+```dart
+import 'package:terminice/terminice.dart';
+```
 
 #### 1. Ask for input
 
@@ -457,6 +469,8 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 
 Terminice exists because I needed this package myself.
 
+Its design has since been shaped through use across dozens of private and internal projects, including tools used by companies and in real-world products.
+
 I wanted to build Dart CLIs that felt good to use without turning every command into a full terminal application. I needed prompts, menus, progress, configuration screens, and status messages. I wanted them to be beautiful, but not heavy. I wanted them to be easy, but not limiting. I wanted them to be customizable, but not scattered across every call site. And I wanted to test the experience instead of hoping stdin, stdout, and keyboard input would behave during real use.
 
 The options around the ecosystem each solved part of that problem. Some packages were simple and pleasant, but stopped at basic prompts. Some were powerful, but too low-level, leaving me to build rendering, keyboard handling, fallback behavior, and testing myself. Some were full TUI frameworks, which are great when the terminal is the whole app, but too much when the CLI only needs a polished setup flow, picker, progress indicator, or config editor.
@@ -493,7 +507,9 @@ It is not trying to replace every CLI package:
 - Use a TUI framework when your app should own the whole terminal screen.
 - Use Terminice for the human-facing layer: prompts, selectors, pickers, flows, tasks, messages, config editors, themes, fallbacks, tests, and reusable custom components.
 
-### Prompt Libraries At A Glance
+### Prompt Libraries: Built-in Scope At A Glance
+
+The tables below compare built-in scope, not the overall quality or suitability of each package.
 
 - `✓` = built in
 - `Limited` = partial or adjacent
@@ -518,7 +534,7 @@ It is not trying to replace every CLI package:
 | Scripted terminal testing harness                        | ✓           | No       | No      | No      | No       | Limited |
 | Custom components that inherit Terminice behavior        | ✓           | No       | No      | No      | No       | No      |
 
-### CLI Utilities And TUI Frameworks At A Glance
+### CLI Utilities And TUI Frameworks: Built-in Scope At A Glance
 
 | Capability                        | `terminice`        | mason_logger    | dcli              | dart_console                  | TUI frameworks         |
 | --------------------------------- | ------------------ | --------------- | ----------------- | ----------------------------- | ---------------------- |
