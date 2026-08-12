@@ -1,3 +1,8 @@
+## 1.2.1
+
+- Kept Ctrl+C input on the shared cancellation path and made terminal startup/restoration robust across partial startup failures, terminal-context replacement, initial rendering errors, and pre-cleanup callback errors.
+- Documented that consuming applications, not Terminice, own process exit and OS signal policy.
+
 ## 1.2.0
 
 - **New**: Added `TerminalEnvironment` so terminal implementations can expose terminal-type capabilities; `DartTerminal` and `MockTerminal` now support it.

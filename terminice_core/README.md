@@ -168,7 +168,7 @@ if (event.type == KeyEventType.arrowUp) {
 } else if (event.type == KeyEventType.char && event.char == 'y') {
   // Handle 'y' press
 } else if (event.type == KeyEventType.ctrlC) {
-  // Handle interrupt
+  // Handle Ctrl+C input
 }
 ```
 
@@ -191,6 +191,8 @@ if (result == KeyActionResult.confirmed) {
   // Exit prompt
 }
 ```
+
+The standard `KeyBindings.cancel()` binding maps Esc and a delivered Ctrl+C input byte to `KeyActionResult.cancelled`. The prompt or consuming application decides what that cancellation result means; `terminice_core` does not terminate the process or set an exit code. Some terminal and operating-system configurations reserve Ctrl+C for SIGINT instead of delivering an input byte, in which case the host runtime's signal policy applies.
 
 ---
 

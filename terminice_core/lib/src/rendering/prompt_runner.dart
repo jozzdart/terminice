@@ -65,6 +65,26 @@ class RenderOutput {
   }
 }
 
+class _CapturedTerminal implements Terminal {
+  final Terminal _fallback;
+  final TerminalInput? _input;
+  final TerminalOutput? _output;
+
+  _CapturedTerminal({
+    required Terminal fallback,
+    TerminalInput? input,
+    TerminalOutput? output,
+  })  : _fallback = fallback,
+        _input = input,
+        _output = output;
+
+  @override
+  TerminalInput get input => _input ?? _fallback.input;
+
+  @override
+  TerminalOutput get output => _output ?? _fallback.output;
+}
+
 /// Manages terminal session state (cursor visibility, raw mode).
 ///
 /// This is a composable component that can be used:
@@ -90,6 +110,7 @@ class TerminalSession {
   /// Whether to enter raw terminal mode (for key input).
   final bool rawMode;
 
+  Terminal? _terminal;
   TerminalModeState? _termState;
   bool _active = false;
 
@@ -104,17 +125,54 @@ class TerminalSession {
   /// Starts the terminal session.
   void start() {
     if (_active) return;
-    _active = true;
-    if (rawMode) _termState = TerminalControl.enterRaw();
-    if (hideCursor) TerminalControl.hideCursor();
+    final currentTerminal = TerminalContext.current;
+    final terminal = _CapturedTerminal(
+      fallback: currentTerminal,
+      input: rawMode ? currentTerminal.input : null,
+      output: hideCursor ? currentTerminal.output : null,
+    );
+    TerminalModeState? termState;
+    var cursorHideAttempted = false;
+
+    try {
+      if (rawMode) {
+        termState = TerminalContext.runWith(
+          terminal,
+          TerminalControl.enterRaw,
+        );
+      }
+      if (hideCursor) {
+        cursorHideAttempted = true;
+        TerminalContext.runWith(terminal, TerminalControl.hideCursor);
+      }
+      _terminal = terminal;
+      _termState = termState;
+      _active = true;
+    } catch (_) {
+      termState?.restore();
+      if (cursorHideAttempted) {
+        try {
+          TerminalContext.runWith(terminal, TerminalControl.showCursor);
+        } catch (_) {}
+      }
+      rethrow;
+    }
   }
 
   /// Ends the terminal session and restores state.
   void end() {
     if (!_active) return;
-    _termState?.restore();
-    if (hideCursor) TerminalControl.showCursor();
-    _active = false;
+    final terminal = _terminal;
+    try {
+      _termState?.restore();
+      if (hideCursor && terminal != null) {
+        TerminalContext.runWith(terminal, TerminalControl.showCursor);
+      }
+    } finally {
+      _terminal = null;
+      _termState = null;
+      _active = false;
+    }
   }
 
   /// Runs [body] within this session, ensuring cleanup on exit.
@@ -230,6 +288,16 @@ class PromptRunner {
         rawMode: true,
       );
 
+  void _cleanupSession(TerminalSession session) {
+    // A user callback must not be able to strand the terminal in raw mode.
+    try {
+      onBeforeCleanup?.call();
+    } finally {
+      session.end();
+    }
+    onAfterCleanup?.call();
+  }
+
   /// Runs the prompt loop synchronously.
   ///
   /// [render] is called with a [RenderOutput] to write content.
@@ -245,13 +313,12 @@ class PromptRunner {
     final output = RenderOutput();
 
     session.start();
-
-    // Initial render (no clearing needed - nothing written yet)
-    render(output);
-
     PromptResult result = PromptResult.cancelled;
 
     try {
+      // Initial render (no clearing needed - nothing written yet)
+      render(output);
+
       while (true) {
         final event = KeyEventReader.read();
         final action = onKey(event);
@@ -266,9 +333,7 @@ class PromptRunner {
         render(output);
       }
     } finally {
-      onBeforeCleanup?.call();
-      session.end();
-      onAfterCleanup?.call();
+      _cleanupSession(session);
     }
 
     // Optionally clear our final output
@@ -320,9 +385,7 @@ class PromptRunner {
     try {
       return body(output);
     } finally {
-      onBeforeCleanup?.call();
-      session.end();
-      onAfterCleanup?.call();
+      _cleanupSession(session);
 
       // Optionally clear our final output
       if (endBehavior.clearOnEnd) {

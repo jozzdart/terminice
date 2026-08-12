@@ -1,5 +1,6 @@
 import 'dart:io' show sleep;
 
+import 'terminal.dart';
 import 'terminal_context.dart';
 
 /// Terminal utilities used across components and prompts to manage raw mode and input.
@@ -10,9 +11,32 @@ class TerminalControl {
     final input = TerminalContext.input;
     final origEcho = input.echoMode;
     final origLineMode = input.lineMode;
-    input.echoMode = false;
-    input.lineMode = false;
-    return TerminalModeState(origEcho: origEcho, origLineMode: origLineMode);
+    var echoAttempted = false;
+    var lineModeAttempted = false;
+
+    try {
+      echoAttempted = true;
+      input.echoMode = false;
+      lineModeAttempted = true;
+      input.lineMode = false;
+      return TerminalModeState._captured(
+        input: input,
+        origEcho: origEcho,
+        origLineMode: origLineMode,
+      );
+    } catch (_) {
+      if (lineModeAttempted) {
+        try {
+          input.lineMode = origLineMode;
+        } catch (_) {}
+      }
+      if (echoAttempted) {
+        try {
+          input.echoMode = origEcho;
+        } catch (_) {}
+      }
+      rethrow;
+    }
   }
 
   /// Attempts to read the next byte for multi-byte escape sequences.
@@ -52,24 +76,34 @@ class TerminalControl {
 class TerminalModeState {
   final bool origEcho;
   final bool origLineMode;
+  final TerminalInput? _input;
 
-  TerminalModeState({required this.origEcho, required this.origLineMode});
+  TerminalModeState({required this.origEcho, required this.origLineMode})
+      : _input = null;
+
+  TerminalModeState._captured({
+    required TerminalInput input,
+    required this.origEcho,
+    required this.origLineMode,
+  }) : _input = input;
 
   /// Restores the terminal's echo and line mode flags to their original values.
   ///
   /// Safe to call multiple times; best-effort guards prevent throwing if the
   /// terminal becomes unavailable between enter/restore calls.
   void restore() {
+    late final TerminalInput input;
     try {
-      if (!TerminalContext.input.hasTerminal) return;
+      input = _input ?? TerminalContext.input;
+      if (!input.hasTerminal) return;
     } catch (_) {
       return;
     }
     try {
-      TerminalContext.input.echoMode = origEcho;
+      input.lineMode = origLineMode;
     } catch (_) {}
     try {
-      TerminalContext.input.lineMode = origLineMode;
+      input.echoMode = origEcho;
     } catch (_) {}
   }
 }

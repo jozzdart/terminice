@@ -324,10 +324,13 @@ Most tools in the library share a consistent set of parameters to keep the API p
 
 Prompts use a consistent cancellation policy:
 
+- Esc and a Ctrl+C byte delivered as terminal input use each interaction's existing cancellation behavior.
 - Nullable prompts return `null` when cancelled.
 - Value prompts return the exact caller-supplied `initial` or default value when cancelled, even if the active interactive value is clamped while editing.
 - Config editor fields leave their existing value unchanged when a field edit is cancelled.
 - List and multi selectors return a non-null list; cancelled multi-selection prompts may return `[]`.
+
+Terminice does not terminate the process or set an exit code when these keys cancel an interaction. The application owns process lifecycle and exit policy; some interactions intentionally represent cancellation with an existing/default value rather than a distinct result. If the terminal or operating system reserves Ctrl+C for SIGINT instead of delivering an input byte, the host runtime's signal policy applies.
 
 #### Validation
 

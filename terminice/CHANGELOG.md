@@ -1,3 +1,13 @@
+## 1.3.1
+
+#### Fixed
+
+- Ctrl+C input continues to use the standard prompt cancellation behavior, with transactional terminal startup and cleanup protected from partial startup failures, terminal-context replacement, initial-render errors, and cleanup-callback errors.
+
+#### Documentation
+
+- Clarified that applications own process exit policy and that operating systems may deliver Ctrl+C as SIGINT instead of prompt input.
+
 ## 1.3.0
 
 #### Changed

@@ -48,6 +48,17 @@ void main() {
       expect(result, 0);
     });
 
+    test('interactive text Ctrl+C returns its cancellation value', () {
+      final mock = MockTerminal();
+      mock.mockInput.queueByte(3);
+
+      final result = Terminice(terminal: mock).text('Name');
+
+      expect(result, isNull);
+      expect(mock.mockInput.echoMode, isTrue);
+      expect(mock.mockInput.lineMode, isTrue);
+    });
+
     test('config fallback normalizes invalid numeric state without input', () {
       final rating = RatingConfigurable(
         key: 'risk',
