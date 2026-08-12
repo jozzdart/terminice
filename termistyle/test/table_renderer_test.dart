@@ -478,7 +478,7 @@ void main() {
       t.setWidths([8]);
       final stripped = _strip(t.rowLine(['AB']));
       final cellContent = stripped.replaceAll('│', '').trim();
-      // 'AB' centered in 8: '   AB   ' — trim gives 'AB'
+      // 'AB' centered in 8: '   AB   ' - trim gives 'AB'
       expect(cellContent, equals('AB'));
     });
 

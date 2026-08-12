@@ -55,8 +55,10 @@ class TerminiceTester {
 
   /// Creates a tester whose terminal streams report that no TTY is available.
   ///
-  /// High-level prompts configured with automatic fallback will use line-mode
-  /// behavior through the normal centralized fallback decision.
+  /// Built-ins integrated with automatic execution use unattended behavior and
+  /// do not consume [lines]. The line queue is retained for compatibility and
+  /// for custom components; use [TerminiceTester.fallback] to exercise piped
+  /// line input for built-ins.
   factory TerminiceTester.nonInteractive({
     Terminice? base,
     Iterable<String> lines = const [],

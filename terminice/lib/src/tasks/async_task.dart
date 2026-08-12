@@ -27,7 +27,11 @@ enum TaskDisplay {
   /// Pick the best display for the current terminal and configuration.
   auto,
 
-  /// Render an animated inline spinner when the terminal supports it.
+  /// Request animated inline rendering.
+  ///
+  /// Explicit plain display, non-modern compatibility, and fallback policy can
+  /// still select the plain renderer. An explicitly interactive Terminice
+  /// instance honors this request without terminal capability detection.
   inline,
 
   /// Render simple line output without ANSI cursor control or raw mode.

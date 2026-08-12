@@ -9,7 +9,7 @@ import '../editor_loop.dart';
 /// sub-editor scoped to the group's [children], with a "← Back" action
 /// instead of "✓ Save & confirm".
 ///
-/// Groups can be nested arbitrarily deep — each level opens its own
+/// Groups can be nested arbitrarily deep - each level opens its own
 /// editor session and returns to the parent on Esc or "← Back".
 /// Only the root-level config editor has the save action.
 ///

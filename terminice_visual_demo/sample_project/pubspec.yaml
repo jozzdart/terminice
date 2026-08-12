@@ -1,0 +1,4 @@
+name: sample_terminice_project
+description: Fixture used by the Terminice visual demo generator.
+version: 0.0.0
+publish_to: none

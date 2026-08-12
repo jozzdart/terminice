@@ -11,7 +11,7 @@ import 'dart:math';
 /// ## Layout strategies
 /// - Call the default constructor when you know the number of columns up front
 /// - Use [GridNavigator.responsive] to derive a column count from terminal
-///   width, cell width, and separators—perfect for adaptive layouts
+///   width, cell width, and separators-perfect for adaptive layouts
 /// - Use [GridNavigator.balanced] to quickly build a near-square grid without
 ///   thinking about math
 ///
@@ -47,7 +47,7 @@ import 'dart:math';
 /// ```
 ///
 /// The navigator only knows about indices, so it is agnostic to the type of the
-/// widgets/items you render—ideal for downstream consumers on pub.dev.
+/// widgets/items you render-ideal for downstream consumers on pub.dev.
 class GridNavigator {
   /// Total number of items in the grid.
   int _itemCount;

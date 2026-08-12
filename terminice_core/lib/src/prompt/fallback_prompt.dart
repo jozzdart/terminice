@@ -1,4 +1,6 @@
 import '../io/terminal_context.dart';
+import '../text/terminal_safe_text.dart';
+import 'numeric_value_normalization.dart';
 import 'validator_semantics.dart';
 
 /// Validator for fallback text input.
@@ -157,7 +159,7 @@ class FallbackPrompt {
   }) {
     while (true) {
       final suffix = defaultValue ? '[Y/n]' : '[y/N]';
-      TerminalContext.output.write('$title $suffix: ');
+      TerminalContext.output.write('${terminalSafeLineText(title)} $suffix: ');
 
       final line = TerminalContext.input.readLineSync();
       if (line == null) return defaultValue;
@@ -292,19 +294,29 @@ class FallbackPrompt {
     num? defaultValue,
     num? min,
     num? max,
+    num? step,
     FallbackNumberValidator? validator,
     bool returnDefaultOnEndOfInput = true,
   }) {
+    validateNumericConstraints(min: min, max: max, step: step);
+    final normalizedDefault = defaultValue == null
+        ? null
+        : normalizeSteppedValue(
+            defaultValue,
+            min: min,
+            max: max,
+            step: step,
+          );
     while (true) {
-      _writePrompt(title, defaultValue: defaultValue?.toString());
+      _writePrompt(title, defaultValue: normalizedDefault?.toString());
 
       final line = TerminalContext.input.readLineSync();
       if (line == null) {
-        return returnDefaultOnEndOfInput ? defaultValue : null;
+        return returnDefaultOnEndOfInput ? normalizedDefault : null;
       }
 
       final text = line.trim();
-      if (text.isEmpty) return defaultValue;
+      if (text.isEmpty) return normalizedDefault;
 
       final value = num.tryParse(text);
       if (value == null) {
@@ -323,6 +335,10 @@ class FallbackPrompt {
         _writeError('Enter a number at most $max.');
         continue;
       }
+      if (step != null && !_isStepAligned(value, step, min ?? 0)) {
+        _writeError('Enter a value in increments of $step from ${min ?? 0}.');
+        continue;
+      }
 
       final error = _numberValidationError(value, validator);
       if (error != null) {
@@ -334,13 +350,85 @@ class FallbackPrompt {
     }
   }
 
+  /// Reads a strict ISO calendar date (`YYYY-MM-DD`).
+  static DateTime? date({
+    required String title,
+    DateTime? defaultValue,
+    DateTime? min,
+    DateTime? max,
+    bool returnDefaultOnEndOfInput = true,
+  }) {
+    final normalizedDefault = defaultValue == null
+        ? null
+        : DateTime(defaultValue.year, defaultValue.month, defaultValue.day);
+    while (true) {
+      _writePrompt(title,
+          defaultValue: normalizedDefault == null
+              ? null
+              : _formatDate(normalizedDefault));
+      final line = TerminalContext.input.readLineSync();
+      if (line == null) {
+        return returnDefaultOnEndOfInput ? normalizedDefault : null;
+      }
+      final text = line.trim();
+      if (text.isEmpty && normalizedDefault != null) return normalizedDefault;
+      final value = _parseDate(text);
+      if (value == null) {
+        _writeError('Enter a real date as YYYY-MM-DD.');
+        continue;
+      }
+      if (min != null &&
+          value.isBefore(DateTime(min.year, min.month, min.day))) {
+        _writeError('Enter a date on or after ${_formatDate(min)}.');
+        continue;
+      }
+      if (max != null &&
+          value.isAfter(DateTime(max.year, max.month, max.day))) {
+        _writeError('Enter a date on or before ${_formatDate(max)}.');
+        continue;
+      }
+      return value;
+    }
+  }
+
+  /// Reads ordinary lines until a line containing only `.` submits.
+  /// A line containing only `:cancel` cancels the prompt.
+  static String? multiline({
+    required String title,
+    int maxLines = 200,
+    bool allowEmpty = true,
+  }) {
+    TerminalContext.output.writeln(
+      '${terminalSafeLineText(title)} (enter . to submit, :cancel to cancel)',
+    );
+    final lines = <String>[];
+    while (lines.length < maxLines) {
+      final line = TerminalContext.input.readLineSync();
+      if (line == null) {
+        if (lines.any((value) => value.isNotEmpty)) return lines.join('\n');
+        return allowEmpty ? '' : null;
+      }
+      if (line == ':cancel') return null;
+      if (line == '.') {
+        if (allowEmpty || lines.any((value) => value.isNotEmpty)) {
+          return lines.join('\n');
+        }
+        _writeError('Input cannot be empty.');
+        continue;
+      }
+      lines.add(line);
+    }
+    if (lines.any((value) => value.isNotEmpty)) return lines.join('\n');
+    return allowEmpty ? '' : null;
+  }
+
   /// Reads an ordered numeric range using the same validation path as [number].
   ///
   /// Start and end are prompted independently. Each accepted input must pass
   /// finite-number parsing, optional [min]/[max] bounds, and [validator].
-  /// Defaults are clamped before they are offered. The returned values are
-  /// ordered so [FallbackRangeResult.start] is always less than or equal to
-  /// [FallbackRangeResult.end].
+  /// Defaults are clamped and snapped to [step] before they are offered. The
+  /// returned values are ordered so [FallbackRangeResult.start] is always less
+  /// than or equal to [FallbackRangeResult.end].
   static FallbackRangeResult? range({
     required String title,
     String? startTitle,
@@ -349,27 +437,45 @@ class FallbackPrompt {
     num? endDefault,
     num? min,
     num? max,
+    num? step,
     FallbackNumberValidator? validator,
     bool returnDefaultOnEndOfInput = true,
   }) {
-    final lower = _lowerBound(min, max);
-    final upper = _upperBound(min, max);
-    final normalizedStartDefault = _clampFiniteDefault(
-      startDefault,
-      min: lower,
-      max: upper,
-    );
-    final normalizedEndDefault = _clampFiniteDefault(
-      endDefault,
-      min: lower,
-      max: upper,
-    );
+    validateNumericConstraints(min: min, max: max, step: step);
+    final normalizedDefaults = startDefault == null || endDefault == null
+        ? null
+        : normalizeSteppedRange(
+            startDefault,
+            endDefault,
+            min: min,
+            max: max,
+            step: step,
+          );
+    final normalizedStartDefault = startDefault == null
+        ? null
+        : normalizedDefaults?.start ??
+            normalizeSteppedValue(
+              startDefault,
+              min: min,
+              max: max,
+              step: step,
+            );
+    final normalizedEndDefault = endDefault == null
+        ? null
+        : normalizedDefaults?.end ??
+            normalizeSteppedValue(
+              endDefault,
+              min: min,
+              max: max,
+              step: step,
+            );
 
     final start = number(
       title: startTitle ?? '$title start',
       defaultValue: normalizedStartDefault,
-      min: lower,
-      max: upper,
+      min: min,
+      max: max,
+      step: step,
       validator: validator,
       returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
@@ -378,8 +484,9 @@ class FallbackPrompt {
     final end = number(
       title: endTitle ?? '$title end',
       defaultValue: normalizedEndDefault,
-      min: lower,
-      max: upper,
+      min: min,
+      max: max,
+      step: step,
       validator: validator,
       returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
@@ -388,8 +495,8 @@ class FallbackPrompt {
     final ordered = _orderedRange(
       start,
       end,
-      min: lower,
-      max: upper,
+      min: min,
+      max: max,
     );
     return FallbackRangeResult(start: ordered.start, end: ordered.end);
   }
@@ -482,6 +589,14 @@ class FallbackPrompt {
     return normalizeValidationError(validator(value));
   }
 
+  static bool _isStepAligned(num value, num step, num anchor) {
+    final units = (value - anchor) / step;
+    if (!units.isFinite) return false;
+    final difference = (units - units.round()).abs();
+    final tolerance = 1e-9 * (units.abs() + 1);
+    return difference <= tolerance;
+  }
+
   static String _fallbackFormFieldTitle(FallbackFormField field) {
     final details = <String>[];
     if (field.placeholder != null && field.placeholder!.isNotEmpty) {
@@ -498,21 +613,6 @@ class FallbackPrompt {
     final initial = field.initialValue;
     if (initial == null || initial.isEmpty) return null;
     return initial;
-  }
-
-  static num? _lowerBound(num? min, num? max) {
-    if (min == null || max == null) return min;
-    return min <= max ? min : max;
-  }
-
-  static num? _upperBound(num? min, num? max) {
-    if (min == null || max == null) return max;
-    return min <= max ? max : min;
-  }
-
-  static num? _clampFiniteDefault(num? value, {num? min, num? max}) {
-    if (value == null || !value.isFinite) return null;
-    return _clampToBounds(value, min: min, max: max);
   }
 
   static FallbackRangeResult _orderedRange(
@@ -537,12 +637,13 @@ class FallbackPrompt {
   }
 
   static void _writePrompt(String title, {String? defaultValue}) {
-    final suffix = defaultValue == null ? '' : ' [$defaultValue]';
-    TerminalContext.output.write('$title$suffix: ');
+    final suffix =
+        defaultValue == null ? '' : ' [${terminalSafeLineText(defaultValue)}]';
+    TerminalContext.output.write('${terminalSafeLineText(title)}$suffix: ');
   }
 
   static void _writeError(String message) {
-    TerminalContext.output.writeln(message);
+    TerminalContext.output.writeln(terminalSafeLineText(message));
   }
 
   static void _writeOptions<T>(
@@ -550,10 +651,10 @@ class FallbackPrompt {
     List<T> options,
     FallbackLabelBuilder<T>? labelBuilder,
   ) {
-    TerminalContext.output.writeln(title);
+    TerminalContext.output.writeln(terminalSafeLineText(title));
     for (var i = 0; i < options.length; i++) {
       TerminalContext.output.writeln(
-        '${i + 1}) ${_labelFor(options[i], labelBuilder)}',
+        '${i + 1}) ${terminalSafeLineText(_labelFor(options[i], labelBuilder))}',
       );
     }
   }
@@ -564,6 +665,24 @@ class FallbackPrompt {
   ) {
     return labelBuilder == null ? item.toString() : labelBuilder(item);
   }
+
+  static DateTime? _parseDate(String text) {
+    final match = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(text);
+    if (match == null) return null;
+    final year = int.parse(match.group(1)!);
+    final month = int.parse(match.group(2)!);
+    final day = int.parse(match.group(3)!);
+    final value = DateTime(year, month, day);
+    if (value.year != year || value.month != month || value.day != day) {
+      return null;
+    }
+    return value;
+  }
+
+  static String _formatDate(DateTime value) =>
+      '${value.year.toString().padLeft(4, '0')}-'
+      '${value.month.toString().padLeft(2, '0')}-'
+      '${value.day.toString().padLeft(2, '0')}';
 
   static int? _normalizeDefaultIndex(int? index, int length) {
     if (index == null || length <= 0) return null;

@@ -19,12 +19,12 @@
 
 `terminice` turns prompts, menus, progress, messages, config, themes, fallback behavior, and testing into one cohesive terminal UI layer. It is quick for small tools, robust for serious CLIs, and flexible enough to grow with your app.
 
-Ships with 30+ ready-made components, 11 themes, display modes, fallback policies, test utilities, custom component hooks, and detailed documentation for every tool. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
+Ships with 30+ ready-made components, 11 built-in style presets, independently chainable display modes, fallback policies, test utilities, custom component hooks, and detailed documentation for every tool. Use the defaults for speed, or tune the experience so every command in your app feels intentionally designed.
 
 [Terminice exists because I needed this package myself.](#the-terminice-vision)
 
 <p align="center">
-  <img src="assets/showcase.gif" alt="terminice interactive showcase" width="1000"/>
+  <img src="assets/terminice-visual-demo.gif" alt="terminice interactive showcase" width="1000"/>
 </p>
 
 ### Features
@@ -33,7 +33,7 @@ Ships with 30+ ready-made components, 11 themes, display modes, fallback policie
 - **Zero boilerplate** - One import, one global instance, chainable theme accessors. No setup, no context objects, no widget trees.
 - **30+ terminal components** - Prompts, menus, pickers, indicators, messages, flows, and config tools.
 - **Detailed docs for every tool** - Each catalogue item includes API notes, behavior details, controls, examples, and usage guidance.
-- **11 color themes** - Dark, Matrix, Fire, Pastel, Ocean, Monochrome, Neon, Arcane, Phantom, and display modes (Minimal, Compact, Verbose). Mix and match colors, glyphs, and features freely.
+- **11 built-in style presets** - Ready-made color themes and display presets, with colors, glyphs, and features you can mix and match freely.
 - **One style everywhere** - Themes, display modes, glyphs, and compatibility settings travel through one `Terminice` instance.
 - **Cross-platform** - Works on Linux, macOS, and Windows. Backed by a testable terminal abstraction you can swap for custom I/O.
 - **No framework lock-in** - Keep your parser, command runner, process tools, and app structure.
@@ -128,66 +128,78 @@ Every tool is fully themeable and ready to use with zero setup. The catalogue is
 
 #### ▤ Prompts
 
-- [`text` — Single-line text input.](#text---single-line-text-input)
-- [`password` — Secure, masked text input.](#password---masked-text-input)
-- [`confirm` — Yes/No boolean confirmation.](#confirm---yesno-confirmation)
-- [`multiline` — Multi-line text editor.](#multiline---terminal-text-area)
-- [`slider` — Numeric selection along a single axis.](#slider---numeric-selection)
-- [`range` — Dual-thumb slider for selecting a min/max range.](#range---dual-handle-numeric-range)
-- [`rating` — Star-based rating input.](#rating---star-rating-input)
-- [`date` — Date picker.](#date---keyboard-date-prompt)
-- [`form` — Form prompt.](#form---multi-field-input)
+- [`text` - Single-line text input.](#text---single-line-text-input)
+- [`password` - Secure, masked text input.](#password---masked-text-input)
+- [`confirm` - Yes/No boolean confirmation.](#confirm---yesno-confirmation)
+- [`multiline` - Multi-line text editor.](#multiline---terminal-text-area)
+- [`slider` - Numeric selection along a single axis.](#slider---numeric-selection)
+- [`range` - Dual-thumb slider for selecting a min/max range.](#range---dual-handle-numeric-range)
+- [`rating` - Star-based rating input.](#rating---star-rating-input)
+- [`date` - Date picker.](#date---keyboard-date-prompt)
+- [`form` - Form prompt.](#form---multi-field-input)
 
 #### ▥ Selectors
 
-- [`searchSelector` — Filterable list of options.](#searchselector---filterable-list-selection)
-- [`choiceSelector` — Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
-- [`checkboxSelector` — Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
-- [`gridSelector` — 2D grid selection.](#gridselector---two-dimensional-selection-grid)
-- [`tagSelector` — Select and manage multiple tags.](#tagselector---chip-style-multi-select)
-- [`toggleGroup` — Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
-- [`commandPalette` — Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
+- [`searchSelector` - Filterable list of options.](#searchselector---filterable-list-selection)
+- [`choiceSelector` - Card-based choices with optional multi-select.](#choiceselector---card-based-choice-grid)
+- [`checkboxSelector` - Multi-select list with checkboxes.](#checkboxselector---multi-select-checklist)
+- [`gridSelector` - 2D grid selection.](#gridselector---two-dimensional-selection-grid)
+- [`tagSelector` - Select and manage multiple tags.](#tagselector---chip-style-multi-select)
+- [`toggleGroup` - Independent editable boolean switches.](#togglegroup---editable-boolean-switches)
+- [`commandPalette` - Global command launcher with fuzzy search.](#commandpalette---fuzzy-command-launcher)
 
 #### ▦ Pickers
 
-- [`filePicker` — Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
-- [`pathPicker` — Browse and select directories.](#pathpicker---directory-and-path-browser)
-- [`colorPicker` — Interactive color selection.](#colorpicker---ansi-color-grid)
-- [`datePicker` — Calendar-based date selection.](#datepicker---calendar-date-selection)
+- [`filePicker` - Browse and select files from the filesystem.](#filepicker---searchable-file-browser)
+- [`pathPicker` - Browse and select directories.](#pathpicker---directory-and-path-browser)
+- [`colorPicker` - Interactive color selection.](#colorpicker---ansi-color-grid)
+- [`datePicker` - Calendar-based date selection.](#datepicker---calendar-date-selection)
 
 #### ▧ Indicators
 
-- [`loadingSpinner` — Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
-- [`inlineSpinner` — Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
-- [`progressBar` — Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
-- [`inlineProgressBar` — Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
-- [`progressDots` — Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
+- [`loadingSpinner` - Full-featured loading animation.](#loadingspinner---framed-loading-spinner)
+- [`inlineSpinner` - Compact loading animation for inline use.](#inlinespinner---one-line-spinner)
+- [`progressBar` - Standard progress bar with percentage.](#progressbar---framed-determinate-progress)
+- [`inlineProgressBar` - Compact progress bar.](#inlineprogressbar---one-line-percent-indicator)
+- [`progressDots` - Minimalist dot-based progress indicator.](#progressdots---framed-dot-progress)
 
 #### ▨ Workflow & CLI UX
 
-- [`message primitives` — `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
-- [`task` — Run a task with spinner or dots status.](#task---async-status-wrapper)
-- [`progressTask` — Run a task with determinate progress.](#progresstask---async-progress-wrapper)
-- [`trackStream` — Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
-- [`TaskProgress` — Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
-- [`TaskDisplay` — Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
-- [`TaskFinalBehavior` — Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
-- [`flow` — Sequential flow builder.](#flow---sequential-flow-composition)
-- [`custom components` — Reusable class or callback components.](#custom-components--extensibility)
+- [`message primitives` - `info`, `success`, `warn`, `error`, `detail`, `log`, and `newline`.](#message-primitives---small-status-lines)
+- [`task` - Run a task with spinner or dots status.](#task---async-status-wrapper)
+- [`progressTask` - Run a task with determinate progress.](#progresstask---async-progress-wrapper)
+- [`trackStream` - Collect a stream while tracking progress.](#trackstream---stream-progress-collector)
+- [`TaskProgress` - Mutable progress state passed to progress tasks.](#taskprogress---mutable-progress-state)
+- [`TaskDisplay` - Rendering mode for task helpers.](#taskdisplay---task-rendering-mode)
+- [`TaskFinalBehavior` - Final output policy for task helpers.](#taskfinalbehavior---final-output-policy)
+- [`flow` - Sequential flow builder.](#flow---sequential-flow-composition)
+- [`custom components` - Reusable class or callback components.](#custom-components--extensibility)
 
 #### ▩ Configuration & Guides
 
-- [`configEditor` — A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
-- [`cheatSheet` — Display a quick reference guide.](#cheatsheet---framed-reference-table)
-- [`helpCenter` — Interactive help documentation viewer.](#helpcenter---searchable-help-browser)
-- [`hotkeyGuide` — Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
-- [`themeDemo` — Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
+- [`configEditor` - A searchable, nested settings editor for complex configurations.](#configeditor---searchable-nested-settings-editor)
+- [`cheatSheet` - Display a quick reference guide.](#cheatsheet---framed-reference-table)
+- [`helpCenter` - Interactive help documentation viewer.](#helpcenter---searchable-help-browser)
+- [`hotkeyGuide` - Display available keyboard shortcuts.](#hotkeyguide---interactive-shortcut-guide)
+- [`themeDemo` - Showcase all available themes and colors.](#themedemo---interactive-theme-gallery)
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
 # Quick Start
 
-Get up and running in seconds. No setup required—just import and call.
+Get up and running in seconds. No setup required-just import and call.
+
+Install the package:
+
+```bash
+dart pub add terminice
+```
+
+Then import it:
+
+```dart
+import 'package:terminice/terminice.dart';
+```
 
 #### 1. Ask for input
 
@@ -262,9 +274,9 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 
 Control the verbosity and framing of your prompts:
 
-- **`verbose`** (Default) — Full borders, contextual hints, and clear separation.
-- **`compact`** — Keeps borders but removes hints for a tighter layout.
-- **`minimal`** — Strips away borders and frames for a classic, inline CLI feel.
+- **`verbose`** (Default) - Full borders, contextual hints, and clear separation.
+- **`compact`** - Keeps borders but removes hints for a tighter layout.
+- **`minimal`** - Strips away borders and frames for a classic, inline CLI feel.
 
 Display modes only override display features. Active colors and glyphs are preserved, so `terminice.ocean.compact` and `terminice.compact.ocean` resolve to the same effective theme.
 
@@ -376,7 +388,7 @@ final b = terminice.compact.ocean;
 
 #### Centralized Instance Configuration
 
-Each `Terminice` instance carries a single immutable `TerminiceConfig`. That config controls the effective theme for component calls that use the caller theme, including prompts, selectors, pickers, most guides, and indicators, plus fallback behavior for covered high-level prompts.
+Each `Terminice` instance carries a single immutable `TerminiceConfig`. That config controls the effective theme and execution mode for the built-in prompts, selectors, pickers, guides, indicators, tasks, flows, messages, and config editor.
 
 ```dart
 final t = terminice.withConfig(
@@ -398,7 +410,7 @@ final role = t.searchSelector(
 - `baseTheme` is the original theme chosen by the caller.
 - `featureOverride` applies a display mode such as `DisplayFeatures.compact`.
 - `compatibility` adapts the theme for terminal capability.
-- `fallbackMode` decides when covered high-level prompts use line-mode fallback.
+- `fallbackMode` selects rich, automatic, or explicit line-mode execution.
 - `TerminiceConfig.effectiveTheme` is the theme produced from those values.
 - `defaultTheme` exposes that effective theme on the `Terminice` instance.
 
@@ -434,28 +446,32 @@ final plainText = terminice.ocean.legacy;
 
 #### Fallback Policies
 
-The default behavior is unchanged: `terminice` uses the rich interactive prompts unless you opt into fallback.
+The default `fallbackMode` is `auto`. Every built-in uses one of three execution modes:
 
-- `terminice.interactive` - Forces rich prompts. This is the default `fallbackMode`.
-- `terminice.autoFallback` - Uses line-mode fallback when input or output is not a terminal.
-- `terminice.fallback` - Always uses line-mode fallback for covered high-level prompts.
+- **Rich TTY** - raw-key, themed interaction when input and output are suitable terminals.
+- **Plain line** - line-oriented, ANSI-free interaction when `.fallback` is explicit, or automatically when human input is available but output is unsuitable or `TERM=dumb`.
+- **Unattended** - deterministic, non-reading behavior when automatic detection finds no input TTY. Confirmations always resolve to `false` here, even with `defaultYes: true`.
+
+`terminice.interactive` explicitly forces rich mode, `terminice.fallback` explicitly forces plain line mode, and `terminice.autoFallback` selects among all three (the same policy used by the default `terminice` instance). Detection uses terminal capabilities and `TERM=dumb`; it does not inspect CI-vendor environment variables. Piped input is deliberately treated as unattended by auto mode, so use explicit `.fallback` when you want to consume piped line input.
 
 ```dart
 final ci = terminice.autoFallback.basic;
 final confirmed = ci.confirm(message: 'Continue?');
 ```
 
-Line-mode fallback uses simple text and numbered prompts instead of raw-mode keyboard UIs. Password fallback reads a normal line; it does **not** mask input in line mode.
+The complete guarantee applies to Terminice's built-ins. Plain line prompts use simple text; selectors and pickers use numbered choices or typed values. Dates use ISO `YYYY-MM-DD`, colors use hex, and typed file paths resolve relative to the supplied start directory. Multiline input submits with a line containing `.` and cancels with `:cancel`. A selector's focused row is not an implicit default: empty input accepts only explicit initial state, otherwise it returns the selector's empty or cancellation value. EOF cancels line selectors unless that component explicitly preserves its initial state. Password input is visible and unmasked in line mode. Plain and unattended paths do not enter raw mode or emit ANSI control sequences, and unattended mode never reads input.
 
-Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `searchSelector`, `gridSelector`, `checkboxSelector`, `choiceSelector`, `tagSelector`, `toggleGroup`, `commandPalette`, `slider`, `range`, `rating`, and the focused enum/theme selects used by the config editor.
+Guides render readable plain text; the help center uses a numbered document choice in line mode and prints its content. The config editor offers a line command loop, rolls all nested edits back on cancel, and returns a valid unchanged snapshot (or `null` for invalid configuration) unattended. Manual indicators, task helpers, `whileRunning`, and stream tracking use bounded start/final log lines rather than animation in plain and unattended modes. Directly constructed built-in indicators auto-detect and capture the ambient terminal at construction time; indicators created from a `Terminice` instance keep that instance's terminal and explicit fallback policy.
 
-Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, manual indicator controller calls such as `show(...)`, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy. Async task helpers use plain task rendering in fallback/plain modes.
+User-authored custom components that perform terminal I/O directly remain responsible for their own fallback behavior. Custom components that compose Terminice built-ins inherit the built-ins' execution behavior; no additional callback is required.
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
 ### The Terminice Vision
 
 Terminice exists because I needed this package myself.
+
+Its design has since been shaped through use across dozens of private and internal projects, including tools used by companies and in real-world products.
 
 I wanted to build Dart CLIs that felt good to use without turning every command into a full terminal application. I needed prompts, menus, progress, configuration screens, and status messages. I wanted them to be beautiful, but not heavy. I wanted them to be easy, but not limiting. I wanted them to be customizable, but not scattered across every call site. And I wanted to test the experience instead of hoping stdin, stdout, and keyboard input would behave during real use.
 
@@ -493,7 +509,9 @@ It is not trying to replace every CLI package:
 - Use a TUI framework when your app should own the whole terminal screen.
 - Use Terminice for the human-facing layer: prompts, selectors, pickers, flows, tasks, messages, config editors, themes, fallbacks, tests, and reusable custom components.
 
-### Prompt Libraries At A Glance
+### Prompt Libraries: Built-in Scope At A Glance
+
+The tables below compare built-in scope, not the overall quality or suitability of each package.
 
 - `✓` = built in
 - `Limited` = partial or adjacent
@@ -518,7 +536,7 @@ It is not trying to replace every CLI package:
 | Scripted terminal testing harness                        | ✓           | No       | No      | No      | No       | Limited |
 | Custom components that inherit Terminice behavior        | ✓           | No       | No      | No      | No       | No      |
 
-### CLI Utilities And TUI Frameworks At A Glance
+### CLI Utilities And TUI Frameworks: Built-in Scope At A Glance
 
 | Capability                        | `terminice`        | mason_logger    | dcli              | dart_console                  | TUI frameworks         |
 | --------------------------------- | ------------------ | --------------- | ----------------- | ----------------------------- | ---------------------- |
@@ -559,7 +577,7 @@ Yes. Theme, display mode, glyphs, compatibility settings, fallback policy, termi
 
 #### What happens outside a rich terminal?
 
-Terminice is designed for real environments: local shells, CI, scripts, non-TTY output, limited terminals, and legacy/plain modes. `autoFallback`, `legacy`, and plain task rendering let the same CLI stay usable without pretending every terminal can do everything.
+Terminice's built-ins automatically choose rich TTY, plain line, or unattended behavior. Auto mode never reads when input is not a TTY; use explicit `.fallback` for intentional piped line input. `legacy` controls styling, while fallback policy controls interaction.
 
 #### Can I test the interactions?
 
@@ -791,6 +809,12 @@ Most CLIs do not need custom components. Start with the built-in prompts,
 selectors, pickers, indicators, tasks, config editors, and flows.
 For a complete list of available tools, check out [**The Terminice Catalogue**](#-the-terminice-catalogue).
 
+<!-- terminice-visual:start:customComponents -->
+<p>
+  <img src="assets/component_showcases/customComponents.svg" alt="customComponents in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:customComponents -->
+
 Reach for `TerminiceComponent<T>` when your CLI has reusable,
 domain-specific terminal UI that should still behave like Terminice. Components
 run inside the caller's configured `Terminice` instance, so they keep the same
@@ -855,6 +879,12 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 
 Collect a single trimmed string with optional placeholder text and inline validation. This is the default building block for names, IDs, short notes, paths, and other one-line values.
 
+<!-- terminice-visual:start:text -->
+<p>
+  <img src="assets/component_showcases/text.svg" alt="text in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:text -->
+
 - `text`
   `(String prompt, {placeholder, validator, required})`
   Opens a themed text input frame.
@@ -910,6 +940,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Collect secrets without echoing the raw value. The password prompt uses the same text engine as `text`, but masks input, can optionally reveal with a hotkey, and can run a two-field verification flow.
 
+<!-- terminice-visual:start:password -->
+<p>
+  <img src="assets/component_showcases/password.svg" alt="password in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:password -->
+
 - `password`
   `(String prompt, {required, maskChar, allowReveal, verify})`
   Opens a masked text prompt.
@@ -961,6 +997,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Ask for a boolean decision with two labeled choices and a configurable default focus. It is ideal for destructive actions, deployment gates, and "continue?" checkpoints.
 
+<!-- terminice-visual:start:confirm -->
+<p>
+  <img src="assets/component_showcases/confirm.svg" alt="confirm in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:confirm -->
+
 - `confirm`
   `({prompt, required message, yesLabel, noLabel, defaultYes})`
   Opens a two-option confirmation prompt.
@@ -968,9 +1010,9 @@ Ask for a boolean decision with two labeled choices and a configurable default f
 - `message` - Main question displayed inside the prompt.
 - `yesLabel` - Positive option label. Defaults to `'Yes'`.
 - `noLabel` - Negative option label. Defaults to `'No'`.
-- `defaultYes` - Defaults to `true`; controls the initially selected option.
+- `defaultYes` - Defaults to `false`; controls the initially selected option in rich and line modes.
 - Returns `bool` - `true` when the positive option is confirmed, `false` when the negative option is confirmed.
-- Cancel behavior - Esc/Ctrl+C returns the default option value from `defaultYes` in the current implementation.
+- Cancel behavior - Esc/Ctrl+C returns the default option value from `defaultYes` in rich mode. Unattended auto mode always returns `false`, regardless of `defaultYes`.
 - Controls - Left/Right toggles the highlighted option, Enter confirms, Esc/Ctrl+C cancels to the default.
 
 #### Examples
@@ -1014,6 +1056,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `multiline` - Terminal Text Area
 
 Capture multi-line text with cursor movement, scrolling, and a dedicated confirm shortcut. This prompt is useful for release notes, commit messages, descriptions, and small config snippets.
+
+<!-- terminice-visual:start:multiline -->
+<p>
+  <img src="assets/component_showcases/multiline.svg" alt="multiline in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:multiline -->
 
 - `multiline`
   `(String prompt, {maxLines, visibleLines, allowEmpty})`
@@ -1062,6 +1110,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `slider` - Numeric Selection
 
 Select a single numeric value within a bounded range using left/right keyboard controls. The rendered bar can show raw values, units, and optional percentage context.
+
+<!-- terminice-visual:start:slider -->
+<p>
+  <img src="assets/component_showcases/slider.svg" alt="slider in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:slider -->
 
 - `slider`
   `(String prompt, {min, max, initial, step, width, unit, showPercent})`
@@ -1123,6 +1177,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `range` - Dual-Handle Numeric Range
 
 Select a start and end value inside the same bounded numeric scale. The active handle can be switched from the keyboard, and confirmed values stay ordered during interaction.
+
+<!-- terminice-visual:start:range -->
+<p>
+  <img src="assets/component_showcases/range.svg" alt="range in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:range -->
 
 - `range`
   `(String prompt, {min, max, startInitial, endInitial, step, width, unit})`
@@ -1189,6 +1249,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Collect a small integer rating with stars, number-key shortcuts, and optional labels for each level. This is a compact fit for priority, satisfaction, quality, and risk scoring.
 
+<!-- terminice-visual:start:rating -->
+<p>
+  <img src="assets/component_showcases/rating.svg" alt="rating in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:rating -->
+
 - `rating`
   `(String prompt, {maxStars, initial, labels})`
   Opens a discrete star rating prompt.
@@ -1233,6 +1299,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `date` - Keyboard Date Prompt
 
 Collect a calendar date by editing day, month, and year fields directly. It renders a formatted preview so the selected date is easy to verify before confirmation.
+
+<!-- terminice-visual:start:date -->
+<p>
+  <img src="assets/component_showcases/date.svg" alt="date in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:date -->
 
 - `date`
   `(String prompt, {initial})`
@@ -1279,6 +1351,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `form` - Multi-Field Input
 
 Group several text/password-style fields inside one themed frame. Forms support per-field placeholders, masking, required checks, initial values, per-field validators, and cross-field validation on submit.
+
+<!-- terminice-visual:start:form -->
+<p>
+  <img src="assets/component_showcases/form.svg" alt="form in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:form -->
 
 Form field and result types come from `terminice_core`, so full form examples use:
 
@@ -1389,6 +1467,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Pick from a vertical list that can be filtered in place. It works as a quick single-choice selector by default, or as a multi-select searchable checklist when `multiSelect` is enabled.
 
+<!-- terminice-visual:start:searchSelector -->
+<p>
+  <img src="assets/component_showcases/searchSelector.svg" alt="searchSelector in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:searchSelector -->
+
 - `searchSelector`
   `({required options, prompt, multiSelect, showSearch, maxVisible})`
   Opens a searchable list prompt.
@@ -1448,6 +1532,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `choiceSelector` - Card-Based Choice Grid
 
 Render choices as two-line cards with a label and optional subtitle. It is useful when each option needs a little context, such as actions, plans, environments, or workflows.
+
+<!-- terminice-visual:start:choiceSelector -->
+<p>
+  <img src="assets/component_showcases/choiceSelector.svg" alt="choiceSelector in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:choiceSelector -->
 
 - `choiceSelector`
   `(String prompt, {required items, multiSelect, columns, cardWidth, maxColumns})`
@@ -1519,6 +1609,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Display a vertical checklist with a live summary line and a select-all shortcut. It is the most direct selector for enabling features, choosing tasks, or collecting a small set of labels.
 
+<!-- terminice-visual:start:checkboxSelector -->
+<p>
+  <img src="assets/component_showcases/checkboxSelector.svg" alt="checkboxSelector in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:checkboxSelector -->
+
 - `checkboxSelector`
   `(String prompt, {required options, initialSelected, maxVisible})`
   Opens a multi-select checklist.
@@ -1578,6 +1674,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Arrange string options into a responsive grid with wrapping arrow-key navigation. It is a good fit for compact fixed vocabularies where scanning by rows and columns is faster than a vertical list.
 
+<!-- terminice-visual:start:gridSelector -->
+<p>
+  <img src="assets/component_showcases/gridSelector.svg" alt="gridSelector in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:gridSelector -->
+
 - `gridSelector`
   `({required options, prompt, columns, multiSelect, cellWidth, maxColumns, initialSelection})`
   Opens a grid selector.
@@ -1635,6 +1737,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `tagSelector` - Chip-Style Multi-Select
 
 Render tags as compact `[ tag ]` chips in a responsive grid. The selector is always multi-select and shows a count summary while the user toggles chips.
+
+<!-- terminice-visual:start:tagSelector -->
+<p>
+  <img src="assets/component_showcases/tagSelector.svg" alt="tagSelector in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:tagSelector -->
 
 - `tagSelector`
   `({required tags, prompt, maxContentWidth, minContentWidth, minColumnWidth, maxColumnWidth, useTerminalWidth})`
@@ -1695,6 +1803,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `toggleGroup` - Editable Boolean Switches
 
 Edit several independent on/off states in one prompt. Unlike a radio group, `toggleGroup` is not mutually exclusive: every row has its own boolean state.
+
+<!-- terminice-visual:start:toggleGroup -->
+<p>
+  <img src="assets/component_showcases/toggleGroup.svg" alt="toggleGroup in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:toggleGroup -->
 
 - `toggleGroup (String prompt, {required items, alignContent})`
   Opens a vertical group of switches.
@@ -1759,6 +1873,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `commandPalette` - Fuzzy Command Launcher
 
 Open a command palette that searches command titles and optional subtitles, ranks matches, and returns the selected command entry. It behaves like a compact launcher for CLIs with many actions.
+
+<!-- terminice-visual:start:commandPalette -->
+<p>
+  <img src="assets/component_showcases/commandPalette.svg" alt="commandPalette in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:commandPalette -->
 
 - `commandPalette (String prompt, {required commands, maxVisible})`
   Opens a ranked command list with an always-visible search input.
@@ -1838,6 +1958,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Browse the filesystem from a starting directory and return the selected file path. The picker renders each directory as an enterable row, adds a parent-directory row when possible, and uses the searchable selector UI so users can filter large folders before choosing.
 
+<!-- terminice-visual:start:filePicker -->
+<p>
+  <img src="assets/component_showcases/filePicker.svg" alt="filePicker in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:filePicker -->
+
 - `filePicker(String prompt, {startDirectory, showHidden, foldersOnly})`
   Opens a searchable filesystem browser.
 - `prompt` - Base title for the frame. The current path is appended in parentheses and shortened when it is longer than 60 visible characters.
@@ -1896,6 +2022,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `pathPicker` - Directory and Path Browser
 
 Choose a directory, or optionally a file, from a dynamic filesystem list. Unlike `filePicker`, this prompt includes an explicit `✓ Select this directory` row, so it is the right picker for output folders, project roots, cache locations, and other directory targets.
+
+<!-- terminice-visual:start:pathPicker -->
+<p>
+  <img src="assets/component_showcases/pathPicker.svg" alt="pathPicker in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:pathPicker -->
 
 - `pathPicker (String prompt, {startDirectory, showHidden, allowFiles, maxVisible})`
   Opens a dynamic path browser.
@@ -1958,6 +2090,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Pick a terminal-friendly color from a live ANSI swatch grid. The picker maps horizontal movement to hue, vertical movement to brightness, and separate shortcuts to saturation, presets, randomization, reset, and hex entry.
 
+<!-- terminice-visual:start:colorPicker -->
+<p>
+  <img src="assets/component_showcases/colorPicker.svg" alt="colorPicker in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:colorPicker -->
+
 - `colorPicker (String prompt, {initialHex, cols, rows})`
   Opens an interactive color grid.
 - `prompt` - Frame title displayed above the grid.
@@ -2014,6 +2152,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `datePicker` - Calendar Date Selection
 
 Pick a single calendar date from a framed month view. The selected day stays highlighted as the user moves by day, week, or year, and today is accented for orientation.
+
+<!-- terminice-visual:start:datePicker -->
+<p>
+  <img src="assets/component_showcases/datePicker.svg" alt="datePicker in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:datePicker -->
 
 - `datePicker (String prompt, {initialDate, startWeekOnMonday, allowPast, allowFuture})`
   Opens an interactive calendar.
@@ -2079,6 +2223,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Write small, synchronous terminal messages through the configured `Terminice` instance. These helpers are useful for the connective tissue around richer UI: setup notes before a prompt, final status after a task, warnings inside a flow, or quiet detail text after a command completes.
 
+<!-- terminice-visual:start:messagePrimitives -->
+<p>
+  <img src="assets/component_showcases/messagePrimitives.svg" alt="messagePrimitives in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:messagePrimitives -->
+
 - `log(Object? message)` - Writes `message.toString()` as a plain line with no status decoration.
 - `info(Object? message)` - Writes an informational status line.
 - `success(Object? message)` - Writes a success status line.
@@ -2087,7 +2237,7 @@ Write small, synchronous terminal messages through the configured `Terminice` in
 - `err(Object? message)` - Alias for `error`.
 - `detail(Object? message)` - Writes a modest detail line for secondary context.
 - `newline([int count = 1])` - Writes one or more blank lines.
-- Plain rendering - Fallback, noninteractive terminals, basic/legacy compatibility, no-color themes, and ASCII glyph themes render ANSI-free plain lines.
+- Plain rendering - Explicit fallback and automatic non-rich execution render ANSI-free plain lines, as do basic/legacy compatibility, no-color themes, and ASCII glyph themes. Explicit `.interactive` preserves modern decorated output even when terminal capability probes are unsuitable.
 - Scope - These are CLI message primitives, not logging infrastructure. They do not manage levels, sinks, timestamps, structured records, or filtering.
 
 #### Examples
@@ -2135,6 +2285,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Run a synchronous or asynchronous operation while `terminice` renders a small status indicator. Use it when the work is indeterminate: publishing, polling, resolving dependencies, or any operation where there is no useful total.
 
+<!-- terminice-visual:start:task -->
+<p>
+  <img src="assets/component_showcases/task.svg" alt="task in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:task -->
+
 - `task<T>(String prompt, {required run, message, success, failure, cancel, isCanceled, interval, style, indicator, maxDots, display, finalBehavior})`
   Runs `run` and completes with its typed result.
 - `prompt` - Main status label. It is also the default success message.
@@ -2145,7 +2301,7 @@ Run a synchronous or asynchronous operation while `terminice` renders a small st
 - `cancel` - Optional formatter for cancellation text. Defaults to `'$prompt canceled'`.
 - `isCanceled` - Optional predicate that decides whether a thrown error should be labelled as cancellation instead of failure.
 - `interval`, `style`, `indicator`, `maxDots` - Tune the running animation. `indicator` can use spinner frames or cycling dots.
-- `display` - A `TaskDisplay` value: `auto`, `inline`, or `plain`. `TaskDisplay.plain`, fallback modes, non-terminal IO, and non-modern compatibility avoid ANSI cursor control and animation.
+- `display` - A `TaskDisplay` value: `auto`, `inline`, or `plain`. `TaskDisplay.plain`, explicit fallback, automatic non-rich execution, and non-modern compatibility avoid ANSI cursor control and animation. Explicit `.interactive` permits inline rendering regardless of terminal probes.
 - `finalBehavior` - A `TaskFinalBehavior` value controlling whether the final status line remains visible.
 - Returns `Future<T>` - The exact result from `run`.
 - Error behavior - Synchronous throws and asynchronous errors render failure or cancel status, then rethrow the original error with its stack trace.
@@ -2179,6 +2335,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `progressTask` - Async Progress Wrapper
 
 Run work with a determinate progress bar. `progressTask` passes a mutable `TaskProgress` object into your callback, so the task can update count and detail text as it advances.
+
+<!-- terminice-visual:start:progressTask -->
+<p>
+  <img src="assets/component_showcases/progressTask.svg" alt="progressTask in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:progressTask -->
 
 - `progressTask<T>(String prompt, {required total, required run, message, success, failure, cancel, isCanceled, display, finalBehavior, interval, progressWidth})`
   Runs `run` while rendering progress.
@@ -2230,6 +2392,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Collect every event from a stream while advancing determinate progress once per event. The returned list preserves stream order.
 
+<!-- terminice-visual:start:trackStream -->
+<p>
+  <img src="assets/component_showcases/trackStream.svg" alt="trackStream in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:trackStream -->
+
 - `trackStream<T>(String prompt, Stream<T> source, {required total, message, success, failure, cancel, isCanceled, display, finalBehavior, interval, progressWidth})`
   Tracks and collects `source`.
 - `prompt` - Main status label.
@@ -2269,6 +2437,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 `TaskProgress` is the handle passed to `progressTask` callbacks and indicator `whileRunning` callbacks. Mutating it updates the rendered progress.
 
+<!-- terminice-visual:start:TaskProgress -->
+<p>
+  <img src="assets/component_showcases/TaskProgress.svg" alt="TaskProgress in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:TaskProgress -->
+
 - `current` - Completed units, clamped to the inclusive `0..total` range.
 - `total` - Total units expected for the task. Must be greater than `0`.
 - `message` - Optional detail shown beside the prompt.
@@ -2304,10 +2478,16 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Choose how async task helpers render while work is running.
 
+<!-- terminice-visual:start:TaskDisplay -->
+<p>
+  <img src="assets/component_showcases/TaskDisplay.svg" alt="TaskDisplay in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:TaskDisplay -->
+
 - `TaskDisplay.auto` - Default. Uses animated inline rendering when the current terminal and `Terminice` configuration support it; otherwise uses plain line output.
-- `TaskDisplay.inline` - Requests animated inline rendering when available; falls back to plain output when animation is unavailable.
+- `TaskDisplay.inline` - Requests animated inline rendering. Explicit fallback, automatic non-rich execution, and non-modern compatibility can still force plain output; explicit `.interactive` honors inline rendering without capability detection.
 - `TaskDisplay.plain` - Uses simple final lines without ANSI cursor control, raw mode, or animation.
-- Fallback behavior - Non-terminal IO, `terminice.fallback`, and non-modern compatibility modes use plain rendering. `terminice.autoFallback` uses plain rendering when fallback is needed.
+- Fallback behavior - `terminice.fallback` and non-modern compatibility use plain rendering. `terminice.autoFallback` uses terminal capabilities to select inline or plain output, while `terminice.interactive` explicitly permits inline output even when those probes report non-terminal IO or throw.
 
 #### Examples
 
@@ -2329,6 +2509,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `TaskFinalBehavior` - Final Output Policy
 
 Control what remains on screen after an async task finishes.
+
+<!-- terminice-visual:start:TaskFinalBehavior -->
+<p>
+  <img src="assets/component_showcases/TaskFinalBehavior.svg" alt="TaskFinalBehavior in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:TaskFinalBehavior -->
 
 - `TaskFinalBehavior.persist` - Default. Leaves one final success, failure, or cancel status line.
 - `TaskFinalBehavior.clear` - Clears the animated task display when it finishes. In plain mode, it suppresses the final status line.
@@ -2354,6 +2540,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `loadingSpinner` - Framed Loading Spinner
 
 Show a framed, theme-aware spinner for an ongoing task. This is the most expressive spinner: it has a frame title, a message line, themed spinner glyphs, and footer hints describing the active style.
+
+<!-- terminice-visual:start:loadingSpinner -->
+<p>
+  <img src="assets/component_showcases/loadingSpinner.svg" alt="loadingSpinner in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:loadingSpinner -->
 
 - `loadingSpinner (String prompt, {message, style})`
   Creates a `LoadingSpinner` controller.
@@ -2447,6 +2639,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Render a compact spinner beside a status label. It is designed for log-style CLIs, CI output, polling loops, and places where a framed widget would be too much visual weight.
 
+<!-- terminice-visual:start:inlineSpinner -->
+<p>
+  <img src="assets/component_showcases/inlineSpinner.svg" alt="inlineSpinner in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:inlineSpinner -->
+
 - `inlineSpinner (String prompt, {style})`
   Creates an `InlineSpinner` controller.
 - `prompt` - Text displayed next to the spinner glyph.
@@ -2523,6 +2721,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `progressBar` - Framed Determinate Progress
 
 Display bounded progress in a framed widget with a themed bar, percentage, and raw count. The bar is determinate: you provide `current` and `total` on every update.
+
+<!-- terminice-visual:start:progressBar -->
+<p>
+  <img src="assets/component_showcases/progressBar.svg" alt="progressBar in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:progressBar -->
 
 - `progressBar (String prompt)`
   Creates a themed `ProgressBar` controller with the default width.
@@ -2622,6 +2826,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Show a compact percentage beside a label. Despite the name, the current implementation is a one-line percent readout rather than a graphical bar, making it useful for dense logs and script output.
 
+<!-- terminice-visual:start:inlineProgressBar -->
+<p>
+  <img src="assets/component_showcases/inlineProgressBar.svg" alt="inlineProgressBar in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:inlineProgressBar -->
+
 - `inlineProgressBar(String prompt)` - Creates an `InlineProgressBar` controller.
 - `prompt` - Text displayed before the percentage.
 - Returns `InlineProgressBar` - The line is not displayed until `show(...)` is called.
@@ -2687,6 +2897,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `progressDots` - Framed Dot Progress
 
 Show ambient progress with a title, message, and cycling dots. It is useful for work that is active but not measurable, such as waiting for a service, preparing a cache, or polling an external process.
+
+<!-- terminice-visual:start:progressDots -->
+<p>
+  <img src="assets/component_showcases/progressDots.svg" alt="progressDots in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:progressDots -->
 
 - `progressDots(String prompt)` - Creates a themed `ProgressDots` controller.
 - `prompt` - Frame title displayed above the dots.
@@ -2769,6 +2985,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `flow` - Sequential Flow Composition
 
 Compose several prompts and selectors into one synchronous, sequential flow. Use it when a CLI command needs a handful of related answers, conditional follow-up questions, or a typed result map without manually wiring each prompt together.
+
+<!-- terminice-visual:start:flow -->
+<p>
+  <img src="assets/component_showcases/flow.svg" alt="flow in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:flow -->
 
 Flow is the primary primitive for multi-step Terminice workflows. Steps run from top to bottom, can be skipped with `when`, and can end in a review/edit loop for flow/wizard-style confirmation without introducing a separate `wizard()` API.
 
@@ -2940,6 +3162,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `configEditor` - Searchable Nested Settings Editor
 
 Build a full terminal settings screen from typed `Configurable` fields. The editor renders a searchable list, opens the right prompt for each value, supports nested groups, tracks modified fields, and returns a `ConfigResult` only when the root editor is saved.
+
+<!-- terminice-visual:start:configEditor -->
+<p>
+  <img src="assets/component_showcases/configEditor.svg" alt="configEditor in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:configEditor -->
 
 ```dart
 ConfigResult? configEditor(
@@ -3249,6 +3477,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Render a themed, non-interactive reference table inside a `FrameView`. It is designed for command lists, shortcut cards, option summaries, or any small table users may want to glance at while using a CLI.
 
+<!-- terminice-visual:start:cheatSheet -->
+<p>
+  <img src="assets/component_showcases/cheatSheet.svg" alt="cheatSheet in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:cheatSheet -->
+
 ```dart
 void cheatSheet(
   String prompt, {
@@ -3338,6 +3572,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `helpCenter` - Searchable Help Browser
 
 Launch an interactive help viewer with live search, a result list, and a preview pane. It returns the selected `HelpDoc`, which makes it useful for opening follow-up docs, routing to a tutorial, or tracking which help topic the user chose.
+
+<!-- terminice-visual:start:helpCenter -->
+<p>
+  <img src="assets/component_showcases/helpCenter.svg" alt="helpCenter in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:helpCenter -->
 
 ```dart
 HelpDoc? helpCenter({
@@ -3477,6 +3717,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 
 Show keyboard shortcuts in a compact framed grid and wait until the user closes it. This is a good companion for complex prompts, editors, command palettes, or any CLI mode with more than a few bindings.
 
+<!-- terminice-visual:start:hotkeyGuide -->
+<p>
+  <img src="assets/component_showcases/hotkeyGuide.svg" alt="hotkeyGuide in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:hotkeyGuide -->
+
 ```dart
 void hotkeyGuide({
   required List<List<String>> shortcuts,
@@ -3552,6 +3798,12 @@ _[▰ Back](#-the-terminice-catalogue) → The `terminice` Catalogue_
 ### `themeDemo` - Interactive Theme Gallery
 
 Preview curated `PromptTheme` presets in the terminal, then optionally open a sample selector using the highlighted theme. The method is intentionally a demo utility: it does not return the selected theme, but it is handy for screenshots, onboarding, and choosing a palette before wiring a theme into your own CLI.
+
+<!-- terminice-visual:start:themeDemo -->
+<p>
+  <img src="assets/component_showcases/themeDemo.svg" alt="themeDemo in fire, matrix, and arcane Terminice themes" width="1000"/>
+</p>
+<!-- terminice-visual:end:themeDemo -->
 
 ```dart
 void themeDemo();

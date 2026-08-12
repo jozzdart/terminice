@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:terminice/terminice.dart';
-import 'package:terminice_core/terminice_core.dart';
 
 import 'mock_terminal.dart';
 
@@ -35,9 +34,9 @@ void main() {
       mock.mockInput.queueLines(['', 'n', 'yes']);
       final t = terminice.fallback.withTerminal(mock);
 
-      expect(t.confirm(message: 'Default yes?'), isTrue);
+      expect(t.confirm(message: 'Default no?'), isFalse);
       expect(t.confirm(message: 'No?'), isFalse);
-      expect(t.confirm(message: 'Default no?', defaultYes: false), isTrue);
+      expect(t.confirm(message: 'Explicit yes?', defaultYes: true), isTrue);
     });
 
     test('selector fallback returns the selected value', () {
@@ -53,8 +52,7 @@ void main() {
       expect(result, equals(['beta']));
     });
 
-    test('auto fallback uses line mode when terminal streams are unavailable',
-        () {
+    test('auto is unattended when input is not a terminal', () {
       final mock = MockTerminal();
       mock.mockInput
         ..setHasTerminal(false)
@@ -64,9 +62,25 @@ void main() {
 
       final result = t.text('Name');
 
-      expect(result, equals('Ada'));
+      expect(result, isNull);
+      expect(t.executionMode, TerminiceExecutionMode.unattended);
       expect(mock.mockInput.lineMode, isTrue);
       expect(mock.mockInput.echoMode, isTrue);
+      expect(mock.mockInput.linesRemaining, equals(1));
+      expect(mock.mockOutput.allOutput, isEmpty);
+    });
+
+    test('explicit fallback reads piped line input', () {
+      final mock = MockTerminal();
+      mock.mockInput
+        ..setHasTerminal(false)
+        ..queueLine('Ada');
+      mock.mockOutput.setHasTerminal(false);
+
+      final result = terminice.fallback.withTerminal(mock).text('Name');
+
+      expect(result, equals('Ada'));
+      expect(mock.mockInput.linesRemaining, equals(0));
     });
 
     test('command palette fallback includes subtitles in numbered options', () {
@@ -101,8 +115,7 @@ void main() {
       expect(result, equals(['gamma']));
     });
 
-    test('multi-select fallback blank input selects the focused first item',
-        () {
+    test('multi-select fallback blank input confirms an empty selection', () {
       final mock = MockTerminal();
       mock.mockInput.queueLine('');
       final t = terminice.fallback.withTerminal(mock);
@@ -112,7 +125,7 @@ void main() {
         options: const ['alpha', 'beta', 'gamma'],
       );
 
-      expect(result, equals(['alpha']));
+      expect(result, isEmpty);
     });
 
     test('multi-select fallback explicit none selects nothing', () {
@@ -140,7 +153,7 @@ void main() {
         initialSelection: const {999},
       );
 
-      expect(result, equals(['alpha']));
+      expect(result, isEmpty);
     });
 
     test('verified password fallback retries mismatches', () {
@@ -158,13 +171,7 @@ void main() {
 
   test('config editor passes derived Terminice config into nested edits', () {
     final mock = MockTerminal();
-    mock.mockInput
-      ..queueKey(KeyEventType.arrowDown)
-      ..queueKey(KeyEventType.arrowDown)
-      ..queueKey(KeyEventType.enter)
-      ..queueKey(KeyEventType.arrowUp)
-      ..queueKey(KeyEventType.arrowUp)
-      ..queueKey(KeyEventType.enter);
+    mock.mockInput.queueLines(['2', 's']);
 
     final capture = _CapturingConfigurable();
     final configured = terminice.compact.legacy.fallback.withTerminal(mock);

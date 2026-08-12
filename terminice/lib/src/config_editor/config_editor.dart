@@ -54,15 +54,68 @@ extension ConfigEditorExtensions on Terminice {
       return ConfigResult(fields: fields, confirmed: true);
     }
 
-    final confirmed = runEditorLoop(
-      terminice: this,
-      title: prompt,
-      fields: fields,
-      isRoot: true,
-      maxVisible: maxVisible,
+    return runWithExecutionMode<ConfigResult?>(
+      rich: () {
+        final confirmed = runRichEditorLoop(
+          terminice: this,
+          title: prompt,
+          fields: fields,
+          isRoot: true,
+          maxVisible: maxVisible,
+        );
+        if (!confirmed) return null;
+        return ConfigResult(fields: fields, confirmed: true);
+      },
+      line: () {
+        final transaction = _ConfigTransaction.capture(fields);
+        final confirmed = runLineEditorLoop(
+          terminice: this,
+          title: prompt,
+          fields: fields,
+          isRoot: true,
+        );
+        if (!confirmed) {
+          transaction.restore();
+          return null;
+        }
+        return ConfigResult(fields: fields, confirmed: true);
+      },
+      // Current values are safe to snapshot only when validation is already
+      // complete; unattended execution cannot ask the user to resolve errors.
+      unattended: () => firstEditorValidationError(fields) == null
+          ? ConfigResult(fields: fields, confirmed: true)
+          : null,
     );
-
-    if (!confirmed) return null;
-    return ConfigResult(fields: fields, confirmed: true);
   }
+}
+
+class _ConfigTransaction {
+  _ConfigTransaction._(this._fields, this._values);
+
+  final List<Configurable> _fields;
+  final List<dynamic> _values;
+
+  factory _ConfigTransaction.capture(List<Configurable> fields) {
+    return _ConfigTransaction._(
+      fields,
+      fields.map((field) => _copyConfigValue(field.toJsonValue())).toList(),
+    );
+  }
+
+  void restore() {
+    for (var i = 0; i < _fields.length; i++) {
+      _fields[i].loadJsonValue(_copyConfigValue(_values[i]));
+    }
+  }
+}
+
+dynamic _copyConfigValue(dynamic value) {
+  if (value is Map) {
+    return <String, dynamic>{
+      for (final entry in value.entries)
+        entry.key.toString(): _copyConfigValue(entry.value),
+    };
+  }
+  if (value is List) return value.map(_copyConfigValue).toList();
+  return value;
 }

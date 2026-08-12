@@ -30,6 +30,17 @@ abstract class Terminal {
   TerminalOutput get output;
 }
 
+/// Optional environment capabilities exposed by a [Terminal].
+///
+/// Implementing this interface is additive: existing custom terminals remain
+/// valid and are treated as having no special terminal type. The built-in
+/// [DartTerminal] uses the process `TERM` value.
+abstract class TerminalEnvironment {
+  /// The terminal type, conventionally sourced from the `TERM` environment
+  /// variable, or `null` when it is unknown.
+  String? get terminalType;
+}
+
 /// Abstract input interface for terminal operations.
 ///
 /// Mirrors the relevant parts of dart:io's `Stdin` class.

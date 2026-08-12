@@ -57,10 +57,8 @@ class Terminice {
     }
   }
 
-  Terminice._({
-    required this.configuration,
-    this.terminal,
-  }) : defaultTheme = configuration.effectiveTheme {
+  Terminice._({required this.configuration, this.terminal})
+      : defaultTheme = configuration.effectiveTheme {
     // Set the terminal context if a custom terminal is provided
     if (terminal != null) {
       TerminalContext.current = terminal;
@@ -91,10 +89,15 @@ class Terminice {
   /// Fallback policy for high-level prompts that opt into line-mode fallback.
   TerminiceFallbackMode get fallbackMode => configuration.fallbackMode;
 
-  /// Whether covered high-level prompts should use line-mode fallback for this
-  /// instance's current terminal.
+  /// Effective execution mode for this instance's current terminal.
+  TerminiceExecutionMode get executionMode {
+    return fallbackMode.executionModeFor(terminal ?? TerminalContext.current);
+  }
+
+  /// Whether built-ins avoid rich terminal interaction for this instance's
+  /// current terminal.
   bool get shouldUseFallback {
-    return fallbackMode.shouldUseFallback(terminal ?? TerminalContext.current);
+    return executionMode != TerminiceExecutionMode.rich;
   }
 
   /// Returns a new client using the provided [terminal] implementation.
@@ -191,12 +194,12 @@ class Terminice {
     return withFallbackMode(TerminiceFallbackMode.interactive);
   }
 
-  /// Use line-mode fallback when stdin or stdout is not a terminal.
+  /// Automatically select rich, line-oriented, or unattended execution.
   Terminice get autoFallback {
     return withFallbackMode(TerminiceFallbackMode.auto);
   }
 
-  /// Always use line-mode fallback for covered high-level prompts.
+  /// Always use line-mode fallback for built-in components.
   Terminice get fallback {
     return withFallbackMode(TerminiceFallbackMode.fallback);
   }

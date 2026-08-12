@@ -107,6 +107,34 @@ void main() {
       expect(result, ['alpha', 'gamma']);
     });
 
+    test('sanitizes hostile titles, labels, defaults, and validator errors',
+        () {
+      terminal.mockInput.queueLines(['2', 'bad', 'good']);
+
+      final selected = FallbackPrompt.singleSelect<Object>(
+        title: 'Pick\x1b[2J\r\nnow',
+        options: [
+          _HostileLabel('first\x1b]0;owned\x07'),
+          _HostileLabel('second\x9b31m'),
+        ],
+      );
+      final value = FallbackPrompt.text(
+        title: 'Name\x00',
+        defaultValue: 'Ada\x7f',
+        validator: (input) => input == 'bad' ? 'No\x1b[31m\r\nretry' : null,
+      );
+
+      expect(selected.toString(), contains('second'));
+      expect(value, 'good');
+      final snapshot = terminal.outputSnapshot;
+      expect(snapshot.containsAnsiControls, isFalse);
+      expect(snapshot.raw, contains(r'Pick\x1b[2J\r now'));
+      expect(snapshot.raw, contains(r'first\x1b]0;owned\x07'));
+      expect(snapshot.raw, contains(r'second\x9b31m'));
+      expect(snapshot.raw, contains(r'Name\x00 [Ada\x7f]: '));
+      expect(snapshot.raw, contains(r'No\x1b[31m\r retry'));
+    });
+
     test('multiSelect uses fallbackIndex for empty input without defaults', () {
       terminal.mockInput.queueLine('');
 
@@ -210,6 +238,104 @@ void main() {
           terminal.mockOutput.contains('Enter a number at most 10.'), isTrue);
     });
 
+    test('number retries values not aligned to step from min', () {
+      terminal.mockInput.queueLines(['1.2', '1.3']);
+
+      final result = FallbackPrompt.number(
+        title: 'Decimal',
+        min: 0.1,
+        max: 2,
+        step: 0.2,
+      );
+
+      expect(result, 1.3);
+      expect(terminal.mockOutput.contains('increments of 0.2'), isTrue);
+    });
+
+    test('number rejects invalid step configuration', () {
+      expect(
+        () => FallbackPrompt.number(title: 'Invalid', step: 0),
+        throwsArgumentError,
+      );
+    });
+
+    test('number rejects non-finite defaults and bounds before I/O', () {
+      final cases = <num? Function()>[
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              defaultValue: double.nan,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              defaultValue: double.infinity,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              defaultValue: double.negativeInfinity,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              min: double.infinity,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              min: double.nan,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              min: double.negativeInfinity,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              max: double.negativeInfinity,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              max: double.nan,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              max: double.infinity,
+            ),
+        () => FallbackPrompt.number(
+              title: 'Invalid',
+              min: -1.7976931348623157e308,
+              max: 1.7976931348623157e308,
+              step: 0.1,
+            ),
+      ];
+
+      for (final run in cases) {
+        final caseTerminal = MockTerminal();
+        TerminalContext.current = caseTerminal;
+        expect(run, throwsArgumentError);
+        expect(caseTerminal.mockOutput.allOutput, isEmpty);
+      }
+    });
+
+    test('number normalizes a blank and EOF default to the valid step grid',
+        () {
+      terminal.mockInput.queueLine('');
+
+      final blankResult = FallbackPrompt.number(
+        title: 'Count',
+        defaultValue: 99,
+        min: 1,
+        max: 9,
+        step: 3,
+      );
+      final eofResult = FallbackPrompt.number(
+        title: 'Count',
+        defaultValue: 3,
+        min: 0,
+        max: 10,
+        step: 2,
+      );
+
+      expect(blankResult, 7);
+      expect(eofResult, 4);
+    });
+
     test('number rejects non-finite values', () {
       terminal.mockInput.queueLines(['NaN', 'Infinity', '5']);
 
@@ -292,6 +418,58 @@ void main() {
 
       expect(result?.start, 0);
       expect(result?.end, 10);
+    });
+
+    test('range snaps and orders blank defaults on the valid step grid', () {
+      terminal.mockInput.queueLines(['', '']);
+
+      final result = FallbackPrompt.range(
+        title: 'Window',
+        startDefault: 10,
+        endDefault: 2,
+        min: 0,
+        max: 9,
+        step: 2,
+      );
+
+      expect(result?.start, 2);
+      expect(result?.end, 8);
+    });
+
+    test('range rejects non-finite defaults and invalid bounds before I/O', () {
+      final cases = <FallbackRangeResult? Function()>[
+        () => FallbackPrompt.range(
+              title: 'Invalid',
+              startDefault: double.nan,
+              endDefault: 2,
+            ),
+        () => FallbackPrompt.range(
+              title: 'Invalid',
+              startDefault: 1,
+              endDefault: double.infinity,
+            ),
+        () => FallbackPrompt.range(
+              title: 'Invalid',
+              startDefault: double.negativeInfinity,
+              endDefault: 2,
+            ),
+        () => FallbackPrompt.range(
+              title: 'Invalid',
+              min: double.negativeInfinity,
+            ),
+        () => FallbackPrompt.range(
+              title: 'Invalid',
+              min: 10,
+              max: 0,
+            ),
+      ];
+
+      for (final run in cases) {
+        final caseTerminal = MockTerminal();
+        TerminalContext.current = caseTerminal;
+        expect(run, throwsArgumentError);
+        expect(caseTerminal.mockOutput.allOutput, isEmpty);
+      }
     });
 
     test('range distinguishes EOF from empty default input', () {
@@ -398,4 +576,13 @@ void main() {
       expect(defaultEofResult?.values, ['Ada']);
     });
   });
+}
+
+class _HostileLabel {
+  const _HostileLabel(this.value);
+
+  final String value;
+
+  @override
+  String toString() => value;
 }

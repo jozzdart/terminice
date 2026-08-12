@@ -5,7 +5,7 @@ import 'dart:math';
 ///
 /// ## When to use
 /// Choose [FocusNavigator] when you have a finite list of focusable items on
-/// screen at once—forms, multi-step wizards, setting pages, command palettes,
+/// screen at once-forms, multi-step wizards, setting pages, command palettes,
 /// onboarding questionnaires, etc. It is intentionally simpler than
 /// [ListNavigator] because there is no viewport math to keep in sync.
 ///

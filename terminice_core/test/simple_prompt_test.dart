@@ -11,6 +11,30 @@ void main() {
 
   tearDown(TerminalContext.reset);
 
+  group('SimplePrompts.confirm', () {
+    test('defaults to No', () {
+      terminal.mockInput.queueKey(KeyEventType.enter);
+
+      expect(
+        SimplePrompts.confirm(title: 'Confirm', message: 'Continue?').run(),
+        isFalse,
+      );
+    });
+
+    test('explicit defaultYes selects Yes', () {
+      terminal.mockInput.queueKey(KeyEventType.enter);
+
+      expect(
+        SimplePrompts.confirm(
+          title: 'Confirm',
+          message: 'Continue?',
+          defaultYes: true,
+        ).run(),
+        isTrue,
+      );
+    });
+  });
+
   group('SimplePrompts.number', () {
     test('cancel returns the exact supplied initial value', () {
       terminal.mockInput.queueKey(KeyEventType.esc);

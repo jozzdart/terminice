@@ -40,8 +40,8 @@ extension CommandPaletteExtensions on Terminice {
     int maxVisible = 12,
   }) {
     if (commands.isEmpty) return null;
-    return runWithFallback<CommandEntry?>(
-      interactive: () {
+    return runWithExecutionMode<CommandEntry?>(
+      rich: () {
         final theme = defaultTheme;
 
         final promptObj = RankedListPrompt<CommandEntry>(
@@ -113,11 +113,12 @@ extension CommandPaletteExtensions on Terminice {
           },
         );
       },
-      fallback: () => FallbackSelection.single<CommandEntry>(
+      line: () => FallbackSelection.single<CommandEntry>(
         title: prompt,
         options: commands,
         labelBuilder: _commandEntryLabel,
       ),
+      unattended: () => null,
     );
   }
 }

@@ -7,8 +7,7 @@ import 'terminice_config.dart';
 
 /// Runs a custom Terminice component with a prepared component [context].
 typedef TerminiceComponentCallback<T> = T Function(
-  TerminiceComponentContext context,
-);
+    TerminiceComponentContext context);
 
 /// A reusable custom component that runs against a configured [Terminice].
 ///
@@ -20,9 +19,8 @@ abstract class TerminiceComponent<T> {
   const TerminiceComponent();
 
   /// Creates a component from a callback.
-  const factory TerminiceComponent.from(
-    TerminiceComponentCallback<T> run,
-  ) = _CallbackTerminiceComponent<T>;
+  const factory TerminiceComponent.from(TerminiceComponentCallback<T> run) =
+      _CallbackTerminiceComponent<T>;
 
   /// Runs this component with the prepared [context].
   T run(TerminiceComponentContext context);
@@ -46,15 +44,14 @@ class _CallbackTerminiceComponent<T> extends TerminiceComponent<T> {
 /// terminal, so components can stay stable even if global [TerminalContext]
 /// changes while they are running.
 class TerminiceComponentContext {
-  TerminiceComponentContext._({
-    required this.terminice,
-    required this.terminal,
-  })  : configuration = terminice.configuration,
+  TerminiceComponentContext._({required this.terminice, required this.terminal})
+      : configuration = terminice.configuration,
         theme = terminice.defaultTheme,
         input = terminal.input,
         output = terminal.output,
-        shouldUseFallback =
-            terminice.configuration.fallbackMode.shouldUseFallback(terminal);
+        executionMode = terminice.configuration.fallbackMode.executionModeFor(
+          terminal,
+        );
 
   /// The configured Terminice instance that created this context.
   final Terminice terminice;
@@ -74,11 +71,17 @@ class TerminiceComponentContext {
   /// Output stream from the captured [terminal].
   final TerminalOutput output;
 
-  /// Whether this context should use line-mode fallback.
+  /// Effective execution mode resolved from the captured [terminal].
+  ///
+  /// Capability probes are performed once while constructing this context, so
+  /// every built-in branch observes the same decision.
+  final TerminiceExecutionMode executionMode;
+
+  /// Whether this context should use the compatibility fallback path.
   ///
   /// This decision is based on [configuration] and the captured [terminal], not
   /// on the current global [TerminalContext].
-  final bool shouldUseFallback;
+  bool get shouldUseFallback => executionMode != TerminiceExecutionMode.rich;
 
   /// Reinstalls the captured [terminal] as the global active terminal.
   ///
@@ -112,6 +115,28 @@ class TerminiceComponentContext {
     return withActiveTerminal<T>(
       () => shouldUseFallback ? fallback() : interactive(),
     );
+  }
+
+  /// Runs a built-in branch for this context's effective execution mode.
+  ///
+  /// The [unattended] callback must not read [input]. This separate dispatch is
+  /// additive so existing custom components using [runWithFallback] keep their
+  /// established two-branch behavior.
+  T runWithExecutionMode<T>({
+    required T Function() rich,
+    required T Function() line,
+    required T Function() unattended,
+  }) {
+    return withActiveTerminal<T>(() {
+      switch (executionMode) {
+        case TerminiceExecutionMode.rich:
+          return rich();
+        case TerminiceExecutionMode.line:
+          return line();
+        case TerminiceExecutionMode.unattended:
+          return unattended();
+      }
+    });
   }
 }
 
@@ -148,6 +173,21 @@ extension TerminiceComponentRunner on Terminice {
       (context) => context.runWithFallback<T>(
         interactive: interactive,
         fallback: fallback,
+      ),
+    );
+  }
+
+  /// Dispatches a built-in across rich, line, and unattended execution.
+  T runWithExecutionMode<T>({
+    required T Function() rich,
+    required T Function() line,
+    required T Function() unattended,
+  }) {
+    return runWithComponent<T>(
+      (context) => context.runWithExecutionMode<T>(
+        rich: rich,
+        line: line,
+        unattended: unattended,
       ),
     );
   }

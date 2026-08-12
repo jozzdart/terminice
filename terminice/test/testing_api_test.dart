@@ -70,7 +70,7 @@ void main() {
         (t) => t.confirm(message: 'Create project?'),
       );
 
-      expect(result, isFalse);
+      expect(result, isTrue);
       expect(tester.output.plainText, contains('Create project?'));
     });
 
@@ -93,15 +93,16 @@ void main() {
       expect(tester.output.plainText, contains('Hello Ada'));
     });
 
-    test('uses auto fallback for non-interactive terminals', () {
+    test('uses unattended mode for non-interactive terminals', () {
       final tester = TerminiceTester.nonInteractive(lines: ['Ada']);
 
       final result = tester.run((t) => t.text('Name'));
 
-      expect(result, equals('Ada'));
+      expect(result, isNull);
       expect(tester.terminal.mockInput.hasTerminal, isFalse);
       expect(tester.terminal.mockOutput.hasTerminal, isFalse);
-      expect(tester.output.plainText, contains('Name'));
+      expect(tester.terminal.mockInput.linesRemaining, equals(1));
+      expect(tester.output.plainText, isEmpty);
     });
 
     test('captures async task helper output through runAsync', () async {

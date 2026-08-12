@@ -71,25 +71,35 @@ class ProgressDots with IndicatorLifecycle {
   /// The [message] is the text displayed next to the dots.
   /// The [maxDots] controls the maximum number of dots in the animation sequence.
   /// The [theme] controls the colors used for the dots and text.
+  ///
+  /// Direct construction captures the ambient terminal and automatically
+  /// detected execution mode at construction time. Use
+  /// [Terminice.progressDots] to capture a client's terminal and explicit
+  /// fallback policy at creation time.
   ProgressDots(
     this.prompt, {
     this.message = 'Working',
     this.maxDots = 3,
     this.theme = PromptTheme.dark,
   })  : _taskClient = null,
-        assert(maxDots > 0);
+        assert(maxDots > 0) {
+    initializeAutomatically();
+  }
 
   ProgressDots._fromTerminice(
     this.prompt,
-    this._taskClient, {
+    Terminice origin, {
     this.theme = PromptTheme.dark,
   })  : message = 'Working',
-        maxDots = 3;
+        maxDots = 3,
+        _taskClient = captureIndicatorClient(origin) {
+    initializeFromTerminice(_taskClient!);
+  }
 
   /// Shows the dots at the given phase.
   void show({required int phase}) {
-    final out = prepareFrame();
-    _render(out, phase);
+    final dots = '.' * (phase % (maxDots + 1));
+    renderIndicator('$prompt: $message$dots', (out) => _render(out, phase));
   }
 
   /// Runs with a callback that provides tick updates.
@@ -99,7 +109,7 @@ class ProgressDots with IndicatorLifecycle {
       callback(() {
         show(phase: phase++);
       });
-    });
+    }, plainStart: '$prompt: $message', plainSuccess: prompt);
   }
 
   /// Runs [run] while showing progress dots and returns its typed result.
@@ -117,20 +127,28 @@ class ProgressDots with IndicatorLifecycle {
     TaskDisplay display = TaskDisplay.auto,
     TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
   }) {
-    return indicatorTaskClient(theme, _taskClient).task<T>(
-      prompt,
-      run: run,
-      message: message ?? this.message,
-      success: success,
-      failure: failure,
-      cancel: cancel,
-      isCanceled: isCanceled,
-      interval: interval,
-      style: SpinnerStyle.dots,
-      indicator: TaskRunningIndicator.dots,
-      maxDots: maxDots,
-      display: display,
-      finalBehavior: finalBehavior,
+    return runTaskSession<T>(
+      (terminal, directFallbackMode) => indicatorTaskClient(
+        theme,
+        _taskClient,
+        terminal: terminal,
+        directFallbackMode: directFallbackMode,
+      ).task<T>(
+        prompt,
+        run: run,
+        message: message ?? this.message,
+        success: success,
+        failure: failure,
+        cancel: cancel,
+        isCanceled: isCanceled,
+        interval: interval,
+        style: SpinnerStyle.dots,
+        indicator: TaskRunningIndicator.dots,
+        maxDots: maxDots,
+        display: display,
+        finalBehavior: finalBehavior,
+      ),
+      plainStart: '$prompt: ${message ?? this.message}',
     );
   }
 

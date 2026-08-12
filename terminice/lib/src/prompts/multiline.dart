@@ -6,6 +6,29 @@ import 'package:terminice_core/terminice_core.dart';
 /// Multi-line editor prompt that emulates a lightweight terminal text area with
 /// scrolling, cursor management, and full keyboard bindings.
 extension MultiLineInputPromptExtensions on Terminice {
+  /// Reads multiple lines, returning `null` when cancelled.
+  String? multiline(
+    String prompt, {
+    int maxLines = 200,
+    int visibleLines = 10,
+    bool allowEmpty = true,
+  }) {
+    return runWithExecutionMode<String?>(
+      rich: () => _richMultiline(
+        prompt,
+        maxLines: maxLines,
+        visibleLines: visibleLines,
+        allowEmpty: allowEmpty,
+      ),
+      line: () => FallbackPrompt.multiline(
+        title: prompt,
+        maxLines: maxLines,
+        allowEmpty: allowEmpty,
+      ),
+      unattended: () => allowEmpty ? '' : null,
+    );
+  }
+
   /// MultiLineInputPrompt - editable pseudo text area for multi-line input.
   ///
   /// - [prompt] is the title displayed above the text area.
@@ -26,7 +49,7 @@ extension MultiLineInputPromptExtensions on Terminice {
   /// ```dart
   /// final text = terminice.multiline('Notes');
   /// ```
-  String? multiline(
+  String? _richMultiline(
     String prompt, {
     int maxLines = 200,
     int visibleLines = 10,

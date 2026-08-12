@@ -1,4 +1,5 @@
 import 'package:terminice/terminice.dart';
+import 'package:terminice/src/config_editor/focused_select.dart';
 import 'package:terminice_core/terminice_core.dart' show FormFieldConfig;
 import 'package:test/test.dart';
 
@@ -39,43 +40,164 @@ void main() {
       expect(result?.values, ['Ada']);
     });
 
-    test('list selectors return empty lists on EOF', () {
-      final searchResult = terminice.fallback
-          .withTerminal(MockTerminal())
-          .searchSelector(options: ['alpha', 'beta']);
+    for (final inputCase in <({String name, bool blank})>[
+      (name: 'blank input', blank: true),
+      (name: 'EOF', blank: false),
+    ]) {
+      test('selectors do not fabricate focused selections on ${inputCase.name}',
+          () {
+        MockTerminal terminal() {
+          final terminal = MockTerminal();
+          if (inputCase.blank) terminal.mockInput.queueLine('');
+          return terminal;
+        }
 
-      final checkboxResult =
-          terminice.fallback.withTerminal(MockTerminal()).checkboxSelector(
-        'Pick many',
-        options: ['alpha', 'beta'],
-        initialSelected: {1},
+        final cases = <({String name, Object? actual, Object? expected})>[
+          (
+            name: 'searchSelector',
+            actual: terminice.fallback
+                .withTerminal(terminal())
+                .searchSelector(options: const ['alpha', 'beta']),
+            expected: <String>[],
+          ),
+          (
+            name: 'gridSelector',
+            actual: terminice.fallback
+                .withTerminal(terminal())
+                .gridSelector(options: const ['alpha', 'beta']),
+            expected: <String>[],
+          ),
+          (
+            name: 'checkboxSelector',
+            actual: terminice.fallback
+                .withTerminal(terminal())
+                .checkboxSelector('Checkbox', options: const ['alpha', 'beta']),
+            expected: <String>[],
+          ),
+          (
+            name: 'choiceSelector',
+            actual: terminice.fallback.withTerminal(terminal()).choiceSelector(
+              'Choice',
+              items: const [ChoiceItem('alpha'), ChoiceItem('beta')],
+            ),
+            expected: <String>[],
+          ),
+          (
+            name: 'tagSelector',
+            actual: terminice.fallback
+                .withTerminal(terminal())
+                .tagSelector(tags: const ['alpha', 'beta']),
+            expected: <String>[],
+          ),
+          (
+            name: 'toggleGroup',
+            actual: terminice.fallback.withTerminal(terminal()).toggleGroup(
+              'Toggle',
+              items: const [ToggleItem('alpha'), ToggleItem('beta')],
+            ),
+            expected: <String, bool>{'alpha': false, 'beta': false},
+          ),
+          (
+            name: 'commandPalette',
+            actual: terminice.fallback.withTerminal(terminal()).commandPalette(
+              'Commands',
+              commands: const [
+                CommandEntry(id: 'open', title: 'Open'),
+              ],
+            ),
+            expected: null,
+          ),
+        ];
+
+        for (final selectorCase in cases) {
+          expect(
+            selectorCase.actual,
+            selectorCase.expected,
+            reason: selectorCase.name,
+          );
+        }
+      });
+    }
+
+    test('blank input preserves explicit selector initial state', () {
+      MockTerminal terminal() => MockTerminal()..mockInput.queueLine('');
+
+      expect(
+        terminice.fallback.withTerminal(terminal()).gridSelector(
+          options: const ['zero', 'one', 'two'],
+          initialSelection: const {2, -1, 1, 99},
+        ),
+        ['one'],
       );
-
-      expect(searchResult, isEmpty);
-      expect(checkboxResult, isEmpty);
+      expect(
+        terminice.fallback.withTerminal(terminal()).gridSelector(
+              options: const ['zero', 'one', 'two'],
+              multiSelect: true,
+              initialSelection: const {2, -1, 1, 99},
+            ),
+        ['one', 'two'],
+      );
+      expect(
+        terminice.fallback.withTerminal(terminal()).checkboxSelector(
+          'Checkbox',
+          options: const ['zero', 'one', 'two'],
+          initialSelected: const {2, -1, 1, 99},
+        ),
+        ['one', 'two'],
+      );
+      expect(
+        terminice.fallback.withTerminal(terminal()).toggleGroup(
+          'Toggle',
+          items: const [
+            ToggleItem('off'),
+            ToggleItem('on', initialOn: true),
+          ],
+        ),
+        {'off': false, 'on': true},
+      );
+      expect(
+        focusedSelect(
+          terminice: terminice.fallback.withTerminal(terminal()),
+          options: const ['zero', 'one', 'two'],
+          title: 'Focused',
+          initialIndex: 2,
+        ),
+        'two',
+      );
     });
 
-    test('selector fallback still uses defaults for empty lines', () {
-      final terminal = MockTerminal();
-      terminal.mockInput.queueLine('');
-
-      final result = terminice.fallback.withTerminal(terminal).searchSelector(
-        options: ['alpha', 'beta'],
+    test('EOF cancels selectors even when they have initial state', () {
+      expect(
+        terminice.fallback.withTerminal(MockTerminal()).gridSelector(
+          options: const ['zero', 'one'],
+          initialSelection: const {1},
+        ),
+        isEmpty,
       );
-
-      expect(result, ['alpha']);
-    });
-
-    test('nullable single selector returns null on EOF', () {
-      final result =
-          terminice.fallback.withTerminal(MockTerminal()).commandPalette(
-        'Commands',
-        commands: [
-          const CommandEntry(id: 'open', title: 'Open'),
-        ],
+      expect(
+        terminice.fallback.withTerminal(MockTerminal()).checkboxSelector(
+          'Checkbox',
+          options: const ['zero', 'one'],
+          initialSelected: const {1},
+        ),
+        isEmpty,
       );
-
-      expect(result, isNull);
+      expect(
+        focusedSelect(
+          terminice: terminice.fallback.withTerminal(MockTerminal()),
+          options: const ['zero', 'one'],
+          title: 'Focused',
+          initialIndex: 1,
+        ),
+        isNull,
+      );
+      expect(
+        terminice.fallback.withTerminal(MockTerminal()).toggleGroup(
+          'Toggle',
+          items: const [ToggleItem('on', initialOn: true)],
+        ),
+        {'on': true},
+      );
     });
   });
 }

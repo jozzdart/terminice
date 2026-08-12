@@ -103,7 +103,7 @@ void main() {
   });
 
   // ══════════════════════════════════════════════════════════════════════════
-  // Convenience getters — Colors
+  // Convenience getters - Colors
   // ══════════════════════════════════════════════════════════════════════════
 
   group('color convenience getters', () {
@@ -177,7 +177,7 @@ void main() {
   });
 
   // ══════════════════════════════════════════════════════════════════════════
-  // Convenience getters — Glyphs
+  // Convenience getters - Glyphs
   // ══════════════════════════════════════════════════════════════════════════
 
   group('glyph convenience getters', () {
@@ -232,7 +232,7 @@ void main() {
   });
 
   // ══════════════════════════════════════════════════════════════════════════
-  // Convenience getters — Features
+  // Convenience getters - Features
   // ══════════════════════════════════════════════════════════════════════════
 
   group('feature convenience getters', () {

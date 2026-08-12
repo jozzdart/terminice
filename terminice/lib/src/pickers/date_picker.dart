@@ -6,6 +6,38 @@ import 'package:time_plus/time_plus.dart';
 
 /// Adds the [datePicker] method to [Terminice] for interactive calendar-based date selection.
 extension DatePickerExtensions on Terminice {
+  /// Selects a calendar date within the configured temporal bounds.
+  DateTime? datePicker(
+    String prompt, {
+    DateTime? initialDate,
+    bool startWeekOnMonday = true,
+    bool allowPast = true,
+    bool allowFuture = true,
+  }) {
+    final today = _dateOnly(DateTime.now());
+    final initial = initialDate == null ? null : _dateOnly(initialDate);
+    final validInitial = initial != null &&
+        (allowPast || !initial.isBefore(today)) &&
+        (allowFuture || !initial.isAfter(today));
+    return runWithExecutionMode<DateTime?>(
+      rich: () => _richDatePicker(
+        prompt,
+        initialDate: initialDate,
+        startWeekOnMonday: startWeekOnMonday,
+        allowPast: allowPast,
+        allowFuture: allowFuture,
+      ),
+      line: () => FallbackPrompt.date(
+        title: prompt,
+        defaultValue: validInitial ? initial : null,
+        min: allowPast ? null : today,
+        max: allowFuture ? null : today,
+        returnDefaultOnEndOfInput: validInitial,
+      ),
+      unattended: () => validInitial ? initial : null,
+    );
+  }
+
   /// Renders a framed, keyboard-driven calendar that captures a single
   /// `DateTime` inside an interactive Terminice session.
   ///
@@ -35,7 +67,7 @@ extension DatePickerExtensions on Terminice {
   ///   startWeekOnMonday: false,
   /// );
   /// ```
-  DateTime? datePicker(
+  DateTime? _richDatePicker(
     String prompt, {
     DateTime? initialDate,
     bool startWeekOnMonday = true,

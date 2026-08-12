@@ -1,3 +1,14 @@
+## 1.2.0
+
+- **New**: Added `TerminalEnvironment` so terminal implementations can expose terminal-type capabilities; `DartTerminal` and `MockTerminal` now support it.
+- **New**: Added `FallbackPrompt.date()` and `FallbackPrompt.multiline()`, plus step-aware number and range fallback input.
+- **New**: Added documented `terminalSafeBlockText()` and `terminalSafeLineText()` helpers for visibly escaping C0/C1 controls and terminal escape sequences in plain output.
+- **New**: Added documented stepped-value and stepped-range normalization helpers for consistent bound clamping, nearest-step snapping, and range ordering.
+- **Behavior**: Hardened `FallbackPrompt` output so titles, options, defaults, labels, and validation errors cannot emit active terminal controls.
+- **Behavior**: Corrected `SimplePrompts.confirm()` to use the safer and more conventional No default; existing callers that explicitly set `defaultYes: true` continue to behave as before.
+- **Behavior**: Preserved established rich-prompt cancellation values while normalizing confirmed stepped values.
+- **Tests**: Added hostile terminal-text and numeric normalization coverage.
+
 ## 1.1.0
 
 - **New**: Added public `FallbackPrompt` line-mode primitives for prompt flows that should not enter raw terminal mode.
@@ -29,22 +40,22 @@
 
 Enhanced **`sliderBar`** with configurable value labels.
 
-- **`value` and `unit` parameters** — `sliderBar` now accepts the actual numeric value and an optional unit suffix (e.g. `'%'`, `'s'`, `'MB'`). The value with its suffix is always shown when provided. The `showPercent` flag (now `false` by default) optionally appends the calculated ratio percentage in parentheses — e.g. `30s (25%)`.
+- **`value` and `unit` parameters** - `sliderBar` now accepts the actual numeric value and an optional unit suffix (e.g. `'%'`, `'s'`, `'MB'`). The value with its suffix is always shown when provided. The `showPercent` flag (now `false` by default) optionally appends the calculated ratio percentage in parentheses - e.g. `30s (25%)`.
 
 ## 0.0.13
 
-Added **`FormPrompt`** — a reusable multi-field text input prompt.
+Added **`FormPrompt`** - a reusable multi-field text input prompt.
 
-- **`FormPrompt`** — Renders multiple labeled text fields inside a single `FrameView`. Supports per-field masking, placeholders, validation, and a cross-field validator. Composes existing `TextInputBuffer`, `FrameView`, `KeyBindings`, and `PromptRunner` with no changes to existing code.
-- **`FormFieldConfig`** — Configuration for each field: `label`, `placeholder`, `masked`, `maskChar`, `allowReveal`, `required`, `validator`, `initialValue`.
-- **`FormResult`** — Result wrapper with indexed `[]` access to field values.
+- **`FormPrompt`** - Renders multiple labeled text fields inside a single `FrameView`. Supports per-field masking, placeholders, validation, and a cross-field validator. Composes existing `TextInputBuffer`, `FrameView`, `KeyBindings`, and `PromptRunner` with no changes to existing code.
+- **`FormFieldConfig`** - Configuration for each field: `label`, `placeholder`, `masked`, `maskChar`, `allowReveal`, `required`, `validator`, `initialValue`.
+- **`FormResult`** - Result wrapper with indexed `[]` access to field values.
 - Key handling: Tab/↓ advance to next field, ↑ goes back, Enter advances or submits from the last field, Ctrl+R reveals masked fields, Esc cancels.
 
 ## 0.0.12
 
 - **Styling extracted to `termistyle`**: All standalone style and rendering primitives (`PromptTheme`, `TerminalColors`, `TerminalGlyphs`, `DisplayFeatures`, `BadgeTone`, `InlineStyle`, `FrameRenderer`, `FramedLayout`, `TableRenderer`, `SyntaxHighlighter`, text utilities) now live in the `termistyle` package and are re-exported through the existing barrel.
 - Removed duplicate `StatTone` enum and `_toneColor` helper from `frame_view.dart` in favor of the shared definitions from `termistyle`.
-- Cleaned up the `style/` directory entirely — all style files are sourced from `termistyle`.
+- Cleaned up the `style/` directory entirely - all style files are sourced from `termistyle`.
 - No public API or behavioral changes. All existing code continues to work unchanged.
 
 ## 0.0.11

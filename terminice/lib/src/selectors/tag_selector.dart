@@ -42,8 +42,8 @@ extension TagSelectorExtensions on Terminice {
     bool useTerminalWidth = true,
   }) {
     if (tags.isEmpty) return [];
-    return runWithFallback<List<String>>(
-      interactive: () {
+    return runWithExecutionMode<List<String>>(
+      rich: () {
         final theme = defaultTheme;
         String renderChip(
             String tag, bool isFocused, bool isSelected, int colWidth) {
@@ -139,11 +139,11 @@ extension TagSelectorExtensions on Terminice {
           },
         );
       },
-      fallback: () => FallbackSelection.multi<String>(
+      line: () => FallbackSelection.multi<String>(
         title: prompt,
         options: tags,
-        fallbackIndex: 0,
       ),
+      unattended: () => <String>[],
     );
   }
 }

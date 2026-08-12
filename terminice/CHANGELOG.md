@@ -1,3 +1,24 @@
+## 1.3.0
+
+#### Changed
+
+- Corrected the default execution policy so built-ins automatically choose rich, line, or unattended behavior based on terminal capabilities. Existing explicit `.interactive` and `.fallback` choices are unchanged; applications that intentionally read piped input should select `.fallback`, while automatic unattended execution safely avoids reading input.
+- Corrected `Terminice.confirm`, `FlowBuilder.confirm`, and `SimplePrompts.confirm` to use the safer and more conventional No default. Existing calls with `defaultYes: true` continue to behave as before in rich and line modes, while unattended confirmation resolves safely to `false`.
+- Normalized slider and range initial values consistently across rich, line, and unattended execution by clamping to bounds, snapping to the nearest valid step, and ordering range endpoints.
+- Direct indicator constructors now detect and capture the ambient terminal's execution mode; indicators created through `Terminice` continue to preserve the originating instance's explicit policy and terminal.
+
+#### Added
+
+- Added public rich/line/unattended execution APIs through `TerminiceExecutionMode`, `executionMode`, `executionModeFor(...)`, and `runWithExecutionMode(...)`, including conservative TTY and `TERM=dumb` detection.
+- Completed ANSI-free line and unattended behavior for all built-in prompts, selectors, pickers, guides, config editing, indicators, tasks, flows, and message primitives. Direct-I/O custom components remain responsible for their own fallback behavior.
+- Added terminal-safe plain-output handling for C0/C1 controls and escape sequences across built-in fallback output.
+- Added shared selector fallback resolution so blank input no longer fabricates a focused selection; valid explicit initial state is still preserved where supported.
+
+#### Documentation
+
+- Generated fire, matrix, and arcane previews for every Terminice catalogue entry, with reproducible visual generation tooling.
+- Sharpened the optimized opening showcase and synchronized the root and package README presentation.
+
 ## 1.2.0
 
 #### Added
@@ -73,59 +94,59 @@
 
 Config editor polish: **custom icons**, **group styling**, and **slider labels**.
 
-- **Custom `icon` parameter** — Every `Configurable` type now accepts an optional `icon` to override the default type glyph. Works on direct constructors and `ConfigFactory` methods alike. Subclasses provide a `defaultTypeIcon` fallback.
-- **Distinct group styling** — `GroupConfigurable` rows render with bold labels, accent-colored field counts, and a dim `→` navigation arrow, making them visually distinct from leaf fields.
-- **Updated default icons** — `GroupConfigurable` uses `⊞` (tree-expand), `PasswordConfigurable` uses `✲` (key-like), and `BoolConfigurable` uses `☉`.
-- **Slider unit & percent control** — `slider()` now accepts a `unit` suffix (e.g. `'%'`, `'s'`, `'MB'`) shown alongside the value, and an opt-in `showPercent` flag that appends the calculated ratio percentage in parentheses. Both default to off, so the slider shows the raw value by default. `NumberConfigurable` and `ConfigFactory.number()` expose `showPercent` to forward this to slider mode.
+- **Custom `icon` parameter** - Every `Configurable` type now accepts an optional `icon` to override the default type glyph. Works on direct constructors and `ConfigFactory` methods alike. Subclasses provide a `defaultTypeIcon` fallback.
+- **Distinct group styling** - `GroupConfigurable` rows render with bold labels, accent-colored field counts, and a dim `→` navigation arrow, making them visually distinct from leaf fields.
+- **Updated default icons** - `GroupConfigurable` uses `⊞` (tree-expand), `PasswordConfigurable` uses `✲` (key-like), and `BoolConfigurable` uses `☉`.
+- **Slider unit & percent control** - `slider()` now accepts a `unit` suffix (e.g. `'%'`, `'s'`, `'MB'`) shown alongside the value, and an opt-in `showPercent` flag that appends the calculated ratio percentage in parentheses. Both default to off, so the slider shows the raw value by default. `NumberConfigurable` and `ConfigFactory.number()` expose `showPercent` to forward this to slider mode.
 
 ## 0.0.19
 
 Added **verify password** and **`terminice.form()`** using the new `FormPrompt` from terminice_core 0.0.13.
 
-- **`password(verify: true)`** — New optional parameter on the password prompt. When enabled, shows "Password" and "Verify password" fields side-by-side in a single frame. Both must match to confirm. Existing behavior (`verify: false`) is completely unchanged.
-- **`terminice.form()`** — Convenience extension that runs a `FormPrompt` with the current theme. Pass `title`, `fields`, and an optional `crossValidator` to collect multiple text inputs in one prompt.
-- **`PasswordConfigurable.verify`** — New field on `PasswordConfigurable` and `ConfigFactory.password()` to enable verify mode from the config editor.
+- **`password(verify: true)`** - New optional parameter on the password prompt. When enabled, shows "Password" and "Verify password" fields side-by-side in a single frame. Both must match to confirm. Existing behavior (`verify: false`) is completely unchanged.
+- **`terminice.form()`** - Convenience extension that runs a `FormPrompt` with the current theme. Pass `title`, `fields`, and an optional `crossValidator` to collect multiple text inputs in one prompt.
+- **`PasswordConfigurable.verify`** - New field on `PasswordConfigurable` and `ConfigFactory.password()` to enable verify mode from the config editor.
 
 ## 0.0.18
 
-Added **`ConfigFactory`** — a shorthand factory for creating configurables with less boilerplate.
+Added **`ConfigFactory`** - a shorthand factory for creating configurables with less boilerplate.
 
-- **`terminice.config`** — Extension getter that returns a `ConfigFactory` instance. Store it as `final c = terminice.config` and build fields with concise one-liners.
-- **Factory methods**: `c.boolean()`, `c.string()`, `c.password()`, `c.number()`, `c.select()`, `c.range()`, `c.rating()`, `c.theme()`, `c.group()` — each mirrors the full constructor of its corresponding `Configurable` type.
+- **`terminice.config`** - Extension getter that returns a `ConfigFactory` instance. Store it as `final c = terminice.config` and build fields with concise one-liners.
+- **Factory methods**: `c.boolean()`, `c.string()`, `c.password()`, `c.number()`, `c.select()`, `c.range()`, `c.rating()`, `c.theme()`, `c.group()` - each mirrors the full constructor of its corresponding `Configurable` type.
 - `select` is used for enum fields since `enum` is a Dart reserved word.
-- `ConfigFactory` is a `const` class — zero overhead, no state, works standalone or via the extension.
+- `ConfigFactory` is a `const` class - zero overhead, no state, works standalone or via the extension.
 
 ## 0.0.17
 
 Added **nested group configurables** to the config editor, enabling hierarchical settings with infinite nesting depth.
 
-- **`GroupConfigurable`** — Groups child fields into a navigable sub-editor. Appears in the parent list with a `▸` icon and a live summary (e.g. "2/5 modified"). Press Enter to drill in, Esc or "← Back" to return. Groups can contain other groups for arbitrary nesting.
-- **Shared editor loop** — Extracted the rendering, navigation, and key-handling logic into a reusable internal loop. Both the top-level `configEditor` and nested group editors share the same code path, eliminating duplication.
-- **Root-only save** — Only the top-level editor shows "✓ Save & confirm". Nested editors show "← Back" instead — edits are preserved in-place and only finalized when the user confirms at the root.
-- **Recursive change detection** — `GroupConfigurable.isModified` checks all descendants recursively. The `*` modified indicator propagates up through all parent groups.
-- **Nested JSON serialization** — `toJsonValue()` produces nested maps and `loadJsonValue()` distributes back to children, so groups round-trip through JSON seamlessly.
-- **Recursive validation** — `GroupConfigurable.validate()` aggregates errors from all children, prefixed with the child label for context.
+- **`GroupConfigurable`** - Groups child fields into a navigable sub-editor. Appears in the parent list with a `▸` icon and a live summary (e.g. "2/5 modified"). Press Enter to drill in, Esc or "← Back" to return. Groups can contain other groups for arbitrary nesting.
+- **Shared editor loop** - Extracted the rendering, navigation, and key-handling logic into a reusable internal loop. Both the top-level `configEditor` and nested group editors share the same code path, eliminating duplication.
+- **Root-only save** - Only the top-level editor shows "✓ Save & confirm". Nested editors show "← Back" instead - edits are preserved in-place and only finalized when the user confirms at the root.
+- **Recursive change detection** - `GroupConfigurable.isModified` checks all descendants recursively. The `*` modified indicator propagates up through all parent groups.
+- **Nested JSON serialization** - `toJsonValue()` produces nested maps and `loadJsonValue()` distributes back to children, so groups round-trip through JSON seamlessly.
+- **Recursive validation** - `GroupConfigurable.validate()` aggregates errors from all children, prefixed with the child label for context.
 
 ## 0.0.16
 
 Introduced the **Config Editor** system - a searchable, theme-aware settings editor that composes existing prompts into a unified configuration flow.
 
-- **`configEditor`** — Keyboard-driven settings editor that presents a searchable list of typed fields. Select a field to open its dedicated prompt, then return to the list. Single terminal session with clean rendering (no leftover artifacts between edits).
-- **`Configurable<T>`** — Abstract base class for typed, serializable config fields with built-in validation, formatting, change detection (`isModified`), and JSON round-tripping (`toJsonValue` / `loadJsonValue`).
-- **`ConfigResult`** — Result wrapper with `toMap()` serialization, typed `get<T>(key)` access, `hasChanges`, `modified` list, and `loadFromMap()` for restoring state.
+- **`configEditor`** - Keyboard-driven settings editor that presents a searchable list of typed fields. Select a field to open its dedicated prompt, then return to the list. Single terminal session with clean rendering (no leftover artifacts between edits).
+- **`Configurable<T>`** - Abstract base class for typed, serializable config fields with built-in validation, formatting, change detection (`isModified`), and JSON round-tripping (`toJsonValue` / `loadJsonValue`).
+- **`ConfigResult`** - Result wrapper with `toMap()` serialization, typed `get<T>(key)` access, `hasChanges`, `modified` list, and `loadFromMap()` for restoring state.
 - **8 configurable types**:
-  - `BoolConfigurable` — Yes/no via confirm prompt.
-  - `StringConfigurable` — Single-line text or multiline editor, with placeholder and required flag.
-  - `PasswordConfigurable` — Masked input with optional reveal toggle.
-  - `NumberConfigurable` — Text input or slider mode, with min/max/step/unit and integer-only option.
-  - `EnumConfigurable` — Searchable dropdown from a fixed set of string options.
-  - `RangeConfigurable` — Dual-handle range prompt with start/end serialization.
-  - `RatingConfigurable` — Star rating with optional per-level labels.
-  - `ThemeConfigurable` — Live theme picker from all 11 built-in presets (or custom map). Changing the theme re-renders the editor immediately.
-- **Live theme switching** — `ThemeConfigurable` fields are auto-wired so selecting a new theme updates the editor's own frame, icons, and hints in real time.
-- **Focused selection** — Enum and theme selectors start the cursor on the currently active value, with a `✓` marker for quick identification.
-- **Field descriptions** — Optional `description` parameter on any configurable, shown as a dim subtitle below the focused field.
-- **Search on by default** — The editor starts with search enabled for fast filtering by label or key.
+  - `BoolConfigurable` - Yes/no via confirm prompt.
+  - `StringConfigurable` - Single-line text or multiline editor, with placeholder and required flag.
+  - `PasswordConfigurable` - Masked input with optional reveal toggle.
+  - `NumberConfigurable` - Text input or slider mode, with min/max/step/unit and integer-only option.
+  - `EnumConfigurable` - Searchable dropdown from a fixed set of string options.
+  - `RangeConfigurable` - Dual-handle range prompt with start/end serialization.
+  - `RatingConfigurable` - Star rating with optional per-level labels.
+  - `ThemeConfigurable` - Live theme picker from all 11 built-in presets (or custom map). Changing the theme re-renders the editor immediately.
+- **Live theme switching** - `ThemeConfigurable` fields are auto-wired so selecting a new theme updates the editor's own frame, icons, and hints in real time.
+- **Focused selection** - Enum and theme selectors start the cursor on the currently active value, with a `✓` marker for quick identification.
+- **Field descriptions** - Optional `description` parameter on any configurable, shown as a dim subtitle below the focused field.
+- **Search on by default** - The editor starts with search enabled for fast filtering by label or key.
 
 ## 0.0.15
 
@@ -151,13 +172,13 @@ Introduced the **Config Editor** system - a searchable, theme-aware settings edi
 ## 0.0.12
 
 - **Display Mode Presets**: New fluent accessors for quick theme switching.
-  - `terminice.minimal` — No borders, inline hints for functional-only output.
-  - `terminice.compact` — Borders but no hints for space-constrained environments.
-  - `terminice.verbose` — Full borders with grid hints for maximum discoverability.
+  - `terminice.minimal` - No borders, inline hints for functional-only output.
+  - `terminice.compact` - Borders but no hints for space-constrained environments.
+  - `terminice.verbose` - Full borders with grid hints for maximum discoverability.
 - **Component Customization Methods**: Fine-grained theme control.
-  - `withColors(TerminalColors)` — Swap color palette while preserving glyphs and features.
-  - `withGlyphs(TerminalGlyphs)` — Change symbols (borders, arrows, checkboxes) independently.
-  - `withFeatures(DisplayFeatures)` — Toggle borders, hints, bold titles on any theme.
+  - `withColors(TerminalColors)` - Swap color palette while preserving glyphs and features.
+  - `withGlyphs(TerminalGlyphs)` - Change symbols (borders, arrows, checkboxes) independently.
+  - `withFeatures(DisplayFeatures)` - Toggle borders, hints, bold titles on any theme.
 - **New Exports**: `TerminalColors`, `TerminalGlyphs`, `DisplayFeatures`, `HintStyle` now available from the main package.
 - **Theme Demo updated**: Now showcases glyphs and features alongside colors.
 - Bumped `terminice_core` dependency to 0.0.9
@@ -203,42 +224,42 @@ Introduced the **Config Editor** system - a searchable, theme-aware settings edi
 
 ## 0.0.6
 
-- Added `datePicker` — a framed calendar prompt with Monday/Sunday toggle,
+- Added `datePicker` - a framed calendar prompt with Monday/Sunday toggle,
   today shortcut, yearly jumps, allowed past/future guards, and full hint tray.
 
 ## 0.0.5
 
-- Added `colorPicker` — a keyboard-first ANSI color grid with curated presets,
+- Added `colorPicker` - a keyboard-first ANSI color grid with curated presets,
   live hex preview, hex entry shortcuts, and frame-integrated hint grid.
 
 ## 0.0.4
 
-- Added `date` — a multi-field, keyboard-driven date prompt with live preview,
+- Added `date` - a multi-field, keyboard-driven date prompt with live preview,
   today shortcut, and cancellable flow for safe calendar input.
 
 ## 0.0.3
 
 Introduced the selector suite:
 
-- **checkboxSelector** — Vertical checklist with select-all binding and live summary.
-- **choiceSelector** — Dashboard grid of cards with optional multi-select.
-- **commandPalette** — VS Code-style palette with fuzzy and substring ranking modes.
-- **gridSelector** — Generic 2D grid selector supporting multi-select and custom widths.
-- **searchSelector** — Scrollable list with optional search toggle and multi-select.
-- **tagSelector** — Chip-style picker that auto-reflows based on terminal width.
-- **toggleGroup** — Row-based toggle switches with focus navigation and "toggle all".
+- **checkboxSelector** - Vertical checklist with select-all binding and live summary.
+- **choiceSelector** - Dashboard grid of cards with optional multi-select.
+- **commandPalette** - VS Code-style palette with fuzzy and substring ranking modes.
+- **gridSelector** - Generic 2D grid selector supporting multi-select and custom widths.
+- **searchSelector** - Scrollable list with optional search toggle and multi-select.
+- **tagSelector** - Chip-style picker that auto-reflows based on terminal width.
+- **toggleGroup** - Row-based toggle switches with focus navigation and "toggle all".
 
 ## 0.0.2
 
 Added the full prompt catalog (text, password, confirm, multiline editor, slider, range, rating):
 
-- **text** — Fast single-line input with immediate validation feedback.
-- **password** — Secure masked entry with optional confirmation before submission.
-- **confirm** — Streamlined yes/no flow that highlights the default action.
-- **multiline** — Scrollable, multi-row composer with diff-friendly output.
-- **slider** — Keyboard-driven selector for smooth movement through numeric ranges.
-- **range** — Paired handles for picking inclusive min/max values within bounds.
-- **rating** — Symbol-based scoring that surfaces descriptive labels alongside stars.
+- **text** - Fast single-line input with immediate validation feedback.
+- **password** - Secure masked entry with optional confirmation before submission.
+- **confirm** - Streamlined yes/no flow that highlights the default action.
+- **multiline** - Scrollable, multi-row composer with diff-friendly output.
+- **slider** - Keyboard-driven selector for smooth movement through numeric ranges.
+- **range** - Paired handles for picking inclusive min/max values within bounds.
+- **rating** - Symbol-based scoring that surfaces descriptive labels alongside stars.
 
 ## 0.0.1
 

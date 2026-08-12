@@ -9,6 +9,22 @@ import 'package:terminice_core/terminice_core.dart';
 /// operators always know which shortcuts are available. Use [Terminice.date]
 /// to collect calendar-safe dates without building custom UI.
 extension DatePromptExtensions on Terminice {
+  /// Reads a local calendar date, optionally defaulting to [initial].
+  DateTime? date(String prompt, {DateTime? initial}) {
+    final defaultDate = initial == null
+        ? null
+        : DateTime(initial.year, initial.month, initial.day);
+    return runWithExecutionMode<DateTime?>(
+      rich: () => _richDate(prompt, initial: initial),
+      line: () => FallbackPrompt.date(
+        title: prompt.isEmpty ? 'Date' : prompt,
+        defaultValue: defaultDate,
+        returnDefaultOnEndOfInput: defaultDate != null,
+      ),
+      unattended: () => defaultDate,
+    );
+  }
+
   /// Presents an accessible, multi-field date selector with live preview.
   ///
   /// Users edit day, month, and year independently while the prompt keeps the
@@ -35,7 +51,7 @@ extension DatePromptExtensions on Terminice {
   /// final date = terminice.date('Launch date', initial: DateTime(2025, 12, 14));
   /// print(date); // -> 2025-12-14 00:00:00.000
   /// ```
-  DateTime? date(
+  DateTime? _richDate(
     String prompt, {
     DateTime? initial,
   }) {

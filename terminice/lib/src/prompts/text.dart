@@ -38,20 +38,21 @@ extension TextPromptExtensions on Terminice {
     String? Function(String)? validator,
     bool required = true,
   }) {
-    return runWithFallback<String?>(
-      interactive: () => TextPromptSync(
+    return runWithExecutionMode<String?>(
+      rich: () => TextPromptSync(
         title: prompt,
         theme: defaultTheme,
         placeholder: placeholder,
         validator: validator,
         required: required,
       ).run(),
-      fallback: () => FallbackPrompt.text(
+      line: () => FallbackPrompt.text(
         title: prompt,
         required: required,
         validator: validator,
         returnDefaultOnEndOfInput: false,
       ),
+      unattended: () => null,
     );
   }
 }

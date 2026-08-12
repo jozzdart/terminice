@@ -1,10 +1,10 @@
 import 'package:terminice_core/terminice_core.dart'
     show
         PromptTheme,
-        Terminal,
         TerminalColors,
         TerminalCompatibility,
-        TerminalGlyphs;
+        TerminalGlyphs,
+        terminalSafeLineText;
 
 import '../core/component_runner.dart';
 import '../core/terminice_api.dart';
@@ -100,19 +100,20 @@ String _formatMessage({
 }
 
 String _plainMessage(_MessageKind kind, String message) {
+  final safeMessage = terminalSafeLineText(message);
   switch (kind) {
     case _MessageKind.log:
-      return message;
+      return safeMessage;
     case _MessageKind.info:
-      return terminiceStatusLine(terminiceInfoStatusLabel, message);
+      return terminiceStatusLine(terminiceInfoStatusLabel, safeMessage);
     case _MessageKind.success:
-      return terminiceStatusLine(terminiceSuccessStatusLabel, message);
+      return terminiceStatusLine(terminiceSuccessStatusLabel, safeMessage);
     case _MessageKind.warn:
-      return terminiceStatusLine(terminiceWarnStatusLabel, message);
+      return terminiceStatusLine(terminiceWarnStatusLabel, safeMessage);
     case _MessageKind.error:
-      return terminiceStatusLine(terminiceErrorStatusLabel, message);
+      return terminiceStatusLine(terminiceErrorStatusLabel, safeMessage);
     case _MessageKind.detail:
-      return terminicePlainDetailLine(message);
+      return terminicePlainDetailLine(safeMessage);
   }
 }
 
@@ -152,16 +153,7 @@ bool _shouldUsePlainMessages(TerminiceComponentContext context) {
     return true;
   }
   if (_themeRequestsPlainMessages(context.theme)) return true;
-  if (!_terminalCanUseModernMessages(context.terminal)) return true;
   return false;
-}
-
-bool _terminalCanUseModernMessages(Terminal terminal) {
-  try {
-    return terminal.input.hasTerminal && terminal.output.hasTerminal;
-  } catch (_) {
-    return false;
-  }
 }
 
 bool _themeRequestsPlainMessages(PromptTheme theme) {

@@ -9,7 +9,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// - ← / → adjust the active handle by `step`
 /// - ↑ / ↓ or Space switches between start/end handles
 /// - Enter confirms
-/// - Esc / Ctrl+C cancel (returns the initial values)
+/// - Esc / Ctrl+C cancel (returns the normalized initial values)
 ///
 /// ```dart
 /// final (start, end) = terminice.range(
@@ -25,8 +25,8 @@ extension RangePromptExtensions on Terminice {
   /// - [prompt] is the title of the range prompt.
   /// - [min] is the minimum allowed value (defaults to 0).
   /// - [max] is the maximum allowed value (defaults to 100).
-  /// - [startInitial] is the starting value for the left handle (defaults to 20).
-  /// - [endInitial] is the starting value for the right handle (defaults to 80).
+  /// - [startInitial] is normalized for the lower handle (defaults to 20).
+  /// - [endInitial] is normalized for the upper handle (defaults to 80).
   /// - [step] is the increment/decrement amount when using arrow keys (defaults to 1).
   /// - [width] is the visual width of the slider bar in characters (defaults to 28).
   /// - [unit] is an optional string appended to the displayed values (defaults to '%').
@@ -47,15 +47,22 @@ extension RangePromptExtensions on Terminice {
     int width = 28,
     String unit = '%',
   }) {
-    return runWithFallback<RangeResult>(
-      interactive: () {
+    final normalizedInitial = normalizeSteppedRange(
+      startInitial,
+      endInitial,
+      min: min,
+      max: max,
+      step: step,
+    );
+    return runWithExecutionMode<RangeResult>(
+      rich: () {
         final theme = defaultTheme;
         final rangePrompt = RangeValuePrompt(
           title: prompt,
           min: min,
           max: max,
-          startInitial: startInitial,
-          endInitial: endInitial,
+          startInitial: normalizedInitial.start,
+          endInitial: normalizedInitial.end,
           step: step,
           theme: theme,
         );
@@ -152,21 +159,22 @@ extension RangePromptExtensions on Terminice {
           },
         );
       },
-      fallback: () {
+      line: () {
         final result = FallbackPrompt.range(
           title: prompt,
           startTitle: _rangePartTitle(prompt, 'start', unit),
           endTitle: _rangePartTitle(prompt, 'end', unit),
-          startDefault: startInitial,
-          endDefault: endInitial,
+          startDefault: normalizedInitial.start,
+          endDefault: normalizedInitial.end,
           min: min,
           max: max,
+          step: step,
           returnDefaultOnEndOfInput: false,
         );
         if (result == null) {
           return RangeResult(
-            start: startInitial,
-            end: endInitial,
+            start: normalizedInitial.start,
+            end: normalizedInitial.end,
           );
         }
         return RangeResult(
@@ -174,6 +182,10 @@ extension RangePromptExtensions on Terminice {
           end: result.end,
         );
       },
+      unattended: () => RangeResult(
+        start: normalizedInitial.start,
+        end: normalizedInitial.end,
+      ),
     );
   }
 }

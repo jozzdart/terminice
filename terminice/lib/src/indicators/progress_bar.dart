@@ -64,19 +64,29 @@ class ProgressBar with IndicatorLifecycle {
   /// The optional [width] lets you dial in the bar footprint to match the
   /// caller's terminal columns while keeping the shimmer effect intact.
   /// The [theme] controls the colors used for the progress bar and text.
+  ///
+  /// Direct construction captures the ambient terminal and automatically
+  /// detected execution mode at construction time. Use
+  /// [Terminice.progressBar] to capture a client's terminal and explicit
+  /// fallback policy at creation time.
   ProgressBar(
     this.prompt, {
     this.width = 36,
     this.theme = PromptTheme.dark,
   })  : _taskClient = null,
-        assert(width > 4);
+        assert(width > 4) {
+    initializeAutomatically();
+  }
 
   ProgressBar._fromTerminice(
     this.prompt,
-    this._taskClient, {
+    Terminice origin, {
     this.width = 36,
     this.theme = PromptTheme.dark,
-  }) : assert(width > 4);
+  })  : _taskClient = captureIndicatorClient(origin),
+        assert(width > 4) {
+    initializeFromTerminice(_taskClient!);
+  }
 
   /// Shows the progress bar at the given progress.
   void show({
@@ -84,8 +94,11 @@ class ProgressBar with IndicatorLifecycle {
     required int total,
     int shimmerPhase = 0,
   }) {
-    final out = prepareFrame();
-    _render(out, current, total, shimmerPhase);
+    final display = progressDisplay(current: current, total: total);
+    renderIndicator(
+      '$prompt: ${display.percent}% (${display.current}/${display.total})',
+      (out) => _render(out, current, total, shimmerPhase),
+    );
   }
 
   /// Runs the progress bar with a callback that provides updates.
@@ -96,7 +109,7 @@ class ProgressBar with IndicatorLifecycle {
       callback((current, total) {
         show(current: current, total: total, shimmerPhase: phase++);
       });
-    });
+    }, plainStart: prompt, plainSuccess: prompt);
   }
 
   /// Runs [run] with a progress handle while rendering determinate progress.
@@ -115,19 +128,27 @@ class ProgressBar with IndicatorLifecycle {
     TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
     Duration interval = const Duration(milliseconds: 80),
   }) {
-    return indicatorTaskClient(theme, _taskClient).progressTask<T>(
-      prompt,
-      total: total,
-      run: run,
-      message: message,
-      success: success,
-      failure: failure,
-      cancel: cancel,
-      isCanceled: isCanceled,
-      display: display,
-      finalBehavior: finalBehavior,
-      interval: interval,
-      progressWidth: width,
+    return runTaskSession<T>(
+      (terminal, directFallbackMode) => indicatorTaskClient(
+        theme,
+        _taskClient,
+        terminal: terminal,
+        directFallbackMode: directFallbackMode,
+      ).progressTask<T>(
+        prompt,
+        total: total,
+        run: run,
+        message: message,
+        success: success,
+        failure: failure,
+        cancel: cancel,
+        isCanceled: isCanceled,
+        display: display,
+        finalBehavior: finalBehavior,
+        interval: interval,
+        progressWidth: width,
+      ),
+      plainStart: message == null ? prompt : '$prompt: $message',
     );
   }
 
@@ -144,19 +165,27 @@ class ProgressBar with IndicatorLifecycle {
     TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
     Duration interval = const Duration(milliseconds: 80),
   }) {
-    return indicatorTaskClient(theme, _taskClient).trackStream<T>(
-      prompt,
-      source,
-      total: total,
-      message: message,
-      success: success,
-      failure: failure,
-      cancel: cancel,
-      isCanceled: isCanceled,
-      display: display,
-      finalBehavior: finalBehavior,
-      interval: interval,
-      progressWidth: width,
+    return runTaskSession<List<T>>(
+      (terminal, directFallbackMode) => indicatorTaskClient(
+        theme,
+        _taskClient,
+        terminal: terminal,
+        directFallbackMode: directFallbackMode,
+      ).trackStream<T>(
+        prompt,
+        source,
+        total: total,
+        message: message,
+        success: success,
+        failure: failure,
+        cancel: cancel,
+        isCanceled: isCanceled,
+        display: display,
+        finalBehavior: finalBehavior,
+        interval: interval,
+        progressWidth: width,
+      ),
+      plainStart: message == null ? prompt : '$prompt: $message',
     );
   }
 

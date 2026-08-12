@@ -57,19 +57,36 @@ extension FormPromptExtensions on Terminice {
     required List<FormFieldConfig> fields,
     String? Function(List<String> values)? crossValidator,
   }) {
-    return runWithFallback<FormResult?>(
-      interactive: () => FormPrompt(
+    return runWithExecutionMode<FormResult?>(
+      rich: () => FormPrompt(
         title: prompt,
         theme: defaultTheme,
         fields: fields,
         crossValidator: crossValidator,
       ).run(),
-      fallback: () => _fallbackForm(
+      line: () => _fallbackForm(
         fields,
         crossValidator: crossValidator,
       ),
+      unattended: () => _unattendedForm(fields, crossValidator),
     );
   }
+}
+
+FormResult? _unattendedForm(
+  List<FormFieldConfig> fields,
+  String? Function(List<String> values)? crossValidator,
+) {
+  final values = <String>[];
+  for (final field in fields) {
+    final value = field.initialValue ?? '';
+    if (field.required && value.isEmpty) return null;
+    final error = field.validator?.call(value);
+    if (error != null && error.isNotEmpty) return null;
+    values.add(value);
+  }
+  final error = crossValidator?.call(values);
+  return error == null || error.isEmpty ? FormResult(values) : null;
 }
 
 FormResult? _fallbackForm(

@@ -243,6 +243,46 @@ void main() {
       expect(terminal.outputSnapshot.containsAnsiControls, isFalse);
     });
 
+    test('explicit interactive task overrides non-TTY and throwing probes',
+        () async {
+      final nonTty = MockTerminal();
+      nonTty.mockInput.setHasTerminal(false);
+      nonTty.mockOutput.setHasTerminal(false);
+      final throwing = _ThrowingProbeTerminal();
+
+      await terminice.interactive.withTerminal(nonTty).task<void>(
+            'Interactive non-TTY',
+            run: () {},
+          );
+      await terminice.interactive.withTerminal(throwing).task<void>(
+            'Interactive throwing',
+            run: () {},
+            display: TaskDisplay.inline,
+          );
+
+      expect(nonTty.outputSnapshot.containsAnsiControls, isTrue);
+      expect(throwing.mockOutput.allOutput, contains('\x1b['));
+    });
+
+    test('auto throwing probes and explicit fallback tasks stay plain',
+        () async {
+      final throwing = _ThrowingProbeTerminal();
+      final fallback = MockTerminal();
+
+      await terminice.autoFallback.withTerminal(throwing).task<void>(
+            'Auto throwing',
+            run: () {},
+            display: TaskDisplay.inline,
+          );
+      await terminice.fallback.withTerminal(fallback).task<void>(
+            'Fallback',
+            run: () {},
+          );
+
+      expect(throwing.mockOutput.allOutput, isNot(contains('\x1b[')));
+      expect(fallback.outputSnapshot.containsAnsiControls, isFalse);
+    });
+
     test('basic compatibility keeps auto output ASCII and ANSI-free', () async {
       final terminal = MockTerminal();
 
@@ -269,7 +309,10 @@ void main() {
           );
 
       expect(result, equals(7));
-      expect(terminal.mockOutput.lines, equals(['OK: installed']));
+      expect(
+        terminal.mockOutput.lines,
+        equals(['Install: Loading', 'OK: installed']),
+      );
       final output = terminal.outputSnapshot;
       expect(output.containsAnsiControls, isFalse);
       expect(output.isAscii, isTrue);
@@ -934,6 +977,27 @@ Future<void> _waitForPostSwitchRender(
 }
 
 class _TaskCanceled implements Exception {}
+
+class _ThrowingProbeTerminal implements Terminal {
+  final MockTerminalInput mockInput = _ThrowingProbeInput();
+  final MockTerminalOutput mockOutput = _ThrowingProbeOutput();
+
+  @override
+  TerminalInput get input => mockInput;
+
+  @override
+  TerminalOutput get output => mockOutput;
+}
+
+class _ThrowingProbeInput extends MockTerminalInput {
+  @override
+  bool get hasTerminal => throw StateError('input probe failed');
+}
+
+class _ThrowingProbeOutput extends MockTerminalOutput {
+  @override
+  bool get hasTerminal => throw StateError('output probe failed');
+}
 
 class _ThrowingTerminal implements Terminal {
   final MockTerminalInput mockInput = MockTerminalInput();
