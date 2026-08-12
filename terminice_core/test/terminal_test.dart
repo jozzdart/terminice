@@ -22,6 +22,13 @@ void main() {
       expect(terminal.output, isA<TerminalOutput>());
     });
 
+    test('DartTerminal exposes its optional terminal environment', () {
+      final terminal = DartTerminal();
+
+      expect(terminal, isA<TerminalEnvironment>());
+      expect(() => terminal.terminalType, returnsNormally);
+    });
+
     test('TerminalInput interface has required methods', () {
       final input = DartTerminal().input;
       expect(() => input.hasTerminal, returnsNormally);

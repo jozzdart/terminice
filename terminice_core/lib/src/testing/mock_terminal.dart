@@ -6,9 +6,10 @@ import 'package:terminice_core/terminice_core.dart';
 ///
 /// Captures all output and allows queuing input bytes/lines for testing
 /// interactive prompts without a real terminal.
-class MockTerminal implements Terminal {
+class MockTerminal implements Terminal, TerminalEnvironment {
   late final MockTerminalInput _input;
   late final MockTerminalOutput _output;
+  String? _terminalType;
 
   MockTerminal() {
     _input = MockTerminalInput();
@@ -27,10 +28,19 @@ class MockTerminal implements Terminal {
   /// Access to the mock output for assertions.
   MockTerminalOutput get mockOutput => _output;
 
+  @override
+  String? get terminalType => _terminalType;
+
+  /// Sets the terminal type used by automatic capability detection.
+  void setTerminalType(String? value) {
+    _terminalType = value;
+  }
+
   /// Resets both input queue and output buffer.
   void reset() {
     _input.reset();
     _output.reset();
+    _terminalType = null;
   }
 }
 

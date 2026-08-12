@@ -16,7 +16,7 @@ import 'terminal.dart';
 /// terminal.output.writeln('Hello');
 /// final byte = terminal.input.readByteSync();
 /// ```
-class DartTerminal implements Terminal {
+class DartTerminal implements Terminal, TerminalEnvironment {
   late final DartTerminalInput _input;
   late final DartTerminalOutput _output;
 
@@ -31,6 +31,15 @@ class DartTerminal implements Terminal {
 
   @override
   TerminalOutput get output => _output;
+
+  @override
+  String? get terminalType {
+    try {
+      return io.Platform.environment['TERM'];
+    } catch (_) {
+      return null;
+    }
+  }
 }
 
 /// Default TerminalInput implementation using dart:io stdin.

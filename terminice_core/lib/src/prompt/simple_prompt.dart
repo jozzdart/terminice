@@ -194,12 +194,14 @@ class SimplePrompts {
   ///   message: 'Are you sure?',
   /// ).run();
   /// ```
+  ///
+  /// [defaultYes] controls the initial selection and defaults to `false`.
   static SimplePrompt<bool> confirm({
     required String title,
     required String message,
     String yesLabel = 'Yes',
     String noLabel = 'No',
-    bool defaultYes = true,
+    bool defaultYes = false,
     PromptTheme theme = PromptTheme.dark,
   }) {
     return SimplePrompt<bool>(
