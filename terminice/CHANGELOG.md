@@ -3,6 +3,7 @@
 #### Fixed
 
 - Corrected selector, configuration editor, help, and prompt layouts, including safe legacy three-dot truncation.
+- Corrected plain cheat-sheet alignment and suffix-preserving path previews for Unicode terminal-cell widths.
 - Release impact: patch-level (`0.0.x`); no version selected.
 
 ## 1.3.0

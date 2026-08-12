@@ -1,5 +1,7 @@
 import 'package:terminice/terminice.dart';
-import 'package:terminice_core/terminice_core.dart' show truncate;
+import 'package:terminice_core/terminice_core.dart' show visibleLength;
+
+import '../../core/layout_text.dart';
 
 /// A configurable string field using a text or multiline prompt.
 ///
@@ -57,10 +59,12 @@ class StringConfigurable extends Configurable<String> {
     if (multiline && value.contains('\n')) {
       final lineCount = value.split('\n').length;
       final firstLine = value.split('\n').first;
-      final preview = truncate(firstLine, 31);
+      final preview = visibleLength(firstLine) > 30
+          ? truncateAfter(firstLine, 30)
+          : firstLine;
       return '$preview (+${lineCount - 1} lines)';
     }
-    return truncate(value, 41);
+    return visibleLength(value) > 40 ? truncateAfter(value, 40) : value;
   }
 
   @override

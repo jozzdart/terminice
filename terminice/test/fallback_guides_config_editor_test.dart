@@ -1,4 +1,5 @@
 import 'package:terminice/terminice.dart';
+import 'package:terminice_core/terminice_core.dart' show ColumnAlign;
 import 'package:test/test.dart';
 
 import 'mock_terminal.dart';
@@ -33,6 +34,69 @@ void main() {
       expect(terminal.mockOutput.contains('Ctrl+S | Save'), isTrue);
       expect(terminal.mockOutput.contains('Terminice theme catalogue'), isTrue);
       _expectPlainIo(terminal);
+    });
+
+    for (final mode in ['line', 'unattended']) {
+      test('cheat sheet aligns Unicode cells in $mode mode', () {
+        final terminal =
+            mode == 'line' ? MockTerminal() : _unattendedTerminal(['queued']);
+        final t = mode == 'line'
+            ? terminice.fallback.withTerminal(terminal)
+            : terminice.autoFallback.withTerminal(terminal);
+
+        t.cheatSheet(
+          'Unicode',
+          columns: const ['L', 'C', 'R'],
+          columnAlignments: const [
+            ColumnAlign.left,
+            ColumnAlign.center,
+            ColumnAlign.right,
+          ],
+          entries: const [
+            ['界', '👩🏽‍💻', 'e\u0301'],
+            ['a', 'x', 'zz'],
+          ],
+        );
+
+        expect(
+          terminal.mockOutput.lines,
+          equals([
+            'Unicode',
+            'L  | C  |  R',
+            '---+----+---',
+            '界 | 👩🏽‍💻 |  e\u0301',
+            'a  | x  | zz',
+          ]),
+        );
+        if (mode == 'unattended') {
+          expect(terminal.mockInput.linesRemaining, 1);
+        }
+        _expectPlainIo(terminal);
+      });
+    }
+
+    test('cheat sheet preserves ASCII line output byte-for-byte', () {
+      final terminal = MockTerminal();
+
+      terminice.fallback.withTerminal(terminal).cheatSheet(
+        'Commands',
+        columns: const ['Key', 'Action'],
+        entries: const [
+          ['q', 'Quit'],
+          ['xx', 'Run'],
+        ],
+      );
+
+      expect(
+        terminal.mockOutput.lines,
+        equals([
+          'Commands',
+          'Key | Action',
+          '----+-------',
+          'q   | Quit  ',
+          'xx  | Run   ',
+        ]),
+      );
     });
 
     test('help line mode selects and prints document content literally', () {

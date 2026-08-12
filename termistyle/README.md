@@ -4,7 +4,7 @@
 
 `termistyle` is the standalone styling foundation extracted from the [terminice](https://pub.dev/packages/terminice) ecosystem. It gives any Dart CLI package access to the same ANSI color palettes, box-drawing glyph sets, composable themes, and rendering utilities that power terminice - without depending on terminice itself.
 
-Use it when you are building a terminal tool, prompt library, ASCII art renderer, or any other CLI package that wants consistent, themeable output with zero external dependencies. Well-tested with 964 tests covering every public API surface.
+Use it when you are building a terminal tool, prompt library, ASCII art renderer, or any other CLI package that wants consistent, themeable output with a small dependency footprint. Its comprehensive test suite covers every public API surface.
 
 ## Install
 
@@ -228,7 +228,7 @@ print(s.spinner(tick, frames: SpinnerFrames.arcs));
 
 ## Testing
 
-termistyle ships with 964 tests covering every public class, function, enum, preset, and edge case. Run them with:
+termistyle ships with comprehensive tests covering its public classes, functions, enums, presets, and edge cases. Run them with:
 
 ```bash
 dart test
@@ -236,7 +236,7 @@ dart test
 
 ## Relationship to terminice
 
-`termistyle` contains the styling subset of `terminice_core` that has **zero dependencies** on terminal I/O, key handling, navigation, or prompt infrastructure. Everything in this package is pure Dart with no external dependencies.
+`termistyle` contains the styling subset of `terminice_core` with no dependencies on terminal I/O, key handling, navigation, or prompt infrastructure. It is pure Dart and uses one small Dart-maintained dependency, `characters`, for Unicode grapheme segmentation.
 
 The split allows packages like title renderers, log formatters, or dashboard builders to use the terminice visual language without importing the interactive prompt stack.
 

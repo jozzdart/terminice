@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:terminice_core/terminice_core.dart';
+
+import '../core/layout_text.dart';
+
 /// Extracts the final path segment (file or directory name).
 String pathBasename(String path) {
   final parts = path.split(Platform.pathSeparator);
@@ -8,7 +12,30 @@ String pathBasename(String path) {
 
 /// Truncates [path] to at most 60 visible characters with a leading ellipsis.
 String shortPath(String path) {
-  return path.length > 60 ? '...${path.substring(path.length - 57)}' : path;
+  final safePath = _safePath(path);
+  final pathWidth = visibleLength(safePath);
+  if (pathWidth <= 60) return safePath;
+
+  const suffixWidth = 57;
+  var prefixCells = pathWidth - suffixWidth;
+  var prefix = clipWithoutEllipsis(safePath, prefixCells);
+  var suffix = safePath.substring(prefix.length);
+
+  // A requested cut can land inside a two-cell grapheme. Advance to the next
+  // centralized grapheme boundary until the suffix fits its cell budget.
+  while (visibleLength(suffix) > suffixWidth) {
+    prefixCells++;
+    prefix = clipWithoutEllipsis(safePath, prefixCells);
+    suffix = safePath.substring(prefix.length);
+  }
+  return '...$suffix';
+}
+
+String _safePath(String path) {
+  final hasControl = path.runes.any(
+    (rune) => rune < 0x20 || (rune >= 0x7f && rune < 0xa0),
+  );
+  return hasControl ? terminalSafeLineText(path) : path;
 }
 
 /// Lists [dir] contents sorted directories-first, then case-insensitive name.

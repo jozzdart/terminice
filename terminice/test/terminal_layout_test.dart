@@ -1,7 +1,8 @@
 import 'package:terminice/terminice.dart';
 import 'package:terminice/src/core/layout_text.dart';
+import 'package:terminice/src/pickers/_file_helpers.dart';
 import 'package:terminice_core/terminice_core.dart'
-    show KeyEventType, stripAnsi;
+    show KeyEventType, stripAnsi, visibleLength;
 import 'package:test/test.dart';
 
 import 'mock_terminal.dart';
@@ -75,27 +76,76 @@ void main() {
           stripAnsi(toggleMock.mockOutput.allOutput), contains('界${' ' * 6}'));
     });
 
-    test('config value previews do not split grapheme clusters', () {
-      final decomposed = StringConfigurable(
-        key: 'decomposed',
-        label: 'Decomposed',
-        value: '${'a' * 29}e\u0301tail\nsecond',
-        multiline: true,
-      );
-      final emoji = StringConfigurable(
-        key: 'emoji',
-        label: 'Emoji',
-        value: '${'a' * 39}👩🏽‍💻tail',
-      );
-      final flag = StringConfigurable(
-        key: 'flag',
-        label: 'Flag',
-        value: '${'a' * 39}🇮🇱tail',
-      );
+    test('config multiline previews preserve 30-character ASCII boundary', () {
+      String preview(int length) => StringConfigurable(
+            key: 'notes',
+            label: 'Notes',
+            value: '${'a' * length}\nsecond',
+            multiline: true,
+          ).displayValue;
 
-      expect(decomposed.displayValue, '${'a' * 29}e\u0301… (+1 lines)');
-      expect(emoji.displayValue, '${'a' * 39}…');
-      expect(flag.displayValue, '${'a' * 39}…');
+      expect(preview(30), '${'a' * 30} (+1 lines)');
+      expect(preview(31), '${'a' * 30}… (+1 lines)');
+      expect(preview(32), '${'a' * 30}… (+1 lines)');
+    });
+
+    test('config single-line previews preserve 40-character ASCII boundary',
+        () {
+      String preview(int length) => StringConfigurable(
+            key: 'name',
+            label: 'Name',
+            value: 'a' * length,
+          ).displayValue;
+
+      expect(preview(40), 'a' * 40);
+      expect(preview(41), '${'a' * 40}…');
+      expect(preview(42), '${'a' * 40}…');
+    });
+
+    test('config preview boundaries are grapheme- and cell-safe', () {
+      String preview(String value, {bool multiline = false}) =>
+          StringConfigurable(
+            key: 'value',
+            label: 'Value',
+            value: multiline ? '$value\nsecond' : value,
+            multiline: multiline,
+          ).displayValue;
+
+      expect(preview('e\u0301' * 30, multiline: true),
+          '${'e\u0301' * 30} (+1 lines)');
+      expect(preview('${'e\u0301' * 30}x', multiline: true),
+          '${'e\u0301' * 30}… (+1 lines)');
+      expect(preview('界' * 15, multiline: true), '${'界' * 15} (+1 lines)');
+      expect(
+          preview('${'界' * 15}x', multiline: true), '${'界' * 15}… (+1 lines)');
+      expect(preview('👩🏽‍💻' * 20), '👩🏽‍💻' * 20);
+      expect(preview('${'👩🏽‍💻' * 20}x'), '${'👩🏽‍💻' * 20}…');
+      expect(preview('${'🇮🇱' * 20}x'), '${'🇮🇱' * 20}…');
+    });
+
+    test('shortPath preserves ASCII suffixes and clips Unicode boundaries', () {
+      expect(shortPath('/ordinary/path'), '/ordinary/path');
+      expect(shortPath('a' * 60), 'a' * 60);
+      expect(shortPath('a' * 61), '...${'a' * 57}');
+
+      final cjk = shortPath('界' * 31);
+      final emoji = shortPath('👩🏽‍💻' * 31);
+      final combining = shortPath('e\u0301' * 61);
+
+      expect(cjk, '...${'界' * 28}');
+      expect(emoji, '...${'👩🏽‍💻' * 28}');
+      expect(combining, '...${'e\u0301' * 57}');
+      expect(visibleLength(cjk), lessThanOrEqualTo(60));
+      expect(visibleLength(emoji), lessThanOrEqualTo(60));
+      expect(visibleLength(combining), 60);
+    });
+
+    test('shortPath renders path controls visibly before truncating', () {
+      final shortened = shortPath('prefix\x1B[31m${'x' * 70}');
+
+      expect(shortened, isNot(contains('\x1B')));
+      expect(shortened, endsWith('x' * 57));
+      expect(visibleLength(shortened), 60);
     });
 
     test('help preview truncates styled text without leaking styles', () {

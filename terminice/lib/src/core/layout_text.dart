@@ -7,13 +7,17 @@ import 'package:terminice_core/terminice_core.dart';
 String truncateWithDots(String text, int width) {
   if (width < 0) return truncate(text, width);
   if (visibleLength(text) <= width) return truncate(text, width);
-  if (width <= 3) return _clipWithoutEllipsis(text, width);
+  if (width <= 3) return clipWithoutEllipsis(text, width);
 
   final clipped = truncate(text, width - 2);
   return _replaceGeneratedEllipsis(clipped, '...');
 }
 
-String _clipWithoutEllipsis(String text, int width) {
+/// Clips to [width] terminal cells without adding an ellipsis.
+///
+/// This is package-internal and deliberately delegates grapheme selection and
+/// ANSI/OSC closure to the centralized terminal text implementation.
+String clipWithoutEllipsis(String text, int width) {
   if (width == 0) return '';
 
   // The extra printable cell guarantees truncation even when [text] is only
@@ -23,6 +27,16 @@ String _clipWithoutEllipsis(String text, int width) {
   // closures intact.
   final clipped = truncate('$text ', width + 1);
   return _replaceGeneratedEllipsis(clipped, '');
+}
+
+/// Keeps at most [contentWidth] cells and appends an ellipsis when clipped.
+///
+/// Unlike [truncate], the ellipsis is outside the content budget. This
+/// preserves legacy previews that kept N ASCII characters and then appended
+/// an ellipsis.
+String truncateAfter(String text, int contentWidth) {
+  if (visibleLength(text) <= contentWidth) return truncate(text, contentWidth);
+  return truncate('$text ', contentWidth + 1);
 }
 
 String _replaceGeneratedEllipsis(String clipped, String replacement) {

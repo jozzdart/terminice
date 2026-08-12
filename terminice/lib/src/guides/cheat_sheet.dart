@@ -102,9 +102,10 @@ void _plainCheatSheet(
       .map((row) => row.map(terminalSafeLineText).toList())
       .toList(growable: false);
   final widths = List<int>.generate(safeColumns.length, (column) {
-    var width = safeColumns[column].length;
+    var width = visibleLength(safeColumns[column]);
     for (final row in safeEntries) {
-      if (row[column].length > width) width = row[column].length;
+      final cellWidth = visibleLength(row[column]);
+      if (cellWidth > width) width = cellWidth;
     }
     return width;
   });
@@ -112,15 +113,13 @@ void _plainCheatSheet(
   String renderRow(List<String> row) {
     final cells = <String>[];
     for (var i = 0; i < row.length; i++) {
-      final padding = widths[i] - row[i].length;
       switch (alignments[i]) {
         case ColumnAlign.left:
-          cells.add('${row[i]}${' ' * padding}');
+          cells.add(padRight(row[i], widths[i]));
         case ColumnAlign.right:
-          cells.add('${' ' * padding}${row[i]}');
+          cells.add(padLeft(row[i], widths[i]));
         case ColumnAlign.center:
-          final left = padding ~/ 2;
-          cells.add('${' ' * left}${row[i]}${' ' * (padding - left)}');
+          cells.add(padVisibleCenter(row[i], widths[i]));
       }
     }
     return cells.join(' | ');
