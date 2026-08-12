@@ -24,8 +24,13 @@ final Terminice terminice = Terminice();
 /// );
 /// ```
 ///
-/// The terminal is set globally via [TerminalContext] when the instance is
-/// created or when [activate] is called.
+/// The terminal is set globally via [TerminalContext] when the public
+/// constructor, [withTerminal], or [activate] selects it. Fluent configuration
+/// and theme derivations preserve their terminal without changing the active
+/// context.
+///
+/// [TerminalContext] represents one CLI session. Run at most one interactive
+/// operation at a time for each physical terminal.
 class Terminice {
   /// Immutable configuration for this Terminice instance.
   final TerminiceConfig configuration;
@@ -51,15 +56,13 @@ class Terminice {
     TerminiceConfig? config,
   })  : configuration = _configurationFor(defaultTheme, config),
         defaultTheme = _configurationFor(defaultTheme, config).effectiveTheme {
-    // Set the terminal context if a custom terminal is provided
-    if (terminal != null) {
-      TerminalContext.current = terminal;
-    }
+    _activateIfProvided(terminal);
   }
 
   Terminice._({required this.configuration, this.terminal})
-      : defaultTheme = configuration.effectiveTheme {
-    // Set the terminal context if a custom terminal is provided
+      : defaultTheme = configuration.effectiveTheme;
+
+  static void _activateIfProvided(Terminal? terminal) {
     if (terminal != null) {
       TerminalContext.current = terminal;
     }
@@ -105,12 +108,19 @@ class Terminice {
   /// This allows using custom terminal I/O for testing or alternative
   /// environments while keeping the same theme.
   ///
+  /// This also makes [terminal] the active [TerminalContext.current].
+  ///
   /// ```dart
   /// final testTerminice = terminice.withTerminal(TestTerminal());
   /// testTerminice.confirm('Test prompt'); // Uses TestTerminal
   /// ```
   Terminice withTerminal(Terminal terminal) {
-    return Terminice._(configuration: configuration, terminal: terminal);
+    final derived = Terminice._(
+      configuration: configuration,
+      terminal: terminal,
+    );
+    _activateIfProvided(terminal);
+    return derived;
   }
 
   /// Activates this instance's terminal as the global [TerminalContext.current].

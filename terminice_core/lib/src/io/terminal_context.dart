@@ -53,7 +53,10 @@ import 'terminal.dart';
 ///
 /// **Design notes:**
 /// - Lazy initialization: Default DartTerminal created on first access
-/// - Thread-safe: Single static instance (Dart is single-threaded)
+/// - Single-session scope: One active interactive operation per physical
+///   terminal
+/// - Async scopes: Independently started temporary scopes must not overlap
+///   within an isolate
 /// - No breaking changes: Existing code continues to work unchanged
 class TerminalContext {
   static Terminal? _instance;
@@ -120,6 +123,10 @@ class TerminalContext {
   /// The previous context is restored after [body]'s result completes, whether
   /// it succeeds or fails. Synchronous throws are captured and still restore the
   /// previous context before the returned future completes with the error.
+  ///
+  /// Properly nested scopes are safe when each inner call is awaited before its
+  /// outer call completes. Independently started scopes must not overlap within
+  /// the same isolate because they share one global terminal slot.
   static Future<T> runWithAsync<T>(
     Terminal terminal,
     FutureOr<T> Function() body,

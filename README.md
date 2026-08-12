@@ -422,6 +422,8 @@ final t = terminice.ocean.compact.basic.autoFallback;
 
 Use `withConfig(...)` to replace the whole instance config while preserving the terminal. Use `withTheme(...)` or `themed(...)` to change the base theme while preserving display mode, compatibility, fallback mode, and terminal. Use `withCompatibility(...)` or `withFallbackMode(...)` when you want to pass the enum explicitly.
 
+Fluent configuration and theme changes do not change the globally active terminal. A public `Terminice(...)` constructor with a terminal, `withTerminal(...)`, and `activate()` select the active terminal explicitly. Terminice uses one global terminal context for a single CLI session, so run at most one interactive operation at a time for each physical terminal.
+
 Because configuration lives on the instance, changing the instance changes theme and behavior consistently across component calls:
 
 ```dart

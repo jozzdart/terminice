@@ -136,6 +136,11 @@ try {
 }
 ```
 
+`TerminalContext` is a single-session global context. Run only one interactive
+operation at a time for a physical terminal. Properly nested `runWithAsync`
+scopes are safe when fully awaited; independently started scopes must not
+overlap within the same isolate.
+
 ### Terminal Control & Raw Mode
 
 Interactive CLI applications require "raw mode" to read keystrokes immediately without waiting for the user to press Enter, and to prevent those keystrokes from echoing to the screen. `TerminalControl` handles entering raw mode and capturing the previous state so it can be safely restored. It also provides helpers for cursor visibility and screen clearing.

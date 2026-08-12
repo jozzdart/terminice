@@ -140,6 +140,22 @@ void main() {
         expect(result.defaultTheme, equals(PromptTheme.fire));
       });
 
+      test('fluent derivations preserve terminal without activating it', () {
+        final bound = MockTerminal();
+        final active = MockTerminal();
+        final original = Terminice(terminal: bound);
+        TerminalContext.current = active;
+
+        final derived = original.ocean.compact.legacy.autoFallback;
+
+        expect(derived.terminal, same(bound));
+        expect(derived.baseTheme, equals(PromptTheme.ocean));
+        expect(derived.featureOverride, equals(DisplayFeatures.compact));
+        expect(derived.compatibility, equals(TerminalCompatibility.legacy));
+        expect(derived.fallbackMode, equals(TerminiceFallbackMode.auto));
+        expect(TerminalContext.current, same(active));
+      });
+
       test('preserves compatibility, fallback mode, and display override', () {
         final mock = MockTerminal();
         final original = Terminice(terminal: mock).compact.legacy.autoFallback;
