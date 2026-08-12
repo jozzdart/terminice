@@ -12,7 +12,7 @@ _TaskRenderer _createTaskRenderer({
   required TaskDisplay display,
   required TaskFinalBehavior finalBehavior,
 }) {
-  if (_shouldUsePlainRenderer(terminice, terminal, display)) {
+  if (_shouldUsePlainRenderer(terminice, display)) {
     return _PlainTaskRenderer(
       output: terminal.output,
       finalBehavior: finalBehavior,
@@ -41,7 +41,7 @@ _TaskRenderer _createProgressTaskRenderer({
   required TaskFinalBehavior finalBehavior,
   required int progressWidth,
 }) {
-  if (_shouldUsePlainRenderer(terminice, terminal, display)) {
+  if (_shouldUsePlainRenderer(terminice, display)) {
     return _PlainProgressTaskRenderer(
       output: terminal.output,
       finalBehavior: finalBehavior,
@@ -61,21 +61,16 @@ _TaskRenderer _createProgressTaskRenderer({
 
 bool _shouldUsePlainRenderer(
   Terminice terminice,
-  Terminal terminal,
   TaskDisplay display,
 ) {
   if (display == TaskDisplay.plain) return true;
-  if (!_terminalCanAnimate(terminal)) return true;
   if (terminice.compatibility != TerminalCompatibility.modern) return true;
-  if (terminice.fallbackMode == TerminiceFallbackMode.fallback) return true;
-  if (display == TaskDisplay.auto && terminice.shouldUseFallback) return true;
-  return false;
-}
-
-bool _terminalCanAnimate(Terminal terminal) {
-  try {
-    return terminal.input.hasTerminal && terminal.output.hasTerminal;
-  } catch (_) {
-    return false;
+  switch (terminice.fallbackMode) {
+    case TerminiceFallbackMode.interactive:
+      return false;
+    case TerminiceFallbackMode.auto:
+      return terminice.executionMode != TerminiceExecutionMode.rich;
+    case TerminiceFallbackMode.fallback:
+      return true;
   }
 }

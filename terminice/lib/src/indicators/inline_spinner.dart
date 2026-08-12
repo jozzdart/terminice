@@ -21,8 +21,9 @@ extension InlineSpinnerExtensions on Terminice {
     String prompt, {
     SpinnerStyle style = SpinnerStyle.dots,
   }) {
-    return InlineSpinner(
+    return InlineSpinner._fromTerminice(
       prompt,
+      this,
       style: style,
       theme: defaultTheme,
     );
@@ -48,19 +49,36 @@ class InlineSpinner with IndicatorLifecycle {
   /// The [prompt] is the text displayed next to the spinner.
   /// The [style] determines the visual appearance of the spinner.
   /// The [theme] controls the colors used for the spinner and text.
+  ///
+  /// Direct construction captures the ambient [TerminalContext] and
+  /// automatically detected execution mode at construction time. Use
+  /// [Terminice.inlineSpinner] to capture a client's terminal and explicit
+  /// fallback policy at creation time.
   InlineSpinner(
     this.prompt, {
     this.style = SpinnerStyle.dots,
     this.theme = PromptTheme.dark,
-  });
+  }) {
+    initializeAutomatically();
+  }
+
+  InlineSpinner._fromTerminice(
+    this.prompt,
+    Terminice origin, {
+    this.style = SpinnerStyle.dots,
+    this.theme = PromptTheme.dark,
+  }) {
+    initializeFromTerminice(origin);
+  }
 
   /// Renders the spinner frame indicated by [frame].
   void show(int frame) {
-    final out = prepareFrame();
-    final frames = framesForStyle(style);
-    final spin = frames[frame % frames.length];
-    out.writeln(
-        '${theme.accent}$spin${theme.reset} ${theme.dim}$prompt${theme.reset}');
+    renderIndicator(prompt, (out) {
+      final frames = framesForStyle(style);
+      final spin = frames[frame % frames.length];
+      out.writeln(
+          '${theme.accent}$spin${theme.reset} ${theme.dim}$prompt${theme.reset}');
+    });
   }
 
   /// Returns the list of Unicode frames used by the configured [SpinnerStyle].

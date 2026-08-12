@@ -47,7 +47,13 @@ abstract class _PlainStatusTaskRenderer extends _TaskRenderer {
 
   void _writeFinal(String status, String message) {
     if (finalBehavior == TaskFinalBehavior.persist) {
-      output.writeln(terminiceStatusLine(status, message, _finalSuffix()));
+      output.writeln(
+        terminiceStatusLine(
+          status,
+          terminalSafeLineText(message),
+          _finalSuffix(),
+        ),
+      );
     }
   }
 
