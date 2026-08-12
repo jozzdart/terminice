@@ -1,8 +1,11 @@
-## 1.1.1
+## 1.2.0
 
+- **New**: Added `TerminalEnvironment` so terminal implementations can expose terminal-type capabilities; `DartTerminal` and `MockTerminal` now support it.
+- **New**: Added `FallbackPrompt.date()` and `FallbackPrompt.multiline()`, plus step-aware number and range fallback input.
 - **New**: Added documented `terminalSafeBlockText()` and `terminalSafeLineText()` helpers for visibly escaping C0/C1 controls and terminal escape sequences in plain output.
 - **New**: Added documented stepped-value and stepped-range normalization helpers for consistent bound clamping, nearest-step snapping, and range ordering.
 - **Behavior**: Hardened `FallbackPrompt` output so titles, options, defaults, labels, and validation errors cannot emit active terminal controls.
+- **Behavior**: Corrected `SimplePrompts.confirm()` to use the safer and more conventional No default; existing callers that explicitly set `defaultYes: true` continue to behave as before.
 - **Behavior**: Preserved established rich-prompt cancellation values while normalizing confirmed stepped values.
 - **Tests**: Added hostile terminal-text and numeric normalization coverage.
 

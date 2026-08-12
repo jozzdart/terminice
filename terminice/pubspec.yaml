@@ -1,6 +1,6 @@
 name: terminice
 description: "A robust terminal UI toolkit for Dart CLI apps. 30+ ready-to-use components, 11 built-in style presets, display modes, fallback policies, testing utilities, and zero boilerplate."
-version: 1.2.1
+version: 1.3.0
 homepage: https://github.com/jozzdart/terminice
 repository: https://github.com/jozzdart/terminice/tree/main/terminice
 issue_tracker: https://github.com/jozzdart/terminice/issues
@@ -21,7 +21,7 @@ platforms:
   windows:
 
 dependencies:
-  terminice_core: ^1.1.1
+  terminice_core: ^1.2.0
   intl: ^0.20.0
   time_plus: ^1.3.2
 
