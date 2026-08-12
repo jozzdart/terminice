@@ -17,6 +17,7 @@ export 'navigation/selection_controller.dart';
 export 'prompt/dynamic_list_prompt.dart';
 export 'prompt/fallback_prompt.dart';
 export 'prompt/form_prompt.dart';
+export 'prompt/numeric_value_normalization.dart';
 export 'prompt/ranked_list_prompt.dart';
 export 'prompt/searchable_list_prompt.dart';
 export 'prompt/selectable_grid_prompt.dart';
@@ -31,6 +32,9 @@ export 'rendering/frame_view.dart';
 export 'rendering/hint_format.dart';
 export 'rendering/line_builder.dart';
 export 'rendering/prompt_runner.dart';
+
+// Plain terminal text
+export 'text/terminal_safe_text.dart';
 
 // Style & rendering (from termistyle)
 export 'package:termistyle/termistyle.dart';

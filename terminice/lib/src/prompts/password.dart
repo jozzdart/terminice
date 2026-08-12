@@ -47,8 +47,8 @@ extension PasswordPromptExtensions on Terminice {
     bool allowReveal = true,
     bool verify = false,
   }) {
-    return runWithFallback<String?>(
-      interactive: () {
+    return runWithExecutionMode<String?>(
+      rich: () {
         if (!verify) {
           return TextPromptSync(
             title: prompt,
@@ -86,7 +86,7 @@ extension PasswordPromptExtensions on Terminice {
 
         return result?[0];
       },
-      fallback: () => verify
+      line: () => verify
           ? _fallbackVerifiedPassword(
               prompt,
               required: required,
@@ -98,6 +98,7 @@ extension PasswordPromptExtensions on Terminice {
               required: required,
               returnDefaultOnEndOfInput: false,
             ),
+      unattended: () => required ? null : '',
     );
   }
 }

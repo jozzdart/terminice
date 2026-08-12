@@ -29,6 +29,22 @@ extension HotkeyGuideExtensions on Terminice {
     String title = 'Hotkeys',
     List<String> footer = const ['Esc or ? to close'],
   }) {
+    runWithExecutionMode<void>(
+      rich: () => _richHotkeyGuide(
+        shortcuts: shortcuts,
+        title: title,
+        footer: footer,
+      ),
+      line: () => _plainHotkeyGuide(title, shortcuts, footer),
+      unattended: () => _plainHotkeyGuide(title, shortcuts, footer),
+    );
+  }
+
+  void _richHotkeyGuide({
+    required List<List<String>> shortcuts,
+    required String title,
+    required List<String> footer,
+  }) {
     final theme = defaultTheme;
     final footerHints = footer;
     // Use KeyBindings for declarative key handling
@@ -68,5 +84,20 @@ extension HotkeyGuideExtensions on Terminice {
       render: render,
       bindings: bindings,
     );
+  }
+}
+
+void _plainHotkeyGuide(
+  String title,
+  List<List<String>> shortcuts,
+  List<String> footer,
+) {
+  final output = TerminalContext.output;
+  output.writeln(terminalSafeLineText(title));
+  for (final shortcut in shortcuts) {
+    output.writeln(shortcut.map(terminalSafeLineText).join(' | '));
+  }
+  if (footer.isNotEmpty) {
+    output.writeln(footer.map(terminalSafeLineText).join(', '));
   }
 }

@@ -17,7 +17,7 @@ extension InlineProgressBarExtensions on Terminice {
   ///
   /// The [prompt] is the label displayed next to the percentage.
   InlineProgressBar inlineProgressBar(String prompt) {
-    return InlineProgressBar(prompt, theme: defaultTheme);
+    return InlineProgressBar._fromTerminice(prompt, this, theme: defaultTheme);
   }
 }
 
@@ -37,16 +37,34 @@ class InlineProgressBar with IndicatorLifecycle {
   ///
   /// The [prompt] is the text displayed next to the progress percentage.
   /// The [theme] controls the colors used for the progress bar and text.
-  InlineProgressBar(this.prompt, {this.theme = PromptTheme.dark});
+  ///
+  /// Direct construction captures the ambient terminal and automatically
+  /// detected execution mode at construction time. Use
+  /// [Terminice.inlineProgressBar] to capture a client's terminal and explicit
+  /// fallback policy at creation time.
+  InlineProgressBar(this.prompt, {this.theme = PromptTheme.dark}) {
+    initializeAutomatically();
+  }
+
+  InlineProgressBar._fromTerminice(
+    this.prompt,
+    Terminice origin, {
+    this.theme = PromptTheme.dark,
+  }) {
+    initializeFromTerminice(origin);
+  }
 
   /// Renders the current progress percentage next to the label.
   ///
   /// [current] and [total] are used to compute an integer percentage. Values
   /// outside the 0-total range are clamped for display.
   void show({required int current, required int total}) {
-    final out = prepareFrame();
-    final percent = progressDisplay(current: current, total: total).percent;
-    out.writeln(
-        '${theme.accent}$prompt${theme.reset} ${theme.dim}$percent%${theme.reset}');
+    final display = progressDisplay(current: current, total: total);
+    renderIndicator(
+        '$prompt: ${display.percent}% (${display.current}/${display.total})',
+        (out) {
+      out.writeln(
+          '${theme.accent}$prompt${theme.reset} ${theme.dim}${display.percent}%${theme.reset}');
+    });
   }
 }

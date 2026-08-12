@@ -932,7 +932,7 @@ void main() {
 
       expect(result.confirmed, isTrue);
       expect(terminal.outputSnapshot.plainText, contains('Step 1/2 - First'));
-      expect(terminal.outputSnapshot.plainText, contains('Ready? [Y/n]: '));
+      expect(terminal.outputSnapshot.plainText, contains('Ready? [y/N]: '));
       expect(
         terminal.outputSnapshot.plainText,
         isNot(contains('Step 2/2 - Ready?')),
@@ -966,12 +966,41 @@ void main() {
       final reviewOutput = output.substring(reviewStart);
 
       expect(output, contains('Step 1/2 - Name'));
-      expect(output, contains('Ready? [Y/n]: '));
+      expect(output, contains('Ready? [y/N]: '));
       expect(output, isNot(contains('Step 2/2 - Ready?')));
       expect(reviewOutput, contains('Display name: Ada'));
       expect(reviewOutput, contains('Ready status: yes'));
       expect(reviewOutput, isNot(contains('Step 1/2')));
       expect(reviewOutput, isNot(contains('Step 2/2')));
+    });
+
+    test('fallback review escapes terminal controls in public text', () {
+      final terminal = _terminalWithLines(['Ada', '1']);
+
+      final result = terminice.fallback
+          .withTerminal(terminal)
+          .flow('Profile\x00\x1b[2J')
+          .text(
+            'name',
+            'Name',
+            reviewLabel: 'Display\x9b31m',
+            summarize: (_, __) => 'Ada\x1b]0;owned\x07\rnext',
+          )
+          .review()
+          .run();
+
+      expect(result.confirmed, isTrue);
+      expect(terminal.outputSnapshot.containsAnsiControls, isFalse);
+      expect(
+        terminal.outputSnapshot.raw,
+        contains(
+          r'Review Profile\x00\x1b[2J',
+        ),
+      );
+      expect(
+        terminal.outputSnapshot.raw,
+        contains(r'Display\x9b31m: Ada\x1b]0;owned\x07\rnext'),
+      );
     });
 
     test('fallback prompt titles keep old style without progress', () {
@@ -988,7 +1017,7 @@ void main() {
 
       expect(result.confirmed, isTrue);
       expect(output, contains('First: '));
-      expect(output, contains('Ready? [Y/n]: '));
+      expect(output, contains('Ready? [y/N]: '));
       expect(output, isNot(contains('Step 1/2 - First')));
       expect(output, isNot(contains('Step 2/2 - Ready?')));
     });

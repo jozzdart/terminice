@@ -4,9 +4,40 @@ import 'package:terminice/terminice.dart';
 import 'package:terminice_core/terminice_core.dart';
 
 import '_file_helpers.dart';
+import '_fallback_path.dart';
 
 /// Adds the [pathPicker] method to [Terminice] for interactive directory and file selection.
 extension PathPickerExtensions on Terminice {
+  /// Selects an existing directory or, when enabled, a file.
+  String? pathPicker(
+    String prompt, {
+    Directory? startDirectory,
+    bool showHidden = false,
+    bool allowFiles = false,
+    int maxVisible = 18,
+  }) {
+    return runWithExecutionMode<String?>(
+      rich: () => _richPathPicker(
+        prompt,
+        startDirectory: startDirectory,
+        showHidden: showHidden,
+        allowFiles: allowFiles,
+        maxVisible: maxVisible,
+      ),
+      line: () => fallbackExistingPath(
+        prompt: prompt,
+        startDirectory: startDirectory,
+        allowFiles: allowFiles,
+        allowDirectories: true,
+        blankSelectsBase: true,
+      ),
+      unattended: () {
+        final base = (startDirectory ?? Directory.current).absolute;
+        return base.existsSync() ? base.path : null;
+      },
+    );
+  }
+
   /// Launches the dynamic path picker for selecting directories (and optional files).
   ///
   /// This picker renders a live-updating list of the current directory using
@@ -30,7 +61,7 @@ extension PathPickerExtensions on Terminice {
   ///   print('Working in $projectRoot');
   /// }
   /// ```
-  String? pathPicker(
+  String? _richPathPicker(
     String prompt, {
     Directory? startDirectory,
     bool showHidden = false,

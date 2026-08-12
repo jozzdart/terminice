@@ -1,6 +1,6 @@
 import 'package:terminice_core/terminice_core.dart';
 
-/// Internal line-mode selection helpers for high-level Terminice components.
+/// Internal fallback selection helpers for high-level Terminice components.
 class FallbackSelection {
   FallbackSelection._();
 
@@ -8,7 +8,7 @@ class FallbackSelection {
   static T? single<T>({
     required String title,
     required List<T> options,
-    int? defaultIndex = 0,
+    int? defaultIndex,
     Set<int>? defaultIndices,
     FallbackLabelBuilder<T>? labelBuilder,
     bool returnDefaultOnEndOfInput = false,
@@ -42,8 +42,8 @@ class FallbackSelection {
     return FallbackPrompt.multiSelect<T>(
       title: title,
       options: options,
-      defaultIndices: defaultIndices,
-      fallbackIndex: _focusedFallbackIndex(fallbackIndex, options.length),
+      defaultIndices: normalizedIndices(defaultIndices, options.length),
+      fallbackIndex: _normalizedIndex(fallbackIndex, options.length),
       labelBuilder: labelBuilder,
       returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
     );
@@ -54,7 +54,7 @@ class FallbackSelection {
     required String title,
     required List<T> options,
     required bool multiSelect,
-    int? defaultIndex = 0,
+    int? defaultIndex,
     Set<int>? defaultIndices,
     FallbackLabelBuilder<T>? labelBuilder,
     bool returnDefaultOnEndOfInput = false,
@@ -77,7 +77,7 @@ class FallbackSelection {
     required List<T> options,
     required bool multiSelect,
     required R Function(T item) mapItem,
-    int? defaultIndex = 0,
+    int? defaultIndex,
     Set<int>? defaultIndices,
     FallbackLabelBuilder<T>? labelBuilder,
     bool returnDefaultOnEndOfInput = false,
@@ -89,7 +89,9 @@ class FallbackSelection {
         title: title,
         options: options,
         defaultIndices: defaultIndices,
-        fallbackIndex: defaultIndex,
+        // A focused item is not a selected item. With no explicit defaults,
+        // blank input confirms the valid empty selection just like rich mode.
+        fallbackIndex: null,
         labelBuilder: labelBuilder,
         returnDefaultOnEndOfInput: returnDefaultOnEndOfInput,
       ).map(mapItem).toList();
@@ -106,28 +108,44 @@ class FallbackSelection {
     return selected == null ? <R>[] : <R>[mapItem(selected)];
   }
 
+  /// Resolves explicit initial indices to their valid items in index order.
+  ///
+  /// Single-select callers receive only the first valid sorted index, while
+  /// multi-select callers receive every valid index. This is also the shared
+  /// unattended-mode policy for selectors that expose initial state.
+  static List<T> initialItems<T>({
+    required List<T> options,
+    required Set<int>? indices,
+    required bool multiSelect,
+  }) {
+    final sorted = normalizedIndices(indices, options.length).toList()..sort();
+    final selected = multiSelect ? sorted : sorted.take(1);
+    return <T>[for (final index in selected) options[index]];
+  }
+
+  /// Removes out-of-range initial indices without inventing replacements.
+  static Set<int> normalizedIndices(Set<int>? indices, int length) {
+    if (indices == null || length <= 0) return <int>{};
+    return indices.where((index) => index >= 0 && index < length).toSet();
+  }
+
   static int? _singleDefaultIndex({
     required int? defaultIndex,
     required Set<int>? defaultIndices,
     required int length,
   }) {
-    final validDefaultIndices = _validIndices(defaultIndices, length);
+    final validDefaultIndices = normalizedIndices(defaultIndices, length);
     if (validDefaultIndices.isEmpty) {
-      return _focusedFallbackIndex(defaultIndex, length);
+      return _normalizedIndex(defaultIndex, length);
     }
 
     final sorted = validDefaultIndices.toList()..sort();
     return sorted.first;
   }
 
-  static Set<int> _validIndices(Set<int>? indices, int length) {
-    if (indices == null || length <= 0) return <int>{};
-    return indices.where((index) => index >= 0 && index < length).toSet();
-  }
-
-  static int? _focusedFallbackIndex(int? index, int length) {
+  static int? _normalizedIndex(int? index, int length) {
     if (index == null || length <= 0) return null;
     if (index >= 0 && index < length) return index;
-    return 0;
+    return null;
   }
 }

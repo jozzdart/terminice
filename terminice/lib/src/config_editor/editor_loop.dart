@@ -20,6 +20,32 @@ bool runEditorLoop({
   required bool isRoot,
   int maxVisible = 18,
 }) {
+  return terminice.runWithExecutionMode<bool>(
+    rich: () => runRichEditorLoop(
+      terminice: terminice,
+      title: title,
+      fields: fields,
+      isRoot: isRoot,
+      maxVisible: maxVisible,
+    ),
+    line: () => runLineEditorLoop(
+      terminice: terminice,
+      title: title,
+      fields: fields,
+      isRoot: isRoot,
+    ),
+    unattended: () => false,
+  );
+}
+
+/// Runs the existing full-screen editor without changing its rich behavior.
+bool runRichEditorLoop({
+  required Terminice terminice,
+  required String title,
+  required List<Configurable> fields,
+  required bool isRoot,
+  int maxVisible = 18,
+}) {
   if (fields.isEmpty) return true;
 
   var activeTerminice = terminice;
@@ -182,6 +208,90 @@ bool runEditorLoop({
   // Non-root editors always preserve edits - Esc just means "go back"
   if (!isRoot) return true;
   return !cancelled;
+}
+
+/// Runs a numbered, line-oriented editor that never changes terminal modes.
+bool runLineEditorLoop({
+  required Terminice terminice,
+  required String title,
+  required List<Configurable> fields,
+  required bool isRoot,
+}) {
+  if (fields.isEmpty) return true;
+
+  final output = TerminalContext.output;
+  final input = TerminalContext.input;
+
+  while (true) {
+    output.writeln(terminalSafeLineText(title));
+    for (var i = 0; i < fields.length; i++) {
+      final field = fields[i];
+      final value = field is PasswordConfigurable
+          ? field.formatValue()
+          : field.displayValue;
+      output.writeln(
+        '${i + 1}. ${terminalSafeLineText(field.label)}: '
+        '${terminalSafeLineText(value)}',
+      );
+    }
+
+    if (isRoot) {
+      output.write('Select field, [r]eview, [s]ave, or [c]ancel: ');
+    } else {
+      output.write('Select field, [r]eview, or [b]ack: ');
+    }
+
+    final line = input.readLineSync();
+    if (line == null) return !isRoot;
+    final command = line.trim().toLowerCase();
+
+    if (command == 'r' || command == 'review') {
+      output.writeln('Current values:');
+      continue;
+    }
+    if (!isRoot && (command == 'b' || command == 'back')) return true;
+    if (isRoot && (command == 'c' || command == 'cancel')) return false;
+    if (isRoot && (command == 's' || command == 'save')) {
+      final validationError = _firstValidationError(fields);
+      if (validationError == null) return true;
+      output.writeln('Cannot save: ${terminalSafeLineText(validationError)}');
+      continue;
+    }
+
+    final selected = int.tryParse(command);
+    if (selected == null || selected < 1 || selected > fields.length) {
+      final range = fields.length == 1 ? '1' : '1-${fields.length}';
+      output.writeln('Enter a field number ($range) or a listed command.');
+      continue;
+    }
+
+    final activeTerminice = _terminiceForFields(terminice, fields);
+    fields[selected - 1].edit(activeTerminice);
+  }
+}
+
+/// Returns the first validation error in editor order, or `null` when valid.
+String? firstEditorValidationError(List<Configurable> fields) =>
+    _firstValidationError(fields);
+
+String? _firstValidationError(List<Configurable> fields) {
+  for (final field in fields) {
+    final error = field.validate();
+    if (error != null) return '${field.label}: $error';
+  }
+  return null;
+}
+
+Terminice _terminiceForFields(
+  Terminice terminice,
+  List<Configurable> fields,
+) {
+  for (final field in fields) {
+    if (field is ThemeConfigurable) {
+      return terminice.themed(field.selectedTheme);
+    }
+  }
+  return terminice;
 }
 
 /// Renders the action row (save or back) at the top of the field list.

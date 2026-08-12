@@ -36,6 +36,29 @@ extension HelpCenterExtensions on Terminice {
     int maxPreviewLines = 8,
   }) {
     if (docs.isEmpty) return null;
+    return runWithExecutionMode<HelpDoc?>(
+      rich: () => _richHelpCenter(
+        title: title,
+        docs: docs,
+        maxVisibleResults: maxVisibleResults,
+        maxPreviewLines: maxPreviewLines,
+      ),
+      line: () => _lineHelpCenter(title, docs),
+      // There is no defensible implicit selection without a user. Print the
+      // documents for logs and return null without consuming input.
+      unattended: () {
+        _plainHelpDocuments(title, docs);
+        return null;
+      },
+    );
+  }
+
+  HelpDoc? _richHelpCenter({
+    required String title,
+    required List<HelpDoc> docs,
+    required int maxVisibleResults,
+    required int maxPreviewLines,
+  }) {
     final theme = defaultTheme;
 
     // Use centralized text input for search query handling
@@ -209,6 +232,42 @@ extension HelpCenterExtensions on Terminice {
     );
 
     return cancelled ? null : result;
+  }
+}
+
+HelpDoc? _lineHelpCenter(String title, List<HelpDoc> docs) {
+  final selected = FallbackPrompt.singleSelect<HelpDoc>(
+    title: terminalSafeLineText(title),
+    options: docs,
+    defaultIndex: null,
+    returnDefaultOnEndOfInput: false,
+    labelBuilder: (doc) {
+      final category = doc.category;
+      final suffix = category == null || category.isEmpty
+          ? ''
+          : ' (${terminalSafeLineText(category)})';
+      return '${terminalSafeLineText(doc.title)}$suffix';
+    },
+  );
+  if (selected == null) return null;
+
+  final output = TerminalContext.output;
+  output.writeln(terminalSafeLineText(selected.title));
+  output.writeln(terminalSafeBlockText(selected.content));
+  return selected;
+}
+
+void _plainHelpDocuments(String title, List<HelpDoc> docs) {
+  final output = TerminalContext.output;
+  output.writeln(terminalSafeLineText(title));
+  for (var i = 0; i < docs.length; i++) {
+    final doc = docs[i];
+    final category = doc.category;
+    final suffix = category == null || category.isEmpty
+        ? ''
+        : ' (${terminalSafeLineText(category)})';
+    output.writeln('${i + 1}. ${terminalSafeLineText(doc.title)}$suffix');
+    output.writeln(terminalSafeBlockText(doc.content));
   }
 }
 

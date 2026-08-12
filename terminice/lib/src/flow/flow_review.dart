@@ -121,7 +121,7 @@ class _FlowReview {
 
   void _writeLine(Object? object) {
     _terminice.activate();
-    TerminalContext.output.writeln(object);
+    TerminalContext.output.writeln(terminalSafeLineText(object.toString()));
   }
 
   Map<String, _FlowReviewAction> _reviewActionOptions() {

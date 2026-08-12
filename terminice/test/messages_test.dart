@@ -1,7 +1,12 @@
 import 'package:test/test.dart';
 import 'package:terminice/terminice.dart';
 import 'package:terminice/testing.dart'
-    show MockTerminal, MockTerminalSnapshotExtension, TerminiceTester;
+    show
+        MockTerminal,
+        MockTerminalInput,
+        MockTerminalOutput,
+        MockTerminalSnapshotExtension,
+        TerminiceTester;
 
 void main() {
   setUp(TerminalContext.reset);
@@ -62,6 +67,36 @@ void main() {
       expect(tester.output.plainLines, equals(_plainMessageLines()));
       expect(tester.output.containsAnsiControls, isFalse);
       expect(tester.output.isAscii, isTrue);
+    });
+
+    test('explicit interactive overrides non-TTY and throwing probes', () {
+      final nonTty = MockTerminal();
+      nonTty.mockInput.setHasTerminal(false);
+      nonTty.mockOutput.setHasTerminal(false);
+      final throwing = _ThrowingProbeTerminal();
+
+      terminice.interactive.withTerminal(nonTty).info('non-TTY');
+      terminice.interactive.withTerminal(throwing).info('throwing');
+
+      expect(nonTty.outputSnapshot.containsAnsiControls, isTrue);
+      expect(throwing.mockOutput.allOutput, contains('\x1b['));
+    });
+
+    test('auto and fallback stay plain when terminal probes are unsuitable',
+        () {
+      final nonTty = MockTerminal();
+      nonTty.mockInput.setHasTerminal(false);
+      nonTty.mockOutput.setHasTerminal(false);
+      final throwing = _ThrowingProbeTerminal();
+      final fallback = MockTerminal();
+
+      terminice.autoFallback.withTerminal(nonTty).info('non-TTY');
+      terminice.autoFallback.withTerminal(throwing).info('throwing');
+      terminice.fallback.withTerminal(fallback).info('fallback');
+
+      expect(nonTty.outputSnapshot.containsAnsiControls, isFalse);
+      expect(throwing.mockOutput.allOutput, isNot(contains('\x1b[')));
+      expect(fallback.outputSnapshot.containsAnsiControls, isFalse);
     });
 
     test('compatibility and plain theme paths use plain ANSI-free output', () {
@@ -181,6 +216,24 @@ void main() {
         ]),
       );
     });
+
+    test('plain messages normalize lines and visibly escape terminal controls',
+        () {
+      final terminal = MockTerminal();
+      final t = terminice.fallback.withTerminal(terminal);
+
+      t.log(_MessageObject('first\n\tsecond\x1b[2J'));
+      t.error('failure\x1b]0;owned\x07\rnext');
+
+      expect(terminal.outputSnapshot.containsAnsiControls, isFalse);
+      expect(
+        terminal.mockOutput.lines,
+        equals([
+          r'first second\x1b[2J',
+          r'ERROR: failure\x1b]0;owned\x07\rnext',
+        ]),
+      );
+    });
   });
 }
 
@@ -213,4 +266,25 @@ class _MessageObject {
 
   @override
   String toString() => value;
+}
+
+class _ThrowingProbeTerminal implements Terminal {
+  final MockTerminalInput mockInput = _ThrowingProbeInput();
+  final MockTerminalOutput mockOutput = _ThrowingProbeOutput();
+
+  @override
+  TerminalInput get input => mockInput;
+
+  @override
+  TerminalOutput get output => mockOutput;
+}
+
+class _ThrowingProbeInput extends MockTerminalInput {
+  @override
+  bool get hasTerminal => throw StateError('input probe failed');
+}
+
+class _ThrowingProbeOutput extends MockTerminalOutput {
+  @override
+  bool get hasTerminal => throw StateError('output probe failed');
 }

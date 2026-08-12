@@ -41,8 +41,8 @@ extension SearchSelectorExtensions on Terminice {
     int maxVisible = 10,
   }) {
     if (options.isEmpty) return [];
-    return runWithFallback<List<String>>(
-      interactive: () => SearchableListPrompt<String>(
+    return runWithExecutionMode<List<String>>(
+      rich: () => SearchableListPrompt<String>(
         title: prompt,
         items: options,
         theme: defaultTheme,
@@ -50,11 +50,12 @@ extension SearchSelectorExtensions on Terminice {
         maxVisible: maxVisible,
         searchEnabled: showSearch,
       ).run(),
-      fallback: () => FallbackSelection.selectedList<String>(
+      line: () => FallbackSelection.selectedList<String>(
         title: prompt,
         options: options,
         multiSelect: multiSelect,
       ),
+      unattended: () => <String>[],
     );
   }
 }

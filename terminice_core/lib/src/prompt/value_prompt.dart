@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:terminice_core/terminice_core.dart';
 
 /// ValuePrompt – composable system for continuous value selection.
@@ -79,8 +77,18 @@ class ValuePrompt {
     _initState();
 
     _bindings = KeyBindings.horizontalNavigation(
-      onLeft: () => _value = math.max(min, _value - step),
-      onRight: () => _value = math.min(max, _value + step),
+      onLeft: () => _value = normalizeSteppedValue(
+        _value - step,
+        min: min,
+        max: max,
+        step: step,
+      ),
+      onRight: () => _value = normalizeSteppedValue(
+        _value + step,
+        min: min,
+        max: max,
+        step: step,
+      ),
     );
 
     if (useNumberKeys) {
@@ -89,7 +97,12 @@ class ValuePrompt {
             onNumber: (n) {
               if (n >= 1 && n <= numberKeyMax) {
                 final normalized = (n - 1) / (numberKeyMax - 1);
-                _value = min + normalized * (max - min);
+                _value = normalizeSteppedValue(
+                  min + normalized * (max - min),
+                  min: min,
+                  max: max,
+                  step: step,
+                );
               }
             },
             max: numberKeyMax,
@@ -128,7 +141,12 @@ class ValuePrompt {
 
   void _initState() {
     _cancelled = false;
-    _value = initial.clamp(min, max);
+    _value = normalizeSteppedValue(
+      initial,
+      min: min,
+      max: max,
+      step: step,
+    );
   }
 }
 
@@ -306,25 +324,41 @@ class RangeValuePrompt {
         KeyBindings.horizontalNavigation(
           onLeft: () {
             if (_editingStart) {
-              _start = math.max(min, _start - step);
+              _start = normalizeSteppedValue(
+                _start - step,
+                min: min,
+                max: max,
+                step: step,
+              );
               if (_start > _end) _end = _start;
             } else {
-              _end = math.max(min, _end - step);
+              _end = normalizeSteppedValue(
+                _end - step,
+                min: min,
+                max: max,
+                step: step,
+              );
               if (_end < _start) _start = _end;
             }
-            _start = _start.clamp(min, max);
-            _end = _end.clamp(min, max);
           },
           onRight: () {
             if (_editingStart) {
-              _start = math.min(max, _start + step);
+              _start = normalizeSteppedValue(
+                _start + step,
+                min: min,
+                max: max,
+                step: step,
+              );
               if (_start > _end) _end = _start;
             } else {
-              _end = math.min(max, _end + step);
+              _end = normalizeSteppedValue(
+                _end + step,
+                min: min,
+                max: max,
+                step: step,
+              );
               if (_end < _start) _start = _end;
             }
-            _start = _start.clamp(min, max);
-            _end = _end.clamp(min, max);
           },
         ) +
         KeyBindings.prompt(onCancel: () => _cancelled = true);
@@ -358,8 +392,15 @@ class RangeValuePrompt {
 
   void _initState() {
     _cancelled = false;
-    _start = math.min(startInitial, endInitial).clamp(min, max);
-    _end = math.max(startInitial, endInitial).clamp(min, max);
+    final normalizedInitial = normalizeSteppedRange(
+      startInitial,
+      endInitial,
+      min: min,
+      max: max,
+      step: step,
+    );
+    _start = normalizedInitial.start;
+    _end = normalizedInitial.end;
     _editingStart = true;
   }
 }

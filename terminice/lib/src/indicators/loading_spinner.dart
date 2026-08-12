@@ -82,25 +82,33 @@ class LoadingSpinner with IndicatorLifecycle {
   /// The [message] is the text displayed next to the spinner.
   /// The [style] determines the visual appearance of the spinner.
   /// The [theme] controls the colors used for the spinner and text.
+  ///
+  /// Direct construction captures the ambient terminal and automatically
+  /// detected execution mode at construction time. Use
+  /// [Terminice.loadingSpinner] to capture a client's terminal and explicit
+  /// fallback policy at creation time.
   LoadingSpinner(
     this.prompt, {
     this.message = 'Loading',
     this.style = SpinnerStyle.dots,
     this.theme = PromptTheme.dark,
-  }) : _taskClient = null;
+  }) : _taskClient = null {
+    initializeAutomatically();
+  }
 
   LoadingSpinner._fromTerminice(
     this.prompt,
-    this._taskClient, {
+    Terminice origin, {
     this.message = 'Loading',
     this.style = SpinnerStyle.dots,
     this.theme = PromptTheme.dark,
-  });
+  }) : _taskClient = captureIndicatorClient(origin) {
+    initializeFromTerminice(_taskClient!);
+  }
 
   /// Shows the spinner at the given frame.
   void show(int frame) {
-    final out = prepareFrame();
-    _render(out, frame);
+    renderIndicator('$prompt: $message', (out) => _render(out, frame));
   }
 
   /// Runs the spinner with a callback that provides tick updates.
@@ -110,7 +118,7 @@ class LoadingSpinner with IndicatorLifecycle {
       callback(() {
         show(frame++);
       });
-    });
+    }, plainStart: '$prompt: $message', plainSuccess: prompt);
   }
 
   /// Runs [run] while showing this spinner and returns its typed result.
@@ -128,18 +136,26 @@ class LoadingSpinner with IndicatorLifecycle {
     TaskDisplay display = TaskDisplay.auto,
     TaskFinalBehavior finalBehavior = TaskFinalBehavior.persist,
   }) {
-    return indicatorTaskClient(theme, _taskClient).task<T>(
-      prompt,
-      run: run,
-      message: message ?? this.message,
-      success: success,
-      failure: failure,
-      cancel: cancel,
-      isCanceled: isCanceled,
-      interval: interval,
-      style: style,
-      display: display,
-      finalBehavior: finalBehavior,
+    return runTaskSession<T>(
+      (terminal, directFallbackMode) => indicatorTaskClient(
+        theme,
+        _taskClient,
+        terminal: terminal,
+        directFallbackMode: directFallbackMode,
+      ).task<T>(
+        prompt,
+        run: run,
+        message: message ?? this.message,
+        success: success,
+        failure: failure,
+        cancel: cancel,
+        isCanceled: isCanceled,
+        interval: interval,
+        style: style,
+        display: display,
+        finalBehavior: finalBehavior,
+      ),
+      plainStart: '$prompt: ${message ?? this.message}',
     );
   }
 
