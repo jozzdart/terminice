@@ -248,12 +248,12 @@ _[▰ Back](#table-of-contents) → Table of Contents_
 
 `terminice` makes styling effortless. Every prompt adapts automatically to the selected theme and display mode. Just chain the theme or mode accessor before calling any prompt.
 
-|                                Dark                                 |                               Matrix                                |                                  Fire                                   |
-| :-----------------------------------------------------------------: | :-----------------------------------------------------------------: | :---------------------------------------------------------------------: |
+|                           Dark                            |                          Matrix                           |                             Fire                              |
+| :-------------------------------------------------------: | :-------------------------------------------------------: | :-----------------------------------------------------------: |
 |  <img src="terminice/assets/theme_showcase_dark.gif" width="300"/>  | <img src="terminice/assets/theme_showcase_matrix.gif" width="300"/> |    <img src="terminice/assets/theme_showcase_fire.gif" width="300"/>    |
-|                             **Pastel**                              |                              **Ocean**                              |                             **Monochrome**                              |
+|                        **Pastel**                         |                         **Ocean**                         |                        **Monochrome**                         |
 | <img src="terminice/assets/theme_showcase_pastel.gif" width="300"/> | <img src="terminice/assets/theme_showcase_ocean.gif" width="300"/>  | <img src="terminice/assets/theme_showcase_monochrome.gif" width="300"/> |
-|                              **Neon**                               |                             **Arcane**                              |                               **Phantom**                               |
+|                         **Neon**                          |                        **Arcane**                         |                          **Phantom**                          |
 |  <img src="terminice/assets/theme_showcase_neon.gif" width="300"/>  | <img src="terminice/assets/theme_showcase_arcane.gif" width="300"/> |  <img src="terminice/assets/theme_showcase_phantom.gif" width="300"/>   |
 
 #### ❖ Available Themes
