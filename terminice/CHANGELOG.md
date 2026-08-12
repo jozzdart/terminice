@@ -1,5 +1,18 @@
 ## 1.2.1
 
+#### Changed
+
+- Changed the default fallback policy to automatic rich/line/unattended execution across all built-ins. This is behaviorally breaking while remaining source-compatible: piped input now requires explicit `.fallback`, and unattended auto mode never reads input.
+- Changed `Terminice.confirm`, `FlowBuilder.confirm`, and `SimplePrompts.confirm` to default to No. Explicit `defaultYes: true` remains supported in rich and line modes, while unattended confirmation always resolves safely to `false`.
+- Normalized slider and range initial values consistently across rich, line, and unattended execution by clamping to bounds, snapping to the nearest valid step, and ordering range endpoints.
+- Direct indicator constructors now detect and capture the ambient terminal's execution mode; indicators created through `Terminice` continue to preserve the originating instance's explicit policy and terminal.
+
+#### Added
+
+- Completed ANSI-free line and unattended behavior for all built-in prompts, selectors, pickers, guides, config editing, indicators, tasks, flows, and message primitives. Direct-I/O custom components remain responsible for their own fallback behavior.
+- Added terminal-safe plain-output handling for C0/C1 controls and escape sequences across built-in fallback output.
+- Added shared selector fallback resolution so blank input no longer fabricates a focused selection; valid explicit initial state is still preserved where supported.
+
 #### Documentation
 
 - Generated fire, matrix, and arcane previews for every Terminice catalogue entry, with reproducible visual generation tooling.
