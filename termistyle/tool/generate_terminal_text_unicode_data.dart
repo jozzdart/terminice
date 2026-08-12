@@ -176,18 +176,14 @@ String _render({
 void _writeRanges(StringBuffer output, String name, List<_Range> ranges) {
   output
     ..writeln('// ${ranges.length} sorted, disjoint ranges.')
-    ..writeln('// dart format off')
     ..writeln('const $name = <int>[');
-  for (var i = 0; i < ranges.length; i += 4) {
-    final line = ranges.skip(i).take(4).expand((range) => [
-          _hex(range.start),
-          _hex(range.end),
-        ]);
-    output.writeln('  ${line.join(', ')},');
+  for (final range in ranges) {
+    output
+      ..writeln('  ${_hex(range.start)},')
+      ..writeln('  ${_hex(range.end)},');
   }
   output
     ..writeln('];')
-    ..writeln('// dart format on')
     ..writeln();
 }
 
