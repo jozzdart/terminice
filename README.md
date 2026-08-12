@@ -388,7 +388,7 @@ final b = terminice.compact.ocean;
 
 #### Centralized Instance Configuration
 
-Each `Terminice` instance carries a single immutable `TerminiceConfig`. That config controls the effective theme for component calls that use the caller theme, including prompts, selectors, pickers, most guides, and indicators, plus fallback behavior for covered high-level prompts.
+Each `Terminice` instance carries a single immutable `TerminiceConfig`. That config controls the effective theme and execution mode for the built-in prompts, selectors, pickers, guides, indicators, tasks, flows, messages, and config editor.
 
 ```dart
 final t = terminice.withConfig(
@@ -410,7 +410,7 @@ final role = t.searchSelector(
 - `baseTheme` is the original theme chosen by the caller.
 - `featureOverride` applies a display mode such as `DisplayFeatures.compact`.
 - `compatibility` adapts the theme for terminal capability.
-- `fallbackMode` decides when covered high-level prompts use line-mode fallback.
+- `fallbackMode` selects rich, automatic, or explicit line-mode execution.
 - `TerminiceConfig.effectiveTheme` is the theme produced from those values.
 - `defaultTheme` exposes that effective theme on the `Terminice` instance.
 
@@ -446,22 +446,24 @@ final plainText = terminice.ocean.legacy;
 
 #### Fallback Policies
 
-The default behavior is unchanged: `terminice` uses the rich interactive prompts unless you opt into fallback.
+The default `fallbackMode` is `auto`. Every built-in uses one of three execution modes:
 
-- `terminice.interactive` - Forces rich prompts. This is the default `fallbackMode`.
-- `terminice.autoFallback` - Uses line-mode fallback when input or output is not a terminal.
-- `terminice.fallback` - Always uses line-mode fallback for covered high-level prompts.
+- **Rich TTY** - raw-key, themed interaction when input and output are suitable terminals.
+- **Plain line** - line-oriented, ANSI-free interaction when `.fallback` is explicit, or automatically when human input is available but output is unsuitable or `TERM=dumb`.
+- **Unattended** - deterministic, non-reading behavior when automatic detection finds no input TTY. Confirmations always resolve to `false` here, even with `defaultYes: true`.
+
+`terminice.interactive` explicitly forces rich mode, `terminice.fallback` explicitly forces plain line mode, and `terminice.autoFallback` selects among all three (the same policy used by the default `terminice` instance). Detection uses terminal capabilities and `TERM=dumb`; it does not inspect CI-vendor environment variables. Piped input is deliberately treated as unattended by auto mode, so use explicit `.fallback` when you want to consume piped line input.
 
 ```dart
 final ci = terminice.autoFallback.basic;
 final confirmed = ci.confirm(message: 'Continue?');
 ```
 
-Line-mode fallback uses simple text and numbered prompts instead of raw-mode keyboard UIs. Password fallback reads a normal line; it does **not** mask input in line mode.
+The complete guarantee applies to Terminice's built-ins. Plain line prompts use simple text; selectors and pickers use numbered choices or typed values. Dates use ISO `YYYY-MM-DD`, colors use hex, and typed file paths resolve relative to the supplied start directory. Multiline input submits with a line containing `.` and cancels with `:cancel`. A selector's focused row is not an implicit default: empty input accepts only explicit initial state, otherwise it returns the selector's empty or cancellation value. EOF cancels line selectors unless that component explicitly preserves its initial state. Password input is visible and unmasked in line mode. Plain and unattended paths do not enter raw mode or emit ANSI control sequences, and unattended mode never reads input.
 
-Fallback coverage currently includes `text`, `password`, `confirm`, `form`, `searchSelector`, `gridSelector`, `checkboxSelector`, `choiceSelector`, `tagSelector`, `toggleGroup`, `commandPalette`, `slider`, `range`, `rating`, and the focused enum/theme selects used by the config editor.
+Guides render readable plain text; the help center uses a numbered document choice in line mode and prints its content. The config editor offers a line command loop, rolls all nested edits back on cancel, and returns a valid unchanged snapshot (or `null` for invalid configuration) unattended. Manual indicators, task helpers, `whileRunning`, and stream tracking use bounded start/final log lines rather than animation in plain and unattended modes. Directly constructed built-in indicators auto-detect and capture the ambient terminal at construction time; indicators created from a `Terminice` instance keep that instance's terminal and explicit fallback policy.
 
-Components without fallback coverage still receive the effective theme when they use the caller theme, but remain rich/interactive until fallback support is added. Today that includes pickers, guides such as `cheatSheet`, `helpCenter`, and `hotkeyGuide`, manual indicator controller calls such as `show(...)`, `multiline`, `date`, and the config editor shell itself; config editor field prompts that call covered components still inherit the instance fallback policy. Async task helpers use plain task rendering in fallback/plain modes.
+User-authored custom components that perform terminal I/O directly remain responsible for their own fallback behavior. Custom components that compose Terminice built-ins inherit the built-ins' execution behavior; no additional callback is required.
 
 _[▰ Back](#table-of-contents) → Table of Contents_
 
@@ -575,7 +577,7 @@ Yes. Theme, display mode, glyphs, compatibility settings, fallback policy, termi
 
 #### What happens outside a rich terminal?
 
-Terminice is designed for real environments: local shells, CI, scripts, non-TTY output, limited terminals, and legacy/plain modes. `autoFallback`, `legacy`, and plain task rendering let the same CLI stay usable without pretending every terminal can do everything.
+Terminice's built-ins automatically choose rich TTY, plain line, or unattended behavior. Auto mode never reads when input is not a TTY; use explicit `.fallback` for intentional piped line input. `legacy` controls styling, while fallback policy controls interaction.
 
 #### Can I test the interactions?
 
@@ -1008,9 +1010,9 @@ Ask for a boolean decision with two labeled choices and a configurable default f
 - `message` - Main question displayed inside the prompt.
 - `yesLabel` - Positive option label. Defaults to `'Yes'`.
 - `noLabel` - Negative option label. Defaults to `'No'`.
-- `defaultYes` - Defaults to `true`; controls the initially selected option.
+- `defaultYes` - Defaults to `false`; controls the initially selected option in rich and line modes.
 - Returns `bool` - `true` when the positive option is confirmed, `false` when the negative option is confirmed.
-- Cancel behavior - Esc/Ctrl+C returns the default option value from `defaultYes` in the current implementation.
+- Cancel behavior - Esc/Ctrl+C returns the default option value from `defaultYes` in rich mode. Unattended auto mode always returns `false`, regardless of `defaultYes`.
 - Controls - Left/Right toggles the highlighted option, Enter confirms, Esc/Ctrl+C cancels to the default.
 
 #### Examples
@@ -2235,7 +2237,7 @@ Write small, synchronous terminal messages through the configured `Terminice` in
 - `err(Object? message)` - Alias for `error`.
 - `detail(Object? message)` - Writes a modest detail line for secondary context.
 - `newline([int count = 1])` - Writes one or more blank lines.
-- Plain rendering - Fallback, noninteractive terminals, basic/legacy compatibility, no-color themes, and ASCII glyph themes render ANSI-free plain lines.
+- Plain rendering - Explicit fallback and automatic non-rich execution render ANSI-free plain lines, as do basic/legacy compatibility, no-color themes, and ASCII glyph themes. Explicit `.interactive` preserves modern decorated output even when terminal capability probes are unsuitable.
 - Scope - These are CLI message primitives, not logging infrastructure. They do not manage levels, sinks, timestamps, structured records, or filtering.
 
 #### Examples
@@ -2299,7 +2301,7 @@ Run a synchronous or asynchronous operation while `terminice` renders a small st
 - `cancel` - Optional formatter for cancellation text. Defaults to `'$prompt canceled'`.
 - `isCanceled` - Optional predicate that decides whether a thrown error should be labelled as cancellation instead of failure.
 - `interval`, `style`, `indicator`, `maxDots` - Tune the running animation. `indicator` can use spinner frames or cycling dots.
-- `display` - A `TaskDisplay` value: `auto`, `inline`, or `plain`. `TaskDisplay.plain`, fallback modes, non-terminal IO, and non-modern compatibility avoid ANSI cursor control and animation.
+- `display` - A `TaskDisplay` value: `auto`, `inline`, or `plain`. `TaskDisplay.plain`, explicit fallback, automatic non-rich execution, and non-modern compatibility avoid ANSI cursor control and animation. Explicit `.interactive` permits inline rendering regardless of terminal probes.
 - `finalBehavior` - A `TaskFinalBehavior` value controlling whether the final status line remains visible.
 - Returns `Future<T>` - The exact result from `run`.
 - Error behavior - Synchronous throws and asynchronous errors render failure or cancel status, then rethrow the original error with its stack trace.
@@ -2483,9 +2485,9 @@ Choose how async task helpers render while work is running.
 <!-- terminice-visual:end:TaskDisplay -->
 
 - `TaskDisplay.auto` - Default. Uses animated inline rendering when the current terminal and `Terminice` configuration support it; otherwise uses plain line output.
-- `TaskDisplay.inline` - Requests animated inline rendering when available; falls back to plain output when animation is unavailable.
+- `TaskDisplay.inline` - Requests animated inline rendering. Explicit fallback, automatic non-rich execution, and non-modern compatibility can still force plain output; explicit `.interactive` honors inline rendering without capability detection.
 - `TaskDisplay.plain` - Uses simple final lines without ANSI cursor control, raw mode, or animation.
-- Fallback behavior - Non-terminal IO, `terminice.fallback`, and non-modern compatibility modes use plain rendering. `terminice.autoFallback` uses plain rendering when fallback is needed.
+- Fallback behavior - `terminice.fallback` and non-modern compatibility use plain rendering. `terminice.autoFallback` uses terminal capabilities to select inline or plain output, while `terminice.interactive` explicitly permits inline output even when those probes report non-terminal IO or throw.
 
 #### Examples
 
