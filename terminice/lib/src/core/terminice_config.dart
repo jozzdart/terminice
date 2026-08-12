@@ -1,31 +1,88 @@
 import 'package:terminice_core/terminice_core.dart';
 
-/// Policy for choosing high-level line-mode fallbacks.
-///
-/// This policy only describes when covered high-level prompts should use
-/// [FallbackPrompt]. Individual prompts opt into it separately.
+/// The effective way a built-in Terminice component should execute.
+enum TerminiceExecutionMode {
+  /// Full-screen or raw-key interaction on a capable terminal.
+  rich,
+
+  /// Line-oriented interaction for a terminal with unsuitable output.
+  line,
+
+  /// Non-interactive execution that must not read from standard input.
+  unattended,
+}
+
+/// Policy for choosing built-in rich, line-oriented, or unattended execution.
 enum TerminiceFallbackMode {
   /// Always use the existing rich, interactive prompt implementations.
   interactive,
 
-  /// Use line-mode fallback when either input or output is not a terminal.
+  /// Automatically select rich, line-oriented, or unattended execution.
   auto,
 
-  /// Always use line-mode fallback for covered high-level prompts.
+  /// Always use line-mode fallback for built-in components.
   fallback;
 
-  /// Whether this mode should use line-mode fallback for [terminal].
-  bool shouldUseFallback(Terminal terminal) {
+  /// Resolves the effective execution mode for [terminal].
+  ///
+  /// [term] overrides the value exposed by an optional [TerminalEnvironment].
+  /// Supplying it explicitly makes capability resolution deterministic in
+  /// tests and embedded runtimes. Terminal capability probe failures are
+  /// treated conservatively.
+  TerminiceExecutionMode executionModeFor(Terminal terminal, {String? term}) {
     switch (this) {
       case TerminiceFallbackMode.interactive:
-        return false;
-      case TerminiceFallbackMode.auto:
-        return !terminal.input.hasTerminal || !terminal.output.hasTerminal;
+        return TerminiceExecutionMode.rich;
       case TerminiceFallbackMode.fallback:
-        return true;
+        return TerminiceExecutionMode.line;
+      case TerminiceFallbackMode.auto:
+        if (!_hasInputTerminal(terminal)) {
+          return TerminiceExecutionMode.unattended;
+        }
+
+        final effectiveTerm = term ?? _terminalType(terminal);
+        if (!_hasOutputTerminal(terminal) || _isDumbTerminal(effectiveTerm)) {
+          return TerminiceExecutionMode.line;
+        }
+        return TerminiceExecutionMode.rich;
     }
   }
+
+  /// Whether this mode uses the compatibility line-mode fallback view.
+  ///
+  /// Unattended execution is also reported as fallback here for compatibility
+  /// with callers written before [TerminiceExecutionMode] was introduced.
+  bool shouldUseFallback(Terminal terminal) {
+    return executionModeFor(terminal) != TerminiceExecutionMode.rich;
+  }
 }
+
+bool _hasInputTerminal(Terminal terminal) {
+  try {
+    return terminal.input.hasTerminal;
+  } catch (_) {
+    return false;
+  }
+}
+
+bool _hasOutputTerminal(Terminal terminal) {
+  try {
+    return terminal.output.hasTerminal;
+  } catch (_) {
+    return false;
+  }
+}
+
+String? _terminalType(Terminal terminal) {
+  if (terminal is! TerminalEnvironment) return null;
+  try {
+    return (terminal as TerminalEnvironment).terminalType;
+  } catch (_) {
+    return 'dumb';
+  }
+}
+
+bool _isDumbTerminal(String? term) => term?.trim().toLowerCase() == 'dumb';
 
 /// Immutable configuration shared by a Terminice instance.
 ///
@@ -41,7 +98,7 @@ class TerminiceConfig {
   /// Compatibility transform applied after display features are resolved.
   final TerminalCompatibility compatibility;
 
-  /// Fallback policy for high-level prompts that support line-mode fallback.
+  /// Execution policy shared by built-in components.
   final TerminiceFallbackMode fallbackMode;
 
   /// Creates an immutable Terminice configuration.
@@ -49,7 +106,7 @@ class TerminiceConfig {
     this.baseTheme = PromptTheme.dark,
     this.featureOverride,
     this.compatibility = TerminalCompatibility.modern,
-    this.fallbackMode = TerminiceFallbackMode.interactive,
+    this.fallbackMode = TerminiceFallbackMode.auto,
   });
 
   /// Theme produced by applying display and compatibility settings.

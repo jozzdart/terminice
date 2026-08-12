@@ -1,10 +1,37 @@
 import 'dart:io';
 import 'package:terminice/terminice.dart';
 
+import '_fallback_path.dart';
 import '_file_helpers.dart';
 
 /// Adds the [filePicker] method to [Terminice] for interactive file browsing.
 extension FilePickerExtensions on Terminice {
+  /// Selects an existing file, or returns `null` when cancelled.
+  /// In line mode, [foldersOnly] accepts a typed existing directory path.
+  String? filePicker(
+    String prompt, {
+    Directory? startDirectory,
+    bool showHidden = false,
+    bool foldersOnly = false,
+  }) {
+    return runWithExecutionMode<String?>(
+      rich: () => _richFilePicker(
+        prompt,
+        startDirectory: startDirectory,
+        showHidden: showHidden,
+        foldersOnly: foldersOnly,
+      ),
+      line: () => fallbackExistingPath(
+        prompt: prompt,
+        startDirectory: startDirectory,
+        allowFiles: !foldersOnly,
+        allowDirectories: foldersOnly,
+        blankSelectsBase: false,
+      ),
+      unattended: () => null,
+    );
+  }
+
   /// Opens a keyboard-driven browser for choosing an existing file.
   ///
   /// The prompt lists the contents of [startDirectory] (or the current working
@@ -31,7 +58,7 @@ extension FilePickerExtensions on Terminice {
   ///   print('Selected $download');
   /// }
   /// ```
-  String? filePicker(
+  String? _richFilePicker(
     String prompt, {
     Directory? startDirectory,
     bool showHidden = false,

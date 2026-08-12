@@ -9,7 +9,9 @@ extension ConfirmPromptExtensions on Terminice {
   /// - [message] is the main question asked to the user.
   /// - [yesLabel] is the text for the positive option (defaults to 'Yes').
   /// - [noLabel] is the text for the negative option (defaults to 'No').
-  /// - [defaultYes] determines which option is initially focused (defaults to `true`).
+  /// - [defaultYes] determines which option is initially focused (defaults to `false`).
+  ///   Unattended automatic execution always returns `false`, even when this is
+  ///   explicitly `true`, so confirmation is fail-safe when no input is possible.
   ///
   /// Controls:
   /// - ← / → change the highlighted option
@@ -29,10 +31,10 @@ extension ConfirmPromptExtensions on Terminice {
     required String message,
     String yesLabel = 'Yes',
     String noLabel = 'No',
-    bool defaultYes = true,
+    bool defaultYes = false,
   }) {
-    return runWithFallback<bool>(
-      interactive: () => SimplePrompts.confirm(
+    return runWithExecutionMode<bool>(
+      rich: () => SimplePrompts.confirm(
         title: prompt,
         message: message,
         yesLabel: yesLabel,
@@ -40,10 +42,11 @@ extension ConfirmPromptExtensions on Terminice {
         defaultYes: defaultYes,
         theme: defaultTheme,
       ).run(),
-      fallback: () => FallbackPrompt.confirm(
+      line: () => FallbackPrompt.confirm(
         title: message,
         defaultValue: defaultYes,
       ),
+      unattended: () => false,
     );
   }
 }

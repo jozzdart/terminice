@@ -29,6 +29,7 @@ void main() {
       expect(snapshot.terminal, same(terminal));
       expect(snapshot.input, same(terminal.input));
       expect(snapshot.output, same(terminal.output));
+      expect(snapshot.executionMode, TerminiceExecutionMode.line);
       expect(snapshot.shouldUseFallback, equals(terminice.shouldUseFallback));
       expect(snapshot.activeTerminal, same(terminal));
       expect(snapshot.shouldUseFallback, isTrue);
@@ -214,6 +215,7 @@ class _ContextProbeComponent extends TerminiceComponent<_ContextSnapshot> {
       terminal: context.terminal,
       input: context.input,
       output: context.output,
+      executionMode: context.executionMode,
       shouldUseFallback: context.shouldUseFallback,
       activeTerminal: TerminalContext.current,
     );
@@ -228,6 +230,7 @@ class _ContextSnapshot {
     required this.terminal,
     required this.input,
     required this.output,
+    required this.executionMode,
     required this.shouldUseFallback,
     required this.activeTerminal,
   });
@@ -238,6 +241,7 @@ class _ContextSnapshot {
   final Terminal terminal;
   final TerminalInput input;
   final TerminalOutput output;
+  final TerminiceExecutionMode executionMode;
   final bool shouldUseFallback;
   final Terminal activeTerminal;
 }

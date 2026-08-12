@@ -41,8 +41,8 @@ extension CheckboxSelectorExtensions on Terminice {
     final theme = defaultTheme;
     if (options.isEmpty) return <String>[];
 
-    return runWithFallback<List<String>>(
-      interactive: () {
+    return runWithExecutionMode<List<String>>(
+      rich: () {
         // Use SelectableListPrompt for centralized state management
         final promptObj = SelectableListPrompt<String>(
           title: prompt,
@@ -106,11 +106,15 @@ extension CheckboxSelectorExtensions on Terminice {
           },
         );
       },
-      fallback: () => FallbackSelection.multi<String>(
+      line: () => FallbackSelection.multi<String>(
         title: prompt,
         options: options,
         defaultIndices: initialSelected,
-        fallbackIndex: 0,
+      ),
+      unattended: () => FallbackSelection.initialItems<String>(
+        options: options,
+        indices: initialSelected,
+        multiSelect: true,
       ),
     );
   }

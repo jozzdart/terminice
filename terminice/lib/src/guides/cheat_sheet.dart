@@ -38,6 +38,36 @@ extension CheatSheetExtensions on Terminice {
     assert(alignments.length == columns.length,
         'columnAlignments must match the column count (${columns.length}).');
 
+    runWithExecutionMode<void>(
+      rich: () => _richCheatSheet(
+        prompt,
+        entries: entries,
+        columns: columns,
+        alignments: alignments,
+        zebraStripes: zebraStripes,
+      ),
+      line: () => _plainCheatSheet(
+        prompt,
+        entries: entries,
+        columns: columns,
+        alignments: alignments,
+      ),
+      unattended: () => _plainCheatSheet(
+        prompt,
+        entries: entries,
+        columns: columns,
+        alignments: alignments,
+      ),
+    );
+  }
+
+  void _richCheatSheet(
+    String prompt, {
+    required List<List<String>> entries,
+    required List<String> columns,
+    required List<ColumnAlign> alignments,
+    required bool zebraStripes,
+  }) {
     final theme = defaultTheme;
     final frame = FrameView(title: prompt, theme: theme);
 
@@ -58,5 +88,49 @@ extension CheatSheetExtensions on Terminice {
         ctx.line(renderer.rowLine(entries[i], index: i));
       }
     });
+  }
+}
+
+void _plainCheatSheet(
+  String prompt, {
+  required List<List<String>> entries,
+  required List<String> columns,
+  required List<ColumnAlign> alignments,
+}) {
+  final safeColumns = columns.map(terminalSafeLineText).toList();
+  final safeEntries = entries
+      .map((row) => row.map(terminalSafeLineText).toList())
+      .toList(growable: false);
+  final widths = List<int>.generate(safeColumns.length, (column) {
+    var width = safeColumns[column].length;
+    for (final row in safeEntries) {
+      if (row[column].length > width) width = row[column].length;
+    }
+    return width;
+  });
+
+  String renderRow(List<String> row) {
+    final cells = <String>[];
+    for (var i = 0; i < row.length; i++) {
+      final padding = widths[i] - row[i].length;
+      switch (alignments[i]) {
+        case ColumnAlign.left:
+          cells.add('${row[i]}${' ' * padding}');
+        case ColumnAlign.right:
+          cells.add('${' ' * padding}${row[i]}');
+        case ColumnAlign.center:
+          final left = padding ~/ 2;
+          cells.add('${' ' * left}${row[i]}${' ' * (padding - left)}');
+      }
+    }
+    return cells.join(' | ');
+  }
+
+  final output = TerminalContext.output;
+  output.writeln(terminalSafeLineText(prompt));
+  output.writeln(renderRow(safeColumns));
+  output.writeln(widths.map((width) => '-' * width).join('-+-'));
+  for (final row in safeEntries) {
+    output.writeln(renderRow(row));
   }
 }

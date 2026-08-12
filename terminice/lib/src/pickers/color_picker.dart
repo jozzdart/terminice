@@ -33,6 +33,36 @@ import 'package:terminice_core/terminice_core.dart';
 /// print(color); // -> '#F97316' or null if cancelled
 /// ```
 extension ColorPickerPromptExtensions on Terminice {
+  /// Selects a color and returns uppercase `#RRGGBB`, or `null` on cancellation.
+  String? colorPicker(
+    String prompt, {
+    String? initialHex,
+    int cols = 24,
+    int rows = 8,
+  }) {
+    final initial = _normalizedHex(initialHex);
+    return runWithExecutionMode<String?>(
+      rich: () => _richColorPicker(
+        prompt,
+        initialHex: initialHex,
+        cols: cols,
+        rows: rows,
+      ),
+      line: () {
+        final value = FallbackPrompt.text(
+          title: '$prompt (hex)',
+          defaultValue: initial,
+          required: initial == null,
+          validator: (value) =>
+              _isValidHex(value) ? null : 'Enter a hex color as #RRGGBB.',
+          returnDefaultOnEndOfInput: initial != null,
+        );
+        return _normalizedHex(value);
+      },
+      unattended: () => initial,
+    );
+  }
+
   /// Presents an interactive color grid with ANSI preview + hex output.
   ///
   /// Parameters:
@@ -43,7 +73,7 @@ extension ColorPickerPromptExtensions on Terminice {
   ///
   /// Returns the chosen hex string in uppercase `#RRGGBB` format, or `null`
   /// when the user cancels (Esc) or the prompt runner reports `PromptResult.cancelled`.
-  String? colorPicker(
+  String? _richColorPicker(
     String prompt, {
     String? initialHex,
     int cols = 24,
@@ -350,6 +380,12 @@ extension ColorPickerPromptExtensions on Terminice {
         ? null
         : selectedHex();
   }
+}
+
+String? _normalizedHex(String? value) {
+  if (value == null || !_isValidHex(value)) return null;
+  final digits = value.trim().replaceFirst('#', '').toUpperCase();
+  return '#$digits';
 }
 
 // ───────────────────────── Utilities ─────────────────────────

@@ -157,13 +157,13 @@ void main() {
     });
 
     group('TerminiceConfig', () {
-      test('defaults preserve existing Terminice behavior', () {
+      test('defaults use automatic execution detection', () {
         const config = TerminiceConfig();
 
         expect(config.baseTheme, equals(PromptTheme.dark));
         expect(config.featureOverride, isNull);
         expect(config.compatibility, equals(TerminalCompatibility.modern));
-        expect(config.fallbackMode, equals(TerminiceFallbackMode.interactive));
+        expect(config.fallbackMode, equals(TerminiceFallbackMode.auto));
         expect(config.effectiveTheme, equals(PromptTheme.dark));
       });
 
@@ -241,6 +241,10 @@ void main() {
         mock.mockInput.setHasTerminal(false);
 
         expect(TerminiceFallbackMode.auto.shouldUseFallback(mock), isTrue);
+        expect(
+          TerminiceFallbackMode.auto.executionModeFor(mock, term: 'xterm'),
+          TerminiceExecutionMode.unattended,
+        );
       });
 
       test('auto requests fallback when output is not a terminal', () {
@@ -248,12 +252,56 @@ void main() {
         mock.mockOutput.setHasTerminal(false);
 
         expect(TerminiceFallbackMode.auto.shouldUseFallback(mock), isTrue);
+        expect(
+          TerminiceFallbackMode.auto.executionModeFor(mock, term: 'xterm'),
+          TerminiceExecutionMode.line,
+        );
       });
 
       test('auto keeps rich prompts when input and output are terminals', () {
         final mock = MockTerminal();
 
         expect(TerminiceFallbackMode.auto.shouldUseFallback(mock), isFalse);
+        expect(
+          TerminiceFallbackMode.auto.executionModeFor(mock, term: 'xterm'),
+          TerminiceExecutionMode.rich,
+        );
+      });
+
+      test('auto uses line mode for TERM=dumb', () {
+        final mock = MockTerminal();
+        mock.setTerminalType(' dumb ');
+
+        expect(
+          TerminiceFallbackMode.auto.executionModeFor(mock),
+          TerminiceExecutionMode.line,
+        );
+      });
+
+      test('explicit modes override terminal capability probes', () {
+        expect(
+          TerminiceFallbackMode.interactive.executionModeFor(ErrorTerminal()),
+          TerminiceExecutionMode.rich,
+        );
+        expect(
+          TerminiceFallbackMode.fallback.executionModeFor(ErrorTerminal()),
+          TerminiceExecutionMode.line,
+        );
+      });
+
+      test('auto fails safely when a capability probe throws', () {
+        expect(
+          TerminiceFallbackMode.auto.executionModeFor(ErrorTerminal()),
+          TerminiceExecutionMode.unattended,
+        );
+
+        expect(
+          TerminiceFallbackMode.auto.executionModeFor(
+            _ThrowingOutputProbeTerminal(),
+            term: 'xterm',
+          ),
+          TerminiceExecutionMode.line,
+        );
       });
 
       test('Terminice exposes fallback decision for preserved terminal', () {
@@ -669,4 +717,14 @@ void main() {
       expect(TerminalContext.current, isNot(same(mock)));
     });
   });
+}
+
+class _ThrowingOutputProbeTerminal implements Terminal {
+  final MockTerminalInput _input = MockTerminalInput();
+
+  @override
+  TerminalInput get input => _input;
+
+  @override
+  TerminalOutput get output => ErrorTerminalOutput();
 }

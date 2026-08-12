@@ -43,8 +43,8 @@ extension GridSelectorExtensions on Terminice {
     Set<int>? initialSelection,
   }) {
     if (options.isEmpty) return <String>[];
-    return runWithFallback<List<String>>(
-      interactive: () => SelectableGridPrompt<String>(
+    return runWithExecutionMode<List<String>>(
+      rich: () => SelectableGridPrompt<String>(
         title: prompt,
         items: options,
         theme: defaultTheme,
@@ -54,11 +54,16 @@ extension GridSelectorExtensions on Terminice {
         maxColumns: maxColumns,
         initialSelection: initialSelection,
       ).run(),
-      fallback: () => FallbackSelection.selectedList<String>(
+      line: () => FallbackSelection.selectedList<String>(
         title: prompt,
         options: options,
         multiSelect: multiSelect,
         defaultIndices: initialSelection,
+      ),
+      unattended: () => FallbackSelection.initialItems<String>(
+        options: options,
+        indices: initialSelection,
+        multiSelect: multiSelect,
       ),
     );
   }

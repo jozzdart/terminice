@@ -7,7 +7,7 @@ import 'package:terminice_core/terminice_core.dart';
 /// Controls:
 /// - ← / → adjust value by `step`
 /// - Enter confirms the selection
-/// - Esc / Ctrl+C cancel (returns the original value)
+/// - Esc / Ctrl+C cancel (returns the normalized initial value)
 ///
 /// ```dart
 /// final percent = terminice.slider(
@@ -32,7 +32,7 @@ extension SliderPromptExtensions on Terminice {
   /// - [prompt] is the title of the slider prompt.
   /// - [min] is the minimum allowed value (defaults to 0).
   /// - [max] is the maximum allowed value (defaults to 100).
-  /// - [initial] is the starting value (defaults to 50).
+  /// - [initial] is clamped and snapped to the nearest step (defaults to 50).
   /// - [step] is the increment/decrement amount when using arrow keys (defaults to 1).
   /// - [width] is the visual width of the slider bar in characters (defaults to 28).
   /// - [unit] is an optional string appended to the displayed value.
@@ -58,13 +58,19 @@ extension SliderPromptExtensions on Terminice {
     String unit = '',
     bool showPercent = false,
   }) {
-    return runWithFallback<num>(
-      interactive: () {
+    final normalizedInitial = normalizeSteppedValue(
+      initial,
+      min: min,
+      max: max,
+      step: step,
+    );
+    return runWithExecutionMode<num>(
+      rich: () {
         final promptObj = ValuePrompt(
           title: prompt,
           min: min,
           max: max,
-          initial: initial,
+          initial: normalizedInitial,
           step: step,
           theme: defaultTheme,
         );
@@ -81,17 +87,18 @@ extension SliderPromptExtensions on Terminice {
           },
         );
       },
-      fallback: () {
-        final defaultValue = initial.clamp(min, max);
+      line: () {
         return FallbackPrompt.number(
               title: unit.isEmpty ? prompt : '$prompt ($unit)',
-              defaultValue: defaultValue,
+              defaultValue: normalizedInitial,
               min: min,
               max: max,
+              step: step,
               returnDefaultOnEndOfInput: false,
             ) ??
-            initial;
+            normalizedInitial;
       },
+      unattended: () => normalizedInitial,
     );
   }
 }

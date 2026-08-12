@@ -9,7 +9,7 @@ void main() {
   tearDown(TerminalContext.reset);
 
   group('cancel behavior', () {
-    test('fallback value prompts return exact supplied initial values', () {
+    test('fallback numeric prompts return safe normalized initial values', () {
       final sliderTerminal = MockTerminal();
       final sliderResult = terminice.fallback
           .withTerminal(sliderTerminal)
@@ -29,9 +29,9 @@ void main() {
           .withTerminal(ratingTerminal)
           .rating('Risk', maxStars: 5, initial: 0);
 
-      expect(sliderResult, 42);
-      expect(rangeResult.start, 20);
-      expect(rangeResult.end, -5);
+      expect(sliderResult, 10);
+      expect(rangeResult.start, 0);
+      expect(rangeResult.end, 10);
       expect(ratingResult, 0);
     });
 
@@ -48,7 +48,7 @@ void main() {
       expect(result, 0);
     });
 
-    test('config field-level fallback cancel leaves values unchanged', () {
+    test('config fallback normalizes invalid numeric state without input', () {
       final rating = RatingConfigurable(
         key: 'risk',
         label: 'Risk',
@@ -85,11 +85,11 @@ void main() {
 
       expect(ratingEdited, isFalse);
       expect(rating.value, 0);
-      expect(rangeEdited, isFalse);
-      expect(range.value.start, 20);
-      expect(range.value.end, -5);
-      expect(sliderEdited, isFalse);
-      expect(slider.value, 42);
+      expect(rangeEdited, isTrue);
+      expect(range.value.start, 0);
+      expect(range.value.end, 10);
+      expect(sliderEdited, isTrue);
+      expect(slider.value, 10);
     });
   });
 }

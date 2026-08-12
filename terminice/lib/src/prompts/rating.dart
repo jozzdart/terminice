@@ -39,8 +39,8 @@ extension RatingPromptExtensions on Terminice {
     assert(maxStars > 0, 'maxStars must be greater than 0');
     assert(initial >= 0, 'initial must be greater than or equal to 0');
 
-    return runWithFallback<int>(
-      interactive: () {
+    return runWithExecutionMode<int>(
+      rich: () {
         final theme = defaultTheme;
         void renderLabel(FrameContext ctx, int value, int max) {
           final effectiveLabels = labels;
@@ -66,7 +66,7 @@ extension RatingPromptExtensions on Terminice {
           },
         );
       },
-      fallback: () {
+      line: () {
         final defaultValue = _clampRating(initial, maxStars);
         final value = FallbackPrompt.number(
           title: prompt,
@@ -80,6 +80,7 @@ extension RatingPromptExtensions on Terminice {
         if (value == null) return initial;
         return _clampRating(value.toInt(), maxStars);
       },
+      unattended: () => _clampRating(initial, maxStars),
     );
   }
 }

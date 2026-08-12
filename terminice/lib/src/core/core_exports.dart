@@ -11,6 +11,7 @@ export 'package:terminice_core/terminice_core.dart'
         PromptThemeCompatibility,
         // Terminal I/O abstraction
         Terminal,
+        TerminalEnvironment,
         TerminalInput,
         TerminalOutput,
         DartTerminal,

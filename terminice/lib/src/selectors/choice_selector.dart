@@ -47,8 +47,8 @@ extension ChoiceSelectorExtensions on Terminice {
     int? maxColumns,
   }) {
     if (items.isEmpty) return [];
-    return runWithFallback<List<String>>(
-      interactive: () {
+    return runWithExecutionMode<List<String>>(
+      rich: () {
         final theme = defaultTheme;
 
         CardRender renderCard(
@@ -172,13 +172,14 @@ extension ChoiceSelectorExtensions on Terminice {
 
         return result.map((item) => item.label).toList();
       },
-      fallback: () => FallbackSelection.mappedList<ChoiceItem, String>(
+      line: () => FallbackSelection.mappedList<ChoiceItem, String>(
         title: prompt,
         options: items,
         multiSelect: multiSelect,
         labelBuilder: _choiceItemLabel,
         mapItem: (item) => item.label,
       ),
+      unattended: () => <String>[],
     );
   }
 }

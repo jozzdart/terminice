@@ -28,6 +28,17 @@ extension ThemeDemoExtensions on Terminice {
     };
     final themeNames = themes.keys.toList();
 
+    runWithExecutionMode<void>(
+      rich: () => _richThemeDemo(themes, themeNames),
+      line: () => _plainThemeDemo(themeNames),
+      unattended: () => _plainThemeDemo(themeNames),
+    );
+  }
+
+  void _richThemeDemo(
+    Map<String, PromptTheme> themes,
+    List<String> themeNames,
+  ) {
     // Use centralized focus navigation
     final focus = FocusNavigator(itemCount: themeNames.length);
     String selected = themeNames.first;
@@ -105,5 +116,15 @@ extension ThemeDemoExtensions on Terminice {
         multiSelect: true,
       );
     }
+  }
+}
+
+void _plainThemeDemo(List<String> themeNames) {
+  final output = TerminalContext.output;
+  output.writeln('Terminice theme catalogue');
+  for (final name in themeNames) {
+    output.writeln(
+      '${terminalSafeLineText(name)}: arrow >, checkbox [x] / [ ], sample text',
+    );
   }
 }

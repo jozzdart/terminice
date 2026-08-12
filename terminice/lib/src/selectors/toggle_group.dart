@@ -37,8 +37,8 @@ extension ToggleGroupExtensions on Terminice {
     bool alignContent = true,
   }) {
     if (items.isEmpty) return const {};
-    return runWithFallback<Map<String, bool>>(
-      interactive: () {
+    return runWithExecutionMode<Map<String, bool>>(
+      rich: () {
         final theme = defaultTheme;
 
         // Use centralized focus navigation
@@ -122,7 +122,7 @@ extension ToggleGroupExtensions on Terminice {
         }
         return resultMap;
       },
-      fallback: () {
+      line: () {
         final selected = FallbackSelection.multi<ToggleItem>(
           title: prompt,
           options: items,
@@ -137,6 +137,9 @@ extension ToggleGroupExtensions on Terminice {
         return {
           for (final item in items) item.label: selected.contains(item),
         };
+      },
+      unattended: () => {
+        for (final item in items) item.label: item.initialOn,
       },
     );
   }

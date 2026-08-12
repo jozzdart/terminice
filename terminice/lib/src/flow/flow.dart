@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:terminice_core/terminice_core.dart'
-    show TerminalContext, normalizeValidationError;
+    show TerminalContext, normalizeValidationError, terminalSafeLineText;
 
 import '../core/component_runner.dart';
 import '../core/terminice_api.dart';
@@ -376,13 +376,16 @@ class FlowBuilder {
   }
 
   /// Adds a confirmation step to the flow.
+  ///
+  /// The default selection is No. Set [defaultYes] to `true` to select Yes in
+  /// rich and line modes; unattended automatic execution remains safely false.
   FlowBuilder confirm(
     String key, {
     String prompt = 'Confirm',
     required String message,
     String yesLabel = 'Yes',
     String noLabel = 'No',
-    bool defaultYes = true,
+    bool defaultYes = false,
     FlowValidator<bool>? validate,
     FlowCondition? when,
     String? reviewLabel,
