@@ -36,7 +36,7 @@ class RankedListPrompt<T> {
   /// Maximum visible items (viewport size).
   final int maxVisible;
 
-  /// Whether search input is always visible (vs toggle with /).
+  /// Retained configuration flag; search input is always visible and active.
   final bool alwaysShowSearch;
 
   /// Initial search mode (true = fuzzy, false = substring).

@@ -5,7 +5,8 @@ import 'package:terminice_core/terminice_core.dart';
 /// Extends the [SelectableListPrompt] pattern with:
 /// - Real-time search/filter via [TextInputBuffer]
 /// - Dynamic item filtering with constraint handling
-/// - Toggleable search mode
+/// - Search/results focus switching with Ctrl+F; / focuses search from results
+/// - Literal Space and / during search, with query/filter preserved on focus changes
 ///
 /// **Design principles:**
 /// - Composition over inheritance (uses same components as SelectableListPrompt)

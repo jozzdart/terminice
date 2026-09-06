@@ -7,9 +7,10 @@ import '../core/fallback_selection.dart';
 ///
 /// Controls:
 /// - ↑ / ↓ navigate through items
-/// - / toggles the search field
-/// - Type to filter when search is visible
-/// - Space toggles the focused option when `multiSelect` is true
+/// - / focuses search from results; Ctrl+F switches search/results focus
+/// - Type to filter with search focus, including literal Space and /
+/// - Focus changes preserve the query, filter, and focused result
+/// - Space toggles the focused option in results when `multiSelect` is true
 /// - Enter confirms the selection
 /// - Esc / Ctrl+C cancels (returns `[]`)
 ///
@@ -17,7 +18,8 @@ import '../core/fallback_selection.dart';
 /// - `options`: Items shown in the scrollable list.
 /// - `prompt`: Frame title displayed above the list.
 /// - `multiSelect`: Enables toggling multiple entries.
-/// - `showSearch`: Starts with the search box visible.
+/// - `showSearch`: Starts with search text focused.
+/// - Selections track original option indices across filters and duplicate labels.
 /// - `maxVisible`: Maximum rows before scrolling.
 ///
 /// Example:

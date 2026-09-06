@@ -1,3 +1,12 @@
+## 1.2.1
+
+- Fixed printable Space and slash handling through shared text bindings while preserving their dedicated key-event types for command bindings.
+- Made text insertion, truncation, deletion, cursor movement, and block cursors preserve grapheme boundaries, including emoji and combining marks. `length`, `cursorPosition`, `maxLength`, and insertion counts remain UTF-16 code units; `moveCursor` now steps by grapheme. Negative `maxLength` values throw `ArgumentError`.
+- Added shared fixed or dynamically focused text bindings with separate state-change and text-change callbacks. Recognized no-op edits are consumed instead of falling through to commands.
+- Changed searchable lists to use Ctrl+F to switch search/results focus and `/` to focus search from results. Focus changes preserve the query, filter, and focused result; Space and slash are literal text during search, and Space selects only with results focus.
+- Fixed filtered multi-selection to track original item indices, preserving selections across query changes and distinguishing duplicate labels.
+- Added regression tests for printable input, Unicode editing, length limits, and no-op key consumption.
+
 ## 1.2.0
 
 - **New**: Added `TerminalEnvironment` so terminal implementations can expose terminal-type capabilities; `DartTerminal` and `MockTerminal` now support it.

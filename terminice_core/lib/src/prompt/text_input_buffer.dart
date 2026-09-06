@@ -48,7 +48,8 @@ class TextInputBuffer {
   /// Creates a new text input buffer.
   ///
   /// [initialText] sets the starting content (truncated to [maxLength] if set).
-  /// [maxLength] optionally limits input length.
+  /// [maxLength] optionally limits UTF-16 code units and must be non-negative.
+  /// Truncation keeps the longest whole-grapheme prefix within that limit.
   TextInputBuffer({
     String initialText = '',
     this.maxLength,
