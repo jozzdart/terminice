@@ -1479,11 +1479,12 @@ Pick from a vertical list that can be filtered in place. It works as a quick sin
 - `options` - `List<String>` displayed in the list. Passing an empty list returns `[]` immediately.
 - `prompt` - Frame title. Defaults to `'Select an option'`.
 - `multiSelect` - Defaults to `false`. When `true`, Space toggles the focused row and Enter returns all selected labels.
-- `showSearch` - Defaults to `false`. When `true`, the search field starts open; otherwise `/` toggles search mode.
+- `showSearch` - Defaults to `false`. When `true`, search text starts focused. `/` focuses search from results; Ctrl+F switches search/results focus without clearing the query or filter.
 - `maxVisible` - Maximum list rows before scrolling. Defaults to `10`; the prompt also adapts to terminal height.
 - Returns `List<String>` - Confirmed labels. Single-select returns a one-item list. Multi-select returns checked labels, or the focused label if nothing was checked.
 - Cancel behavior - Esc/Ctrl+C returns `[]`. Empty options and no-match confirmation also return `[]`.
-- Controls - Up/Down navigates, `/` toggles search, type filters while search is open, Space toggles in multi-select, Enter confirms, Esc/Ctrl+C cancels.
+- Controls - Up/Down navigates, `/` focuses search from results, Ctrl+F switches search/results focus, and typing filters while search has focus (including literal Space and `/`). Space toggles in multi-select only with results focus; Enter confirms and Esc/Ctrl+C cancels.
+- Selection identity - Selections use original option indices and survive query changes, including when labels are duplicated. Focus changes and cursor-only edits preserve the focused result.
 
 #### Examples
 
@@ -1973,7 +1974,7 @@ Browse the filesystem from a starting directory and return the selected file pat
 - Returns `String?` - The selected file path when a file is confirmed, or `null` when the user cancels.
 - Filesystem behavior - Entries come from `Directory.listSync(followLinks: false)`, sorted with directories first and then by case-insensitive basename. Symlinks are not followed by the listing helper. Unreadable directories can surface the underlying `FileSystemException`.
 - Cancel behavior - Esc/Ctrl+C inside the embedded search selector returns `null`.
-- Controls - Up/Down navigates rows, `/` toggles search, typing filters while search is open, Enter enters a directory or confirms a file, Esc/Ctrl+C cancels.
+- Controls - Up/Down navigates rows, `/` focuses search from results, Ctrl+F switches search/results focus while preserving the query and filter, and typing (including Space and `/`) filters while search has focus. Enter enters a directory or confirms a file; Esc/Ctrl+C cancels.
 
 #### Examples
 
@@ -3182,7 +3183,7 @@ ConfigResult? configEditor(
 - `maxVisible` - Upper limit for visible rows. The actual viewport is also clamped to the terminal height.
 - Returns `ConfigResult?` - Returns `ConfigResult(fields: fields, confirmed: true)` when the root "Save & confirm" row is selected, or `null` when the root editor is cancelled.
 - Empty behavior - If `fields` is empty, the method returns an immediate confirmed `ConfigResult`.
-- Search behavior - Search is active by default. Typing filters by field `label` or `key`; `/` toggles search on and off.
+- Search behavior - Search text has focus by default. Typing (including Space and `/`) filters by field `label` or `key`; Ctrl+F switches search/results focus and `/` focuses search from results. Focus changes preserve the query, filter, and focused row.
 - Navigation behavior - `↑` / `↓` move through rows, `Enter` opens the focused field or group, and the first row is the root save action.
 - Group behavior - `GroupConfigurable` opens a nested editor with a "Back" action instead of "Save & confirm". Esc or Back in a group returns to the parent and preserves edits in place; only the root save decides whether a result is returned.
 - Theme behavior - A `ThemeConfigurable` at the current editor level updates the editor theme live after a new theme is selected. The editor also starts with that field's selected theme.
@@ -3766,7 +3767,8 @@ terminice.neon.hotkeyGuide(
   shortcuts: const [
     ['Ctrl+D', 'Save multiline input', 'Editor'],
     ['Ctrl+R', 'Reveal password', 'Password fields'],
-    ['/', 'Toggle search', 'Lists'],
+    ['/', 'Focus search from results', 'Lists'],
+    ['Ctrl+F', 'Switch search/results focus', 'Lists'],
     ['?', 'Close this guide', 'Help'],
   ],
   footer: const ['Enter to close', 'Esc to close', '? to close'],

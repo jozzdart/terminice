@@ -56,9 +56,8 @@ extension MultiLineInputPromptExtensions on Terminice {
     bool allowEmpty = true,
   }) {
     final theme = defaultTheme;
-    final lines = <String>[''];
+    final lines = <TextInputBuffer>[TextInputBuffer()];
     int cursorLine = 0;
-    int cursorColumn = 0;
     int scrollOffset = 0;
     bool cancelled = false;
     bool confirmed = false;
@@ -71,127 +70,67 @@ extension MultiLineInputPromptExtensions on Terminice {
       }
     }
 
-    // Use KeyBindings for declarative key handling
+    void moveLine(int delta) {
+      final column = lines[cursorLine].cursorPosition;
+      cursorLine = (cursorLine + delta).clamp(0, lines.length - 1);
+      lines[cursorLine].setCursorPosition(column);
+      updateScroll();
+    }
+
     final bindings = KeyBindings([
-          // Vertical movement
-          KeyBinding.single(
-            KeyEventType.arrowUp,
-            (event) {
-              if (cursorLine > 0) cursorLine--;
-              cursorColumn = min(cursorColumn, lines[cursorLine].length);
-              updateScroll();
-              return KeyActionResult.handled;
-            },
-            hintLabel: '↑/↓',
-            hintDescription: 'line',
-          ),
-          KeyBinding.single(
-            KeyEventType.arrowDown,
-            (event) {
-              if (cursorLine < lines.length - 1) cursorLine++;
-              cursorColumn = min(cursorColumn, lines[cursorLine].length);
-              updateScroll();
-              return KeyActionResult.handled;
-            },
-          ),
-          // Horizontal movement
-          KeyBinding.single(
-            KeyEventType.arrowLeft,
-            (event) {
-              if (cursorColumn > 0) {
-                cursorColumn--;
-              } else if (cursorLine > 0) {
-                cursorLine--;
-                cursorColumn = lines[cursorLine].length;
-              }
-              updateScroll();
-              return KeyActionResult.handled;
-            },
-            hintLabel: '←/→',
-            hintDescription: 'move',
-          ),
-          KeyBinding.single(
-            KeyEventType.arrowRight,
-            (event) {
-              if (cursorColumn < lines[cursorLine].length) {
-                cursorColumn++;
-              } else if (cursorLine < lines.length - 1) {
-                cursorLine++;
-                cursorColumn = 0;
-              }
-              updateScroll();
-              return KeyActionResult.handled;
-            },
-          ),
-          // Enter = new line
-          KeyBinding.single(
-            KeyEventType.enter,
-            (event) {
-              if (lines.length < maxLines) {
-                final line = lines[cursorLine];
-                final before = line.substring(0, cursorColumn);
-                final after = line.substring(cursorColumn);
-                lines[cursorLine] = before;
-                lines.insert(cursorLine + 1, after);
-                cursorLine++;
-                cursorColumn = 0;
-              }
-              updateScroll();
-              return KeyActionResult.handled;
-            },
-            hintLabel: 'Enter',
-            hintDescription: 'new line',
-          ),
-          // Backspace
-          KeyBinding.single(
-            KeyEventType.backspace,
-            (event) {
-              if (cursorColumn > 0) {
-                final line = lines[cursorLine];
-                lines[cursorLine] = line.substring(0, cursorColumn - 1) +
-                    line.substring(cursorColumn);
-                cursorColumn--;
-              } else if (cursorLine > 0) {
-                // merge with previous line
-                final prev = lines[cursorLine - 1];
-                final current = lines.removeAt(cursorLine);
-                cursorLine--;
-                cursorColumn = prev.length;
-                lines[cursorLine] = prev + current;
-              }
-              updateScroll();
-              return KeyActionResult.handled;
-            },
-          ),
-          // Typing
-          KeyBinding.char(
-            (c) => true,
-            (event) {
-              final ch = event.char!;
-              final line = lines[cursorLine];
-              final before = line.substring(0, cursorColumn);
-              final after = line.substring(cursorColumn);
-              lines[cursorLine] = '$before$ch$after';
-              cursorColumn++;
-              return KeyActionResult.handled;
-            },
-          ),
-          // Space
-          KeyBinding.single(
-            KeyEventType.space,
-            (event) {
-              final line = lines[cursorLine];
-              final before = line.substring(0, cursorColumn);
-              final after = line.substring(cursorColumn);
-              lines[cursorLine] = '$before $after';
-              cursorColumn++;
-              return KeyActionResult.handled;
-            },
-          ),
+          KeyBinding.single(KeyEventType.arrowUp, (_) {
+            moveLine(-1);
+            return KeyActionResult.handled;
+          }, hintLabel: '↑/↓', hintDescription: 'line'),
+          KeyBinding.single(KeyEventType.arrowDown, (_) {
+            moveLine(1);
+            return KeyActionResult.handled;
+          }),
+          KeyBinding.single(KeyEventType.arrowLeft, (_) {
+            if (!lines[cursorLine].cursorAtStart || cursorLine == 0) {
+              return KeyActionResult.ignored;
+            }
+            lines[--cursorLine].moveCursorToEnd();
+            updateScroll();
+            return KeyActionResult.handled;
+          }, hintLabel: '←/→', hintDescription: 'move'),
+          KeyBinding.single(KeyEventType.arrowRight, (_) {
+            if (!lines[cursorLine].cursorAtEnd ||
+                cursorLine == lines.length - 1) {
+              return KeyActionResult.ignored;
+            }
+            lines[++cursorLine].moveCursorToStart();
+            updateScroll();
+            return KeyActionResult.handled;
+          }),
+          KeyBinding.single(KeyEventType.enter, (_) {
+            if (lines.length < maxLines) {
+              final input = lines[cursorLine];
+              final after = input.textAfterCursor;
+              input.setText(input.textBeforeCursor);
+              lines.insert(++cursorLine,
+                  TextInputBuffer(initialText: after)..moveCursorToStart());
+            }
+            updateScroll();
+            return KeyActionResult.handled;
+          }, hintLabel: 'Enter', hintDescription: 'new line'),
+          KeyBinding.single(KeyEventType.backspace, (_) {
+            if (!lines[cursorLine].cursorAtStart || cursorLine == 0) {
+              return KeyActionResult.ignored;
+            }
+            final current = lines.removeAt(cursorLine);
+            final previous = lines[--cursorLine];
+            final joinPosition = previous.length;
+            previous.setText(previous.text + current.text);
+            previous.setCursorPosition(joinPosition);
+            updateScroll();
+            return KeyActionResult.handled;
+          }),
         ]) +
+        KeyBindings.textInput(buffer: () => lines[cursorLine]) +
         KeyBindings.ctrlD(
           onPress: () {
-            if (allowEmpty || lines.any((l) => l.trim().isNotEmpty)) {
+            if (allowEmpty || lines.any((l) => l.text.trim().isNotEmpty)) {
               confirmed = true;
               return KeyActionResult.confirmed;
             }
@@ -213,16 +152,14 @@ extension MultiLineInputPromptExtensions on Terminice {
         final start = scrollOffset;
         final end = min(scrollOffset + visibleLines, lines.length);
         for (var i = start; i < end; i++) {
-          final text = lines[i];
+          final text = lines[i].text;
           final isCurrent = i == cursorLine;
           final prefix = ctx.lb.arrow(isCurrent);
 
           if (isCurrent) {
-            final before = text.substring(0, cursorColumn);
-            final after = text.substring(cursorColumn);
-            final cursorChar = after.isEmpty ? ' ' : after[0];
+            final cursor = lines[i].textWithBlockCursor();
             ctx.gutterLine(
-                '$prefix $before${theme.inverse}$cursorChar${theme.reset}${after.length > 1 ? after.substring(1) : ''}');
+                '$prefix ${cursor.before}${theme.inverse}${cursor.cursor}${theme.reset}${cursor.after}');
           } else {
             ctx.gutterLine('$prefix $text');
           }
@@ -242,6 +179,6 @@ extension MultiLineInputPromptExtensions on Terminice {
     );
 
     if (cancelled || !confirmed) return null;
-    return lines.join('\n');
+    return lines.map((line) => line.text).join('\n');
   }
 }

@@ -5,7 +5,8 @@ import 'package:terminice_core/terminice_core.dart';
 /// Extends the [SelectableListPrompt] pattern with:
 /// - Real-time search/filter via [TextInputBuffer]
 /// - Dynamic item filtering with constraint handling
-/// - Toggleable search mode
+/// - Search/results focus switching with Ctrl+F; / focuses search from results
+/// - Literal Space and / during search, with query/filter preserved on focus changes
 ///
 /// **Design principles:**
 /// - Composition over inheritance (uses same components as SelectableListPrompt)
@@ -49,7 +50,7 @@ class SearchableListPrompt<T> {
   /// Initial selection indices.
   final Set<int>? initialSelection;
 
-  /// Whether search is initially enabled.
+  /// Whether the search text initially has focus.
   final bool searchEnabled;
 
   /// Terminal lines to reserve for chrome.
@@ -64,6 +65,7 @@ class SearchableListPrompt<T> {
   late TextInputBuffer _queryInput;
   late KeyBindings _bindings;
   late List<T> _filtered;
+  late List<int> _filteredIndices;
   late bool _searchActive;
   bool _cancelled = false;
 
@@ -85,7 +87,7 @@ class SearchableListPrompt<T> {
   /// Current navigation state.
   ListNavigator get nav => _nav;
 
-  /// Current selection state.
+  /// Current selection state, using indices in the original [items].
   SelectionController get selection => _selection;
 
   /// Current search query input.
@@ -97,7 +99,7 @@ class SearchableListPrompt<T> {
   /// Currently filtered items.
   List<T> get filtered => _filtered;
 
-  /// Whether search is currently active.
+  /// Whether search text currently has focus. Filtering persists without focus.
   bool get isSearchActive => _searchActive;
 
   /// Whether the prompt was cancelled.
@@ -142,16 +144,15 @@ class SearchableListPrompt<T> {
         };
 
     void updateFilter() {
-      if (!_searchActive || _queryInput.isEmpty) {
-        _filtered = List.from(items);
-      } else {
-        final query = _queryInput.text;
-        _filtered =
-            items.where((item) => effectiveFilter(item, query)).toList();
-      }
+      _filteredIndices = [
+        for (var i = 0; i < items.length; i++)
+          if (_queryInput.isEmpty ||
+              effectiveFilter(items[i], _queryInput.text))
+            i,
+      ];
+      _filtered = [for (final i in _filteredIndices) items[i]];
       _nav.itemCount = _filtered.length;
       _nav.reset();
-      _selection.constrainTo(_filtered.length);
     }
 
     // Create bindings with search support
@@ -160,14 +161,16 @@ class SearchableListPrompt<T> {
       onDown: () => _nav.moveDown(),
       onSearchToggle: () {
         _searchActive = !_searchActive;
-        if (!_searchActive) _queryInput.clear();
-        updateFilter();
       },
       searchBuffer: _queryInput,
       isSearchEnabled: () => _searchActive,
       onSearchInput: updateFilter,
-      onToggle: multiSelect && _filtered.isNotEmpty
-          ? () => _selection.toggle(_nav.selectedIndex)
+      onToggle: multiSelect
+          ? () {
+              if (_filtered.isNotEmpty) {
+                _selection.toggle(_filteredIndices[_nav.selectedIndex]);
+              }
+            }
           : null,
       hasMultiSelect: multiSelect,
       onCancel: () => _cancelled = true,
@@ -200,7 +203,8 @@ class SearchableListPrompt<T> {
           window,
           selectedIndex: _nav.selectedIndex,
           renderItem: (T item, int absoluteIndex, bool isFocused) {
-            final isSelected = _selection.isSelected(absoluteIndex);
+            final isSelected =
+                _selection.isSelected(_filteredIndices[absoluteIndex]);
 
             if (renderItem != null) {
               renderItem(
@@ -214,7 +218,7 @@ class SearchableListPrompt<T> {
             } else {
               // Default rendering
               final label = itemLabel?.call(item) ?? item.toString();
-              final displayLabel = highlightMatches && _searchActive
+              final displayLabel = highlightMatches
                   ? highlightSubstring(label, _queryInput.text, theme)
                   : label;
               final checkbox = multiSelect ? ctx.lb.checkbox(isSelected) : ' ';
@@ -241,13 +245,14 @@ class SearchableListPrompt<T> {
       bindings: _bindings,
     );
 
-    if (_cancelled || result == PromptResult.cancelled || _filtered.isEmpty) {
+    if (_cancelled || result == PromptResult.cancelled) {
       return [];
     }
 
     return _selection.getSelectedMany(
-      _filtered,
-      fallbackIndex: _nav.selectedIndex,
+      items,
+      fallbackIndex:
+          _filtered.isEmpty ? null : _filteredIndices[_nav.selectedIndex],
     );
   }
 

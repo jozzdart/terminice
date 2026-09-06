@@ -19,7 +19,8 @@ import 'editor_loop.dart';
 ///
 /// Controls:
 /// - ↑ / ↓ navigate through fields
-/// - / toggles search filter
+/// - / focuses search from results; Ctrl+F switches search/results focus
+/// - Search focus accepts literal Space and /; focus changes preserve the filter
 /// - Enter opens the editor for the focused field (or enters a group)
 /// - Select "✓ Save & confirm" to return the result
 /// - Esc / Ctrl+C cancels (returns `null`)

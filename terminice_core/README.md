@@ -157,7 +157,7 @@ try {
 
 ### Key Events
 
-Terminals send input as a stream of bytes. Printable text is decoded as UTF-8, so valid one-byte ASCII and multi-byte characters both become `KeyEventType.char` events. Special keys like arrows or `F1` are sent as multi-byte ANSI escape sequences (e.g., `ESC [ A` for up arrow). `KeyEventReader` synchronously reads from the terminal input, intercepts these sequences, and normalizes them into a simple, predictable `KeyEvent` object.
+Terminals send input as a stream of bytes. Printable text is decoded as UTF-8, so valid one-byte ASCII and multi-byte characters become `KeyEventType.char` events, except Space and `/`, which retain their dedicated event types. Special keys like arrows or `F1` are sent as multi-byte ANSI escape sequences (e.g., `ESC [ A` for up arrow). `KeyEventReader` synchronously reads from the terminal input, intercepts these sequences, and normalizes them into a simple, predictable `KeyEvent` object.
 
 ```dart
 // Read a single normalized key event
@@ -354,6 +354,14 @@ The **Prompt** module is the orchestrator that ties IO, Navigation, and Renderin
 - `TextPromptSync`, `TextInputBuffer`
 - `SelectableListPrompt`, `SearchableListPrompt`, `SelectableGridPrompt` (and more)
 - `FallbackPrompt`
+
+### Shared Text Editing and Search Focus
+
+`TextInputBuffer` and `KeyBindings.textInput` provide shared editing for fixed or dynamically focused buffers. Printable text includes Space and `/` through `KeyEvent.printableText`; those keys retain their dedicated event types for command bindings. Recognized no-op edits are consumed, while `onInput` runs only for text or cursor changes and `onTextChanged` runs only for text changes.
+
+`length`, `cursorPosition`, `maxLength`, and the return value of `insertText` count UTF-16 code units. `maxLength` must be non-negative; initialization, replacement, and insertion keep only a whole-grapheme prefix that fits. `moveCursor(delta)` moves by graphemes, and `setCursorPosition(offset)` clamps a UTF-16 offset and rounds down to a grapheme boundary. Backspace, deletion, and block cursors also operate on complete graphemes, preserving emoji and combining marks.
+
+`SearchableListPrompt` and `KeyBindings.searchableList` use Ctrl+F to switch search/results focus. `/` focuses search from results; with search focus, Space and `/` insert literal text. Focus changes preserve the query, filter, and focused result. Space toggles multi-selection only with results focus. Selection state uses original item indices, so selections survive filtering and duplicate labels remain distinct. Custom `renderItem` callbacks still receive indices in the filtered list.
 
 ### Prompt Runner & Render Output
 

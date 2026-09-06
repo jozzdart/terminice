@@ -76,7 +76,7 @@ bool runRichEditorLoop({
   var filteredIndices = List.generate(fields.length, (i) => i);
 
   void updateFilter() {
-    if (!searchActive || searchBuffer.isEmpty) {
+    if (searchBuffer.isEmpty) {
       filteredIndices = List.generate(fields.length, (i) => i);
     } else {
       final query = searchBuffer.text.toLowerCase();
@@ -98,8 +98,6 @@ bool runRichEditorLoop({
     onDown: () => nav.moveDown(),
     onSearchToggle: () {
       searchActive = !searchActive;
-      if (!searchActive) searchBuffer.clear();
-      updateFilter();
     },
     searchBuffer: searchBuffer,
     isSearchEnabled: () => searchActive,
@@ -124,7 +122,7 @@ bool runRichEditorLoop({
     final frame = FrameView(title: title, theme: theme, bindings: bindings);
     frame.render(out, (ctx) {
       ctx.searchLine(
-        searchBuffer.textWithCursor(),
+        searchBuffer.textWithCursor(showCursor: searchActive),
         enabled: searchActive,
       );
       ctx.writeConnector();
@@ -150,7 +148,7 @@ bool runRichEditorLoop({
               isFocused,
               theme,
               labelWidth,
-              searchActive ? searchBuffer.text : null,
+              searchBuffer.text,
             );
           }
         },

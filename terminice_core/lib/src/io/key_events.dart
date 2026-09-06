@@ -44,6 +44,23 @@ class KeyEvent {
   final String? char;
 
   const KeyEvent(this.type, [this.char]);
+
+  /// Printable text represented by this event, or null for a command key.
+  /// Space and slash retain their public event types for command bindings.
+  String? get printableText {
+    switch (type) {
+      case KeyEventType.space:
+        return ' ';
+      case KeyEventType.slash:
+        return '/';
+      case KeyEventType.char:
+        return char != null && KeyEventReader._isPrintableCharacter(char!)
+            ? char
+            : null;
+      default:
+        return null;
+    }
+  }
 }
 
 /// Synchronous key event reader for raw terminal input.

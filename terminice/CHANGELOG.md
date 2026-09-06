@@ -1,3 +1,13 @@
+## 1.3.1
+
+#### Fixed
+
+- Unified text editing across prompts, forms, multiline input, searches, and hex color entry so supported printable Space and slash input is preserved. Multiline editing now preserves whole graphemes during movement, deletion, line splits, joins, and cursor rendering; hex entry keeps its existing validation and seven-code-unit limit.
+- Changed searchable selectors and config editors to use Ctrl+F for search/results focus and `/` to focus search from results. Queries, filtering, and focused results survive focus changes; Space and slash insert literal search text, and multi-select Space toggles only with results focus.
+- Preserved selections by original item index across search filters, including duplicate labels, and prevented cursor-only search edits from resetting results.
+- Added rich-prompt integration coverage for text, password, form, multiline, selector, command palette, help, config, and color input paths.
+- Bumped `terminice_core` to `^1.2.1`.
+
 ## 1.3.0
 
 #### Changed

@@ -146,7 +146,7 @@ extension HelpCenterExtensions on Terminice {
             },
           ),
         ]) +
-        queryInput.toTextInputBindings(onInput: updateFilter) +
+        queryInput.toTextInputBindings(onTextChanged: updateFilter) +
         KeyBindings.confirm(onConfirm: () {
           if (filtered.isNotEmpty) result = filtered[nav.selectedIndex];
           return KeyActionResult.confirmed;
