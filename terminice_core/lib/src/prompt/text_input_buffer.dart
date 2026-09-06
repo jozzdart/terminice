@@ -1,3 +1,5 @@
+import 'package:characters/characters.dart';
+
 import 'package:terminice_core/terminice_core.dart';
 
 /// Manages text input state with cursor positioning.
@@ -40,25 +42,22 @@ class TextInputBuffer {
   /// Current cursor position (0 = before first char, length = after last char).
   int _cursorPosition = 0;
 
-  /// Optional maximum length for the input.
+  /// Optional maximum UTF-16 length; truncation preserves whole graphemes.
   final int? maxLength;
 
   /// Creates a new text input buffer.
   ///
   /// [initialText] sets the starting content (truncated to [maxLength] if set).
-  /// [maxLength] optionally limits input length.
+  /// [maxLength] optionally limits UTF-16 code units and must be non-negative.
+  /// Truncation keeps the longest whole-grapheme prefix within that limit.
   TextInputBuffer({
     String initialText = '',
     this.maxLength,
   }) {
-    if (initialText.isNotEmpty) {
-      var text = initialText;
-      if (maxLength != null && text.length > maxLength!) {
-        text = text.substring(0, maxLength!);
-      }
-      _buffer.write(text);
-      _cursorPosition = text.length;
+    if (maxLength != null && maxLength! < 0) {
+      throw ArgumentError.value(maxLength, 'maxLength', 'Must be non-negative');
     }
+    setText(initialText);
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -68,10 +67,10 @@ class TextInputBuffer {
   /// Current text content.
   String get text => _buffer.toString();
 
-  /// Current cursor position.
+  /// Current cursor position in UTF-16 code units, always at a grapheme boundary.
   int get cursorPosition => _cursorPosition;
 
-  /// Length of the current text.
+  /// Length of the current text in UTF-16 code units.
   int get length => _buffer.length;
 
   /// Whether the buffer is empty.
@@ -92,121 +91,81 @@ class TextInputBuffer {
   /// Text after the cursor (including char at cursor).
   String get textAfterCursor => text.substring(_cursorPosition);
 
-  /// Character at cursor position, or null if cursor is at end.
-  String? get charAtCursor =>
-      _cursorPosition < _buffer.length ? text[_cursorPosition] : null;
+  /// Whole grapheme at cursor position, or null if cursor is at end.
+  String? get charAtCursor => _cursorPosition < _buffer.length
+      ? textAfterCursor.characters.first
+      : null;
 
   // ──────────────────────────────────────────────────────────────────────────
   // MUTATIONS
   // ──────────────────────────────────────────────────────────────────────────
 
-  /// Inserts a character at the cursor position.
-  ///
-  /// Returns true if the character was inserted (respects maxLength).
-  bool insert(String char) {
-    if (char.isEmpty) return false;
-    if (maxLength != null && _buffer.length >= maxLength!) return false;
+  /// Inserts text, returning whether any text was inserted.
+  bool insert(String text) => insertText(text) > 0;
 
-    final before = text.substring(0, _cursorPosition);
-    final after = text.substring(_cursorPosition);
-
-    _buffer.clear();
-    _buffer.write(before);
-    _buffer.write(char);
-    _buffer.write(after);
-
-    _cursorPosition += char.length;
-    return true;
+  /// Inserts the longest whole-grapheme prefix that fits [maxLength].
+  /// Returns the number of UTF-16 code units inserted.
+  int insertText(String value) {
+    final inserted = _truncate(
+        value, maxLength == null ? value.length : maxLength! - length);
+    if (inserted.isEmpty) return 0;
+    final position = _cursorPosition + inserted.length;
+    _replace('$textBeforeCursor$inserted$textAfterCursor', position,
+        roundUp: true);
+    return inserted.length;
   }
 
-  /// Inserts text at the cursor position.
-  ///
-  /// Returns the number of characters actually inserted (respects maxLength).
-  int insertText(String text) {
-    if (text.isEmpty) return 0;
-
-    var toInsert = text;
-    if (maxLength != null) {
-      final available = maxLength! - _buffer.length;
-      if (available <= 0) return 0;
-      if (text.length > available) {
-        toInsert = text.substring(0, available);
-      }
-    }
-
-    final before = this.text.substring(0, _cursorPosition);
-    final after = this.text.substring(_cursorPosition);
-
-    _buffer.clear();
-    _buffer.write(before);
-    _buffer.write(toInsert);
-    _buffer.write(after);
-
-    _cursorPosition += toInsert.length;
-    return toInsert.length;
-  }
-
-  /// Deletes the character before the cursor (backspace).
-  ///
-  /// Returns true if a character was deleted.
+  /// Deletes the complete grapheme before the cursor.
   bool backspace() {
-    if (_cursorPosition == 0) return false;
-
-    final before = text.substring(0, _cursorPosition - 1);
-    final after = text.substring(_cursorPosition);
-
-    _buffer.clear();
-    _buffer.write(before);
-    _buffer.write(after);
-
-    _cursorPosition--;
+    if (cursorAtStart) return false;
+    final start = _boundaries.lastWhere((p) => p < _cursorPosition);
+    _replace(text.substring(0, start) + textAfterCursor, start);
     return true;
   }
 
-  /// Deletes the character at the cursor (delete key).
-  ///
-  /// Returns true if a character was deleted.
+  /// Deletes the complete grapheme at the cursor.
   bool delete() {
-    if (_cursorPosition >= _buffer.length) return false;
-
-    final before = text.substring(0, _cursorPosition);
-    final after = text.substring(_cursorPosition + 1);
-
-    _buffer.clear();
-    _buffer.write(before);
-    _buffer.write(after);
-
+    if (cursorAtEnd) return false;
+    final end = _boundaries.firstWhere((p) => p > _cursorPosition);
+    _replace(textBeforeCursor + text.substring(end), _cursorPosition);
     return true;
   }
 
-  /// Deletes word before cursor (Ctrl+Backspace behavior).
-  ///
-  /// Returns true if any characters were deleted.
+  /// Deletes the word before the cursor, including trailing spaces.
   bool backspaceWord() {
-    if (_cursorPosition == 0) return false;
-
-    final t = text;
-    var pos = _cursorPosition - 1;
-
-    // Skip trailing whitespace
-    while (pos > 0 && t[pos] == ' ') {
-      pos--;
-    }
-
-    // Delete until start of word
-    while (pos > 0 && t[pos - 1] != ' ') {
-      pos--;
-    }
-
-    final before = t.substring(0, pos);
-    final after = t.substring(_cursorPosition);
-
-    _buffer.clear();
-    _buffer.write(before);
-    _buffer.write(after);
-
-    _cursorPosition = pos;
+    final end = _cursorPosition;
+    moveCursorWordLeft();
+    if (end == _cursorPosition) return false;
+    _replace(textBeforeCursor + text.substring(end), _cursorPosition);
     return true;
+  }
+
+  static String _truncate(String value, int limit) {
+    var length = 0;
+    final result = StringBuffer();
+    for (final grapheme in value.characters) {
+      if (length + grapheme.length > limit) break;
+      result.write(grapheme);
+      length += grapheme.length;
+    }
+    return result.toString();
+  }
+
+  List<int> get _boundaries {
+    var position = 0;
+    return [
+      0,
+      for (final grapheme in text.characters) position += grapheme.length
+    ];
+  }
+
+  void _replace(String value, int position, {bool roundUp = false}) {
+    _buffer.clear();
+    _buffer.write(value);
+    final target = position.clamp(0, length);
+    _cursorPosition = roundUp
+        ? _boundaries.firstWhere((p) => p >= target)
+        : _boundaries.lastWhere((p) => p <= target);
   }
 
   /// Clears all text and resets cursor to start.
@@ -217,23 +176,17 @@ class TextInputBuffer {
 
   /// Sets the buffer to new text, cursor at end.
   void setText(String newText) {
-    var text = newText;
-    if (maxLength != null && text.length > maxLength!) {
-      text = text.substring(0, maxLength!);
-    }
-
-    _buffer.clear();
-    _buffer.write(text);
-    _cursorPosition = text.length;
+    final value = _truncate(newText, maxLength ?? newText.length);
+    _replace(value, value.length);
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // CURSOR MOVEMENT
-  // ──────────────────────────────────────────────────────────────────────────
-
-  /// Moves cursor by delta positions (negative = left, positive = right).
+  /// Moves by grapheme positions (negative = left, positive = right).
+  /// The public cursor offset remains measured in UTF-16 code units.
   void moveCursor(int delta) {
-    _cursorPosition = (_cursorPosition + delta).clamp(0, _buffer.length);
+    final boundaries = _boundaries;
+    final index = boundaries.indexOf(_cursorPosition);
+    _cursorPosition =
+        boundaries[(index + delta).clamp(0, boundaries.length - 1)];
   }
 
   /// Moves cursor to the start.
@@ -246,49 +199,38 @@ class TextInputBuffer {
     _cursorPosition = _buffer.length;
   }
 
-  /// Moves cursor to a specific position (clamped).
+  /// Sets a UTF-16 offset, clamped and rounded down to a grapheme boundary.
   void setCursorPosition(int position) {
-    _cursorPosition = position.clamp(0, _buffer.length);
+    _cursorPosition =
+        _boundaries.lastWhere((p) => p <= position.clamp(0, length));
   }
 
   /// Moves cursor to the start of the previous word.
   void moveCursorWordLeft() {
     if (_cursorPosition == 0) return;
 
-    final t = text;
-    var pos = _cursorPosition - 1;
-
-    // Skip whitespace
-    while (pos > 0 && t[pos] == ' ') {
-      pos--;
+    final graphemes = textBeforeCursor.characters.toList();
+    var index = graphemes.length;
+    while (index > 0 && graphemes[index - 1] == ' ') {
+      index--;
     }
-
-    // Find start of word
-    while (pos > 0 && t[pos - 1] != ' ') {
-      pos--;
+    while (index > 0 && graphemes[index - 1] != ' ') {
+      index--;
     }
-
-    _cursorPosition = pos;
+    _cursorPosition = graphemes.take(index).join().length;
   }
 
-  /// Moves cursor to the end of the next word.
+  /// Moves cursor past the current word and following spaces.
   void moveCursorWordRight() {
-    if (_cursorPosition >= _buffer.length) return;
-
-    final t = text;
-    var pos = _cursorPosition;
-
-    // Skip current word
-    while (pos < t.length && t[pos] != ' ') {
-      pos++;
+    final graphemes = textAfterCursor.characters.toList();
+    var index = 0;
+    while (index < graphemes.length && graphemes[index] != ' ') {
+      index++;
     }
-
-    // Skip whitespace
-    while (pos < t.length && t[pos] == ' ') {
-      pos++;
+    while (index < graphemes.length && graphemes[index] == ' ') {
+      index++;
     }
-
-    _cursorPosition = pos;
+    _cursorPosition += graphemes.take(index).join().length;
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -297,21 +239,15 @@ class TextInputBuffer {
 
   /// Handles a key event for text input.
   ///
-  /// Returns true if the input was modified (useful for triggering re-render).
-  /// Handles: typing, backspace, arrow keys, home/end.
+  /// Returns true if text or cursor state changed (useful for re-rendering).
+  /// Handles typing, backspace and horizontal arrows. Recognized no-op keys
+  /// return false here; text bindings consume them to prevent command fallthrough.
   ///
   /// Does NOT handle: Enter, Esc, Tab (these are typically handled by the parent prompt).
   bool handleKey(KeyEvent event) {
+    final printable = event.printableText;
+    if (printable != null) return insert(printable);
     switch (event.type) {
-      case KeyEventType.char:
-        if (event.char != null) {
-          return insert(event.char!);
-        }
-        return false;
-
-      case KeyEventType.space:
-        return insert(' ');
-
       case KeyEventType.backspace:
         return backspace();
 
@@ -383,7 +319,7 @@ class TextInputBuffer {
     final before = textBeforeCursor;
     final cursorChar = charAtCursor ?? ' ';
     final after = _cursorPosition < _buffer.length
-        ? text.substring(_cursorPosition + 1)
+        ? text.substring(_cursorPosition + cursorChar.length)
         : '';
 
     return TextWithBlockCursor(
@@ -414,28 +350,15 @@ extension SimpleTextInput on TextInputBuffer {
 extension TextInputBindingsExtensions on TextInputBuffer {
   /// Creates text input bindings that delegate to a TextInputBuffer.
   ///
-  /// This handles typing, backspace, delete, and cursor movement.
-  /// Returns `handled` if the buffer processed the event, `ignored` otherwise.
+  /// Handles typing, backspace, and horizontal cursor movement.
+  /// Recognized no-op edits are consumed; [onInput] runs only on state changes.
+  /// [onTextChanged] excludes cursor-only changes.
   KeyBindings toTextInputBindings({
     void Function()? onInput,
+    void Function()? onTextChanged,
   }) {
-    return KeyBindings([
-      KeyBinding(
-        keys: {
-          KeyEventType.char,
-          KeyEventType.backspace,
-          KeyEventType.arrowLeft,
-          KeyEventType.arrowRight,
-        },
-        action: (event) {
-          if (handleKey(event)) {
-            onInput?.call();
-            return KeyActionResult.handled;
-          }
-          return KeyActionResult.ignored;
-        },
-      ),
-    ]);
+    return KeyBindings.textInput(
+        buffer: () => this, onInput: onInput, onTextChanged: onTextChanged);
   }
 }
 

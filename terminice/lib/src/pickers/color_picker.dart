@@ -120,24 +120,17 @@ extension ColorPickerPromptExtensions on Terminice {
 
     // Hex mode intercepts all navigation/text keys while active. When
     // inactive, returns `ignored` so normal grid bindings fire instead.
-    final hexModeBindings = KeyBindings([
-      KeyBinding(
-        keys: {
-          KeyEventType.char,
-          KeyEventType.space,
-          KeyEventType.backspace,
-          KeyEventType.arrowLeft,
-          KeyEventType.arrowRight,
-          KeyEventType.arrowUp,
-          KeyEventType.arrowDown,
-        },
-        action: (event) {
-          if (!hexMode) return KeyActionResult.ignored;
-          hexInput.handleKey(event);
-          return KeyActionResult.handled;
-        },
-      ),
-    ]);
+    final hexModeBindings = KeyBindings.textInput(
+          buffer: () => hexInput,
+          isEnabled: () => hexMode,
+        ) +
+        KeyBindings([
+          KeyBinding(
+            keys: {KeyEventType.arrowUp, KeyEventType.arrowDown},
+            action: (_) =>
+                hexMode ? KeyActionResult.handled : KeyActionResult.ignored,
+          ),
+        ]);
 
     final enterBinding = KeyBindings([
       KeyBinding.single(

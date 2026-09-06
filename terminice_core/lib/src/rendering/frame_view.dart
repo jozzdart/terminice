@@ -360,9 +360,9 @@ class FrameContext {
   /// Writes a search input line: │ Search: [query]
   void searchLine(String query, {bool enabled = true}) {
     if (enabled) {
-      gutterLine('${theme.accent}Search:${theme.reset} $query');
+      gutterLine('${theme.accent}Search (text focus):${theme.reset} $query');
     } else {
-      dimMessage('(Search disabled — press / to enable)');
+      gutterLine('${theme.dim}Search (results focus): $query${theme.reset}');
     }
   }
 
