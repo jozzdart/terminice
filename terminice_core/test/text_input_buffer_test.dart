@@ -4,6 +4,29 @@ import 'package:test/test.dart';
 void main() {
   tearDown(TerminalContext.reset);
 
+  test('text-only callbacks exclude cursor changes and consumed no-op edits',
+      () {
+    final buffer = TextInputBuffer(maxLength: 1);
+    var stateChanges = 0;
+    var textChanges = 0;
+    final bindings = buffer.toTextInputBindings(
+      onInput: () => stateChanges++,
+      onTextChanged: () => textChanges++,
+    );
+    for (final event in [
+      const KeyEvent(KeyEventType.char, 'a'),
+      const KeyEvent(KeyEventType.char, 'b'),
+      const KeyEvent(KeyEventType.arrowLeft),
+      const KeyEvent(KeyEventType.backspace),
+      const KeyEvent(KeyEventType.arrowRight),
+      const KeyEvent(KeyEventType.backspace),
+    ]) {
+      expect(bindings.handle(event), KeyActionResult.handled);
+    }
+    expect(stateChanges, 4);
+    expect(textChanges, 2);
+  });
+
   test('every decoded printable ASCII character reaches the editor', () {
     final terminal = MockTerminal();
     TerminalContext.current = terminal;

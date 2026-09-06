@@ -156,7 +156,7 @@ class RankedListPrompt<T> {
           onUp: () => _nav.moveUp(),
           onDown: () => _nav.moveDown(),
         ) +
-        _queryInput.toTextInputBindings(onInput: updateRanking) +
+        _queryInput.toTextInputBindings(onTextChanged: updateRanking) +
         KeyBindings.ctrlR(
           onPress: () {
             _useFuzzy = !_useFuzzy;

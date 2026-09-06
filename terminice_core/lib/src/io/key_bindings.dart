@@ -927,11 +927,13 @@ class KeyBindings {
   /// Text editing bindings for a fixed or dynamically focused buffer.
   /// Recognized editing keys are consumed even when nothing changes (for
   /// example, backspace at the start or typing at maxLength). [onInput] runs
-  /// only when text or cursor state changes. Disabled bindings ignore events.
+  /// only when text or cursor state changes; [onTextChanged] runs only for text
+  /// changes. Disabled bindings ignore events.
   static KeyBindings textInput({
     required TextInputBuffer Function() buffer,
     bool Function()? isEnabled,
     void Function()? onInput,
+    void Function()? onTextChanged,
   }) {
     return KeyBindings([
       KeyBinding(
@@ -948,14 +950,20 @@ class KeyBindings {
           if (event.type == KeyEventType.char && event.printableText == null) {
             return KeyActionResult.ignored;
           }
-          if (buffer().handleKey(event)) onInput?.call();
+          final input = buffer();
+          final previousText = input.text;
+          if (input.handleKey(event)) onInput?.call();
+          if (input.text != previousText) onTextChanged?.call();
           return KeyActionResult.handled;
         },
       ),
     ]);
   }
 
-  /// Creates searchable list bindings: navigation + search toggle + conditional text input + prompt.
+  /// Search/list focus bindings. [isSearchEnabled] reports text focus;
+  /// [onSearchToggle] switches focus without clearing the query or filter.
+  /// Slash focuses search from results; Ctrl+F switches either direction.
+  /// [onSearchInput] runs only when query text changes.
   static KeyBindings searchableList({
     required void Function() onUp,
     required void Function() onDown,
@@ -969,18 +977,30 @@ class KeyBindings {
     void Function()? onCancel,
   }) {
     var bindings = verticalNavigation(onUp: onUp, onDown: onDown) +
-        searchToggle(onToggle: onSearchToggle) +
-        conditionalTextInput(
-          buffer: searchBuffer,
+        KeyBindings([
+          KeyBinding.single(KeyEventType.slash, (event) {
+            if (isSearchEnabled()) return KeyActionResult.ignored;
+            onSearchToggle();
+            return KeyActionResult.handled;
+          }, hintLabel: '/', hintDescription: 'focus search'),
+          KeyBinding.single(KeyEventType.ctrlGeneric, (event) {
+            if (event.char != 'f') return KeyActionResult.ignored;
+            onSearchToggle();
+            return KeyActionResult.handled;
+          }, hintLabel: 'Ctrl+F', hintDescription: 'search/results focus'),
+        ]) +
+        textInput(
+          buffer: () => searchBuffer,
           isEnabled: isSearchEnabled,
-          onInput: onSearchInput,
+          onTextChanged: onSearchInput,
         );
 
     if (hasMultiSelect && onToggle != null) {
       bindings = bindings +
           conditionalToggle(
-            isEnabled: () => true,
+            isEnabled: () => !isSearchEnabled(),
             onToggle: onToggle,
+            hintDescription: 'select in results',
           );
     }
 

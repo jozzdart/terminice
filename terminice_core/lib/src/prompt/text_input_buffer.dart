@@ -351,10 +351,13 @@ extension TextInputBindingsExtensions on TextInputBuffer {
   ///
   /// Handles typing, backspace, and horizontal cursor movement.
   /// Recognized no-op edits are consumed; [onInput] runs only on state changes.
+  /// [onTextChanged] excludes cursor-only changes.
   KeyBindings toTextInputBindings({
     void Function()? onInput,
+    void Function()? onTextChanged,
   }) {
-    return KeyBindings.textInput(buffer: () => this, onInput: onInput);
+    return KeyBindings.textInput(
+        buffer: () => this, onInput: onInput, onTextChanged: onTextChanged);
   }
 }
 

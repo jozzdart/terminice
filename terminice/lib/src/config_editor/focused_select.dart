@@ -62,7 +62,7 @@ String? _interactiveFocusedSelect({
   var filteredMap = List<int>.generate(options.length, (i) => i);
 
   void applyFilter({bool resetNav = false}) {
-    if (!searchActive || searchBuffer.isEmpty) {
+    if (searchBuffer.isEmpty) {
       filtered = List<String>.from(options);
       filteredMap = List<int>.generate(options.length, (i) => i);
     } else {
@@ -85,8 +85,6 @@ String? _interactiveFocusedSelect({
     onDown: () => nav.moveDown(),
     onSearchToggle: () {
       searchActive = !searchActive;
-      if (!searchActive) searchBuffer.clear();
-      applyFilter(resetNav: true);
     },
     searchBuffer: searchBuffer,
     isSearchEnabled: () => searchActive,
@@ -115,7 +113,7 @@ String? _interactiveFocusedSelect({
           final marker =
               origIdx == clampedInit ? '${theme.accent}✓${theme.reset} ' : '  ';
           final arrow = ctx.lb.arrow(isFocused);
-          final label = searchActive && searchBuffer.isNotEmpty
+          final label = searchBuffer.isNotEmpty
               ? highlightSubstring(item, searchBuffer.text, theme)
               : item;
           ctx.highlightedLine(
