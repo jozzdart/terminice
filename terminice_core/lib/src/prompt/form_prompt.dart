@@ -220,26 +220,10 @@ class FormPrompt {
 
     // Build the active-field text input bindings dynamically so they
     // always target the focused buffer.
-    final bindings = KeyBindings([
-          // Typing, backspace, cursor movement → active buffer
-          KeyBinding(
-            keys: {
-              KeyEventType.char,
-              KeyEventType.space,
-              KeyEventType.backspace,
-              KeyEventType.arrowLeft,
-              KeyEventType.arrowRight,
-            },
-            action: (event) {
-              final state = states[focusIndex];
-              if (state.buffer.handleKey(event)) {
-                clearAllErrors();
-                return KeyActionResult.handled;
-              }
-              return KeyActionResult.ignored;
-            },
-          ),
-        ]) +
+    final bindings = KeyBindings.textInput(
+          buffer: () => states[focusIndex].buffer,
+          onInput: clearAllErrors,
+        ) +
         // Tab / ↓: next field
         KeyBindings([
           KeyBinding.multi(

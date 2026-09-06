@@ -920,21 +920,36 @@ class KeyBindings {
     required bool Function() isEnabled,
     void Function()? onInput,
   }) {
+    return textInput(
+        buffer: () => buffer, isEnabled: isEnabled, onInput: onInput);
+  }
+
+  /// Text editing bindings for a fixed or dynamically focused buffer.
+  /// Recognized editing keys are consumed even when nothing changes (for
+  /// example, backspace at the start or typing at maxLength). [onInput] runs
+  /// only when text or cursor state changes. Disabled bindings ignore events.
+  static KeyBindings textInput({
+    required TextInputBuffer Function() buffer,
+    bool Function()? isEnabled,
+    void Function()? onInput,
+  }) {
     return KeyBindings([
       KeyBinding(
         keys: {
           KeyEventType.char,
+          KeyEventType.space,
+          KeyEventType.slash,
           KeyEventType.backspace,
           KeyEventType.arrowLeft,
           KeyEventType.arrowRight,
         },
         action: (event) {
-          if (!isEnabled()) return KeyActionResult.ignored;
-          if (buffer.handleKey(event)) {
-            onInput?.call();
-            return KeyActionResult.handled;
+          if (isEnabled != null && !isEnabled()) return KeyActionResult.ignored;
+          if (event.type == KeyEventType.char && event.printableText == null) {
+            return KeyActionResult.ignored;
           }
-          return KeyActionResult.ignored;
+          if (buffer().handleKey(event)) onInput?.call();
+          return KeyActionResult.handled;
         },
       ),
     ]);
